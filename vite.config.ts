@@ -24,4 +24,12 @@ export default defineConfig({
             },
         ],
     },
+    server: {
+        proxy: {
+            "/ws": {
+                target: "ws://127.0.0.1:9000",
+                ws: true,
+            },
+        },
+    },
 })

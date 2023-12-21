@@ -9,13 +9,19 @@ pub enum Rules {
     Or { rules: Vec<Rules> },
     Luminosity(rules::luminosity::RuleLuminosity),
     DysonRadius(rules::dyson_radius::RuleDysonRadius),
+    AverageVeinAmount(rules::average_vein_amount::RuleAverageVeinAmount),
+    AverageVeinPatch(rules::average_vein_patch::RuleAverageVeinPatch),
+    Spectr(rules::spectr::RuleSpectr),
 }
 
 pub fn transform_rules(r: Rules) -> Box<dyn Rule> {
     match r {
-        Rules::Luminosity(rule) => Box::new(rule),
-        Rules::DysonRadius(rule) => Box::new(rule),
         Rules::And { rules } => Box::new(rules::and::RuleAnd { evaluated: false, rules: rules.into_iter().map(transform_rules).collect() }),
         Rules::Or { rules } => Box::new(rules::or::RuleOr { evaluated: false, rules: rules.into_iter().map(transform_rules).collect() }),
+        Rules::Luminosity(rule) => Box::new(rule),
+        Rules::DysonRadius(rule) => Box::new(rule),
+        Rules::AverageVeinAmount(rule) => Box::new(rule),
+        Rules::AverageVeinPatch(rule) => Box::new(rule),
+        Rules::Spectr(rule) => Box::new(rule),
     }
 }

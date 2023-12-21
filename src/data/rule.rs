@@ -13,24 +13,19 @@ pub enum Condition {
     Gte(f32),
     Between(f32, f32),
     NotBetween(f32, f32),
-    In(Vec<usize>),
-    NotIn(Vec<usize>),
-    Exist,
-    NotExist,
 }
 
 impl Condition {
-    pub fn eval(&self, value: f32) -> Option<bool> {
+    pub fn eval(&self, value: f32) -> bool {
         match self {
-            Condition::Eq(f) => Some(value == *f),
-            Condition::Neq(f) => Some(value != *f),
-            Condition::Lt(f) => Some(value < *f),
-            Condition::Lte(f) => Some(value <= *f),
-            Condition::Gt(f) => Some(value > *f),
-            Condition::Gte(f) => Some(value >= *f),
-            Condition::Between(f1, f2) => Some(*f1 <= value && value <= *f2),
-            Condition::NotBetween(f1, f2) => Some(*f1 > value || value > *f2),
-            _ => None,
+            Condition::Eq(f) => value == *f,
+            Condition::Neq(f) => value != *f,
+            Condition::Lt(f) => value < *f,
+            Condition::Lte(f) => value <= *f,
+            Condition::Gt(f) => value > *f,
+            Condition::Gte(f) => value >= *f,
+            Condition::Between(f1, f2) => *f1 <= value && value <= *f2,
+            Condition::NotBetween(f1, f2) => *f1 > value || value > *f2,
         }
     }
 }

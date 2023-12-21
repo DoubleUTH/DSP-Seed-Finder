@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 #[allow(dead_code)]
 #[repr(i32)]
-#[derive(Debug, PartialEq, Eq, Clone, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Deserialize, Serialize)]
 pub enum StarType {
     MainSeqStar,
     GiantStar,
@@ -19,7 +19,7 @@ impl Default for StarType {
 
 #[allow(dead_code)]
 #[repr(i32)]
-#[derive(Debug, PartialEq, Eq, Clone, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Deserialize, Serialize)]
 pub enum SpectrType {
     M,
     K,
@@ -33,7 +33,7 @@ pub enum SpectrType {
 
 #[allow(dead_code)]
 #[repr(i32)]
-#[derive(Debug, PartialEq, Eq, Clone, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Deserialize, Serialize)]
 pub enum PlanetType {
     None,
     Vocano,
@@ -51,7 +51,7 @@ impl Default for PlanetType {
 
 #[allow(dead_code)]
 #[repr(i32)]
-#[derive(Debug, PartialEq, Eq, Clone, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Deserialize, Serialize)]
 pub enum ThemeDistribute {
     Default,
     Birth,
@@ -67,7 +67,7 @@ impl Default for ThemeDistribute {
 
 #[allow(dead_code)]
 #[repr(i32)]
-#[derive(Debug, PartialEq, Eq, Clone, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Deserialize, Serialize)]
 pub enum VeinType {
     None,
     Iron,

@@ -5,6 +5,7 @@ use super::star_gen::{create_birth_star, create_star, create_star_planets};
 use crate::data::enums::{PlanetType, SpectrType, StarType};
 use crate::data::galaxy::Galaxy;
 use crate::data::game_desc::GameDesc;
+use crate::data::planet::Planet;
 use crate::data::rule::Rule;
 use crate::data::star::Star;
 use crate::data::vector3::Vector3;
@@ -178,6 +179,26 @@ fn generate_stars(game_desc: &GameDesc) -> impl Iterator<Item = Star> {
     })
 }
 
+fn sum_veins(star: &mut Star, planets: &Vec<Planet>) {
+    for planet in planets {
+        for vein in &planet.veins {
+            let avg_group = (vein.min_group + vein.max_group) as f32 / 4.0;
+            let avg_patches = ((vein.min_patch + vein.max_patch) as f32) * avg_group;
+            let avg_amount = ((vein.min_amount + vein.max_amount) as f32) * avg_group;
+            if let Some(x) = star.vein_patch.get_mut(&vein.vein_type) {
+                *x += avg_patches;
+            } else {
+                star.vein_patch.insert(vein.vein_type.clone(), avg_patches);
+            }
+            if let Some(x) = star.vein_amount.get_mut(&vein.vein_type) {
+                *x += avg_amount;
+            } else {
+                star.vein_amount.insert(vein.vein_type.clone(), avg_amount);
+            }
+        }
+    }
+}
+
 pub fn create_galaxy(game_desc: &GameDesc) -> Galaxy {
     let mut galaxy = Galaxy::new();
     let mut habitable_count = 0;
@@ -195,6 +216,7 @@ pub fn create_galaxy(game_desc: &GameDesc) -> Galaxy {
                 generate_veins(planet, &star, game_desc);
             }
         }
+        sum_veins(&mut star, &planets);
         star.planets = planets;
         galaxy.stars.push(star);
     }
@@ -235,6 +257,7 @@ pub fn find_stars(game_desc: &GameDesc, rule: &mut Box<dyn Rule>) -> Vec<Star> {
                 generate_veins(planet, &star, game_desc);
             }
         }
+        sum_veins(&mut star, &planets);
         if !rule.is_evaluated() && rule.on_veins_generated(&star, &planets) == Some(false) {
             continue;
         }

@@ -13,7 +13,7 @@ pub struct RuleLuminosity {
 impl Rule for RuleLuminosity {
     fn on_star_created(&mut self, star: &Star) -> Option<bool> {
         self.evaluated = true;
-        self.condition.eval(star.luminosity)
+        Some(self.condition.eval(star.luminosity))
     }
     fn is_evaluated(&self) -> bool {
         self.evaluated

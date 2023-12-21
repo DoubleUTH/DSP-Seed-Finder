@@ -49,6 +49,9 @@ export enum RuleType {
     Or = "Or",
     Luminosity = "Luminosity",
     DysonRadius = "DysonRadius",
+    AverageVeinAmount = "AverageVeinAmount",
+    AverageVeinPatch = "AverageVeinPatch",
+    Spectr = "Spectr",
 }
 
 export enum ConditionType {
@@ -60,8 +63,4 @@ export enum ConditionType {
     Gte = "Gte",
     Between = "Between",
     NotBetween = "NotBetween",
-    In = "In",
-    NotIn = "NotIn",
-    Exist = "Exist",
-    NotExist = "NotExist",
 }

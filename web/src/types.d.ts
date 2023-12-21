@@ -92,10 +92,6 @@ declare global {
             type: ConditionType.NotBetween
             value: [float, float]
         }
-        export type In = { type: ConditionType.In; value: integer[] }
-        export type NotIn = { type: ConditionType.NotIn; value: integer[] }
-        export type Exist = { type: ConditionType.Exist }
-        export type NotExist = { type: ConditionType.NotExist }
     }
 
     declare type Condition =
@@ -105,10 +101,6 @@ declare global {
         | Condition.Lte
         | Condition.Gt
         | Condition.Gte
-        | Condition.Between
-        | Condition.NotBetween
-        | Condition.In
-        | Condition.NotIn
 
     declare namespace Rule {
         export type And = { type: RuleType.And; rules: Rule[] }
@@ -121,9 +113,30 @@ declare global {
             type: RuleType.DysonRadius
             condition: Condition
         }
+        export type AverageVeinAmount = {
+            type: RuleType.DysonRadius
+            vein: VeinType
+            condition: Condition
+        }
+        export type AverageVeinPatch = {
+            type: RuleType.DysonRadius
+            vein: VeinType
+            condition: Condition
+        }
+        export type Spectr = {
+            type: RuleType.DysonRadius
+            spectr: SpectrType[]
+        }
     }
 
-    declare type Rule = Rule.And | Rule.Or | Rule.Luminosity | Rule.DysonRadius
+    declare type Rule =
+        | Rule.And
+        | Rule.Or
+        | Rule.Luminosity
+        | Rule.DysonRadius
+        | Rule.AverageVeinAmount
+        | Rule.AverageVeinPatch
+        | Rule.Spectr
 
     declare interface WorldGen {
         concurrency: integer

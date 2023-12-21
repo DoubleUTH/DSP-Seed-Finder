@@ -404,28 +404,31 @@ pub fn generate_veins(planet: &mut Planet, star: &Star, game_desc: &GameDesc) {
             } else {
                 f
             };
-            let num17 = ((num_array_3[index3 as usize] * 100000.0 * num16).round() as i32).max(20);
-            let num18 = if num17 < 16000 {
-                ((num17 as f32) * (15.0 / 16.0)).floor() as i32
+            if game_desc.is_infinite_resource() {
+                vein.min_amount = 0;
+                vein.max_amount = 0;
             } else {
-                15000
-            };
-
-            let map_amount = |amount: i32| -> i32 {
-                let x1 = ((amount as f32) * 1.1).round();
-                let x2 = (if vein.vein_type == VeinType::Oil {
-                    x1 * game_desc.oil_amount_multipler()
-                } else if game_desc.is_infinite_resource() {
-                    1000000000.0
+                let num17 = ((num_array_3[index3 as usize] * 100000.0 * num16).round() as i32).max(20);
+                let num18 = if num17 < 16000 {
+                    ((num17 as f32) * (15.0 / 16.0)).floor() as i32
                 } else {
-                    x1 * game_desc.resource_multiplier
-                })
-                .round() as i32;
-                x2.max(1)
-            };
+                    15000
+                };
 
-            vein.min_amount = map_amount(num17 - num18);
-            vein.max_amount = map_amount(num17 + num18);
+                let map_amount = |amount: i32| -> i32 {
+                    let x1 = ((amount as f32) * 1.1).round();
+                    let x2 = (if vein.vein_type == VeinType::Oil {
+                        x1 * game_desc.oil_amount_multipler()
+                    } else {
+                        x1 * game_desc.resource_multiplier
+                    })
+                    .round() as i32;
+                    x2.max(1)
+                };
+
+                vein.min_amount = map_amount(num17 - num18);
+                vein.max_amount = map_amount(num17 + num18);
+            }
             output.push(vein);
         }
     }

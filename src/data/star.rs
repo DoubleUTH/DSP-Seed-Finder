@@ -1,7 +1,8 @@
-use super::enums::{SpectrType, StarType};
+use super::enums::{SpectrType, StarType, VeinType};
 use super::planet::Planet;
 use super::vector3::Vector3;
 use serde::Serialize;
+use std::collections::HashMap;
 
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -39,6 +40,8 @@ pub struct Star {
     pub orbit_scaler: f32,
     pub dyson_radius: f32,
     pub planets: Vec<Planet>,
+    pub vein_patch: HashMap<VeinType, f32>,
+    pub vein_amount: HashMap<VeinType, f32>,
 }
 
 impl Default for Star {
@@ -67,6 +70,8 @@ impl Default for Star {
             orbit_scaler: 0.0,
             dyson_radius: 0.0,
             planets: vec![],
+            vein_patch: HashMap::new(),
+            vein_amount: HashMap::new(),
         }
     }
 }

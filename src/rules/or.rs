@@ -1,16 +1,12 @@
 use crate::data::planet::Planet;
 use crate::data::rule::Rule;
 use crate::data::star::Star;
-use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
 pub struct RuleOr {
-    #[serde(skip)]
     pub evaluated: bool,
     pub rules: Vec<Box<dyn Rule>>,
 }
 
-#[typetag::serde]
 impl Rule for RuleOr {
     fn is_evaluated(&self) -> bool {
         self.evaluated

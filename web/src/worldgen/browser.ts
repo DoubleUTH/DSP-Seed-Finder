@@ -1,115 +1,117 @@
-import { TinyEmitter } from "tiny-emitter"
 import WorldgenWorker from "./worldgen.worker?worker"
 
 const GENERATE_NAME = "generate"
-const FREE_EVENT = "free"
+const FIND_NAME = "find"
+const FIND_NEXT_NAME = "next"
+
+async function* combineGenerators<T>(iterable: AsyncGenerator<T>[]) {
+    const asyncIterators = Array.from(iterable, (o) =>
+        o[Symbol.asyncIterator](),
+    )
+    let count = asyncIterators.length
+    const never = new Promise<any>(() => {})
+    async function getNext(asyncIterator: AsyncIterator<T>, index: number) {
+        const result = await asyncIterator.next()
+        return { index, result }
+    }
+    const nextPromises = asyncIterators.map(getNext)
+    while (count) {
+        const { index, result } = await Promise.race(nextPromises)
+        if (result.done) {
+            nextPromises[index] = never
+            count--
+        } else {
+            nextPromises[index] = getNext(asyncIterators[index]!, index)
+            yield result.value
+        }
+    }
+}
 
 export class WorldGenImpl implements WorldGen {
-    private readonly workerPool: Worker[] = []
-    private readonly runningWorkers = new WeakSet<Worker>()
+    private readonly workerPool = new Set<Worker>()
     concurrency: number = Math.max(navigator.hardwareConcurrency, 1)
-    private readonly emitter = new TinyEmitter()
-    private destroyed = false
-
-    private clearExtraWorkers() {
-        while (this.workerPool.length > this.concurrency) {
-            const idleWorkerIndex = this.workerPool.findLastIndex(
-                (worker) => !this.runningWorkers.has(worker),
-            )
-            if (idleWorkerIndex > -1) {
-                this.workerPool[idleWorkerIndex]?.terminate()
-                this.workerPool.splice(idleWorkerIndex, 1)
-            } else {
-                break
-            }
-        }
-    }
-
-    private assertNotDestroyed() {
-        if (this.destroyed) {
-            throw new Error("Cannot use a destroyed WorldGen")
-        }
-    }
-
-    private getAvailableWorker() {
-        if (this.destroyed) return null
-        this.clearExtraWorkers()
-        for (const worker of this.workerPool) {
-            if (!this.runningWorkers.has(worker)) {
-                return worker
-            }
-        }
-        if (this.workerPool.length < this.concurrency) {
-            const worker = new WorldgenWorker()
-            this.workerPool.push(worker)
-            return worker
-        }
-
-        return null
-    }
-
-    private async useAvailableWorker<T>(
-        cb: (worker: Worker) => Promise<T>,
-    ): Promise<T> {
-        this.assertNotDestroyed()
-        let worker = this.getAvailableWorker()
-        while (!worker) {
-            await new Promise((resolve) => {
-                this.emitter.once(FREE_EVENT, resolve)
-            })
-            this.assertNotDestroyed()
-            worker = this.getAvailableWorker()
-        }
-        this.runningWorkers.add(worker)
-        try {
-            const result = await cb(worker)
-            return result
-        } finally {
-            this.runningWorkers.delete(worker)
-        }
-    }
-
-    private async doWork(
-        worker: Worker,
-        type: string,
-        input: any,
-    ): Promise<any> {
-        return new Promise((resolve) => {
-            const eventHandler = (ev: MessageEvent) => {
-                const message = ev.data
-                if (message.type === type) {
-                    worker.removeEventListener("message", eventHandler)
-                    resolve(message.data)
-                    if (this.destroyed) {
-                        worker.terminate()
-                    } else {
-                        this.emitter.emit(FREE_EVENT)
-                    }
-                }
-            }
-            worker.addEventListener("message", eventHandler)
-            worker.postMessage({ type, input })
-        })
-    }
 
     async generate(gameDesc: GameDesc): Promise<Galaxy> {
-        return await this.useAvailableWorker((worker) => {
-            return this.doWork(worker, GENERATE_NAME, gameDesc)
-        })
+        const worker = new WorldgenWorker()
+        this.workerPool.add(worker)
+        try {
+            const result = await new Promise<Galaxy>((resolve) => {
+                const eventHandler = (ev: MessageEvent) => {
+                    const message = ev.data
+                    if (message.type === GENERATE_NAME) {
+                        worker.removeEventListener("message", eventHandler)
+                        resolve(message.data)
+                    }
+                }
+                worker.addEventListener("message", eventHandler)
+                worker.postMessage({ type: GENERATE_NAME, input: gameDesc })
+            })
+            return result
+        } finally {
+            worker.terminate()
+            this.workerPool.delete(worker)
+        }
     }
 
     find(
         gameDesc: Omit<GameDesc, "seed">,
+        range: [number, number],
         rule: Rule,
-    ): AsyncIterator<Galaxy, any, undefined> {
-        throw new Error("Method not implemented.")
+    ): AsyncGenerator<Galaxy> {
+        let currentSeed = range[0]
+        const finalSeed = range[1]
+
+        const workers = Array.from({
+            length: Math.min(this.concurrency, finalSeed - currentSeed + 1),
+        }).map(() => {
+            const worker = new WorldgenWorker()
+            this.workerPool.add(worker)
+            return worker
+        })
+
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this
+
+        async function* run(worker: Worker): AsyncGenerator<Galaxy> {
+            let resolveFn: ((data: Galaxy) => void) | undefined
+            const eventHandler = (ev: MessageEvent) => {
+                const message = ev.data
+                if (message.type === FIND_NAME) {
+                    resolveFn?.(message.data)
+                }
+            }
+            worker.addEventListener("message", eventHandler)
+            try {
+                worker.postMessage({
+                    type: FIND_NAME,
+                    input: { game: { ...gameDesc, seed: currentSeed++ }, rule },
+                })
+
+                for (;;) {
+                    const result = await new Promise<Galaxy>((resolve) => {
+                        resolveFn = resolve
+                    })
+                    yield result
+                    if (currentSeed > finalSeed) break
+                    worker.postMessage({
+                        type: FIND_NEXT_NAME,
+                        input: currentSeed++,
+                    })
+                }
+            } finally {
+                worker.removeEventListener("message", eventHandler)
+                worker.terminate()
+                self.workerPool.delete(worker)
+            }
+        }
+
+        return combineGenerators(workers.map(run))
     }
 
     destroy() {
-        this.destroyed = true
-        this.concurrency = 0
-        this.emitter.emit(FREE_EVENT)
-        this.clearExtraWorkers()
-        this.workerPool.length = 0
+        for (const worker of this.workerPool) {
+            worker.terminate()
+        }
+        this.workerPool.clear()
     }
 }

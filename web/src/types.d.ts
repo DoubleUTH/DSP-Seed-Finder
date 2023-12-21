@@ -130,8 +130,9 @@ declare global {
         generate(gameDesc: GameDesc): Promise<Galaxy>
         find(
             gameDesc: Omit<GameDesc, "seed">,
+            range: [number, number],
             rule: Rule,
-        ): AsyncIterator<Galaxy>
+        ): AsyncGenerator<Galaxy>
         destroy(): void
     }
 }

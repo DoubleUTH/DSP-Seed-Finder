@@ -204,7 +204,7 @@ pub fn create_galaxy(game_desc: &GameDesc) -> Galaxy {
     return galaxy;
 }
 
-pub fn find_stars(game_desc: &GameDesc, mut rule: Box<dyn Rule>) -> Vec<Star> {
+pub fn find_stars(game_desc: &GameDesc, rule: &mut Box<dyn Rule>) -> Vec<Star> {
     let mut habitable_count = 0;
     let mut stars: Vec<Star> = vec![];
     let mut names: Vec<String> = vec![];

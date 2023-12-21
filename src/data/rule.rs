@@ -36,7 +36,6 @@ impl Condition {
 }
 
 #[allow(unused_variables)]
-#[typetag::serde(tag = "type")]
 pub trait Rule {
     fn is_evaluated(&self) -> bool;
     fn on_star_created(&mut self, star: &Star) -> Option<bool> {

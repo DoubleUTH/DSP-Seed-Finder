@@ -10,7 +10,6 @@ use super::vein::Vein;
 pub fn create_planet(
     galaxy: &Galaxy,
     star: &Star,
-    game_desc: &GameDesc,
     index: i32,
     orbit_around_planet: Option<&Planet>,
     orbit_around: i32,
@@ -51,6 +50,7 @@ pub fn create_planet(
     rand.next_f64();
     rand.next_f64();
     let theme_seed = rand.next();
+    planet.theme_seed = theme_seed;
     let a = 1.2_f32.powf((num3 * (num4 - 0.5) * 0.5) as f32);
     let f1 = if let Some(orbit_planet) = orbit_around_planet {
         (((1600.0 * (orbit_index as f64) + 200.0)
@@ -205,45 +205,18 @@ pub fn create_planet(
         }
     }
 
-    (planet.precision, planet.segment) =
-        if planet.planet_type != PlanetType::Gas && planet.planet_type != PlanetType::None {
-            (200, 5)
-        } else {
-            (64, 2)
-        };
-    planet.luminosity = (star.lignt_balance_radius / (planet.sun_distance + 0.01)).powf(0.6);
-    if planet.luminosity > 1.0 {
-        planet.luminosity = planet.luminosity.ln() + 1.0;
-        planet.luminosity = planet.luminosity.ln() + 1.0;
-        planet.luminosity = planet.luminosity.ln() + 1.0;
-    }
-    planet.luminosity = (planet.luminosity * 100.0).round() / 100.0;
-
-    set_planet_theme(
-        &mut planet,
-        star,
-        game_desc,
-        used_theme_ids,
-        rand1,
-        theme_seed,
-    );
+    set_planet_theme(&mut planet, star, used_theme_ids, rand1);
 
     planet
 }
 
-fn set_planet_theme(
-    planet: &mut Planet,
-    star: &Star,
-    game_desc: &GameDesc,
-    used_theme_ids: &mut Vec<i32>,
-    rand1: f64,
-    theme_seed: i32,
-) {
+fn set_planet_theme(planet: &mut Planet, star: &Star, used_theme_ids: &mut Vec<i32>, rand1: f64) {
     let mut potential_themes: Vec<&'static ThemeProto> = vec![];
-    for theme in THEME_PROTOS
+    let unused_themes: Vec<&'static ThemeProto> = THEME_PROTOS
         .iter()
         .filter(|&theme| !used_theme_ids.contains(&theme.id))
-    {
+        .collect();
+    for theme in &unused_themes {
         let mut flag1 = false;
         if star.index == 0 && planet.planet_type == PlanetType::Ocean {
             if theme.distribute == ThemeDistribute::Birth {
@@ -274,10 +247,7 @@ fn set_planet_theme(
         }
     }
     if potential_themes.is_empty() {
-        for theme in THEME_PROTOS
-            .iter()
-            .filter(|&theme| !used_theme_ids.contains(&theme.id))
-        {
+        for theme in &unused_themes {
             if theme.planet_type == PlanetType::Desert {
                 potential_themes.push(theme);
             }
@@ -295,15 +265,18 @@ fn set_planet_theme(
 
     planet.theme_proto = theme_proto;
     planet.planet_type = theme_proto.planet_type;
+}
 
+pub fn generate_gases(planet: &mut Planet, star: &Star, game_desc: &GameDesc) {
     let gas_coef = game_desc.gas_coef();
 
-    let mut rand = DspRandom::new(theme_seed);
+    let mut rand = DspRandom::new(planet.theme_seed);
 
-    for (item, speed) in theme_proto
+    for (item, speed) in planet
+        .theme_proto
         .gas_items
         .iter()
-        .zip(theme_proto.gas_speeds.iter())
+        .zip(planet.theme_proto.gas_speeds.iter())
     {
         let num2 = speed * (rand.next_f32() * 0.190909147262573 + 0.909090876579285) * gas_coef;
         planet
@@ -312,12 +285,7 @@ fn set_planet_theme(
     }
 }
 
-pub fn generate_veins(
-    planet: &mut Planet,
-    star: &Star,
-    game_desc: &GameDesc,
-    is_birth_planet: bool,
-) {
+pub fn generate_veins(planet: &mut Planet, star: &Star, game_desc: &GameDesc) {
     let mut rand1 = DspRandom::new(planet.seed);
     rand1.next_f64();
     rand1.next_f64();
@@ -392,7 +360,7 @@ pub fn generate_veins(
     };
     let is_rare_resource = game_desc.is_rare_resource();
     let mut f = star.resource_coef;
-    if is_birth_planet {
+    if planet.is_birth {
         f *= 0.6666667;
     } else if is_rare_resource {
         if f > 1.0 {
@@ -452,12 +420,13 @@ pub fn generate_veins(
 
             let map_amount = |amount: i32| -> i32 {
                 let x1 = ((amount as f32) * 1.1).round();
-                let x2 = (x1
-                    * (if vein_type == VeinType::Oil {
-                        game_desc.oil_amount_multipler()
-                    } else {
-                        game_desc.resource_multiplier
-                    }))
+                let x2 = (if vein_type == VeinType::Oil {
+                    x1 * game_desc.oil_amount_multipler()
+                } else if game_desc.is_infinite_resource() {
+                    1000000000.0
+                } else {
+                    x1 * game_desc.resource_multiplier
+                })
                 .round() as i32;
                 x2.max(1)
             };

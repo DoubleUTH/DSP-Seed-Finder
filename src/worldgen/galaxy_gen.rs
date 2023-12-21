@@ -1,7 +1,7 @@
 use super::enums::{SpectrType, StarType, ThemeDistribute};
 use super::galaxy::Galaxy;
 use super::game_desc::GameDesc;
-use super::planet_gen::generate_veins;
+use super::planet_gen::{generate_gases, generate_veins};
 use super::random::DspRandom;
 use super::star_gen::{create_birth_star, create_star, create_star_planets};
 use super::vector3::Vector3;
@@ -148,9 +148,7 @@ pub fn create_galaxy(game_desc: &GameDesc) -> Galaxy {
     for index in 0..star_count {
         let seed = rand.next();
         if index == 0 {
-            galaxy
-                .stars
-                .push(create_birth_star(&galaxy, &game_desc, seed));
+            galaxy.stars.push(create_birth_star(&galaxy, seed));
         } else {
             let need_spectr = if index == 3 {
                 SpectrType::M
@@ -173,7 +171,6 @@ pub fn create_galaxy(game_desc: &GameDesc) -> Galaxy {
             galaxy.stars.push(create_star(
                 &galaxy,
                 tmp_poses[index as usize],
-                game_desc,
                 index + 1,
                 seed,
                 need_type,
@@ -185,22 +182,20 @@ pub fn create_galaxy(game_desc: &GameDesc) -> Galaxy {
     let mut habitable_count = 0;
 
     for index in 0..(star_count as usize) {
-        let mut planets = create_star_planets(
-            &galaxy,
-            &galaxy.stars[index],
-            game_desc,
-            &mut habitable_count,
-        );
+        let mut planets = create_star_planets(&galaxy, &galaxy.stars[index], &mut habitable_count);
         if index == 0 {
-            for planet in &planets {
+            for planet in &mut planets {
                 if planet.theme_proto.distribute == ThemeDistribute::Birth {
                     galaxy.birth_planet_id = planet.id;
+                    planet.is_birth = true;
+                    break;
                 }
             }
         }
         let star = galaxy.stars.get_mut(index).unwrap();
         for planet in &mut planets {
-            generate_veins(planet, star, game_desc, galaxy.birth_planet_id == planet.id);
+            generate_gases(planet, star, game_desc);
+            generate_veins(planet, star, game_desc);
         }
         star.planet_count = planets.len() as i32;
         star.planets = planets;

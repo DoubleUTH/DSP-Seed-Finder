@@ -7,7 +7,7 @@ pub struct Vein {
     pub max_group: i32,
     pub min_patch: i32,
     pub max_patch: i32,
-    pub min_amount: i32,
+    pub min_amount: i32, // times 4e-5 for oil
     pub max_amount: i32,
 }
 

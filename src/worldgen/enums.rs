@@ -1,3 +1,4 @@
+#[allow(dead_code)]
 #[repr(i32)]
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum StarType {
@@ -14,6 +15,7 @@ impl Default for StarType {
     }
 }
 
+#[allow(dead_code)]
 #[repr(i32)]
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum SpectrType {
@@ -27,6 +29,7 @@ pub enum SpectrType {
     X,
 }
 
+#[allow(dead_code)]
 #[repr(i32)]
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum PlanetType {
@@ -44,6 +47,7 @@ impl Default for PlanetType {
     }
 }
 
+#[allow(dead_code)]
 #[repr(i32)]
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum ThemeDistribute {
@@ -59,6 +63,7 @@ impl Default for ThemeDistribute {
     }
 }
 
+#[allow(dead_code)]
 #[repr(i32)]
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum VeinType {

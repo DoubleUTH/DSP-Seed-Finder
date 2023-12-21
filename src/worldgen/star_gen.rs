@@ -1,6 +1,5 @@
 use super::enums::{SpectrType, StarType};
 use super::galaxy::Galaxy;
-use super::game_desc::GameDesc;
 use super::name_gen::random_name;
 use super::planet::Planet;
 use super::planet_gen::create_planet;
@@ -11,7 +10,6 @@ use super::vector3::Vector3;
 pub fn create_star(
     galaxy: &Galaxy,
     pos: Vector3,
-    game_desc: &GameDesc,
     id: i32,
     seed: i32,
     need_type: StarType,
@@ -41,8 +39,6 @@ pub fn create_star(
     let num4 = rand2.next_f64() * 0.2 + 0.9;
     let y = rand2.next_f64() * 0.4 - 0.2;
     let num5 = 2_f64.powf(y);
-    let mut rand3 = DspRandom::new(rand2.next());
-    let num6 = rand3.next_f64();
     let num7 = -0.98 + (0.88 + 0.98) * star.level.clamp(0.0, 1.0);
     let average_value = if need_type == StarType::GiantStar {
         if y > -0.08 {
@@ -150,12 +146,10 @@ pub fn create_star(
     }
     star.name = random_name(seed1, &star, &galaxy);
 
-    // TODO: dark fog
-
     star
 }
 
-pub fn create_birth_star(galaxy: &Galaxy, game_desc: &GameDesc, seed: i32) -> Star {
+pub fn create_birth_star(galaxy: &Galaxy, seed: i32) -> Star {
     let mut star = Star::new();
     star.index = 0;
     star.level = 0.0;
@@ -171,10 +165,6 @@ pub fn create_birth_star(galaxy: &Galaxy, game_desc: &GameDesc, seed: i32) -> St
     let rn = rand2.next_f64();
     let rt = rand2.next_f64();
     let num2 = rand2.next_f64() * 0.2 + 0.9;
-    let y = rand2.next_f64() * 0.4 - 0.2;
-    let num3 = 2_f64.powf(y);
-    let mut rand3 = DspRandom::new(rand2.next());
-    let num4 = rand3.next_f64();
     let p1 = rand_normal(0.0, 0.08, r1_1, r2_1).clamp(-0.2, 0.2);
     star.mass = 2_f32.powf(p1);
     let d = 2.0 + 0.4 * (1.0 - (star.mass as f64));
@@ -212,17 +202,10 @@ pub fn create_birth_star(galaxy: &Galaxy, game_desc: &GameDesc, seed: i32) -> St
     }
     star.name = random_name(seed1, &star, &galaxy);
 
-    // TODO: dark fog
-
     star
 }
 
-pub fn create_star_planets(
-    galaxy: &Galaxy,
-    star: &Star,
-    game_desc: &GameDesc,
-    habitable_count: &mut i32,
-) -> Vec<Planet> {
+pub fn create_star_planets(galaxy: &Galaxy, star: &Star, habitable_count: &mut i32) -> Vec<Planet> {
     let mut rand1 = DspRandom::new(star.seed);
     rand1.next_f64();
     rand1.next_f64();
@@ -231,13 +214,11 @@ pub fn create_star_planets(
     let num1 = rand2.next_f64();
     let num2 = rand2.next_f64();
     let num3 = if rand2.next_f64() > 0.5 { 1 } else { 0 };
-    let num4 = rand2.next_f64();
-    let num5 = rand2.next_f64();
-    let num6 = rand2.next_f64() * 0.2 + 0.9;
-    let num7 = rand2.next_f64() * 0.2 + 0.9;
-    let mut rand3 = DspRandom::new(rand1.next());
+    rand2.next_f64();
+    rand2.next_f64();
+    rand2.next_f64();
+    rand2.next_f64();
     let mut used_theme_ids: Vec<i32> = vec![];
-    // TODO: hive orbits conditions
 
     let mut make_planet = |index: i32,
                            orbit_around_planet: Option<&Planet>,
@@ -251,7 +232,6 @@ pub fn create_star_planets(
         create_planet(
             galaxy,
             star,
-            game_desc,
             index,
             orbit_around_planet,
             orbit_around,
@@ -467,7 +447,6 @@ pub fn create_star_planets(
             output.push(create_planet(
                 galaxy,
                 star,
-                game_desc,
                 index,
                 if orbit_around == 0 {
                     None

@@ -1,0 +1,9 @@
+{
+    "extends": "./tsconfig.base.json",
+    "compilerOptions": {
+        "composite": true,
+        "allowSyntheticDefaultImports": true,
+        "types": ["node"]
+    },
+    "include": ["../vite.config.ts"]
+}

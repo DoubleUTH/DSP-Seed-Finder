@@ -1,19 +1,28 @@
+use serde::Serialize;
+
 use super::enums::PlanetType;
 use super::theme_proto::{ThemeProto, DEFAULT_THEME_PROTO};
 use super::vein::Vein;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Planet {
     pub index: i32,
+    #[serde(skip_serializing)]
     pub seed: i32,
+    #[serde(skip_serializing)]
     pub info_seed: i32,
+    #[serde(skip_serializing)]
     pub theme_seed: i32,
     pub orbit_around: i32,
     pub orbit_index: i32,
+    #[serde(skip_serializing)]
     pub number: i32,
     pub id: i32,
     pub name: String,
+    #[serde(skip_serializing)]
     pub radius: f32,
+    #[serde(skip_serializing)]
     pub scale: f32,
     pub is_birth: bool,
     pub orbit_radius: f32,

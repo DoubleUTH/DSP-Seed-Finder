@@ -1,6 +1,8 @@
 use super::enums::VeinType;
+use serde::Serialize;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Vein {
     pub vein_type: VeinType,
     pub min_group: i32,

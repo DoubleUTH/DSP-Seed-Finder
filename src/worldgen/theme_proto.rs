@@ -1,19 +1,31 @@
 use super::enums::{PlanetType, ThemeDistribute, VeinType};
 use once_cell::sync::Lazy;
+use serde::Serialize;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ThemeProto {
     pub id: i32,
     pub name: &'static str,
+    #[serde(skip_serializing)]
     pub distribute: ThemeDistribute,
+    #[serde(skip_serializing)]
     pub temperature: f32,
+    #[serde(skip_serializing)]
     pub planet_type: PlanetType,
+    #[serde(skip_serializing)]
     pub vein_spot: Vec<i32>,
+    #[serde(skip_serializing)]
     pub vein_count: Vec<f32>,
+    #[serde(skip_serializing)]
     pub vein_opacity: Vec<f32>,
+    #[serde(skip_serializing)]
     pub rare_veins: Vec<VeinType>,
+    #[serde(skip_serializing)]
     pub rare_settings: Vec<f32>,
+    #[serde(skip_serializing)]
     pub gas_items: Vec<i32>,
+    #[serde(skip_serializing)]
     pub gas_speeds: Vec<f32>,
 }
 

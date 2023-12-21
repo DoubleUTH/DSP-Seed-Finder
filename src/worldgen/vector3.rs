@@ -1,4 +1,6 @@
-#[derive(Debug, PartialEq, Clone, Copy)]
+use serde::Serialize;
+
+#[derive(Debug, PartialEq, Clone, Copy, Serialize)]
 pub struct Vector3(pub f64, pub f64, pub f64);
 
 impl Vector3 {

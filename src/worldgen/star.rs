@@ -1,15 +1,21 @@
 use super::enums::{SpectrType, StarType};
 use super::planet::Planet;
 use super::vector3::Vector3;
+use serde::Serialize;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Star {
     pub id: i32,
+    #[serde(skip_serializing)]
     pub index: i32,
+    #[serde(skip_serializing)]
     pub seed: i32,
     pub position: Vector3,
     pub name: String,
+    #[serde(skip_serializing)]
     pub level: f32,
+    #[serde(skip_serializing)]
     pub resource_coef: f32,
     pub mass: f32,
     pub lifetime: f32,
@@ -17,14 +23,20 @@ pub struct Star {
     pub temperature: f32,
     pub star_type: StarType,
     pub spectr: SpectrType,
+    #[serde(skip_serializing)]
     pub color: f32,
+    #[serde(skip_serializing)]
     pub class_factor: f32,
     pub luminosity: f32,
     pub radius: f32,
+    #[serde(skip_serializing)]
     pub habitable_radius: f32,
+    #[serde(skip_serializing)]
     pub lignt_balance_radius: f32,
+    #[serde(skip_serializing)]
     pub orbit_scaler: f32,
     pub dyson_radius: f32,
+    #[serde(skip_serializing)]
     pub planet_count: i32,
     pub planets: Vec<Planet>,
 }

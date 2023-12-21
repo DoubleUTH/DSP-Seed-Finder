@@ -1,15 +1,14 @@
-use super::enums::{PlanetType, SpectrType, StarType, ThemeDistribute, VeinType};
-use super::galaxy::Galaxy;
-use super::game_desc::GameDesc;
-use super::planet::Planet;
 use super::random::DspRandom;
-use super::star::Star;
-use super::theme_proto::{ThemeProto, THEME_PROTOS};
-use super::vein::Vein;
+use crate::data::enums::{PlanetType, SpectrType, StarType, ThemeDistribute, VeinType};
+use crate::data::game_desc::GameDesc;
+use crate::data::planet::Planet;
+use crate::data::star::Star;
+use crate::data::theme_proto::{ThemeProto, THEME_PROTOS};
+use crate::data::vein::Vein;
 
 pub fn create_planet(
-    galaxy: &Galaxy,
     star: &Star,
+    star_count: i32,
     index: i32,
     orbit_around_planet: Option<&Planet>,
     orbit_around: i32,
@@ -17,7 +16,6 @@ pub fn create_planet(
     number: i32,
     gas_giant: bool,
     habitable_count: &mut i32,
-    used_theme_ids: &mut Vec<i32>,
     info_seed: i32,
     gen_seed: i32,
 ) -> Planet {
@@ -30,7 +28,6 @@ pub fn create_planet(
     planet.orbit_index = orbit_index;
     planet.number = number;
     planet.id = star.astro_id() + index + 1;
-    planet.name = star.name.clone() + " " + ROMAN[index as usize];
 
     let num3 = rand.next_f64();
     let num4 = rand.next_f64();
@@ -51,6 +48,7 @@ pub fn create_planet(
     rand.next_f64();
     let theme_seed = rand.next();
     planet.theme_seed = theme_seed;
+    planet.theme_rand1 = rand1;
     let a = 1.2_f32.powf((num3 * (num4 - 0.5) * 0.5) as f32);
     let f1 = if let Some(orbit_planet) = orbit_around_planet {
         (((1600.0 * (orbit_index as f64) + 200.0)
@@ -161,9 +159,9 @@ pub fn create_planet(
         planet.scale = 10.0;
         planet.habitable_bias = 100.0;
     } else {
-        let num18 = ((galaxy.star_count as f32) * 0.29).ceil().max(11.0);
+        let num18 = ((star_count as f32) * 0.29).ceil().max(11.0);
         let num19 = (num18 as f64) - (*habitable_count as f64);
-        let num20 = (galaxy.star_count - star.index) as f32;
+        let num20 = (star_count - star.index) as f32;
         let sun_distance = planet.sun_distance;
         let (num21, f2) = if habitable_radius > 0.0 && sun_distance > 0.0 {
             let f2 = sun_distance / habitable_radius;
@@ -205,22 +203,19 @@ pub fn create_planet(
         }
     }
 
-    set_planet_theme(&mut planet, star, used_theme_ids, rand1);
-
     planet
 }
 
-fn set_planet_theme(planet: &mut Planet, star: &Star, used_theme_ids: &mut Vec<i32>, rand1: f64) {
+pub fn set_planet_theme(planet: &mut Planet, is_birth_star: bool, used_theme_ids: &mut Vec<i32>) {
     let mut potential_themes: Vec<&'static ThemeProto> = vec![];
     let unused_themes: Vec<&'static ThemeProto> = THEME_PROTOS
         .iter()
         .filter(|&theme| !used_theme_ids.contains(&theme.id))
         .collect();
     for theme in &unused_themes {
-        let mut flag1 = false;
-        if star.index == 0 && planet.planet_type == PlanetType::Ocean {
+        if is_birth_star && planet.planet_type == PlanetType::Ocean {
             if theme.distribute == ThemeDistribute::Birth {
-                flag1 = true;
+                potential_themes.push(theme);
             }
         } else {
             let flag2 = if theme.temperature.abs() < 0.5 && theme.planet_type == PlanetType::Desert
@@ -231,19 +226,16 @@ fn set_planet_theme(planet: &mut Planet, star: &Star, used_theme_ids: &mut Vec<i
                 (theme.temperature as f64) * (planet.temperature_bias as f64) >= -0.100000001490116
             };
             if (theme.planet_type == planet.planet_type) & flag2 {
-                if star.index == 0 {
+                if is_birth_star {
                     if theme.distribute == ThemeDistribute::Default {
-                        flag1 = true;
+                        potential_themes.push(theme);
                     }
                 } else if theme.distribute == ThemeDistribute::Default
                     || theme.distribute == ThemeDistribute::Interstellar
                 {
-                    flag1 = true;
+                    potential_themes.push(theme);
                 }
             }
-        }
-        if flag1 {
-            potential_themes.push(theme);
         }
     }
     if potential_themes.is_empty() {
@@ -260,11 +252,12 @@ fn set_planet_theme(planet: &mut Planet, star: &Star, used_theme_ids: &mut Vec<i
             }
         }
     }
-    let theme_proto = potential_themes
-        [((rand1 * (potential_themes.len() as f64)) as usize) % potential_themes.len()];
+    let theme_proto = potential_themes[((planet.theme_rand1 * (potential_themes.len() as f64))
+        as usize)
+        % potential_themes.len()];
 
     planet.theme_proto = theme_proto;
-    planet.planet_type = theme_proto.planet_type;
+    planet.planet_type = theme_proto.planet_type.clone();
 }
 
 pub fn generate_gases(planet: &mut Planet, star: &Star, game_desc: &GameDesc) {
@@ -360,7 +353,7 @@ pub fn generate_veins(planet: &mut Planet, star: &Star, game_desc: &GameDesc) {
     };
     let is_rare_resource = game_desc.is_rare_resource();
     let mut f = star.resource_coef;
-    if planet.is_birth {
+    if planet.theme_proto.distribute == ThemeDistribute::Birth {
         f *= 0.6666667;
     } else if is_rare_resource {
         if f > 1.0 {
@@ -370,7 +363,7 @@ pub fn generate_veins(planet: &mut Planet, star: &Star, game_desc: &GameDesc) {
     }
 
     for (index1, rare_vein_ref) in theme_proto.rare_veins.iter().enumerate() {
-        let rare_vein = *rare_vein_ref as usize;
+        let rare_vein = rare_vein_ref.clone() as usize;
         let num2 = theme_proto.rare_settings[index1 * 4 + (if star.index == 0 { 0 } else { 1 })];
         let rare_setting_1 = theme_proto.rare_settings[index1 * 4 + 2];
         let rare_setting_2 = theme_proto.rare_settings[index1 * 4 + 3];
@@ -398,7 +391,7 @@ pub fn generate_veins(planet: &mut Planet, star: &Star, game_desc: &GameDesc) {
             vein.vein_type = vein_type;
             vein.min_group = num8 - 1;
             vein.max_group = num8 + 1;
-            if vein_type == VeinType::Oil {
+            if vein.vein_type == VeinType::Oil {
                 vein.min_patch = 1;
                 vein.max_patch = 1;
             } else {
@@ -406,7 +399,7 @@ pub fn generate_veins(planet: &mut Planet, star: &Star, game_desc: &GameDesc) {
                 vein.min_patch = (num12 * 20.0).round() as i32;
                 vein.max_patch = (num12 * 24.0).round() as i32;
             }
-            let num16 = if vein_type == VeinType::Oil {
+            let num16 = if vein.vein_type == VeinType::Oil {
                 f.powf(0.5)
             } else {
                 f
@@ -420,7 +413,7 @@ pub fn generate_veins(planet: &mut Planet, star: &Star, game_desc: &GameDesc) {
 
             let map_amount = |amount: i32| -> i32 {
                 let x1 = ((amount as f32) * 1.1).round();
-                let x2 = (if vein_type == VeinType::Oil {
+                let x2 = (if vein.vein_type == VeinType::Oil {
                     x1 * game_desc.oil_amount_multipler()
                 } else if game_desc.is_infinite_resource() {
                     1000000000.0
@@ -439,11 +432,6 @@ pub fn generate_veins(planet: &mut Planet, star: &Star, game_desc: &GameDesc) {
 
     planet.veins = output;
 }
-
-const ROMAN: &'static [&'static str] = &[
-    "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV",
-    "XVI", "XVII", "XVIII", "XIX", "XX",
-];
 
 const ORBIT_RADIUS: &'static [f32] = &[
     0.0, 0.4, 0.7, 1.0, 1.4, 1.9, 2.5, 3.3, 4.3, 5.5, 6.9, 8.4, 10.0, 11.7, 13.5, 15.4, 17.5,

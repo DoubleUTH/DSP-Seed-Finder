@@ -8,4 +8,20 @@ export default defineConfig({
         outDir: path.resolve(process.cwd(), "dist"),
     },
     plugins: [solid()],
+    resolve: {
+        alias: [
+            {
+                find: "worldgen-wasm",
+                replacement: path.resolve(process.cwd(), "pkg"),
+            },
+            {
+                find: "worldgen-impl",
+                replacement: path.resolve(
+                    process.cwd(),
+                    "web/src/worldgen",
+                    "browser.ts",
+                ),
+            },
+        ],
+    },
 })

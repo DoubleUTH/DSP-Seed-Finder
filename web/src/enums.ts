@@ -43,3 +43,25 @@ export enum VeinType {
     Bamboo,
     Mag,
 }
+
+export enum RuleType {
+    And,
+    Or,
+    Luminosity,
+    DysonRadius,
+}
+
+export enum ConditionType {
+    Eq,
+    Neq,
+    Lt,
+    Lte,
+    Gt,
+    Gte,
+    Between,
+    NotBetween,
+    In,
+    NotIn,
+    Exist,
+    NotExist,
+}

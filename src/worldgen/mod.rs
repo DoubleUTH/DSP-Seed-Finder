@@ -1,13 +1,5 @@
-pub mod enums;
-pub mod galaxy;
 pub mod galaxy_gen;
-pub mod game_desc;
 mod name_gen;
-pub mod planet;
 mod planet_gen;
 mod random;
-pub mod star;
 mod star_gen;
-pub mod theme_proto;
-pub mod vector3;
-pub mod vein;

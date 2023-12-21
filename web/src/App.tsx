@@ -1,13 +1,15 @@
 import styles from "./App.module.css"
-import { generateGalaxy } from "./worldgen"
+import { WorldGenImpl } from "worldgen-impl"
 
 function App() {
     async function click() {
-        console.time()
-        for (let i = 0; i < 10000; ++i) {
-            await generateGalaxy({ seed: i })
-        }
-        console.timeEnd()
+        const worldgen: WorldGen = new WorldGenImpl()
+        await Promise.all(
+            Array.from({ length: 1000 }).map((_, seed) =>
+                worldgen.generate({ seed }),
+            ),
+        )
+        worldgen.destroy()
     }
     return (
         <div class={styles.app}>

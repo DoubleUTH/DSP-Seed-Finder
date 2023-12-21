@@ -11,6 +11,8 @@ pub struct Star {
     pub index: i32,
     #[serde(skip_serializing)]
     pub seed: i32,
+    #[serde(skip_serializing)]
+    pub name_seed: i32,
     pub position: Vector3,
     pub name: String,
     #[serde(skip_serializing)]
@@ -36,8 +38,6 @@ pub struct Star {
     #[serde(skip_serializing)]
     pub orbit_scaler: f32,
     pub dyson_radius: f32,
-    #[serde(skip_serializing)]
-    pub planet_count: i32,
     pub planets: Vec<Planet>,
 }
 
@@ -47,8 +47,9 @@ impl Default for Star {
             id: 0,
             index: 0,
             seed: 0,
+            name_seed: 0,
             position: Vector3::zero(),
-            name: "".to_owned(),
+            name: Default::default(),
             level: 0.0,
             resource_coef: 0.0,
             mass: 0.0,
@@ -65,7 +66,6 @@ impl Default for Star {
             lignt_balance_radius: 0.0,
             orbit_scaler: 0.0,
             dyson_radius: 0.0,
-            planet_count: 0,
             planets: vec![],
         }
     }

@@ -1,15 +1,13 @@
-use super::enums::{SpectrType, StarType};
-use super::galaxy::Galaxy;
-use super::name_gen::random_name;
-use super::planet::Planet;
 use super::planet_gen::create_planet;
 use super::random::DspRandom;
-use super::star::Star;
-use super::vector3::Vector3;
+use crate::data::enums::{SpectrType, StarType};
+use crate::data::planet::Planet;
+use crate::data::star::Star;
+use crate::data::vector3::Vector3;
 
 pub fn create_star(
-    galaxy: &Galaxy,
-    pos: Vector3,
+    star_count: i32,
+    pos: &Vector3,
     id: i32,
     seed: i32,
     need_type: StarType,
@@ -17,12 +15,12 @@ pub fn create_star(
 ) -> Star {
     let mut star = Star::new();
     star.index = id - 1;
-    star.level = (star.index as f32) / ((galaxy.star_count - 1) as f32);
+    star.level = (star.index as f32) / ((star_count - 1) as f32);
     star.id = id;
     star.seed = seed;
     let mut rand1 = DspRandom::new(seed);
-    let seed1 = rand1.next();
-    star.position = pos;
+    star.name_seed = rand1.next();
+    star.position = pos.clone();
     let magitude = pos.magnitude() as f32;
     let mut num1 = magitude / 32.0;
     if (num1 as f64) > 1.0 {
@@ -144,12 +142,10 @@ pub fn create_star(
     if star.dyson_radius * 40000.0 < star.physics_radius() * 1.5 {
         star.dyson_radius = star.physics_radius() * 1.5 / 40000.0;
     }
-    star.name = random_name(seed1, &star, &galaxy);
-
     star
 }
 
-pub fn create_birth_star(galaxy: &Galaxy, seed: i32) -> Star {
+pub fn create_birth_star(seed: i32) -> Star {
     let mut star = Star::new();
     star.index = 0;
     star.level = 0.0;
@@ -157,7 +153,7 @@ pub fn create_birth_star(galaxy: &Galaxy, seed: i32) -> Star {
     star.seed = seed;
     star.resource_coef = 0.6;
     let mut rand1 = DspRandom::new(seed);
-    let seed1 = rand1.next();
+    star.name_seed = rand1.next();
     let mut rand2 = DspRandom::new(rand1.next());
     let r1_1 = rand2.next_f64();
     let r2_1 = rand2.next_f64();
@@ -200,12 +196,10 @@ pub fn create_birth_star(galaxy: &Galaxy, seed: i32) -> Star {
     if star.dyson_radius * 40000.0 < star.physics_radius() * 1.5 {
         star.dyson_radius = star.physics_radius() * 1.5 / 40000.0;
     }
-    star.name = random_name(seed1, &star, &galaxy);
-
     star
 }
 
-pub fn create_star_planets(galaxy: &Galaxy, star: &Star, habitable_count: &mut i32) -> Vec<Planet> {
+pub fn create_star_planets(star: &Star, star_count: i32, habitable_count: &mut i32) -> Vec<Planet> {
     let mut rand1 = DspRandom::new(star.seed);
     rand1.next_f64();
     rand1.next_f64();
@@ -218,7 +212,6 @@ pub fn create_star_planets(galaxy: &Galaxy, star: &Star, habitable_count: &mut i
     rand2.next_f64();
     rand2.next_f64();
     rand2.next_f64();
-    let mut used_theme_ids: Vec<i32> = vec![];
 
     let mut make_planet = |index: i32,
                            orbit_around_planet: Option<&Planet>,
@@ -230,8 +223,8 @@ pub fn create_star_planets(galaxy: &Galaxy, star: &Star, habitable_count: &mut i
         let info_seed = rand2.next();
         let gen_seed = rand2.next();
         create_planet(
-            galaxy,
             star,
+            star_count,
             index,
             orbit_around_planet,
             orbit_around,
@@ -239,7 +232,6 @@ pub fn create_star_planets(galaxy: &Galaxy, star: &Star, habitable_count: &mut i
             number,
             gas_giant,
             habitable_count,
-            &mut used_theme_ids,
             info_seed,
             gen_seed,
         )
@@ -445,8 +437,8 @@ pub fn create_star_planets(galaxy: &Galaxy, star: &Star, habitable_count: &mut i
                 num9 += 1;
             }
             output.push(create_planet(
-                galaxy,
                 star,
+                star_count,
                 index,
                 if orbit_around == 0 {
                     None
@@ -458,7 +450,6 @@ pub fn create_star_planets(galaxy: &Galaxy, star: &Star, habitable_count: &mut i
                 if orbit_around == 0 { num8 } else { num9 },
                 gas_giant,
                 habitable_count,
-                &mut used_theme_ids,
                 info_seed,
                 gen_seed,
             ));

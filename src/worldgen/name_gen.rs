@@ -1,7 +1,6 @@
-use super::enums::StarType;
-use super::galaxy::Galaxy;
 use super::random::DspRandom;
-use super::star::Star;
+use crate::data::enums::StarType;
+use crate::data::star::Star;
 
 fn gen_random_name(seed: i32, star: &Star) -> String {
     let mut rand = DspRandom::new(seed);
@@ -29,11 +28,15 @@ fn gen_random_name(seed: i32, star: &Star) -> String {
     }
 }
 
-pub fn random_name(seed: i32, star: &Star, galaxy: &Galaxy) -> String {
+pub fn random_name<'a>(
+    seed: i32,
+    star: &Star,
+    mut names: impl Iterator<Item = &'a String>,
+) -> String {
     let mut rand = DspRandom::new(seed);
     for _ in 0..256 {
         let str = gen_random_name(rand.next(), star);
-        if galaxy.stars.iter().all(|s| s.name != str) {
+        if names.all(|s| *s != str) {
             return str;
         }
     }

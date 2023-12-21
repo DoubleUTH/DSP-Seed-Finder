@@ -25,6 +25,11 @@
         "noUncheckedIndexedAccess": true,
         "noImplicitOverride": true,
         "noErrorTruncation": true,
-        "useDefineForClassFields": false
+        "useDefineForClassFields": false,
+
+        "paths": {
+            "worldgen-wasm": ["../pkg"],
+            "worldgen-impl": ["../web/src/worldgen/browser"]
+        }
     }
 }

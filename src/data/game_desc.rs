@@ -1,7 +1,9 @@
-#[derive(Debug, Clone, Copy)]
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct GameDesc {
-    pub galaxy_algo: i32,
-    pub galaxy_seed: i32,
+    pub seed: i32,
     pub star_count: i32,
     pub resource_multiplier: f32,
 }
@@ -9,8 +11,7 @@ pub struct GameDesc {
 impl GameDesc {
     pub fn new(seed: i32) -> Self {
         Self {
-            galaxy_algo: 20200403,
-            galaxy_seed: seed,
+            seed,
             star_count: 64,
             resource_multiplier: 1.0,
         }

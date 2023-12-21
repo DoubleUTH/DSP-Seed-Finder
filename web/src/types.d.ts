@@ -1,72 +1,137 @@
-import type { SpectrType, StarType, PlanetType, VeinType } from "./enums"
+import type {
+    SpectrType,
+    StarType,
+    PlanetType,
+    VeinType,
+    ConditionType,
+    RuleType,
+} from "./enums"
 
 declare global {
     declare type integer = number
     declare type float = number
 
     declare interface GameDesc {
-        readonly seed: integer
-        readonly starCount?: integer
-        readonly resourceMultiplier?: float
+        seed: integer
+        starCount?: integer
+        resourceMultiplier?: float
     }
 
     declare interface Galaxy {
-        readonly seed: integer
-        readonly stars: readonly Star[]
+        seed: integer
+        stars: Star[]
     }
 
     declare interface Star {
-        readonly id: integer
-        readonly position: readonly [float, float, float]
-        readonly name: string
-        readonly mass: float
-        readonly lifetime: float
-        readonly age: float
-        readonly temperature: float
-        readonly type: StarType
-        readonly spectr: SpectrType
-        readonly luminosity: float
-        readonly radius: float
-        readonly dysonRadius: float
-        readonly planets: readonly Planet[]
+        id: integer
+        position: [float, float, float]
+        name: string
+        mass: float
+        lifetime: float
+        age: float
+        temperature: float
+        type: StarType
+        spectr: SpectrType
+        luminosity: float
+        radius: float
+        dysonRadius: float
+        planets: Planet[]
     }
 
     declare interface Planet {
-        readonly id: integer
-        readonly index: integer
-        readonly orbitAround: integer
-        readonly orbitIndex: integer
-        readonly name: string
-        readonly isBirth: bool
-        readonly orbitRadius: float
-        readonly orbitInclination: float
-        readonly orbitLongitude: float
-        readonly orbitalPeriod: float
-        readonly orbitPhase: float
-        readonly obliquity: float
-        readonly rotationPeriod: float
-        readonly rotationPhase: float
-        readonly sunDistance: float
-        readonly planetType: PlanetType
-        readonly habitableBias: float
-        readonly temperatureBias: float
-        readonly themeProto: ThemeProto
-        readonly veins: readonly Vein[]
-        readonly gases: readonly (readonly [itemId: integer, rate: float])[]
+        id: integer
+        index: integer
+        orbitAround: integer
+        orbitIndex: integer
+        name: string
+        isBirth: bool
+        orbitRadius: float
+        orbitInclination: float
+        orbitLongitude: float
+        orbitalPeriod: float
+        orbitPhase: float
+        obliquity: float
+        rotationPeriod: float
+        rotationPhase: float
+        sunDistance: float
+        planetType: PlanetType
+        habitableBias: float
+        temperatureBias: float
+        themeProto: ThemeProto
+        veins: Vein[]
+        gases: [itemId: integer, rate: float][]
     }
 
     declare interface ThemeProto {
-        readonly id: integer
-        readonly name: string
+        id: integer
+        name: string
     }
 
     declare interface Vein {
-        readonly veinType: VeinType
-        readonly minGroup: integer
-        readonly maxGroup: integer
-        readonly minPatch: integer
-        readonly maxPatch: integer
-        readonly minAmount: integer
-        readonly maxAmount: integer
+        veinType: VeinType
+        minGroup: integer
+        maxGroup: integer
+        minPatch: integer
+        maxPatch: integer
+        minAmount: integer
+        maxAmount: integer
+    }
+
+    declare namespace Condition {
+        export type Eq = { type: ConditionType.Eq; value: float }
+        export type Neq = { type: ConditionType.Neq; value: float }
+        export type Lt = { type: ConditionType.Lt; value: float }
+        export type Lte = { type: ConditionType.Lte; value: float }
+        export type Gt = { type: ConditionType.Gt; value: float }
+        export type Gte = { type: ConditionType.Gte; value: float }
+        export type Between = {
+            type: ConditionType.Between
+            value: [float, float]
+        }
+        export type NotBetween = {
+            type: ConditionType.NotBetween
+            value: [float, float]
+        }
+        export type In = { type: ConditionType.In; value: integer[] }
+        export type NotIn = { type: ConditionType.NotIn; value: integer[] }
+        export type Exist = { type: ConditionType.Exist }
+        export type NotExist = { type: ConditionType.NotExist }
+    }
+
+    declare type Condition =
+        | Condition.Eq
+        | Condition.Neq
+        | Condition.Lt
+        | Condition.Lte
+        | Condition.Gt
+        | Condition.Gte
+        | Condition.Between
+        | Condition.NotBetween
+        | Condition.In
+        | Condition.NotIn
+
+    declare namespace Rule {
+        export type And = { type: RuleType.And; rules: Rule[] }
+        export type Or = { type: RuleType.Or; rules: Rule[] }
+        export type Luminosity = {
+            type: RuleType.Luminosity
+            condition: Condition
+        }
+        export type DysonRadius = {
+            type: RuleType.DysonRadius
+            condition: Condition
+        }
+    }
+
+    declare type Rule = Rule.And | Rule.Or | Rule.Luminosity | Rule.DysonRadius
+
+    declare interface WorldGen {
+        concurrency: integer
+        generate(gameDesc: GameDesc): Promise<Galaxy>
+        find(
+            gameDesc: Omit<GameDesc, "seed">,
+            rule: Rule,
+        ): AsyncIterator<Galaxy>
+        destroy(): void
     }
 }

@@ -19,12 +19,10 @@ pub struct Planet {
     #[serde(skip_serializing)]
     pub number: i32,
     pub id: i32,
-    pub name: String,
     #[serde(skip_serializing)]
     pub radius: f32,
     #[serde(skip_serializing)]
     pub scale: f32,
-    pub is_birth: bool,
     pub orbit_radius: f32,
     pub orbit_inclination: f32,
     pub orbit_longitude: f32,
@@ -38,6 +36,8 @@ pub struct Planet {
     pub habitable_bias: f32,
     pub temperature_bias: f32,
     pub theme_proto: &'static ThemeProto,
+    #[serde(skip_serializing)]
+    pub theme_rand1: f64,
     pub veins: Vec<Vein>,
     pub gases: Vec<(i32, f32)>,
 }
@@ -53,10 +53,8 @@ impl Default for Planet {
             orbit_index: 0,
             number: 0,
             id: 0,
-            name: "".to_owned(),
             radius: 200.0,
             scale: 1.0,
-            is_birth: false,
             orbit_radius: 0.0,
             orbit_inclination: 0.0,
             orbit_longitude: 0.0,
@@ -70,6 +68,7 @@ impl Default for Planet {
             habitable_bias: 0.0,
             temperature_bias: 0.0,
             theme_proto: DEFAULT_THEME_PROTO,
+            theme_rand1: 0.0,
             veins: vec![],
             gases: vec![],
         }

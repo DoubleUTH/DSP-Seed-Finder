@@ -3,6 +3,7 @@
 mod data;
 mod rules;
 mod worldgen;
+mod transform_rules;
 
 use std::sync::Arc;
 

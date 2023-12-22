@@ -27,7 +27,7 @@ impl Rule for RuleAnd {
                 };
             }
         }
-        if has_unknown { None } else { Some(true) }
+        if has_unknown { None } else { self.evaluated = true; Some(true) }
     }
     fn on_planets_created(&mut self, star: &Star, planets: &Vec<Planet>) -> Option<bool> {
         let mut has_unknown = false;
@@ -45,7 +45,7 @@ impl Rule for RuleAnd {
                 };
             }
         }
-        if has_unknown { None } else { Some(true) }
+        if has_unknown { None } else { self.evaluated = true; Some(true) }
     }
     fn on_planets_themed(&mut self, star: &Star, planets: &Vec<Planet>) -> Option<bool> {
         let mut has_unknown = false;
@@ -63,7 +63,7 @@ impl Rule for RuleAnd {
                 };
             }
         }
-        if has_unknown { None } else { Some(true) }
+        if has_unknown { None } else { self.evaluated = true; Some(true) }
     }
     fn on_veins_generated(&mut self, star: &Star, planets: &Vec<Planet>) -> Option<bool> {
         let mut has_unknown = false;
@@ -81,7 +81,7 @@ impl Rule for RuleAnd {
                 };
             }
         }
-        if has_unknown { None } else { Some(true) }
+        if has_unknown { None } else { self.evaluated = true; Some(true) }
     }
     fn reset(&mut self) {
         self.evaluated = false;

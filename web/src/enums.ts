@@ -52,6 +52,12 @@ export enum RuleType {
     AverageVeinAmount = "AverageVeinAmount",
     AverageVeinPatch = "AverageVeinPatch",
     Spectr = "Spectr",
+    TidalLockCount = "TidalLockCount",
+    OceanType = "OceanType",
+    StarType = "StarType",
+    GasCount = "GasCount",
+    SatelliteCount = "SatelliteCount",
+    Birth = "Birth",
 }
 
 export enum ConditionType {
@@ -63,4 +69,10 @@ export enum ConditionType {
     Gte = "Gte",
     Between = "Between",
     NotBetween = "NotBetween",
+}
+
+export enum GasType {
+    Fireice = 1011,
+    Hydrogen = 1120,
+    Deuterium = 1121,
 }

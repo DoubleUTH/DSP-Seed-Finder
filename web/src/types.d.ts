@@ -5,6 +5,7 @@ import type {
     VeinType,
     ConditionType,
     RuleType,
+    GasType,
 } from "./enums"
 
 declare global {
@@ -59,7 +60,7 @@ declare global {
         temperatureBias: float
         themeProto: ThemeProto
         veins: Vein[]
-        gases: [itemId: integer, rate: float][]
+        gases: [itemId: GasType, rate: float][]
     }
 
     declare interface ThemeProto {
@@ -127,6 +128,29 @@ declare global {
             type: RuleType.Spectr
             spectr: SpectrType[]
         }
+        export type TidalLockCount = {
+            type: RuleType.TidalLockCount
+            condition: Condition
+        }
+        export type OceanType = {
+            type: RuleType.OceanType
+            oceanType: integer[]
+        }
+        export type StarType = {
+            type: RuleType.StarType
+            starType: StarType[]
+        }
+        export type GasCount = {
+            type: RuleType.GasCount
+            condition: Condition
+        }
+        export type SatelliteCount = {
+            type: RuleType.SatelliteCount
+            condition: Condition
+        }
+        export type Birth = {
+            type: RuleType.Birth
+        }
     }
 
     declare type Rule =
@@ -137,6 +161,12 @@ declare global {
         | Rule.AverageVeinAmount
         | Rule.AverageVeinPatch
         | Rule.Spectr
+        | Rule.TidalLockCount
+        | Rule.OceanType
+        | Rule.StarType
+        | Rule.GasCount
+        | Rule.SatelliteCount
+        | Rule.Birth
 
     declare interface WorldGen {
         concurrency: integer

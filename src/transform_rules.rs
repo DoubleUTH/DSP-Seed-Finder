@@ -12,6 +12,12 @@ pub enum Rules {
     AverageVeinAmount(rules::average_vein_amount::RuleAverageVeinAmount),
     AverageVeinPatch(rules::average_vein_patch::RuleAverageVeinPatch),
     Spectr(rules::spectr::RuleSpectr),
+    TidalLockCount(rules::tidal_lock_count::RuleTidalLockCount),
+    OceanType(rules::ocean_type::RuleOceanType),
+    StarType(rules::star_type::RuleStarType),
+    GasCount(rules::gas_count::RuleGasCount),
+    SatelliteCount(rules::satellite_count::RuleSatelliteCount),
+    Birth(rules::birth::RuleBirth),
 }
 
 pub fn transform_rules(r: Rules) -> Box<dyn Rule> {
@@ -23,5 +29,11 @@ pub fn transform_rules(r: Rules) -> Box<dyn Rule> {
         Rules::AverageVeinAmount(rule) => Box::new(rule),
         Rules::AverageVeinPatch(rule) => Box::new(rule),
         Rules::Spectr(rule) => Box::new(rule),
+        Rules::TidalLockCount(rule) => Box::new(rule),
+        Rules::OceanType(rule) => Box::new(rule),
+        Rules::StarType(rule) => Box::new(rule),
+        Rules::GasCount(rule) => Box::new(rule),
+        Rules::SatelliteCount(rule) => Box::new(rule),
+        Rules::Birth(rule) => Box::new(rule),
     }
 }

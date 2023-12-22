@@ -1,6 +1,6 @@
 import styles from "./App.module.css"
 import { WorldGenImpl } from "worldgen-impl"
-import { ConditionType, RuleType } from "./enums"
+import { ConditionType, RuleType, VeinType } from "./enums"
 
 function App() {
     async function click() {
@@ -10,10 +10,11 @@ function App() {
     async function click2() {
         const worldgen: WorldGen = new WorldGenImpl()
         const g = worldgen.find({}, [0, 1000], {
-            type: RuleType.Luminosity,
+            type: RuleType.AverageVeinPatch,
+            vein: VeinType.Mag,
             condition: {
                 type: ConditionType.Gt,
-                value: 15,
+                value: 1,
             },
         })
         for await (const r of g) {

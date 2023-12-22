@@ -123,7 +123,7 @@ fn generate_stars(game_desc: &GameDesc) -> impl Iterator<Item = Star> {
     let galaxy_seed = game_desc.seed;
 
     let mut rand = DspRandom::new(galaxy_seed);
-    let tmp_poses = generate_temp_poses(rand.next(), game_desc.star_count, 4, 2.0, 2.3, 3.5, 0.18);
+    let tmp_poses = generate_temp_poses(rand.next_seed(), game_desc.star_count, 4, 2.0, 2.3, 3.5, 0.18);
     let star_count = tmp_poses.len() as i32;
 
     let num1 = rand.next_f32();
@@ -145,7 +145,7 @@ fn generate_stars(game_desc: &GameDesc) -> impl Iterator<Item = Star> {
     let num13 = num12 / 2;
 
     (0..star_count).map(move |index| {
-        let seed = rand.next();
+        let seed = rand.next_seed();
         if index == 0 {
             create_birth_star(seed)
         } else {
@@ -182,9 +182,8 @@ fn generate_stars(game_desc: &GameDesc) -> impl Iterator<Item = Star> {
 fn sum_veins(star: &mut Star, planets: &Vec<Planet>) {
     for planet in planets {
         for vein in &planet.veins {
-            let avg_group = (vein.min_group + vein.max_group) as f32 / 4.0;
-            let avg_patches = ((vein.min_patch + vein.max_patch) as f32) * avg_group;
-            let avg_amount = ((vein.min_amount + vein.max_amount) as f32) * avg_group;
+            let avg_patches = ((vein.min_patch + vein.max_patch) as f32) * ((vein.min_group + vein.max_group) as f32) / 4.0;
+            let avg_amount = ((vein.min_amount + vein.max_amount) as f32) * avg_patches / 2.0;
             if let Some(x) = star.vein_patch.get_mut(&vein.vein_type) {
                 *x += avg_patches;
             } else {

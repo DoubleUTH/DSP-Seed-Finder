@@ -40,7 +40,7 @@ impl DspRandom {
         }
     }
 
-    pub fn next_f64(&mut self) -> f64 {
+    fn sample(&mut self) -> i32 {
         self.inext += 1;
         if self.inext >= 56 {
             self.inext = 1
@@ -54,7 +54,11 @@ impl DspRandom {
             num += MBIG;
         }
         self.seed_array[self.inext] = num;
-        (num as f64) * 4.6566128752458E-10
+        num
+    }
+
+    pub fn next_f64(&mut self) -> f64 {
+        (self.sample() as f64) * 4.6566128752458E-10
     }
 
     pub fn next_f32(&mut self) -> f32 {
@@ -64,18 +68,18 @@ impl DspRandom {
     pub fn next_i32(&mut self, min_value: i32, max_value: i32) -> i32 {
         let num = (max_value - min_value) as u32;
         if num <= 1 {
-            1
+            min_value
         } else {
             (((self.next_f64() * (num as f64)) as i64) + (min_value as i64)) as i32
         }
     }
 
     pub fn next_usize(&mut self) -> usize {
-        (self.next_f64() * (MBIG as f64)) as usize
+        self.sample() as usize
     }
 
-    pub fn next(&mut self) -> i32 {
-        (self.next_f64() * (MBIG as f64)) as i32
+    pub fn next_seed(&mut self) -> i32 {
+        self.sample()
     }
 }
 

@@ -19,7 +19,7 @@ pub fn create_star(
     star.id = id;
     star.seed = seed;
     let mut rand1 = DspRandom::new(seed);
-    star.name_seed = rand1.next();
+    star.name_seed = rand1.next_seed();
     star.position = pos.clone();
     let magitude = pos.magnitude() as f32;
     let mut num1 = magitude / 32.0;
@@ -27,7 +27,7 @@ pub fn create_star(
         num1 = ((((num1.ln() + 1.0).ln() + 1.0).ln() + 1.0).ln() + 1.0).ln() + 1.0
     }
     star.resource_coef = 7.0_f32.powf(num1) * 0.6;
-    let mut rand2 = DspRandom::new(rand1.next());
+    let mut rand2 = DspRandom::new(rand1.next_seed());
     let r1_1 = rand2.next_f64();
     let r2_1 = rand2.next_f64();
     let num2 = rand2.next_f64();
@@ -153,8 +153,8 @@ pub fn create_birth_star(seed: i32) -> Star {
     star.seed = seed;
     star.resource_coef = 0.6;
     let mut rand1 = DspRandom::new(seed);
-    star.name_seed = rand1.next();
-    let mut rand2 = DspRandom::new(rand1.next());
+    star.name_seed = rand1.next_seed();
+    let mut rand2 = DspRandom::new(rand1.next_seed());
     let r1_1 = rand2.next_f64();
     let r2_1 = rand2.next_f64();
     let num1 = rand2.next_f64();
@@ -204,7 +204,7 @@ pub fn create_star_planets(star: &Star, star_count: i32, habitable_count: &mut i
     rand1.next_f64();
     rand1.next_f64();
     rand1.next_f64();
-    let mut rand2 = DspRandom::new(rand1.next());
+    let mut rand2 = DspRandom::new(rand1.next_seed());
     let num1 = rand2.next_f64();
     let num2 = rand2.next_f64();
     let num3 = if rand2.next_f64() > 0.5 { 1 } else { 0 };
@@ -220,8 +220,8 @@ pub fn create_star_planets(star: &Star, star_count: i32, habitable_count: &mut i
                            number: i32,
                            gas_giant: bool|
      -> Planet {
-        let info_seed = rand2.next();
-        let gen_seed = rand2.next();
+        let info_seed = rand2.next_seed();
+        let gen_seed = rand2.next_seed();
         create_planet(
             star,
             star_count,
@@ -399,8 +399,8 @@ pub fn create_star_planets(star: &Star, star_count: i32, habitable_count: &mut i
         let mut num10 = 1;
         let mut output: Vec<Planet> = vec![];
         for index in 0..planet_count {
-            let info_seed = rand2.next();
-            let gen_seed = rand2.next();
+            let info_seed = rand2.next_seed();
+            let gen_seed = rand2.next_seed();
             let num11 = rand2.next_f64();
             let num12 = rand2.next_f64();
             let mut gas_giant = false;

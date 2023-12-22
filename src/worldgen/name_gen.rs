@@ -4,7 +4,7 @@ use crate::data::star::Star;
 
 fn gen_random_name(seed: i32, star: &Star) -> String {
     let mut rand = DspRandom::new(seed);
-    let seed1 = rand.next();
+    let seed1 = rand.next_seed();
     let num1 = rand.next_f64();
     if star.star_type == StarType::GiantStar {
         let num2 = rand.next_f64();
@@ -35,7 +35,7 @@ pub fn random_name<'a>(
 ) -> String {
     let mut rand = DspRandom::new(seed);
     for _ in 0..256 {
-        let str = gen_random_name(rand.next(), star);
+        let str = gen_random_name(rand.next_seed(), star);
         if names.all(|s| *s != str) {
             return str;
         }

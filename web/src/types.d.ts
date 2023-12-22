@@ -114,17 +114,17 @@ declare global {
             condition: Condition
         }
         export type AverageVeinAmount = {
-            type: RuleType.DysonRadius
+            type: RuleType.AverageVeinAmount
             vein: VeinType
             condition: Condition
         }
         export type AverageVeinPatch = {
-            type: RuleType.DysonRadius
+            type: RuleType.AverageVeinPatch
             vein: VeinType
             condition: Condition
         }
         export type Spectr = {
-            type: RuleType.DysonRadius
+            type: RuleType.Spectr
             spectr: SpectrType[]
         }
     }

@@ -30,3 +30,25 @@ impl Rule for RuleAverageVeinAmount {
         self.evaluated = false;
     }
 }
+
+
+#[cfg(test)]
+mod tests {
+    use crate::{data::{game_desc::GameDesc, enums::VeinType, rule::{Condition, Rule}}, worldgen::galaxy_gen::find_stars};
+
+    use super::RuleAverageVeinAmount;
+
+    #[test]
+    fn rand_test_1() {
+        let game_desc: GameDesc = GameDesc::new(0);
+        let rule = RuleAverageVeinAmount {
+            evaluated: false,
+            vein: VeinType::Mag,
+            condition: Condition::Gt(1.0)
+        };
+        let mut boxed = Box::new(rule) as Box<dyn Rule>;
+        let star = find_stars(&game_desc, &mut boxed);
+        println!("{:?}", star);
+        assert_eq!(star.len(), 2);
+    }
+}

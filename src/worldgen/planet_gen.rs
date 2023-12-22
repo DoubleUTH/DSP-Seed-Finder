@@ -46,7 +46,7 @@ pub fn create_planet(
     rand.next_f64();
     rand.next_f64();
     rand.next_f64();
-    let theme_seed = rand.next();
+    let theme_seed = rand.next_seed();
     planet.theme_seed = theme_seed;
     planet.theme_rand1 = rand1;
     let a = 1.2_f32.powf((num3 * (num4 - 0.5) * 0.5) as f32);

@@ -3,7 +3,7 @@ use crate::data::rule::Rule;
 use crate::data::star::Star;
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RuleSpectr {
     #[serde(skip)]

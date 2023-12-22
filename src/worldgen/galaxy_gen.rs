@@ -225,7 +225,7 @@ pub fn create_galaxy(game_desc: &GameDesc) -> Galaxy {
     return galaxy;
 }
 
-pub fn find_stars(game_desc: &GameDesc, rule: &mut Box<dyn Rule>) -> Vec<Star> {
+pub fn find_stars(game_desc: &GameDesc, rule: &mut Box<dyn Rule + Send>) -> Galaxy {
     let mut habitable_count = 0;
     let mut stars: Vec<Star> = vec![];
     let mut names: Vec<String> = vec![];
@@ -265,5 +265,5 @@ pub fn find_stars(game_desc: &GameDesc, rule: &mut Box<dyn Rule>) -> Vec<Star> {
         stars.push(star);
     }
 
-    stars
+    Galaxy { seed: game_desc.seed, stars }
 }

@@ -3,7 +3,7 @@ use crate::data::star::Star;
 use crate::data::planet::Planet;
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RuleSatelliteCount {
     #[serde(skip)]

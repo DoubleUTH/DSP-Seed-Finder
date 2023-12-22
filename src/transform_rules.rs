@@ -2,7 +2,7 @@ use crate::rules;
 use crate::data::rule::Rule;
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "type")]
 pub enum Rules {
     And { rules: Vec<Rules> },
@@ -20,7 +20,7 @@ pub enum Rules {
     Birth(rules::birth::RuleBirth),
 }
 
-pub fn transform_rules(r: Rules) -> Box<dyn Rule> {
+pub fn transform_rules(r: Rules) -> Box<dyn Rule + Send> {
     match r {
         Rules::And { rules } => Box::new(rules::and::RuleAnd { evaluated: false, rules: rules.into_iter().map(transform_rules).collect() }),
         Rules::Or { rules } => Box::new(rules::or::RuleOr { evaluated: false, rules: rules.into_iter().map(transform_rules).collect() }),

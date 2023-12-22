@@ -4,7 +4,7 @@ use crate::data::planet::Planet;
 use crate::data::star::Star;
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RuleAverageVeinPatch {
     #[serde(skip)]

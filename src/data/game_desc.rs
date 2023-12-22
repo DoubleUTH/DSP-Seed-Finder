@@ -4,16 +4,25 @@ use serde::{Deserialize, Serialize};
 #[serde(rename_all = "camelCase")]
 pub struct GameDesc {
     pub seed: i32,
+    #[serde(default = "GameDesc::default_star_count")]
     pub star_count: i32,
+    #[serde(default = "GameDesc::default_resource_multiplier")]
     pub resource_multiplier: f32,
 }
 
 impl GameDesc {
+    pub fn default_star_count() -> i32 {
+        64
+    }
+    pub fn default_resource_multiplier() -> f32 {
+        1.0
+    }
+
     pub fn new(seed: i32) -> Self {
         Self {
             seed,
-            star_count: 64,
-            resource_multiplier: 1.0,
+            star_count: GameDesc::default_star_count(),
+            resource_multiplier: GameDesc::default_resource_multiplier(),
         }
     }
 

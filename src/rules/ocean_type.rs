@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 // TODO: add ocean type to theme proto
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RuleOceanType {
     #[serde(skip)]

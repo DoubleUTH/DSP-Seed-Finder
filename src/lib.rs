@@ -32,8 +32,7 @@ pub fn findStars(gameDesc: JsValue, rule: JsValue) {
         let rule = serde_wasm_bindgen::from_value(rule).unwrap();
         let mut transformed: Box<dyn Rule> = transform_rules::transform_rules(rule);
         loop {
-            let stars = find_stars(&game_desc, &mut transformed);
-            let galaxy = Galaxy { seed: game_desc.seed, stars };
+            let galaxy = find_stars(&game_desc, &mut transformed);
             let result = serde_wasm_bindgen::to_value(&galaxy).unwrap();
             let next_seed: JsValue = found(result).await;
             match next_seed.as_f64() {

@@ -2,7 +2,7 @@ use super::planet::Planet;
 use super::star::Star;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 #[serde(tag = "type", content = "value")]
 pub enum Condition {
     Eq(f32),

@@ -4,7 +4,7 @@ use crate::data::star::Star;
 
 pub struct RuleOr {
     pub evaluated: bool,
-    pub rules: Vec<Box<dyn Rule>>,
+    pub rules: Vec<Box<dyn Rule + Send>>,
 }
 
 impl Rule for RuleOr {

@@ -76,3 +76,11 @@ export enum GasType {
     Hydrogen = 1120,
     Deuterium = 1121,
 }
+
+export enum OceanType {
+    None = 0,
+    Ice = -2,
+    Lava = -1,
+    Water = 1000,
+    Sulfur = 1116,
+}

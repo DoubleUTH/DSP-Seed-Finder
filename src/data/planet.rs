@@ -35,6 +35,7 @@ pub struct Planet {
     pub planet_type: PlanetType,
     pub habitable_bias: f32,
     pub temperature_bias: f32,
+    pub luminosity: f32,
     pub theme_proto: &'static ThemeProto,
     #[serde(skip_serializing)]
     pub theme_rand1: f64,
@@ -67,6 +68,7 @@ impl Default for Planet {
             planet_type: PlanetType::None,
             habitable_bias: 0.0,
             temperature_bias: 0.0,
+            luminosity: 0.0,
             theme_proto: DEFAULT_THEME_PROTO,
             theme_rand1: 0.0,
             veins: vec![],

@@ -203,6 +203,14 @@ pub fn create_planet(
         }
     }
 
+    planet.luminosity = (star.lignt_balance_radius / (planet.sun_distance + 0.01)).powf(0.6);
+    if planet.luminosity > 1.0 {
+        planet.luminosity = planet.luminosity.ln() + 1.0;
+        planet.luminosity = planet.luminosity.ln() + 1.0;
+        planet.luminosity = planet.luminosity.ln() + 1.0;
+    }
+    planet.luminosity = (planet.luminosity * 100.0).round() / 100.0;
+
     planet
 }
 
@@ -405,10 +413,11 @@ pub fn generate_veins(planet: &mut Planet, star: &Star, game_desc: &GameDesc) {
                 f
             };
             if game_desc.is_infinite_resource() {
-                vein.min_amount = 0;
-                vein.max_amount = 0;
+                vein.min_amount = 1;
+                vein.max_amount = 1;
             } else {
-                let num17 = ((num_array_3[index3 as usize] * 100000.0 * num16).round() as i32).max(20);
+                let num17 =
+                    ((num_array_3[index3 as usize] * 100000.0 * num16).round() as i32).max(20);
                 let num18 = if num17 < 16000 {
                     ((num17 as f32) * (15.0 / 16.0)).floor() as i32
                 } else {

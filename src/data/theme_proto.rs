@@ -7,6 +7,8 @@ use serde::Serialize;
 pub struct ThemeProto {
     pub id: i32,
     pub name: &'static str,
+    pub wind: f32,
+    pub water_item_id: i32,
     #[serde(skip_serializing)]
     pub distribute: ThemeDistribute,
     #[serde(skip_serializing)]
@@ -32,6 +34,8 @@ pub struct ThemeProto {
 pub const DEFAULT_THEME_PROTO: &'static ThemeProto = &ThemeProto {
     id: 0,
     name: "",
+    water_item_id: 0,
+    wind: 0.0,
     distribute: ThemeDistribute::Default,
     temperature: 0.0,
     planet_type: PlanetType::None,
@@ -55,6 +59,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
         ThemeProto {
             id: 1,
             name: "Ocean 1",
+            water_item_id: 1000,
+            wind: 1.0,
             distribute: ThemeDistribute::Birth,
             temperature: 0.0,
             planet_type: PlanetType::Ocean,
@@ -69,6 +75,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
         ThemeProto {
             id: 2,
             name: "Gas 1",
+            water_item_id: 0,
+            wind: 0.0,
             distribute: ThemeDistribute::Default,
             temperature: 2.0,
             planet_type: PlanetType::Gas,
@@ -83,6 +91,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
         ThemeProto {
             id: 3,
             name: "Gas 2",
+            water_item_id: 0,
+            wind: 0.0,
             distribute: ThemeDistribute::Default,
             temperature: 1.0,
             planet_type: PlanetType::Gas,
@@ -97,6 +107,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
         ThemeProto {
             id: 4,
             name: "Gas 3",
+            water_item_id: 0,
+            wind: 0.0,
             distribute: ThemeDistribute::Default,
             temperature: -1.0,
             planet_type: PlanetType::Gas,
@@ -111,6 +123,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
         ThemeProto {
             id: 5,
             name: "Gas 4",
+            water_item_id: 0,
+            wind: 0.0,
             distribute: ThemeDistribute::Default,
             temperature: -2.0,
             planet_type: PlanetType::Gas,
@@ -125,6 +139,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
         ThemeProto {
             id: 6,
             name: "Desert 1",
+            water_item_id: 0,
+            wind: 1.5,
             distribute: ThemeDistribute::Default,
             temperature: 2.0,
             planet_type: PlanetType::Desert,
@@ -139,6 +155,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
         ThemeProto {
             id: 7,
             name: "Desert 2",
+            water_item_id: 0,
+            wind: 0.4,
             distribute: ThemeDistribute::Default,
             temperature: -1.0,
             planet_type: PlanetType::Desert,
@@ -153,6 +171,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
         ThemeProto {
             id: 8,
             name: "Ocean 2",
+            water_item_id: 1000,
+            wind: 1.0,
             distribute: ThemeDistribute::Interstellar,
             temperature: 0.0,
             planet_type: PlanetType::Ocean,
@@ -167,6 +187,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
         ThemeProto {
             id: 9,
             name: "Lava 1",
+            water_item_id: -1,
+            wind: 0.7,
             distribute: ThemeDistribute::Default,
             temperature: 5.0,
             planet_type: PlanetType::Vocano,
@@ -181,6 +203,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
         ThemeProto {
             id: 10,
             name: "Ice 1",
+            water_item_id: 1000,
+            wind: 0.7,
             distribute: ThemeDistribute::Default,
             temperature: -5.0,
             planet_type: PlanetType::Ice,
@@ -195,6 +219,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
         ThemeProto {
             id: 11,
             name: "Desert 3",
+            water_item_id: 0,
+            wind: 0.0,
             distribute: ThemeDistribute::Default,
             temperature: -2.0,
             planet_type: PlanetType::Desert,
@@ -209,6 +235,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
         ThemeProto {
             id: 12,
             name: "Desert 4",
+            water_item_id: 0,
+            wind: 0.8,
             distribute: ThemeDistribute::Default,
             temperature: 1.0,
             planet_type: PlanetType::Desert,
@@ -223,6 +251,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
         ThemeProto {
             id: 13,
             name: "Volcanic 1",
+            water_item_id: 1116,
+            wind: 0.8,
             distribute: ThemeDistribute::Interstellar,
             temperature: 4.0,
             planet_type: PlanetType::Vocano,
@@ -237,6 +267,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
         ThemeProto {
             id: 14,
             name: "Ocean 3",
+            water_item_id: 1000,
+            wind: 1.0,
             distribute: ThemeDistribute::Interstellar,
             temperature: 0.0,
             planet_type: PlanetType::Ocean,
@@ -251,6 +283,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
         ThemeProto {
             id: 15,
             name: "Ocean 4",
+            water_item_id: 1000,
+            wind: 1.1,
             distribute: ThemeDistribute::Interstellar,
             temperature: 0.0,
             planet_type: PlanetType::Ocean,
@@ -265,6 +299,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
         ThemeProto {
             id: 16,
             name: "Ocean 5",
+            water_item_id: 1000,
+            wind: 1.1,
             distribute: ThemeDistribute::Interstellar,
             temperature: 0.0,
             planet_type: PlanetType::Ocean,
@@ -279,6 +315,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
         ThemeProto {
             id: 17,
             name: "Desert 5",
+            water_item_id: 0,
+            wind: 1.1,
             distribute: ThemeDistribute::Default,
             temperature: 1.0,
             planet_type: PlanetType::Desert,
@@ -293,6 +331,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
         ThemeProto {
             id: 18,
             name: "Ocean 6",
+            water_item_id: 1000,
+            wind: 1.0,
             distribute: ThemeDistribute::Interstellar,
             temperature: 0.0,
             planet_type: PlanetType::Ocean,
@@ -307,6 +347,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
         ThemeProto {
             id: 19,
             name: "Desert 6",
+            water_item_id: 0,
+            wind: 1.6,
             distribute: ThemeDistribute::Interstellar,
             temperature: 1.0,
             planet_type: PlanetType::Desert,
@@ -321,6 +363,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
         ThemeProto {
             id: 20,
             name: "Desert 7",
+            water_item_id: -2,
+            wind: 0.7,
             distribute: ThemeDistribute::Default,
             temperature: -2.0,
             planet_type: PlanetType::Desert,
@@ -335,6 +379,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
         ThemeProto {
             id: 21,
             name: "Gas 5",
+            water_item_id: 0,
+            wind: 0.0,
             distribute: ThemeDistribute::Interstellar,
             temperature: 1.0,
             planet_type: PlanetType::Gas,
@@ -349,6 +395,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
         ThemeProto {
             id: 22,
             name: "Desert 8",
+            water_item_id: 1000,
+            wind: 1.1,
             distribute: ThemeDistribute::Interstellar,
             temperature: 0.0,
             planet_type: PlanetType::Ocean,
@@ -363,6 +411,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
         ThemeProto {
             id: 23,
             name: "Desert 9",
+            water_item_id: 0,
+            wind: 1.5,
             distribute: ThemeDistribute::Interstellar,
             temperature: 0.08,
             planet_type: PlanetType::Desert,
@@ -377,6 +427,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
         ThemeProto {
             id: 24,
             name: "Desert 10",
+            water_item_id: 0,
+            wind: 1.3,
             distribute: ThemeDistribute::Default,
             temperature: -4.0,
             planet_type: PlanetType::Ice,
@@ -391,6 +443,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
         ThemeProto {
             id: 25,
             name: "Desert 11",
+            water_item_id: -2,
+            wind: 1.0,
             distribute: ThemeDistribute::Interstellar,
             temperature: 0.0,
             planet_type: PlanetType::Ocean,

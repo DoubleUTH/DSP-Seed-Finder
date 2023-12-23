@@ -6,6 +6,7 @@ import type {
     ConditionType,
     RuleType,
     GasType,
+    OceanType,
 } from "./enums"
 
 declare global {
@@ -58,6 +59,7 @@ declare global {
         planetType: PlanetType
         habitableBias: float
         temperatureBias: float
+        luminosity: float
         themeProto: ThemeProto
         veins: Vein[]
         gases: [itemId: GasType, rate: float][]
@@ -66,6 +68,8 @@ declare global {
     declare interface ThemeProto {
         id: integer
         name: string
+        waterItemId: OceanType
+        wind: float
     }
 
     declare interface Vein {

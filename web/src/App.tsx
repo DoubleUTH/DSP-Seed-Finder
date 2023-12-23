@@ -1,35 +1,27 @@
+import { createStore } from "solid-js/store"
+import clsx from "clsx"
 import styles from "./App.module.css"
-import { WorldGenImpl } from "worldgen-impl"
-import { ConditionType, RuleType, VeinType } from "./enums"
+import { StoreContext, defaultStore } from "./store"
+import Header from "./components/Header"
+import { ParentComponent } from "solid-js"
+import Settings from "./components/Settings"
 
-function App() {
-    async function click() {
-        const worldgen: WorldGen = new WorldGenImpl()
-        console.log(await worldgen.generate({ seed: 0 }))
-    }
-    async function click2() {
-        const worldgen: WorldGen = new WorldGenImpl()
-        const g = worldgen.find({}, [0, 1000], {
-            type: RuleType.AverageVeinPatch,
-            vein: VeinType.Mag,
-            condition: {
-                type: ConditionType.Gt,
-                value: 1,
-            },
-        })
-        for await (const r of g) {
-            console.log(r)
-        }
-    }
+const App: ParentComponent = (props) => {
+    const [store, setStore] = createStore<Store>(defaultStore)
+
     return (
-        <div class={styles.app}>
-            <button type="button" onClick={click}>
-                Click
-            </button>
-            <button type="button" onClick={click2}>
-                Click2
-            </button>
-        </div>
+        <StoreContext.Provider value={[store, setStore]}>
+            <div
+                class={clsx(
+                    styles.app,
+                    store.settings.darkMode ? styles.dark : styles.light,
+                )}
+            >
+                <Header />
+                {props.children}
+                <Settings />
+            </div>
+        </StoreContext.Provider>
     )
 }
 

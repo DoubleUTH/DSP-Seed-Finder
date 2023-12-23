@@ -1,3 +1,20 @@
 .app {
-    display: block;
+    height: 100%;
+
+    --primary: #1668dc;
+
+    color: var(--text);
+    background-color: var(--background);
+}
+
+.light {
+    --text: #213547;
+    --background: #ffffff;
+    --modal-background: #ffffff;
+}
+
+.dark {
+    --text: #ffffff;
+    --background: #242424;
+    --modal-background: #1f1f1f;
 }

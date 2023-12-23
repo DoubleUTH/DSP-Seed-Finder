@@ -1,0 +1,43 @@
+.modal {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.45);
+    display: grid;
+    place-items: center;
+    visibility: visible;
+    opacity: 1;
+    transition:
+        visibility 0s,
+        opacity 0.3s;
+}
+
+.hidden {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition:
+        visibility 0.3s,
+        opacity 0.3s;
+}
+
+.content {
+    position: relative;
+    width: 450px;
+    max-height: 80vh;
+    min-height: 80px;
+    overflow-y: auto;
+    background-color: var(--modal-background);
+    border-radius: 16px;
+    overflow-x: hidden;
+}
+
+.close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 12px;
+    cursor: pointer;
+}

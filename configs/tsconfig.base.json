@@ -28,8 +28,7 @@
         "useDefineForClassFields": false,
 
         "paths": {
-            "worldgen-wasm": ["../pkg"],
-            "worldgen-impl": ["../web/src/worldgen/browser"]
+            "worldgen-wasm": ["../pkg"]
         }
     }
 }

@@ -27,13 +27,11 @@ async function* combineGenerators<T>(iterable: AsyncGenerator<T>[]) {
     }
 }
 
-export class WorldGenImpl implements WorldGen {
-    private readonly workerPool = new Set<Worker>()
-    concurrency: number = Math.max(navigator.hardwareConcurrency, 1)
+export class WorldGenBrowser implements WorldGen {
+    private _stop: () => void = () => {}
 
     async generate(gameDesc: GameDesc): Promise<Galaxy> {
         const worker = new WorldgenWorker()
-        this.workerPool.add(worker)
         try {
             const result = await new Promise<Galaxy>((resolve) => {
                 const eventHandler = (ev: MessageEvent) => {
@@ -49,31 +47,34 @@ export class WorldGenImpl implements WorldGen {
             return result
         } finally {
             worker.terminate()
-            this.workerPool.delete(worker)
         }
     }
 
-    find(
-        gameDesc: Omit<GameDesc, "seed">,
-        range: [number, number],
-        rule: Rule,
-    ): AsyncGenerator<Galaxy> {
+    find({
+        gameDesc,
+        range,
+        rule,
+        concurrency,
+    }: {
+        gameDesc: Omit<GameDesc, "seed">
+        range: [integer, integer]
+        rule: Rule
+        concurrency: integer
+    }): AsyncGenerator<Galaxy> {
         let currentSeed = range[0]
         const finalSeed = range[1]
 
         const workers = Array.from({
-            length: Math.min(this.concurrency, finalSeed - currentSeed + 1),
-        }).map(() => {
-            const worker = new WorldgenWorker()
-            this.workerPool.add(worker)
-            return worker
-        })
+            length: Math.min(concurrency, finalSeed - currentSeed + 1),
+        }).map(() => new WorldgenWorker())
 
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
-        const self = this
+        let stopped = false
+        this._stop = () => {
+            stopped = true
+        }
 
         async function* run(worker: Worker): AsyncGenerator<Galaxy> {
-            let resolveFn: ((data: Galaxy) => void) | undefined
+            let resolveFn: ((data?: Galaxy) => void) | undefined
             const eventHandler = (ev: MessageEvent) => {
                 const message = ev.data
                 if (message.type === FIND_NAME) {
@@ -88,30 +89,31 @@ export class WorldGenImpl implements WorldGen {
                 })
 
                 for (;;) {
-                    const result = await new Promise<Galaxy>((resolve) => {
-                        resolveFn = resolve
-                    })
+                    const result = await new Promise<Galaxy | undefined>(
+                        (resolve) => {
+                            resolveFn = resolve
+                        },
+                    )
+                    if (!result) break
                     yield result
                     if (currentSeed > finalSeed) break
                     worker.postMessage({
                         type: FIND_NEXT_NAME,
                         input: currentSeed++,
                     })
+                    if (stopped) break
                 }
             } finally {
                 worker.removeEventListener("message", eventHandler)
                 worker.terminate()
-                self.workerPool.delete(worker)
             }
         }
 
         return combineGenerators(workers.map(run))
     }
 
-    destroy() {
-        for (const worker of this.workerPool) {
-            worker.terminate()
-        }
-        this.workerPool.clear()
+    stop() {
+        this._stop()
+        this._stop = () => {}
     }
 }

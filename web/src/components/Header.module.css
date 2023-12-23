@@ -1,0 +1,35 @@
+.header {
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    line-height: 2;
+    display: flex;
+    align-items: center;
+}
+
+.title {
+    font-size: 22px;
+    font-weight: bold;
+    padding: 0 20px;
+}
+
+.buttons {
+    display: flex;
+    flex: 1 1 0;
+}
+
+.button {
+    font-size: 16px;
+    padding: 0 8px;
+}
+
+.icons {
+    display: flex;
+    align-items: center;
+}
+
+.icon {
+    padding: 8px;
+    cursor: pointer;
+}

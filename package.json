@@ -5,11 +5,16 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build:web": "vite build",
         "preview": "vite preview",
-        "build:wasm": "wasm-pack build --target web"
+        "build:web": "vite build",
+        "build:browser": "wasm-pack build --target web",
+        "build:native": "cargo build --release"
     },
     "dependencies": {
+        "@floating-ui/dom": "^1.5.3",
+        "@solidjs/router": "^0.10.5",
+        "clsx": "^2.0.0",
+        "solid-icons": "^1.1.0",
         "solid-js": "^1.8.7",
         "tiny-emitter": "^2.1.0"
     },

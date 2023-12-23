@@ -1,11 +1,35 @@
+@font-face {
+    font-family: "Economica";
+    src: url("../fonts/Economica-Regular.ttf");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Economica";
+    src: url("../fonts/Economica-Bold.ttf");
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Economica";
+    src: url("../fonts/Economica-Italic.ttf");
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: "Economica";
+    src: url("../fonts/Economica-BoldItalic.ttf");
+    font-weight: bold;
+    font-style: italic;
+}
+
 :root {
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    font-family: "Economica", sans-serif;
     line-height: 1.5;
     font-weight: 400;
-
-    color-scheme: light dark;
-    color: rgba(255, 255, 255, 0.87);
-    background-color: #242424;
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;
@@ -14,14 +38,21 @@
     height: 100%;
 }
 
-body {
-    margin: 0;
+body,
+#root {
     height: 100%;
 }
 
-@media (prefers-color-scheme: light) {
-    :root {
-        color: #213547;
-        background-color: #ffffff;
-    }
+*::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: rgba(151, 151, 151, 0.75);
+    border-radius: 4px;
+}
+
+*::-webkit-scrollbar-track-piece {
+    background-color: transparent;
 }

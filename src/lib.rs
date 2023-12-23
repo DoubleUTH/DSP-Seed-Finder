@@ -2,13 +2,13 @@
 
 mod data;
 mod rules;
-mod worldgen;
 mod transform_rules;
+mod worldgen;
 
-use data::{game_desc::GameDesc, rule::Rule, galaxy::Galaxy};
+use data::game_desc::GameDesc;
 use wasm_bindgen::prelude::*;
-use worldgen::galaxy_gen::{create_galaxy, find_stars};
 use wasm_bindgen_futures::spawn_local;
+use worldgen::galaxy_gen::{create_galaxy, find_stars};
 
 #[wasm_bindgen]
 extern "C" {
@@ -30,7 +30,7 @@ pub fn findStars(gameDesc: JsValue, rule: JsValue) {
     spawn_local(async {
         let mut game_desc: GameDesc = serde_wasm_bindgen::from_value(gameDesc).unwrap();
         let rule = serde_wasm_bindgen::from_value(rule).unwrap();
-        let mut transformed: Box<dyn Rule> = transform_rules::transform_rules(rule);
+        let mut transformed = transform_rules::transform_rules(rule);
         loop {
             let galaxy = find_stars(&game_desc, &mut transformed);
             let result = serde_wasm_bindgen::to_value(&galaxy).unwrap();

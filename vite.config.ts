@@ -5,7 +5,7 @@ import path from "path"
 export default defineConfig({
     root: path.resolve(process.cwd(), "web"),
     build: {
-        outDir: path.resolve(process.cwd(), "dist"),
+        outDir: path.resolve(process.cwd(), "dist-browser"),
     },
     plugins: [solid()],
     resolve: {
@@ -14,22 +14,6 @@ export default defineConfig({
                 find: "worldgen-wasm",
                 replacement: path.resolve(process.cwd(), "pkg"),
             },
-            {
-                find: "worldgen-impl",
-                replacement: path.resolve(
-                    process.cwd(),
-                    "web/src/worldgen",
-                    "browser.ts",
-                ),
-            },
         ],
-    },
-    server: {
-        proxy: {
-            "/ws": {
-                target: "ws://127.0.0.1:9000",
-                ws: true,
-            },
-        },
     },
 })

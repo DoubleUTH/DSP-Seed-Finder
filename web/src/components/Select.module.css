@@ -1,0 +1,42 @@
+.select {
+    position: relative;
+    min-width: 90px;
+    cursor: pointer;
+}
+
+.content {
+    line-height: 22px;
+    padding: 4px 11px;
+    border-radius: 4px;
+    border: 1px solid #424242;
+    transition: 0.3s;
+}
+
+.focus .content {
+    border-color: var(--primary);
+}
+
+.dropdown {
+    position: fixed;
+    border-radius: 4px;
+    border: 1px solid var(--primary);
+    background-color: var(--modal-background);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.item {
+    padding: 8px;
+    margin: 2px;
+    border-radius: 4px;
+}
+
+.item:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+}
+
+.selected,
+.selected:hover {
+    background-color: var(--primary);
+}

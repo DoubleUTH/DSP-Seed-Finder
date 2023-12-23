@@ -169,13 +169,31 @@ declare global {
         | Rule.Birth
 
     declare interface WorldGen {
-        concurrency: integer
         generate(gameDesc: GameDesc): Promise<Galaxy>
-        find(
-            gameDesc: Omit<GameDesc, "seed">,
-            range: [number, number],
-            rule: Rule,
-        ): AsyncGenerator<Galaxy>
-        destroy(): void
+        find(options: {
+            gameDesc: Omit<GameDesc, "seed">
+            range: [number, number]
+            rule: Rule
+            concurrency: integer
+        }): AsyncGenerator<Galaxy>
+        stop(): void
+    }
+
+    declare interface Store {
+        settings: Settings
+        modals: {
+            settings: boolean
+        }
+        selects: {
+            resourceMultiplier: boolean
+        }
+    }
+
+    declare interface Settings {
+        concurrency: integer
+        darkMode: boolean
+        nativeMode: boolean
+        starCount: integer
+        resourceMultiplier: float
     }
 }

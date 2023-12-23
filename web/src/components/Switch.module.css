@@ -1,0 +1,28 @@
+.switch {
+    position: relative;
+    cursor: pointer;
+    width: 44px;
+    height: 22px;
+    border-radius: 9999px;
+    background-color: #888888;
+    transition: 0.3s;
+}
+
+.active {
+    background-color: var(--primary);
+}
+
+.slider {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    bottom: 2px;
+    width: 18px;
+    border-radius: 9999px;
+    background-color: #fff;
+    transition: 0.3s;
+}
+
+.active .slider {
+    left: 24px;
+}

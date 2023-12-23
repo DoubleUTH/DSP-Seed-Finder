@@ -7,16 +7,14 @@ import "./index.css"
 import App from "./App"
 import Find from "./views/Find"
 import Galaxy from "./views/Galaxy"
-import Home from "./views/Home"
 
 const root = document.getElementById("root")
 
 const dispose = render(
     () => (
         <Router root={App}>
-            <Route path="/" component={Home} />
-            <Route path="/find" component={Find} />
-            <Route path="/galaxy" component={Galaxy} />
+            <Route path="/" component={Find} />
+            <Route path="/galaxy/:seed?/:index?" component={Galaxy} />
         </Router>
     ),
     root!,

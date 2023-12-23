@@ -1,0 +1,68 @@
+.view {
+    display: flex;
+    flex-direction: column;
+}
+
+.card {
+    position: relative;
+    margin: 12px;
+    padding: 12px;
+    border-radius: 8px;
+    background-color: rgba(160, 160, 160, 0.2);
+}
+
+.expand {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    top: 0;
+    right: 0;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transform: rotate(-90deg);
+    transition: transform 0.3s;
+}
+
+.expand:hover {
+    color: var(--primary-light);
+}
+
+.expanded {
+    transform: rotate(0deg);
+}
+
+.title {
+    font-size: 22px;
+    margin-bottom: 16px;
+}
+
+.index {
+    font-size: 16px;
+    margin-left: 12px;
+    color: #808080;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 18px;
+    line-height: 24px;
+    min-width: 200px;
+    gap: 16px;
+}
+
+.row + .row {
+    margin-top: 4px;
+    padding-top: 4px;
+    border-top: 1px solid rgba(160, 160, 160, 0.5);
+}
+
+.value {
+    min-width: 60px;
+    text-align: right;
+}
+
+.estimate {
+    font-style: italic;
+}

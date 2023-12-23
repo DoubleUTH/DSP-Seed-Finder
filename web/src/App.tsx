@@ -2,9 +2,9 @@ import { createStore } from "solid-js/store"
 import clsx from "clsx"
 import styles from "./App.module.css"
 import { StoreContext, defaultStore } from "./store"
-import Header from "./components/Header"
+import Header from "./partials/Header"
 import { ParentComponent } from "solid-js"
-import Settings from "./components/Settings"
+import Settings from "./partials/Settings"
 
 const App: ParentComponent = (props) => {
     const [store, setStore] = createStore<Store>(defaultStore)
@@ -18,7 +18,7 @@ const App: ParentComponent = (props) => {
                 )}
             >
                 <Header />
-                {props.children}
+                <div class={styles.content}>{props.children}</div>
                 <Settings />
             </div>
         </StoreContext.Provider>

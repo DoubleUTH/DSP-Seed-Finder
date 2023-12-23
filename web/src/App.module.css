@@ -2,9 +2,12 @@
     height: 100%;
 
     --primary: #1668dc;
+    --primary-light: #3c89e8;
 
     color: var(--text);
     background-color: var(--background);
+    display: flex;
+    flex-direction: column;
 }
 
 .light {
@@ -17,4 +20,9 @@
     --text: #ffffff;
     --background: #242424;
     --modal-background: #1f1f1f;
+}
+
+.content {
+    flex: 1 1 0;
+    min-height: 0;
 }

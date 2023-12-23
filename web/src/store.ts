@@ -12,9 +12,7 @@ export const defaultStore: Store = {
     modals: {
         settings: false,
     },
-    selects: {
-        resourceMultiplier: false,
-    },
+    galaxys: {},
 }
 
 type ContextType = [get: Store, set: SetStoreFunction<Store>]

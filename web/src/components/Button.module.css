@@ -1,0 +1,38 @@
+.button {
+    border-width: 1px;
+    border-style: solid;
+    padding: 4px 15px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition:
+        color 0.3s,
+        background-color 0.3s,
+        border-color 0.3s;
+}
+
+.solid {
+    color: #fff;
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.solid:hover {
+    background-color: var(--primary-light);
+    border-color: var(--primary-light);
+}
+
+.outline {
+    border-color: #424242;
+}
+
+.outline:hover {
+    color: var(--primary-light);
+    border-color: var(--primary-light);
+}
+
+.button:disabled {
+    cursor: not-allowed;
+    border-color: #424242;
+    color: rgba(255, 255, 255, 0.25);
+    background-color: rgba(255, 255, 255, 0.08);
+}

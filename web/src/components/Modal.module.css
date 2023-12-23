@@ -8,6 +8,7 @@
     display: grid;
     place-items: center;
     visibility: visible;
+    backdrop-filter: blur(4px);
     opacity: 1;
     transition:
         visibility 0s,
@@ -18,9 +19,7 @@
     visibility: hidden;
     opacity: 0;
     pointer-events: none;
-    transition:
-        visibility 0.3s,
-        opacity 0.3s;
+    transition: opacity 0.3s;
 }
 
 .content {

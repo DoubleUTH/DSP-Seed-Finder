@@ -130,8 +130,8 @@ pub fn create_star(
     star.luminosity = f1.powf(0.7);
     star.radius = ((star.mass as f64).powf(0.4) * num5) as f32;
     let p2 = (num10 as f32) + 2.0;
-    star.lignt_balance_radius = 1.7_f32.powf(p2);
-    star.habitable_radius = star.lignt_balance_radius + 0.2;
+    star.light_balance_radius = 1.7_f32.powf(p2);
+    star.habitable_radius = star.light_balance_radius + 0.25;
     star.orbit_scaler = 1.35_f32.powf(p2);
     if star.orbit_scaler < 1.0 {
         star.orbit_scaler += (1.0 - star.orbit_scaler) * 0.6;
@@ -161,6 +161,7 @@ pub fn create_birth_star(seed: i32) -> Star {
     let rn = rand2.next_f64();
     let rt = rand2.next_f64();
     let num2 = rand2.next_f64() * 0.2 + 0.9;
+    let num3 = 2_f64.powf(rand2.next_f64() * 0.4 - 0.2);
     let p1 = rand_normal(0.0, 0.08, r1_1, r2_1).clamp(-0.2, 0.2);
     star.mass = 2_f32.powf(p1);
     let d = 2.0 + 0.4 * (1.0 - (star.mass as f64));
@@ -182,10 +183,10 @@ pub fn create_birth_star(seed: i32) -> Star {
     star.color = (((num5 + 3.5) * 0.200000002980232) as f32).clamp(0.0, 1.0);
     star.class_factor = num5 as f32;
     star.luminosity = f1.powf(0.7);
-    star.radius = ((star.mass as f64).powf(0.4) * num5) as f32;
+    star.radius = ((star.mass as f64).powf(0.4) * num3) as f32;
     let p2 = (num5 as f32) + 2.0;
-    star.lignt_balance_radius = 1.7_f32.powf(p2);
-    star.habitable_radius = star.lignt_balance_radius + 0.2;
+    star.light_balance_radius = 1.7_f32.powf(p2);
+    star.habitable_radius = star.light_balance_radius + 0.2;
     star.orbit_scaler = 1.35_f32.powf(p2);
     if star.orbit_scaler < 1.0 {
         star.orbit_scaler += (1.0 - star.orbit_scaler) * 0.6;
@@ -196,6 +197,9 @@ pub fn create_birth_star(seed: i32) -> Star {
     if star.dyson_radius * 40000.0 < star.physics_radius() * 1.5 {
         star.dyson_radius = star.physics_radius() * 1.5 / 40000.0;
     }
+
+    // displayed luminosity
+    star.luminosity = (star.luminosity.powf(0.330000013113022) * 1000.0) / 1000.0;
     star
 }
 
@@ -443,7 +447,7 @@ pub fn create_star_planets(star: &Star, star_count: i32, habitable_count: &mut i
                 if orbit_around == 0 {
                     None
                 } else {
-                    output.get(orbit_around as usize)
+                    output.get((orbit_around - 1) as usize)
                 },
                 orbit_around,
                 if orbit_around == 0 { num10 } else { num9 },
@@ -499,7 +503,7 @@ fn set_star_age(star: &mut Star, age: f32, rn: f64, rt: f64) {
             star.temperature = 0.0;
             star.luminosity *= 1.0 / 1000.0 * num1;
             star.habitable_radius = 0.0;
-            star.lignt_balance_radius *= 0.4 * num1;
+            star.light_balance_radius *= 0.4 * num1;
             star.color = 1.0;
         } else if star.mass >= 7.0 {
             star.star_type = StarType::NeutronStar;
@@ -509,7 +513,7 @@ fn set_star_age(star: &mut Star, age: f32, rn: f64, rt: f64) {
             star.temperature = num3 * 1e+7;
             star.luminosity *= 0.1 * num1;
             star.habitable_radius = 0.0;
-            star.lignt_balance_radius *= 3.0 * num1;
+            star.light_balance_radius *= 3.0 * num1;
             star.orbit_scaler *= 1.5 * num1;
             star.color = 1.0;
         } else {
@@ -520,7 +524,7 @@ fn set_star_age(star: &mut Star, age: f32, rn: f64, rt: f64) {
             star.temperature = num2 * 150000.0;
             star.luminosity *= 0.04 * num2;
             star.habitable_radius *= 0.15 * num2;
-            star.lignt_balance_radius *= 0.2 * num1;
+            star.light_balance_radius *= 0.2 * num1;
             star.color = 0.7;
         }
     } else {
@@ -536,7 +540,7 @@ fn set_star_age(star: &mut Star, age: f32, rn: f64, rt: f64) {
             star.temperature *= num5;
             star.luminosity *= 1.6;
             star.habitable_radius *= 9.0;
-            star.lignt_balance_radius = 3.0 * star.habitable_radius;
+            star.light_balance_radius = 3.0 * star.habitable_radius;
             star.orbit_scaler *= 3.3;
         }
     }

@@ -175,7 +175,7 @@ pub fn create_planet(
         let num24 = (a + (0.35 - a) * 0.5).clamp(0.08, 0.8);
         planet.habitable_bias = num21 * num22;
         planet.temperature_bias =
-            (1.20000004768372 / ((f2 + 0.200000002980232) as f64) - 1.0) as f32;
+            (1.20000004768372 / ((f2 as f64) + 0.200000002980232) - 1.0) as f32;
         let num25 = (planet.habitable_bias / num24)
             .clamp(0.0, 1.1)
             .powf(num24 * 10.0);
@@ -203,7 +203,7 @@ pub fn create_planet(
         }
     }
 
-    planet.luminosity = (star.lignt_balance_radius / (planet.sun_distance + 0.01)).powf(0.6);
+    planet.luminosity = (star.light_balance_radius / (planet.sun_distance + 0.01)).powf(0.6);
     if planet.luminosity > 1.0 {
         planet.luminosity = planet.luminosity.ln() + 1.0;
         planet.luminosity = planet.luminosity.ln() + 1.0;
@@ -233,7 +233,7 @@ pub fn set_planet_theme(planet: &mut Planet, is_birth_star: bool, used_theme_ids
             } else {
                 (theme.temperature as f64) * (planet.temperature_bias as f64) >= -0.100000001490116
             };
-            if (theme.planet_type == planet.planet_type) & flag2 {
+            if (theme.planet_type == planet.planet_type) && flag2 {
                 if is_birth_star {
                     if theme.distribute == ThemeDistribute::Default {
                         potential_themes.push(theme);
@@ -246,6 +246,7 @@ pub fn set_planet_theme(planet: &mut Planet, is_birth_star: bool, used_theme_ids
             }
         }
     }
+
     if potential_themes.is_empty() {
         for theme in &unused_themes {
             if theme.planet_type == PlanetType::Desert {
@@ -266,6 +267,7 @@ pub fn set_planet_theme(planet: &mut Planet, is_birth_star: bool, used_theme_ids
 
     planet.theme_proto = theme_proto;
     planet.planet_type = theme_proto.planet_type.clone();
+    used_theme_ids.push(theme_proto.id);
 }
 
 pub fn generate_gases(planet: &mut Planet, star: &Star, game_desc: &GameDesc) {
@@ -412,7 +414,7 @@ pub fn generate_veins(planet: &mut Planet, star: &Star, game_desc: &GameDesc) {
             } else {
                 f
             };
-            if game_desc.is_infinite_resource() {
+            if game_desc.is_infinite_resource() && vein.vein_type != VeinType::Oil {
                 vein.min_amount = 1;
                 vein.max_amount = 1;
             } else {

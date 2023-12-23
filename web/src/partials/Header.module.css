@@ -6,6 +6,8 @@
     line-height: 2;
     display: flex;
     align-items: center;
+    flex: none;
+    background-color: var(--background);
 }
 
 .title {

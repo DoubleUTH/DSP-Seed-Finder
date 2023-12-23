@@ -130,10 +130,12 @@ a {
     color: inherit;
     text-decoration: none;
 }
-input {
+input,
+button {
     color: inherit;
     background: inherit;
     outline: none;
+    border: none;
     font: inherit;
 }
 

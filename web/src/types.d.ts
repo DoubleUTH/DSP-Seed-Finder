@@ -25,20 +25,22 @@ declare global {
     }
 
     declare interface Star {
-        id: integer
+        index: integer
         position: [float, float, float]
         name: string
         mass: float
         lifetime: float
         age: float
         temperature: float
-        type: StarType
+        starType: StarType
         spectr: SpectrType
         luminosity: float
         radius: float
         dysonRadius: float
         planets: Planet[]
     }
+
+    declare type Gas = [itemId: GasType, rate: float]
 
     declare interface Planet {
         id: integer
@@ -62,7 +64,7 @@ declare global {
         luminosity: float
         themeProto: ThemeProto
         veins: Vein[]
-        gases: [itemId: GasType, rate: float][]
+        gases: Gas[]
     }
 
     declare interface ThemeProto {
@@ -188,9 +190,16 @@ declare global {
         modals: {
             settings: boolean
         }
-        selects: {
-            resourceMultiplier: boolean
-        }
+        galaxys: Record<
+            number,
+            {
+                loading: boolean
+                seed: integer
+                starCount: integer
+                resourceMultiplier: float
+                stars: Star[]
+            }
+        >
     }
 
     declare interface Settings {

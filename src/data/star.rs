@@ -7,8 +7,8 @@ use std::collections::HashMap;
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Star {
-    pub id: i32,
     #[serde(skip_serializing)]
+    pub id: i32,
     pub index: i32,
     #[serde(skip_serializing)]
     pub seed: i32,
@@ -35,12 +35,14 @@ pub struct Star {
     #[serde(skip_serializing)]
     pub habitable_radius: f32,
     #[serde(skip_serializing)]
-    pub lignt_balance_radius: f32,
+    pub light_balance_radius: f32,
     #[serde(skip_serializing)]
     pub orbit_scaler: f32,
     pub dyson_radius: f32,
     pub planets: Vec<Planet>,
+    #[serde(skip_serializing)]
     pub vein_patch: HashMap<VeinType, f32>,
+    #[serde(skip_serializing)]
     pub vein_amount: HashMap<VeinType, f32>,
 }
 
@@ -66,7 +68,7 @@ impl Default for Star {
             luminosity: 0.0,
             radius: 0.0,
             habitable_radius: 0.0,
-            lignt_balance_radius: 0.0,
+            light_balance_radius: 0.0,
             orbit_scaler: 0.0,
             dyson_radius: 0.0,
             planets: vec![],

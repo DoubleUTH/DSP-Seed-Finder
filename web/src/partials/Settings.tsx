@@ -1,13 +1,14 @@
 import styles from "./Settings.module.css"
 import { useStore } from "../store"
-import Modal from "./Modal"
-import { Component } from "solid-js"
-import Switch from "./Switch"
-import NumberInput from "./NumberInput"
-import Select from "./Select"
+import Modal from "../components/Modal"
+import { Component, createSignal } from "solid-js"
+import Switch from "../components/Switch"
+import NumberInput from "../components/NumberInput"
+import Select from "../components/Select"
 
 const Settings: Component = () => {
     const [store, setStore] = useStore()
+    const [select, setSelect] = createSignal(false)
 
     function bind<K extends keyof Settings>(
         key: K,
@@ -34,7 +35,13 @@ const Settings: Component = () => {
             </div>
             <div class={styles.row}>
                 <div class={styles.field}>Number of stars</div>
-                <NumberInput {...bind("starCount")} min={1} max={64} step={1} />
+                <NumberInput
+                    {...bind("starCount")}
+                    min={32}
+                    max={64}
+                    step={1}
+                    emptyValue={0}
+                />
             </div>
             <div class={styles.row}>
                 <div class={styles.field}>Resource Multiplier</div>
@@ -45,16 +52,15 @@ const Settings: Component = () => {
                     }
                     options={[0.1, 0.5, 0.8, 1, 1.5, 2, 3, 5, 8, 100]}
                     isSelected={(t) => t === store.settings.resourceMultiplier}
-                    focus={store.selects.resourceMultiplier}
-                    onFocusChange={(f) =>
-                        setStore("selects", "resourceMultiplier", f)
-                    }
+                    focus={select()}
+                    onFocusChange={(f) => setSelect(f)}
                 />
             </div>
             <div class={styles.row}>
                 <div class={styles.field}>Maximum concurrent threads</div>
                 <NumberInput
                     {...bind("concurrency")}
+                    emptyValue={0}
                     min={1}
                     max={9999}
                     step={1}

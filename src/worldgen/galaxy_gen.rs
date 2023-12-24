@@ -234,9 +234,9 @@ pub fn create_galaxy(game_desc: &GameDesc) -> Galaxy {
     return galaxy;
 }
 
-pub fn find_stars(game_desc: &GameDesc, rule: &mut Box<dyn Rule + Send>) -> Galaxy {
+pub fn find_stars(game_desc: &GameDesc, rule: &mut Box<dyn Rule + Send>) -> Vec<i32> {
     let mut habitable_count = 0;
-    let mut stars: Vec<Star> = vec![];
+    let mut output: Vec<i32> = vec![];
     let mut names: Vec<String> = vec![];
 
     for mut star in generate_stars(game_desc) {
@@ -244,7 +244,10 @@ pub fn find_stars(game_desc: &GameDesc, rule: &mut Box<dyn Rule + Send>) -> Gala
         let name = random_name(star.name_seed, &star, names.iter());
         names.push(name);
         let mut planets = create_star_planets(&star, game_desc.star_count, &mut habitable_count);
-        if rule.on_planets_created(&star, &planets) == Some(false) {
+        if let Some(x) = rule.on_planets_created(&star, &planets) {
+            if x {
+                output.push(star.index);
+            }
             continue;
         }
         let mut used_theme_ids: Vec<i32> = vec![];
@@ -252,7 +255,10 @@ pub fn find_stars(game_desc: &GameDesc, rule: &mut Box<dyn Rule + Send>) -> Gala
         for planet in &mut planets {
             set_planet_theme(planet, is_birth_star, &mut used_theme_ids);
         }
-        if !rule.is_evaluated() && rule.on_planets_themed(&star, &planets) == Some(false) {
+        if let Some(x) = rule.on_planets_themed(&star, &planets) {
+            if x {
+                output.push(star.index);
+            }
             continue;
         }
         for planet in &mut planets {
@@ -263,20 +269,18 @@ pub fn find_stars(game_desc: &GameDesc, rule: &mut Box<dyn Rule + Send>) -> Gala
             }
         }
         sum_veins(&mut star, &planets);
-        if !rule.is_evaluated() && rule.on_veins_generated(&star, &planets) == Some(false) {
+        if let Some(x) = rule.on_veins_generated(&star, &planets) {
+            if x {
+                output.push(star.index);
+            }
             continue;
         }
         star.planets = planets;
         star.name = names.last().unwrap().clone();
-        let done = star.index == 0 && rule.is_birth();
-        stars.push(star);
-        if done {
+        if star.index == 0 && rule.is_birth() {
             break;
         }
     }
 
-    Galaxy {
-        seed: game_desc.seed,
-        stars,
-    }
+    output
 }

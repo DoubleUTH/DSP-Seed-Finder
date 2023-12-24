@@ -25,7 +25,7 @@ export class WorldGenNative implements WorldGen {
         const ws = await connect()
         const promise = new Promise<Galaxy>((resolve) => {
             ws.addEventListener("message", (ev) => {
-                resolve(JSON.parse(ev.data).galaxy)
+                resolve(JSON.parse(ev.data))
                 ws.close()
             })
         })
@@ -46,12 +46,12 @@ export class WorldGenNative implements WorldGen {
         range: [integer, integer]
         rule: Rule
         concurrency: integer
-        onProgress?: (current: number, galaxys: Galaxy[]) => void
+        onProgress?: (current: number, results: FindResult[]) => void
         onComplete?: () => void
         onInterrupt?: () => void
     }) {
         connect().then((ws) => {
-            let results: Galaxy[] = []
+            let results: FindResult[] = []
             let done = false
 
             this._stop = () => {
@@ -68,8 +68,8 @@ export class WorldGenNative implements WorldGen {
 
             ws.addEventListener("message", (ev) => {
                 const msg = JSON.parse(ev.data)
-                if (msg.type === "Galaxy") {
-                    results.push(msg.galaxy)
+                if (msg.type === "Result") {
+                    results.push({ seed: msg.seed, indexes: msg.indexes })
                 } else {
                     onProgress?.(msg.end, results)
                     results = []

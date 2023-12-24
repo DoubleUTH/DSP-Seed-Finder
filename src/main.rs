@@ -5,7 +5,6 @@ mod rules;
 mod transform_rules;
 mod worldgen;
 
-use data::galaxy::Galaxy;
 use data::game_desc::GameDesc;
 use futures_util::lock::Mutex;
 use futures_util::{future, SinkExt, StreamExt, TryStreamExt};
@@ -47,7 +46,7 @@ enum IncomingMessage {
 #[derive(Serialize)]
 #[serde(tag = "type")]
 enum OutgoingMessage {
-    Galaxy { galaxy: Galaxy },
+    Result { seed: i32, indexes: Vec<i32> },
     Progress { start: i32, end: i32 },
     Done { start: i32, end: i32 },
 }
@@ -103,8 +102,7 @@ async fn accept_connection(stream: TcpStream) {
                         let w = boxed_write.clone();
                         tokio::spawn(async move {
                             let galaxy = create_galaxy(&game);
-                            let output =
-                                serde_json::to_string(&OutgoingMessage::Galaxy { galaxy }).unwrap();
+                            let output = serde_json::to_string(&galaxy).unwrap();
                             w.lock().await.send(Message::Text(output)).await.unwrap();
                         });
                     }
@@ -142,18 +140,21 @@ async fn accept_connection(stream: TcpStream) {
                                         break;
                                     }
                                     g.seed = seed;
-                                    let galaxy = find_stars(&g, &mut transformed);
+                                    let star_indexes = find_stars(&g, &mut transformed);
                                     let notify_progress = {
                                         let mut x = s.lock().unwrap();
                                         x.add(seed)
                                     };
-                                    if notify_progress.is_some() || !galaxy.stars.is_empty() {
+                                    if notify_progress.is_some() || !star_indexes.is_empty() {
                                         let w2 = w.clone();
                                         runtime.block_on(async move {
                                             let mut stream = w2.lock().await;
-                                            if !galaxy.stars.is_empty() {
+                                            if !star_indexes.is_empty() {
                                                 let output = serde_json::to_string(
-                                                    &OutgoingMessage::Galaxy { galaxy },
+                                                    &OutgoingMessage::Result {
+                                                        seed,
+                                                        indexes: star_indexes,
+                                                    },
                                                 )
                                                 .unwrap();
                                                 stream.send(Message::Text(output)).await.unwrap();

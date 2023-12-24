@@ -5,7 +5,7 @@ import path from "path"
 export default defineConfig({
     root: path.resolve(process.cwd(), "web"),
     build: {
-        outDir: path.resolve(process.cwd(), "dist-browser"),
+        outDir: path.resolve(process.cwd(), "dist"),
     },
     plugins: [solid()],
     resolve: {

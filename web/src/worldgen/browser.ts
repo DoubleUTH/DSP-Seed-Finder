@@ -39,7 +39,7 @@ export class WorldGenBrowser implements WorldGen {
         range: [integer, integer]
         rule: Rule
         concurrency: integer
-        onProgress?: (current: number, galaxys: Galaxy[]) => void
+        onProgress?: (current: number, results: FindResult[]) => void
         onComplete?: () => void
         onInterrupt?: () => void
     }) {
@@ -55,17 +55,17 @@ export class WorldGenBrowser implements WorldGen {
         let progressStart = currentSeed
         let progressEnd = currentSeed
         const pendingSeeds = new Set<integer>()
-        let results: Galaxy[] = []
+        let results: FindResult[] = []
         let done = maxWorker
 
         function run(worker: Worker) {
             const eventHandler = (ev: MessageEvent) => {
                 const message = ev.data
                 if (message.type === FIND_NAME) {
-                    const galaxy: Galaxy = message.data
-                    const seed = galaxy.seed
-                    if (galaxy.stars.length > 0) {
-                        results.push(galaxy)
+                    const result: FindResult = message.data
+                    const seed = result.seed
+                    if (result.indexes.length > 0) {
+                        results.push(result)
                     }
                     if (progressEnd === seed) {
                         ++progressEnd

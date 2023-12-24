@@ -6,6 +6,7 @@ mod transform_rules;
 mod worldgen;
 
 use data::game_desc::GameDesc;
+use serde::Serialize;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::spawn_local;
 use worldgen::galaxy_gen::{create_galaxy, find_stars};
@@ -24,6 +25,12 @@ pub fn generate(gameDesc: JsValue) -> Result<JsValue, serde_wasm_bindgen::Error>
     serde_wasm_bindgen::to_value(&galaxy)
 }
 
+#[derive(Serialize)]
+struct FindResult {
+    seed: i32,
+    indexes: Vec<i32>,
+}
+
 #[wasm_bindgen]
 #[allow(non_snake_case)]
 pub fn findStars(gameDesc: JsValue, rule: JsValue) {
@@ -32,8 +39,12 @@ pub fn findStars(gameDesc: JsValue, rule: JsValue) {
         let rule = serde_wasm_bindgen::from_value(rule).unwrap();
         let mut transformed = transform_rules::transform_rules(rule);
         loop {
-            let galaxy = find_stars(&game_desc, &mut transformed);
-            let result = serde_wasm_bindgen::to_value(&galaxy).unwrap();
+            let star_indexes = find_stars(&game_desc, &mut transformed);
+            let result = serde_wasm_bindgen::to_value(&FindResult {
+                seed: game_desc.seed,
+                indexes: star_indexes,
+            })
+            .unwrap();
             let next_seed: JsValue = found(result).await;
             match next_seed.as_f64() {
                 Some(f) => {

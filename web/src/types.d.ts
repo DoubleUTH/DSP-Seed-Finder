@@ -191,11 +191,16 @@ declare global {
             range: [number, number]
             rule: Rule
             concurrency: integer
-            onProgress?: (current: number, galaxys: Galaxy[]) => void
+            onProgress?: (current: number, results: FindResult[]) => void
             onComplete?: () => void
             onInterrupt?: () => void
         }): void
         stop(): void
+    }
+
+    declare interface FindResult {
+        seed: integer
+        indexes: integer[]
     }
 
     declare interface Store {

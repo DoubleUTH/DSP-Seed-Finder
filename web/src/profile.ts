@@ -73,11 +73,11 @@ export async function setProfileSettings(
 export async function saveToProfile(
     id: string,
     currentSeed: integer,
-    galaxys: Galaxy[] = [],
+    results: FindResult[] = [],
 ) {
     const db = await openDatabase(id)
     const txn = db.transaction(
-        galaxys.length > 0 ? [SETTINGS, STARS] : [SETTINGS],
+        results.length > 0 ? [SETTINGS, STARS] : [SETTINGS],
         "readwrite",
     )
     await new Promise((resolve, reject) => {
@@ -90,14 +90,14 @@ export async function saveToProfile(
             settingsStore.put({ ...req.result, current: currentSeed })
         }
 
-        if (galaxys.length > 0) {
+        if (results.length > 0) {
             const store = txn.objectStore(STARS)
-            galaxys.forEach((galaxy) => {
-                galaxy.stars.forEach((star) => {
+            results.forEach((result) => {
+                result.indexes.forEach((index) => {
                     store.put({
-                        id: galaxy.seed * 100 + star.index,
-                        seed: galaxy.seed,
-                        index: star.index,
+                        id: result.seed * 100 + index,
+                        seed: result.seed,
+                        index: index,
                     })
                 })
             })

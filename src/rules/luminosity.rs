@@ -1,3 +1,4 @@
+use crate::data::planet::Planet;
 use crate::data::rule::{Condition, Rule};
 use crate::data::star::Star;
 use serde::{Deserialize, Serialize};
@@ -11,7 +12,7 @@ pub struct RuleLuminosity {
 }
 
 impl Rule for RuleLuminosity {
-    fn on_star_created(&mut self, star: &Star) -> Option<bool> {
+    fn on_planets_created(&mut self, star: &Star, _: &Vec<Planet>) -> Option<bool> {
         self.evaluated = true;
         Some(self.condition.eval(star.luminosity))
     }

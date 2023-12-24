@@ -52,3 +52,7 @@
 .active .index {
     color: #c0c0c0;
 }
+
+.right {
+    flex: 1 1 0;
+}

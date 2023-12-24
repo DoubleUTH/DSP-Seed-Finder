@@ -1,3 +1,4 @@
+use crate::data::planet::Planet;
 use crate::data::rule::Rule;
 use crate::data::star::Star;
 use serde::{Deserialize, Serialize};
@@ -10,9 +11,12 @@ pub struct RuleBirth {
 }
 
 impl Rule for RuleBirth {
-    fn on_star_created(&mut self, star: &Star) -> Option<bool> {
+    fn on_planets_created(&mut self, star: &Star, _: &Vec<Planet>) -> Option<bool> {
         self.evaluated = true;
-        Some(star.id == 1)
+        Some(star.index == 0)
+    }
+    fn is_birth(&self) -> bool {
+        true
     }
     fn is_evaluated(&self) -> bool {
         self.evaluated

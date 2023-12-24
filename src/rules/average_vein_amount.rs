@@ -1,6 +1,6 @@
 use crate::data::enums::VeinType;
-use crate::data::rule::{Condition, Rule};
 use crate::data::planet::Planet;
+use crate::data::rule::{Condition, Rule};
 use crate::data::star::Star;
 use serde::{Deserialize, Serialize};
 
@@ -14,6 +14,18 @@ pub struct RuleAverageVeinAmount {
 }
 
 impl Rule for RuleAverageVeinAmount {
+    fn on_planets_themed(&mut self, _: &Star, planets: &Vec<Planet>) -> Option<bool> {
+        if self.vein.is_rare() {
+            if planets
+                .iter()
+                .all(|p| !p.theme_proto.rare_veins.contains(&self.vein))
+            {
+                self.evaluated = true;
+                return Some(false);
+            }
+        }
+        None
+    }
     fn on_veins_generated(&mut self, star: &Star, _: &Vec<Planet>) -> Option<bool> {
         self.evaluated = true;
         let value = if let Some(x) = star.vein_amount.get(&self.vein) {

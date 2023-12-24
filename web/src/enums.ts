@@ -58,6 +58,8 @@ export enum RuleType {
     GasCount = "GasCount",
     SatelliteCount = "SatelliteCount",
     Birth = "Birth",
+    ThemeId = "ThemeId",
+    PlanetCount = "PlanetCount",
 }
 
 export enum ConditionType {

@@ -1,6 +1,20 @@
 .view {
     display: flex;
-    flex-direction: column;
+    height: 100%;
+}
+
+.main {
+    overflow-y: scroll;
+}
+
+@media screen and (min-width: 1440px) {
+    .main {
+        display: flex;
+    }
+}
+
+.column {
+    overflow-y: scroll;
 }
 
 .card {
@@ -38,7 +52,6 @@
 }
 
 .index {
-    font-size: 16px;
     margin-left: 12px;
     color: #808080;
 }
@@ -47,15 +60,14 @@
     display: flex;
     justify-content: space-between;
     font-size: 18px;
+    padding: 4px 0;
     line-height: 24px;
-    min-width: 200px;
+    min-width: 240px;
     gap: 16px;
 }
 
 .row + .row {
-    margin-top: 4px;
-    padding-top: 4px;
-    border-top: 1px solid rgba(160, 160, 160, 0.5);
+    border-top: 1px dotted rgba(160, 160, 160, 0.5);
 }
 
 .value {
@@ -65,4 +77,42 @@
 
 .estimate {
     font-style: italic;
+}
+
+.nearbyRow {
+    min-width: 280px;
+}
+
+.nearbyType {
+    color: rgba(160, 160, 160, 0.8);
+}
+
+.nearbyDistance {
+    display: inline-block;
+    text-align: right;
+    width: 48px;
+}
+
+.planets {
+    padding: 12px 0;
+}
+
+.planets .title {
+    padding: 0 12px;
+}
+
+.planet {
+    font-size: 18px;
+    padding: 8px 12px;
+    line-height: 24px;
+    min-width: 240px;
+}
+
+.planet + .planet {
+    border-top: 2px solid rgba(160, 160, 160, 0.5);
+}
+
+.planetName {
+    font-size: 20px;
+    margin-bottom: 8px;
 }

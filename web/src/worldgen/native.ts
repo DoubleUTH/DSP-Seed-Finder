@@ -25,7 +25,7 @@ export class WorldGenNative implements WorldGen {
         const ws = await connect()
         const promise = new Promise<Galaxy>((resolve) => {
             ws.addEventListener("message", (ev) => {
-                resolve(JSON.parse(ev.data))
+                resolve(JSON.parse(ev.data).galaxy)
                 ws.close()
             })
         })
@@ -33,65 +33,63 @@ export class WorldGenNative implements WorldGen {
         return promise
     }
 
-    async *find({
+    find({
         gameDesc,
         range,
         rule,
         concurrency,
+        onProgress,
+        onComplete,
+        onInterrupt,
     }: {
         gameDesc: Omit<GameDesc, "seed">
         range: [integer, integer]
         rule: Rule
         concurrency: integer
-    }): AsyncGenerator<Galaxy, any, undefined> {
-        const ws = await connect()
-        let results: Galaxy[] = []
-        let done = false
-        let resolve: () => void = () => {}
-        let promise = new Promise<void>((r) => {
-            resolve = r
-        })
+        onProgress?: (current: number, galaxys: Galaxy[]) => void
+        onComplete?: () => void
+        onInterrupt?: () => void
+    }) {
+        connect().then((ws) => {
+            let results: Galaxy[] = []
+            let done = false
 
-        this._stop = () => {
-            if (ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify({ type: "Stop" }))
+            this._stop = () => {
+                if (ws.readyState === WebSocket.OPEN) {
+                    ws.send(JSON.stringify({ type: "Stop" }))
+                }
             }
-        }
 
-        ws.addEventListener("close", () => {
-            done = true
-            resolve()
+            ws.addEventListener("close", () => {
+                if (!done) {
+                    onInterrupt?.()
+                }
+            })
+
+            ws.addEventListener("message", (ev) => {
+                const msg = JSON.parse(ev.data)
+                if (msg.type === "Galaxy") {
+                    results.push(msg.galaxy)
+                } else {
+                    onProgress?.(msg.end, results)
+                    results = []
+                    if (msg.type === "Done") {
+                        done = true
+                        onComplete?.()
+                        ws.close()
+                    }
+                }
+            })
+            ws.send(
+                JSON.stringify({
+                    type: "Find",
+                    game: { ...gameDesc, seed: 0 },
+                    range,
+                    rule,
+                    concurrency,
+                }),
+            )
         })
-
-        ws.addEventListener("message", (ev) => {
-            if (!ev.data) {
-                done = true
-                resolve()
-            } else {
-                results.push(JSON.parse(ev.data))
-                resolve()
-                promise = new Promise<void>((r) => {
-                    resolve = r
-                })
-            }
-        })
-
-        ws.send(
-            JSON.stringify({
-                type: "Find",
-                game: { ...gameDesc, seed: 0 },
-                range,
-                rule,
-                concurrency,
-            }),
-        )
-
-        while (!done) {
-            await promise
-            yield* results
-            results = []
-        }
-        ws.close()
     }
 
     stop() {

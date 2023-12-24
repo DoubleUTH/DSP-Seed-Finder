@@ -1,7 +1,7 @@
+use crate::data::planet::Planet;
 use crate::data::rule::Rule;
+use crate::data::star::Star;
 use serde::{Deserialize, Serialize};
-
-// TODO: add ocean type to theme proto
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -12,6 +12,14 @@ pub struct RuleOceanType {
 }
 
 impl Rule for RuleOceanType {
+    fn on_planets_themed(&mut self, _: &Star, planets: &Vec<Planet>) -> Option<bool> {
+        self.evaluated = true;
+        Some(
+            self.ocean_type
+                .iter()
+                .all(|t| planets.iter().any(|p| *t == p.theme_proto.water_item_id)),
+        )
+    }
     fn is_evaluated(&self) -> bool {
         self.evaluated
     }

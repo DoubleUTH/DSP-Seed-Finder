@@ -4,29 +4,6 @@ const GENERATE_NAME = "generate"
 const FIND_NAME = "find"
 const FIND_NEXT_NAME = "next"
 
-async function* combineGenerators<T>(iterable: AsyncGenerator<T>[]) {
-    const asyncIterators = Array.from(iterable, (o) =>
-        o[Symbol.asyncIterator](),
-    )
-    let count = asyncIterators.length
-    const never = new Promise<any>(() => {})
-    async function getNext(asyncIterator: AsyncIterator<T>, index: number) {
-        const result = await asyncIterator.next()
-        return { index, result }
-    }
-    const nextPromises = asyncIterators.map(getNext)
-    while (count) {
-        const { index, result } = await Promise.race(nextPromises)
-        if (result.done) {
-            nextPromises[index] = never
-            count--
-        } else {
-            nextPromises[index] = getNext(asyncIterators[index]!, index)
-            yield result.value
-        }
-    }
-}
-
 export class WorldGenBrowser implements WorldGen {
     private _stop: () => void = () => {}
 
@@ -55,61 +32,79 @@ export class WorldGenBrowser implements WorldGen {
         range,
         rule,
         concurrency,
+        onProgress,
+        onComplete,
     }: {
         gameDesc: Omit<GameDesc, "seed">
         range: [integer, integer]
         rule: Rule
         concurrency: integer
-    }): AsyncGenerator<Galaxy> {
+        onProgress?: (current: number, galaxys: Galaxy[]) => void
+        onComplete?: () => void
+        onInterrupt?: () => void
+    }) {
         let currentSeed = range[0]
         const finalSeed = range[1]
-
-        const workers = Array.from({
-            length: Math.min(concurrency, finalSeed - currentSeed + 1),
-        }).map(() => new WorldgenWorker())
 
         let stopped = false
         this._stop = () => {
             stopped = true
         }
 
-        async function* run(worker: Worker): AsyncGenerator<Galaxy> {
-            let resolveFn: ((data?: Galaxy) => void) | undefined
+        const maxWorker = Math.min(concurrency, finalSeed - currentSeed + 1)
+        let progressStart = currentSeed
+        let progressEnd = currentSeed
+        const pendingSeeds = new Set<integer>()
+        let results: Galaxy[] = []
+        let done = maxWorker
+
+        function run(worker: Worker) {
             const eventHandler = (ev: MessageEvent) => {
                 const message = ev.data
                 if (message.type === FIND_NAME) {
-                    resolveFn?.(message.data)
+                    const galaxy: Galaxy = message.data
+                    const seed = galaxy.seed
+                    if (galaxy.stars.length > 0) {
+                        results.push(galaxy)
+                    }
+                    if (progressEnd === seed) {
+                        ++progressEnd
+                        while (pendingSeeds.delete(progressEnd)) {
+                            ++progressEnd
+                        }
+                        if (progressEnd >= progressStart + 1000) {
+                            progressStart = progressEnd
+                            onProgress?.(progressEnd, results)
+                            results = []
+                        }
+                    } else {
+                        pendingSeeds.add(seed)
+                    }
+                    if (!stopped && currentSeed <= finalSeed) {
+                        worker.postMessage({
+                            type: FIND_NEXT_NAME,
+                            input: currentSeed++,
+                        })
+                    } else {
+                        worker.terminate()
+                        if (--done === 0) {
+                            onProgress?.(progressEnd, results)
+                            results = []
+                            onComplete?.()
+                        }
+                    }
                 }
             }
             worker.addEventListener("message", eventHandler)
-            try {
-                worker.postMessage({
-                    type: FIND_NAME,
-                    input: { game: { ...gameDesc, seed: currentSeed++ }, rule },
-                })
-
-                for (;;) {
-                    const result = await new Promise<Galaxy | undefined>(
-                        (resolve) => {
-                            resolveFn = resolve
-                        },
-                    )
-                    if (!result) break
-                    yield result
-                    if (currentSeed > finalSeed) break
-                    worker.postMessage({
-                        type: FIND_NEXT_NAME,
-                        input: currentSeed++,
-                    })
-                    if (stopped) break
-                }
-            } finally {
-                worker.removeEventListener("message", eventHandler)
-                worker.terminate()
-            }
+            worker.postMessage({
+                type: FIND_NAME,
+                input: { game: { ...gameDesc, seed: currentSeed++ }, rule },
+            })
         }
 
-        return combineGenerators(workers.map(run))
+        for (let i = 0; i < maxWorker; ++i) {
+            run(new WorldgenWorker())
+        }
     }
 
     stop() {

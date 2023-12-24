@@ -243,11 +243,8 @@ pub fn find_stars(game_desc: &GameDesc, rule: &mut Box<dyn Rule + Send>) -> Gala
         rule.reset();
         let name = random_name(star.name_seed, &star, names.iter());
         names.push(name);
-        if rule.on_star_created(&star) == Some(false) {
-            continue;
-        }
         let mut planets = create_star_planets(&star, game_desc.star_count, &mut habitable_count);
-        if !rule.is_evaluated() && rule.on_planets_created(&star, &planets) == Some(false) {
+        if rule.on_planets_created(&star, &planets) == Some(false) {
             continue;
         }
         let mut used_theme_ids: Vec<i32> = vec![];
@@ -271,7 +268,11 @@ pub fn find_stars(game_desc: &GameDesc, rule: &mut Box<dyn Rule + Send>) -> Gala
         }
         star.planets = planets;
         star.name = names.last().unwrap().clone();
+        let done = star.index == 0 && rule.is_birth();
         stars.push(star);
+        if done {
+            break;
+        }
     }
 
     Galaxy {

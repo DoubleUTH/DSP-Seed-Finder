@@ -1,5 +1,5 @@
-use crate::rules;
 use crate::data::rule::Rule;
+use crate::rules;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -18,12 +18,20 @@ pub enum Rules {
     GasCount(rules::gas_count::RuleGasCount),
     SatelliteCount(rules::satellite_count::RuleSatelliteCount),
     Birth(rules::birth::RuleBirth),
+    ThemeId(rules::theme_id::RuleThemeId),
+    PlanetCount(rules::planet_count::RulePlanetCount),
 }
 
 pub fn transform_rules(r: Rules) -> Box<dyn Rule + Send> {
     match r {
-        Rules::And { rules } => Box::new(rules::and::RuleAnd { evaluated: false, rules: rules.into_iter().map(transform_rules).collect() }),
-        Rules::Or { rules } => Box::new(rules::or::RuleOr { evaluated: false, rules: rules.into_iter().map(transform_rules).collect() }),
+        Rules::And { rules } => Box::new(rules::and::RuleAnd {
+            evaluated: false,
+            rules: rules.into_iter().map(transform_rules).collect(),
+        }),
+        Rules::Or { rules } => Box::new(rules::or::RuleOr {
+            evaluated: false,
+            rules: rules.into_iter().map(transform_rules).collect(),
+        }),
         Rules::Luminosity(rule) => Box::new(rule),
         Rules::DysonRadius(rule) => Box::new(rule),
         Rules::AverageVeinAmount(rule) => Box::new(rule),
@@ -35,5 +43,7 @@ pub fn transform_rules(r: Rules) -> Box<dyn Rule + Send> {
         Rules::GasCount(rule) => Box::new(rule),
         Rules::SatelliteCount(rule) => Box::new(rule),
         Rules::Birth(rule) => Box::new(rule),
+        Rules::ThemeId(rule) => Box::new(rule),
+        Rules::PlanetCount(rule) => Box::new(rule),
     }
 }

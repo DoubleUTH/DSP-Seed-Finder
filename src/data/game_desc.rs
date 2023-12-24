@@ -18,14 +18,6 @@ impl GameDesc {
         1.0
     }
 
-    pub fn new(seed: i32) -> Self {
-        Self {
-            seed,
-            star_count: GameDesc::default_star_count(),
-            resource_multiplier: GameDesc::default_resource_multiplier(),
-        }
-    }
-
     pub fn is_infinite_resource(&self) -> bool {
         self.resource_multiplier >= 99.5
     }

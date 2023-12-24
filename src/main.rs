@@ -5,11 +5,12 @@ mod rules;
 mod transform_rules;
 mod worldgen;
 
+use data::galaxy::Galaxy;
 use data::game_desc::GameDesc;
-use futures_util::future::join_all;
 use futures_util::lock::Mutex;
 use futures_util::{future, SinkExt, StreamExt, TryStreamExt};
 use serde::{Deserialize, Serialize};
+use std::collections::HashSet;
 use std::sync::atomic::{AtomicBool, AtomicI32, Ordering};
 use std::sync::Arc;
 use tokio::net::{TcpListener, TcpStream};
@@ -43,6 +44,44 @@ enum IncomingMessage {
     Stop,
 }
 
+#[derive(Serialize)]
+#[serde(tag = "type")]
+enum OutgoingMessage {
+    Galaxy { galaxy: Galaxy },
+    Progress { start: i32, end: i32 },
+    Done { start: i32, end: i32 },
+}
+
+struct FindState {
+    pub progress_start: i32,
+    pub progress_end: i32,
+    pub pending_seeds: HashSet<i32>,
+    pub running: i32,
+}
+
+impl FindState {
+    pub fn add(&mut self, seed: i32) -> Option<(i32, i32)> {
+        if self.progress_end == seed {
+            self.progress_end += 1;
+            let mut e = self.progress_end;
+            while self.pending_seeds.remove(&e) {
+                e += 1;
+            }
+            self.progress_end = e;
+            if self.progress_end >= self.progress_start + 1000 {
+                let start = self.progress_start;
+                self.progress_start = self.progress_end;
+                Some((start, self.progress_end))
+            } else {
+                None
+            }
+        } else {
+            self.pending_seeds.insert(seed);
+            None
+        }
+    }
+}
+
 async fn accept_connection(stream: TcpStream) {
     let ws_stream = accept_async(stream)
         .await
@@ -64,7 +103,8 @@ async fn accept_connection(stream: TcpStream) {
                         let w = boxed_write.clone();
                         tokio::spawn(async move {
                             let galaxy = create_galaxy(&game);
-                            let output = serde_json::to_string(&galaxy).unwrap();
+                            let output =
+                                serde_json::to_string(&OutgoingMessage::Galaxy { galaxy }).unwrap();
                             w.lock().await.send(Message::Text(output)).await.unwrap();
                         });
                     }
@@ -74,20 +114,26 @@ async fn accept_connection(stream: TcpStream) {
                         range: (start, end),
                         concurrency,
                     } => {
-                        let current_seed = Arc::new(AtomicI32::new(start));
                         let threads = concurrency.min(end - start + 1);
+                        let current_seed = Arc::new(AtomicI32::new(start));
+                        let state = Arc::new(std::sync::Mutex::new(FindState {
+                            progress_end: start,
+                            progress_start: start,
+                            running: threads,
+                            pending_seeds: HashSet::new(),
+                        }));
                         stopped.store(false, Ordering::SeqCst);
-                        let mut handles = vec![];
                         for _ in 0..threads {
                             let w = boxed_write.clone();
                             let mut transformed = transform_rules::transform_rules(rule.clone());
                             let mut g = game.clone();
-                            let s = current_seed.clone();
+                            let s = state.clone();
+                            let cs = current_seed.clone();
                             let stop = stopped.clone();
-                            let handle = tokio::task::spawn_blocking(move || {
+                            tokio::task::spawn_blocking(move || {
                                 let runtime = Handle::current();
                                 loop {
-                                    let seed = s
+                                    let seed = cs
                                         .fetch_update(Ordering::SeqCst, Ordering::SeqCst, |x| {
                                             Some(x + 1)
                                         })
@@ -97,27 +143,55 @@ async fn accept_connection(stream: TcpStream) {
                                     }
                                     g.seed = seed;
                                     let galaxy = find_stars(&g, &mut transformed);
-                                    let output = serde_json::to_string(&galaxy).unwrap();
-                                    let w2 = w.clone();
-                                    runtime.block_on(async move {
-                                        w2.lock().await.send(Message::Text(output)).await.unwrap()
-                                    });
+                                    let notify_progress = {
+                                        let mut x = s.lock().unwrap();
+                                        x.add(seed)
+                                    };
+                                    if notify_progress.is_some() || !galaxy.stars.is_empty() {
+                                        let w2 = w.clone();
+                                        runtime.block_on(async move {
+                                            let mut stream = w2.lock().await;
+                                            if !galaxy.stars.is_empty() {
+                                                let output = serde_json::to_string(
+                                                    &OutgoingMessage::Galaxy { galaxy },
+                                                )
+                                                .unwrap();
+                                                stream.send(Message::Text(output)).await.unwrap();
+                                            }
+                                            if let Some((start, end)) = notify_progress {
+                                                let output = serde_json::to_string(
+                                                    &OutgoingMessage::Progress { start, end },
+                                                )
+                                                .unwrap();
+                                                stream.send(Message::Text(output)).await.unwrap();
+                                            }
+                                        });
+                                    }
                                     if stop.load(Ordering::SeqCst) {
                                         break;
                                     }
                                 }
+                                let mut x = s.lock().unwrap();
+                                x.running -= 1;
+                                if x.running == 0 {
+                                    let progress_start = x.progress_start;
+                                    let progress_end = x.progress_end;
+                                    runtime.block_on(async move {
+                                        w.lock()
+                                            .await
+                                            .send(Message::Text(
+                                                serde_json::to_string(&OutgoingMessage::Done {
+                                                    start: progress_start,
+                                                    end: progress_end,
+                                                })
+                                                .unwrap(),
+                                            ))
+                                            .await
+                                            .unwrap();
+                                    })
+                                }
                             });
-                            handles.push(handle)
                         }
-                        let w2 = boxed_write.clone();
-                        tokio::spawn(async move {
-                            join_all(handles).await;
-                            w2.lock()
-                                .await
-                                .send(Message::Text("".to_owned()))
-                                .await
-                                .unwrap();
-                        });
                     }
                 }
             }

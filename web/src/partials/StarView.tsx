@@ -1,10 +1,18 @@
 import { createStore } from "solid-js/store"
-import { GasType, OceanType, SpectrType, StarType, VeinType } from "../enums"
+import {
+    GasType,
+    OceanType,
+    PlanetType,
+    SpectrType,
+    StarType,
+    VeinType,
+} from "../enums"
 import { formatNumber, toPrecision } from "../util"
 import styles from "./StarView.module.css"
 import { Component, Show, For } from "solid-js"
 import { AiOutlineDown } from "solid-icons/ai"
 import clsx from "clsx"
+import { A } from "@solidjs/router"
 
 function distanceFromBirth([x, y, z]: [float, float, float]): float {
     return Math.sqrt(x * x + y * y + z * z)
@@ -143,12 +151,84 @@ function hasSulfur(star: Star): boolean {
     )
 }
 
+function planetVeins(planet: Planet): VeinStat[] {
+    const veins: Record<VeinType, VeinStat> = {} as any
+    for (const vein of planet.veins) {
+        const stat = statVein(vein)
+        const existing = veins[vein.veinType]
+        if (existing) {
+            existing.min += stat.min
+            existing.max += stat.max
+            existing.avg += stat.avg
+        } else {
+            veins[vein.veinType] = { ...stat }
+        }
+    }
+    return veinOrder.map((type) => veins[type]).filter((x) => x)
+}
+
+function planetGases(planet: Planet): Gas[] {
+    const veins: Record<GasType, float> = {} as any
+    for (const [type, amount] of planet.gases) {
+        veins[type] ??= 0
+        veins[type] += amount
+    }
+    return gasOrder
+        .filter((type) => veins[type])
+        .map((type) => [type, veins[type]])
+}
+
 function formatVein(amount: number, isOil: boolean): string {
     if (isOil) {
         return formatNumber(amount * 4e-5, 2) + " /s"
     } else {
         return toPrecision(amount, 0)
     }
+}
+
+function nearbyStars(
+    star: Star,
+    stars: Star[],
+): { star: Star; distance: float }[] {
+    const [x1, y1, z1] = star.position
+    const result = stars
+        .filter((s) => s.index !== star.index)
+        .map((s) => {
+            const [x2, y2, z2] = s.position
+            const dx = x1 - x2
+            const dy = y1 - y2
+            const dz = z1 - z2
+            return { star: s, distance: Math.sqrt(dx * dx + dy * dy + dz * dz) }
+        })
+
+    result.sort((a, b) => a.distance - b.distance)
+
+    return result
+}
+
+const Romans = ["I", "II", "III", "IV", "V", "VI"]
+
+const planetTypes: Record<number, string> = {
+    1: "Mariterra",
+    6: "Scorchedia",
+    7: "Geloterra",
+    8: "Tropicana",
+    9: "Lava",
+    10: "Glacieon",
+    11: "Desolus",
+    12: "Gobi",
+    13: "Sulfuria",
+    14: "Crimsonis",
+    15: "Prairiea",
+    16: "Aquatica",
+    17: "Halitum",
+    18: "Sakura Ocean",
+    19: "Cyclonius",
+    20: "Maroonfrost",
+    22: "Savanna",
+    23: "Onyxtopia",
+    24: "Icefrostia",
+    25: "Pandora Swamp",
 }
 
 const Expand: Component<{ expand: boolean; toggle: () => void }> = (props) => (
@@ -259,7 +339,145 @@ const StarVeins: Component<{ star: Star }> = (props) => (
     </>
 )
 
-const StarView: Component<{ star: Star; stars?: Star[] }> = (props) => {
+const NearbyStar: Component<{ seed: integer; star: Star; distance: float }> = (
+    props,
+) => (
+    <A
+        href={`/galaxy/${props.seed}/${props.star.index}`}
+        class={clsx(styles.row, styles.nearbyRow)}
+    >
+        <div>
+            <span>{props.star.name}</span>
+            <span class={styles.index}>#{props.star.index + 1}</span>
+        </div>
+        <div>
+            <span class={styles.nearbyType}>{type(props.star)}</span>
+            <span class={styles.nearbyDistance}>
+                {formatNumber(props.distance, 1)} ly
+            </span>
+        </div>
+    </A>
+)
+
+const PlanetView: Component<{ star: Star; planet: Planet }> = (props) => {
+    function isGas() {
+        return props.planet.planetType === PlanetType.Gas
+    }
+
+    return (
+        <div class={styles.planet}>
+            <div class={styles.planetName}>
+                {props.star.name} {Romans[props.planet.index]}
+            </div>
+            <Show when={isGas()}>
+                <div class={styles.row}>
+                    <div class={styles.field}>Type</div>
+                    <div class={styles.value}>
+                        {props.planet.gases.find(
+                            ([g]) => g === GasType.Deuterium,
+                        )
+                            ? "Gas Giant"
+                            : "Ice Giant"}
+                    </div>
+                </div>
+            </Show>
+            <Show when={!isGas()}>
+                <Show when={props.planet.orbitAround > 0}>
+                    <div class={styles.row}>Satellite</div>
+                </Show>
+                <Show
+                    when={
+                        props.planet.orbitalPeriod ===
+                        props.planet.rotationPeriod
+                    }
+                >
+                    <div class={styles.row}>Tidal locking</div>
+                </Show>
+                <Show
+                    when={
+                        props.planet.orbitalPeriod * 0.5 ===
+                        props.planet.rotationPeriod
+                    }
+                >
+                    <div class={styles.row}>Orbital Resonance 1 : 2</div>
+                </Show>
+                <Show
+                    when={
+                        props.planet.orbitalPeriod * 0.25 ===
+                        props.planet.rotationPeriod
+                    }
+                >
+                    <div class={styles.row}>Orbital Resonance 1 : 4</div>
+                </Show>
+                <Show when={Math.abs(props.planet.obliquity) > 70}>
+                    <div class={styles.row}>Horizontal Rotation</div>
+                </Show>
+                <div class={styles.row}>
+                    <div class={styles.field}>Wind Power</div>
+                    <div class={styles.value}>
+                        {toPrecision(props.planet.themeProto.wind * 100, 0)}%
+                    </div>
+                </div>
+                <div class={styles.row}>
+                    <div class={styles.field}>Solar Power</div>
+                    <div class={styles.value}>
+                        {toPrecision(props.planet.luminosity * 100, 0)}%
+                    </div>
+                </div>
+                <div class={styles.row}>
+                    <div class={styles.field}>Type</div>
+                    <div class={styles.value}>
+                        {planetTypes[props.planet.themeProto.id] ||
+                            props.planet.themeProto.id}
+                    </div>
+                </div>
+            </Show>
+            <For each={planetVeins(props.planet)}>
+                {(vein) => (
+                    <div class={styles.row}>
+                        <div class={styles.field}>
+                            {veinNames[vein.veinType]}
+                        </div>
+                        <div class={clsx(styles.value, styles.estimate)}>
+                            {formatVein(
+                                vein.avg,
+                                vein.veinType === VeinType.Oil,
+                            )}
+                        </div>
+                    </div>
+                )}
+            </For>
+            <Show
+                when={props.planet.themeProto.waterItemId === OceanType.Water}
+            >
+                <div class={styles.row}>
+                    <div class={styles.field}>Water</div>
+                    <div class={styles.value}>Ocean</div>
+                </div>
+            </Show>
+            <Show
+                when={props.planet.themeProto.waterItemId === OceanType.Sulfur}
+            >
+                <div class={styles.row}>
+                    <div class={styles.field}>Sulfuric Acid</div>
+                    <div class={styles.value}>Ocean</div>
+                </div>
+            </Show>
+            <For each={planetGases(props.planet)}>
+                {([type, amount]) => (
+                    <div class={styles.row}>
+                        <div class={styles.field}>{gasNames[type]}</div>
+                        <div class={styles.value}>
+                            {formatNumber(amount, 4)} /s
+                        </div>
+                    </div>
+                )}
+            </For>
+        </div>
+    )
+}
+
+const StarView: Component<{ star: Star; galaxy?: Galaxy }> = (props) => {
     const [expand, setExpand] = createStore({
         detail: false,
         planets: {} as Record<number, boolean>,
@@ -267,22 +485,63 @@ const StarView: Component<{ star: Star; stars?: Star[] }> = (props) => {
 
     return (
         <div class={styles.view}>
-            <div class={styles.card}>
-                <Expand
-                    expand={expand.detail}
-                    toggle={() => setExpand("detail", (x) => !x)}
-                />
-                <div class={styles.title}>
-                    <span>{props.star.name}</span>
-                    <span class={styles.index}>#{props.star.index + 1}</span>
+            <div class={styles.main}>
+                <div class={styles.column}>
+                    <div class={styles.card}>
+                        <Expand
+                            expand={expand.detail}
+                            toggle={() => setExpand("detail", (x) => !x)}
+                        />
+                        <div class={styles.title}>
+                            <span>{props.star.name}</span>
+                            <span class={styles.index}>
+                                #{props.star.index + 1}
+                            </span>
+                        </div>
+                        <StarDetail star={props.star} expand={expand.detail} />
+                    </div>
+                    <div class={styles.card}>
+                        <div class={styles.title}>
+                            <span>Resources</span>
+                        </div>
+                        <StarVeins star={props.star} />
+                    </div>
                 </div>
-                <StarDetail star={props.star} expand={expand.detail} />
+                <Show when={!!props.galaxy}>
+                    <div class={styles.column}>
+                        <div class={styles.card}>
+                            <div class={styles.title}>
+                                <span>Nearby Stars</span>
+                            </div>
+                            <For
+                                each={nearbyStars(
+                                    props.star,
+                                    props.galaxy!.stars,
+                                )}
+                            >
+                                {({ star, distance }) => (
+                                    <NearbyStar
+                                        seed={props.galaxy!.seed}
+                                        star={star}
+                                        distance={distance}
+                                    />
+                                )}
+                            </For>
+                        </div>
+                    </div>
+                </Show>
             </div>
-            <div class={styles.card}>
-                <div class={styles.title}>
-                    <span>Resources</span>
+            <div class={styles.column}>
+                <div class={clsx(styles.card, styles.planets)}>
+                    <div class={styles.title}>
+                        <span>Planets</span>
+                    </div>
+                    <For each={props.star.planets}>
+                        {(planet) => (
+                            <PlanetView star={props.star} planet={planet} />
+                        )}
+                    </For>
                 </div>
-                <StarVeins star={props.star} />
             </div>
         </div>
     )

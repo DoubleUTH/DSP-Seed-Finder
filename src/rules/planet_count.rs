@@ -1,21 +1,20 @@
-use crate::data::enums::StarType;
-use crate::data::planet::Planet;
 use crate::data::rule::Rule;
 use crate::data::star::Star;
+use crate::data::{planet::Planet, rule::Condition};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct RuleStarType {
+pub struct RulePlanetCount {
     #[serde(skip)]
     pub evaluated: bool,
-    pub star_type: Vec<StarType>,
+    pub condition: Condition,
 }
 
-impl Rule for RuleStarType {
-    fn on_planets_created(&mut self, star: &Star, _: &Vec<Planet>) -> Option<bool> {
+impl Rule for RulePlanetCount {
+    fn on_planets_created(&mut self, _: &Star, planets: &Vec<Planet>) -> Option<bool> {
         self.evaluated = true;
-        Some(self.star_type.contains(&star.star_type))
+        Some(self.condition.eval(planets.len() as f32))
     }
     fn is_evaluated(&self) -> bool {
         self.evaluated

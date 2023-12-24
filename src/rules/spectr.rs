@@ -1,4 +1,5 @@
 use crate::data::enums::SpectrType;
+use crate::data::planet::Planet;
 use crate::data::rule::Rule;
 use crate::data::star::Star;
 use serde::{Deserialize, Serialize};
@@ -12,7 +13,7 @@ pub struct RuleSpectr {
 }
 
 impl Rule for RuleSpectr {
-    fn on_star_created(&mut self, star: &Star) -> Option<bool> {
+    fn on_planets_created(&mut self, star: &Star, _: &Vec<Planet>) -> Option<bool> {
         self.evaluated = true;
         Some(self.spectr.contains(&star.spectr))
     }

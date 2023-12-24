@@ -33,8 +33,9 @@ impl Condition {
 #[allow(unused_variables)]
 pub trait Rule {
     fn is_evaluated(&self) -> bool;
-    fn on_star_created(&mut self, star: &Star) -> Option<bool> {
-        None
+    // optimization for birth only
+    fn is_birth(&self) -> bool {
+        false
     }
     fn on_planets_created(&mut self, star: &Star, planets: &Vec<Planet>) -> Option<bool> {
         None

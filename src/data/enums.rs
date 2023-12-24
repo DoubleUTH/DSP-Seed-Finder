@@ -92,3 +92,18 @@ impl Default for VeinType {
         Self::None
     }
 }
+
+impl VeinType {
+    pub fn is_rare(&self) -> bool {
+        match self {
+            VeinType::Fireice
+            | VeinType::Diamond
+            | VeinType::Fractal
+            | VeinType::Crysrub
+            | VeinType::Grat
+            | VeinType::Bamboo
+            | VeinType::Mag => true,
+            _ => false,
+        }
+    }
+}

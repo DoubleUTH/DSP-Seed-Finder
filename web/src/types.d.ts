@@ -47,8 +47,6 @@ declare global {
         index: integer
         orbitAround: integer
         orbitIndex: integer
-        name: string
-        isBirth: bool
         orbitRadius: float
         orbitInclination: float
         orbitLongitude: float
@@ -157,6 +155,14 @@ declare global {
         export type Birth = {
             type: RuleType.Birth
         }
+        export type ThemeId = {
+            type: RuleType.ThemeId
+            themeIds: integer[]
+        }
+        export type PlanetCount = {
+            type: RuleType.PlanetCount
+            condition: Condition
+        }
     }
 
     declare type Rule =
@@ -173,6 +179,8 @@ declare global {
         | Rule.GasCount
         | Rule.SatelliteCount
         | Rule.Birth
+        | Rule.ThemeId
+        | Rule.PlanetCount
 
     declare interface WorldGen {
         generate(gameDesc: GameDesc): Promise<Galaxy>
@@ -181,7 +189,10 @@ declare global {
             range: [number, number]
             rule: Rule
             concurrency: integer
-        }): AsyncGenerator<Galaxy>
+            onProgress?: (current: number, galaxys: Galaxy[]) => void
+            onComplete?: () => void
+            onInterrupt?: () => void
+        }): void
         stop(): void
     }
 

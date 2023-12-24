@@ -5,7 +5,7 @@ export const defaultStore: Store = {
     settings: {
         darkMode: window.matchMedia("(prefers-color-scheme: dark)").matches,
         concurrency: Math.max(navigator.hardwareConcurrency, 1),
-        nativeMode: false,
+        nativeMode: true,
         starCount: 64,
         resourceMultiplier: 1,
     },

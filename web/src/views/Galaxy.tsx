@@ -129,7 +129,10 @@ const View: Component<{ seed: number; index: number }> = (props) => {
                     </For>
                 </div>
                 <div class={styles.right}>
-                    <StarView star={stars()[props.index]!} stars={stars()} />
+                    <StarView
+                        star={stars()[props.index]!}
+                        galaxy={store.galaxys[props.seed]!}
+                    />
                 </div>
             </div>
         </Show>

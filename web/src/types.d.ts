@@ -165,9 +165,7 @@ declare global {
         }
     }
 
-    declare type Rule =
-        | Rule.And
-        | Rule.Or
+    declare type SimpleRule =
         | Rule.Luminosity
         | Rule.DysonRadius
         | Rule.AverageVeinAmount
@@ -181,6 +179,10 @@ declare global {
         | Rule.Birth
         | Rule.ThemeId
         | Rule.PlanetCount
+
+    declare type CompoundRule = Rule.And | Rule.Or
+
+    declare type Rule = SimpleRule | CompoundRule
 
     declare interface WorldGen {
         generate(gameDesc: GameDesc): Promise<Galaxy>
@@ -219,5 +221,16 @@ declare global {
         nativeMode: boolean
         starCount: integer
         resourceMultiplier: float
+    }
+
+    declare interface ProfileSettings {
+        id: string
+        name: string
+        starCount: integer
+        resourceMultiplier: float
+        start: integer
+        end: integer
+        current: integer
+        rules: SimpleRule[][]
     }
 }

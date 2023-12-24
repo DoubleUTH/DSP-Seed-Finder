@@ -1,3 +1,5 @@
+import { RuleType } from "./enums"
+
 export function toPrecision(number: number, precision: number) {
     return number.toLocaleString([], {
         minimumFractionDigits: precision,
@@ -13,4 +15,11 @@ export function formatNumber(number: number, precision: number): string {
     } else {
         return toPrecision(number, precision)
     }
+}
+
+export function constructRule(rules: SimpleRule[][]): Rule {
+    const rs: Rule[] = rules.map((r) =>
+        r.length === 1 ? r[0]! : { type: RuleType.Or, rules: r },
+    )
+    return rs.length === 1 ? rs[0]! : { type: RuleType.And, rules: rs }
 }

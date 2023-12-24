@@ -68,7 +68,7 @@ impl FindState {
                 e += 1;
             }
             self.progress_end = e;
-            if self.progress_end >= self.progress_start + 1000 {
+            if self.progress_end >= self.progress_start + 10000 {
                 let start = self.progress_start;
                 self.progress_start = self.progress_end;
                 Some((start, self.progress_end))

@@ -104,10 +104,10 @@ const Find: Component = () => {
     }
 
     return (
-        <>
+        <div>
             <Button onClick={search}>Click</Button>
             <Button onClick={stop}>Stop</Button>
-        </>
+        </div>
     )
 }
 

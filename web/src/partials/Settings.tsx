@@ -1,14 +1,13 @@
 import styles from "./Settings.module.css"
 import { useStore } from "../store"
 import Modal from "../components/Modal"
-import { Component, createSignal } from "solid-js"
+import { Component } from "solid-js"
 import Switch from "../components/Switch"
 import NumberInput from "../components/NumberInput"
 import Select from "../components/Select"
 
 const Settings: Component = () => {
     const [store, setStore] = useStore()
-    const [select, setSelect] = createSignal(false)
 
     function bind<K extends keyof Settings>(
         key: K,
@@ -52,8 +51,6 @@ const Settings: Component = () => {
                     }
                     options={[0.1, 0.5, 0.8, 1, 1.5, 2, 3, 5, 8, 100]}
                     isSelected={(t) => t === store.settings.resourceMultiplier}
-                    focus={select()}
-                    onFocusChange={(f) => setSelect(f)}
                 />
             </div>
             <div class={styles.row}>

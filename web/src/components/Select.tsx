@@ -1,5 +1,5 @@
 import styles from "./Select.module.css"
-import { For, JSX, createEffect, onCleanup } from "solid-js"
+import { For, JSX, createEffect, createSignal, onCleanup } from "solid-js"
 import clsx from "clsx"
 import { computePosition, flip } from "@floating-ui/dom"
 
@@ -10,16 +10,17 @@ function Select<T>(props: {
     getLabel: (t: T) => JSX.Element
     isSelected: (t: T) => boolean
     options: T[]
-    focus?: boolean
-    onFocusChange?: (focus: boolean) => void
+    onSearch?: (text: string) => void
 }): JSX.Element {
     let select: HTMLDivElement
     let dropdown: HTMLDivElement
 
+    const [focus, setFocus] = createSignal(false)
+
     createEffect(() => {
         const handler = (ev: MouseEvent) => {
             if (!select!.contains(ev.target as Node)) {
-                props.onFocusChange?.(false)
+                setFocus(false)
             }
         }
         document.body.addEventListener("click", handler)
@@ -27,7 +28,7 @@ function Select<T>(props: {
     })
 
     createEffect(() => {
-        if (props.focus) {
+        if (focus()) {
             dropdown!.style.display = ""
             dropdown.style.width = select.clientWidth + "px"
             computePosition(select!, dropdown!, {
@@ -54,16 +55,9 @@ function Select<T>(props: {
     return (
         <div
             ref={select!}
-            class={clsx(
-                styles.select,
-                props.class,
-                props.focus && styles.focus,
-            )}
+            class={clsx(styles.select, props.class, focus() && styles.focus)}
         >
-            <div
-                class={styles.content}
-                onClick={() => props.onFocusChange?.(true)}
-            >
+            <div class={styles.content} onClick={() => setFocus(true)}>
                 {props.value ? props.getLabel(props.value) : ""}
             </div>
             <div ref={dropdown!} class={styles.dropdown}>
@@ -75,7 +69,7 @@ function Select<T>(props: {
                                 props.isSelected(option) && styles.selected,
                             )}
                             onClick={() => {
-                                props.onFocusChange?.(false)
+                                setFocus(false)
                                 props.onChange?.(option)
                             }}
                         >

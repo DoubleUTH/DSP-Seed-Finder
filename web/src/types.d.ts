@@ -32,7 +32,7 @@ declare global {
         lifetime: float
         age: float
         temperature: float
-        starType: StarType
+        type: StarType
         spectr: SpectrType
         luminosity: float
         radius: float

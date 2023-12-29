@@ -15,6 +15,7 @@ export class WorldGenBrowser implements WorldGen {
                     const message = ev.data
                     if (message.type === GENERATE_NAME) {
                         worker.removeEventListener("message", eventHandler)
+                        console.log(message.data)
                         resolve(message.data)
                     }
                 }

@@ -18,7 +18,7 @@ impl Rule for RuleAverageVeinPatch {
         if self.vein.is_rare() {
             if planets
                 .iter()
-                .all(|p| !p.theme_proto.rare_veins.contains(&self.vein))
+                .all(|p| !p.get_theme().rare_veins.contains(&self.vein))
             {
                 self.evaluated = true;
                 return Some(false);

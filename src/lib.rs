@@ -22,7 +22,7 @@ extern "C" {
 pub fn generate(gameDesc: JsValue) -> Result<JsValue, serde_wasm_bindgen::Error> {
     let game_desc: GameDesc = serde_wasm_bindgen::from_value(gameDesc)?;
     let galaxy = create_galaxy(&game_desc);
-    serde_wasm_bindgen::to_value(&galaxy)
+    galaxy.serialize(&serde_wasm_bindgen::Serializer::json_compatible())
 }
 
 #[derive(Serialize)]
@@ -35,15 +35,17 @@ struct FindResult {
 #[allow(non_snake_case)]
 pub fn findStars(gameDesc: JsValue, rule: JsValue) {
     spawn_local(async {
+        let serializer = serde_wasm_bindgen::Serializer::json_compatible();
         let mut game_desc: GameDesc = serde_wasm_bindgen::from_value(gameDesc).unwrap();
         let rule = serde_wasm_bindgen::from_value(rule).unwrap();
         let mut transformed = transform_rules::transform_rules(rule);
         loop {
             let star_indexes = find_stars(&game_desc, &mut transformed);
-            let result = serde_wasm_bindgen::to_value(&FindResult {
+            let result = FindResult {
                 seed: game_desc.seed,
                 indexes: star_indexes,
-            })
+            }
+            .serialize(&serializer)
             .unwrap();
             let next_seed: JsValue = found(result).await;
             match next_seed.as_f64() {

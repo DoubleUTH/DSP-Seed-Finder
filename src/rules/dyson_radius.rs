@@ -14,7 +14,7 @@ pub struct RuleDysonRadius {
 impl Rule for RuleDysonRadius {
     fn on_planets_created(&mut self, star: &Star, _: &Vec<Planet>) -> Option<bool> {
         self.evaluated = true;
-        Some(self.condition.eval(star.dyson_radius))
+        Some(self.condition.eval(star.get_dyson_radius()))
     }
     fn is_evaluated(&self) -> bool {
         self.evaluated

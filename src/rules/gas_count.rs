@@ -1,7 +1,6 @@
-use crate::data::enums::PlanetType;
-use crate::data::rule::{Rule, Condition};
-use crate::data::star::Star;
 use crate::data::planet::Planet;
+use crate::data::rule::{Condition, Rule};
+use crate::data::star::Star;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -17,7 +16,10 @@ impl Rule for RuleGasCount {
     fn on_planets_created(&mut self, _: &Star, planets: &Vec<Planet>) -> Option<bool> {
         if self.cold == None {
             self.evaluated = true;
-            let count = planets.iter().filter(|planet| planet.planet_type == PlanetType::Gas).count();
+            let count = planets
+                .iter()
+                .filter(|planet| planet.is_gas_giant())
+                .count();
             Some(self.condition.eval(count as f32))
         } else {
             None
@@ -26,7 +28,12 @@ impl Rule for RuleGasCount {
     fn on_planets_themed(&mut self, _: &Star, planets: &Vec<Planet>) -> Option<bool> {
         self.evaluated = true;
         let cold = self.cold.unwrap();
-        let count = planets.iter().filter(|planet| planet.planet_type == PlanetType::Gas && cold == (planet.theme_proto.temperature < 0.0)).count();
+        let count = planets
+            .iter()
+            .filter(|planet| {
+                planet.is_gas_giant() && cold == (planet.get_theme().temperature < 0.0)
+            })
+            .count();
         Some(self.condition.eval(count as f32))
     }
     fn is_evaluated(&self) -> bool {

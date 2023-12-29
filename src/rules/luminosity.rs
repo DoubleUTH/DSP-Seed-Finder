@@ -14,7 +14,7 @@ pub struct RuleLuminosity {
 impl Rule for RuleLuminosity {
     fn on_planets_created(&mut self, star: &Star, _: &Vec<Planet>) -> Option<bool> {
         self.evaluated = true;
-        Some(self.condition.eval(star.luminosity))
+        Some(self.condition.eval(star.get_luminosity()))
     }
     fn is_evaluated(&self) -> bool {
         self.evaluated

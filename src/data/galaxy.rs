@@ -1,14 +1,13 @@
-use super::star::Star;
+use super::star_planets::StarWithPlanets;
 use serde::Serialize;
 
-#[derive(Debug, Clone, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct Galaxy {
+#[derive(Debug, Serialize)]
+pub struct Galaxy<'a> {
     pub seed: i32,
-    pub stars: Vec<Star>,
+    pub stars: Vec<StarWithPlanets<'a>>,
 }
 
-impl Default for Galaxy {
+impl Default for Galaxy<'_> {
     fn default() -> Self {
         Self {
             seed: 0,
@@ -17,7 +16,7 @@ impl Default for Galaxy {
     }
 }
 
-impl Galaxy {
+impl Galaxy<'_> {
     pub fn new() -> Self {
         Default::default()
     }

@@ -1,182 +1,625 @@
-use super::enums::PlanetType;
-use super::theme_proto::{ThemeProto, DEFAULT_THEME_PROTO};
+use super::enums::{PlanetType, SpectrType, StarType, ThemeDistribute, VeinType};
+use super::macros::macros::{lazy_getter, lazy_getter_ref};
+use super::random::DspRandom;
+use super::star::Star;
+use super::theme_proto::{ThemeProto, THEME_PROTOS};
 use super::vein::Vein;
 use serde::ser::{Serialize, SerializeStruct, Serializer};
-use std::cell::Cell;
+use std::cell::{RefCell, UnsafeCell};
+use std::rc::Rc;
 
-#[derive(Debug, Clone)]
-pub struct Planet {
+#[derive(Debug)]
+pub struct Planet<'a> {
+    pub star: Rc<Star<'a>>,
     pub index: i32,
     pub seed: i32,
     pub info_seed: i32,
     pub theme_seed: i32,
-    pub is_birth: bool,
-    pub orbit_around: Option<i32>,
+    pub orbit_around: RefCell<Option<Rc<Planet<'a>>>>,
     pub orbit_index: i32,
     pub radius: f32,
     pub scale: f32,
-    pub orbit_radius: f32,
-    pub orbit_inclination: f32,
+    obliquity_scale: f64,
+    rotation_param: f64,
+    rotation_scale: f64,
+    orbit_inclination_factor: f64,
+    orbit_radius_factor: f64,
+    habitable_factor: f64,
+    type_factor: f64,
+    gas_giant: bool,
     pub orbit_longitude: f32,
-    pub orbital_period: f64,
-    pub sun_orbital_period: f64,
     pub orbit_phase: f32,
-    obliquity: Cell<f32>,
-    rotation_period: Cell<f64>,
     pub rotation_phase: f32,
-    rotation_calculated: Cell<bool>,
-    pub rotation_params: (f64, f64, f64),
-    pub sun_distance: f32,
-    pub planet_type: PlanetType,
-    pub habitable_bias: f32,
-    pub temperature_bias: f32,
-    pub star_light_balance_radius: f32,
-    luminosity: Cell<f32>,
-    luminosity_calculated: Cell<bool>,
-    pub theme_proto: &'static ThemeProto,
-    pub theme_rand1: f64,
-    pub veins: Vec<Vein>,
-    pub gases: Vec<(i32, f32)>,
+    theme_rand1: f64,
+    get_orbital_radius: UnsafeCell<Option<f32>>,
+    get_sun_distance: UnsafeCell<Option<f32>>,
+    get_temperature_factor: UnsafeCell<Option<f32>>,
+    get_habitable_bias: UnsafeCell<Option<f32>>,
+    get_temperature_bias: UnsafeCell<Option<f32>>,
+    get_luminosity: UnsafeCell<Option<f32>>,
+    get_unmodified_planet_type: UnsafeCell<Option<&'static PlanetType>>,
+    get_orbit_inclination: UnsafeCell<Option<f32>>,
+    get_sun_orbital_period: UnsafeCell<Option<f64>>,
+    get_orbital_period: UnsafeCell<Option<f64>>,
+    get_obliquity: UnsafeCell<Option<f32>>,
+    get_eligible_for_resonance: UnsafeCell<Option<bool>>,
+    get_rotation_period: UnsafeCell<Option<f64>>,
+    get_theme: UnsafeCell<Option<&'static ThemeProto>>,
+    get_gases: UnsafeCell<Option<Vec<(i32, f32)>>>,
+    get_veins: UnsafeCell<Option<Vec<Vein>>>,
 }
 
-impl Default for Planet {
-    fn default() -> Self {
-        Self {
-            index: 0,
-            seed: 0,
-            info_seed: 0,
+const ORBIT_RADIUS: &'static [f32] = &[
+    0.0, 0.4, 0.7, 1.0, 1.4, 1.9, 2.5, 3.3, 4.3, 5.5, 6.9, 8.4, 10.0, 11.7, 13.5, 15.4, 17.5,
+];
+
+impl<'a> Planet<'a> {
+    pub fn new(
+        star: Rc<Star<'a>>,
+        index: i32,
+        orbit_index: i32,
+        gas_giant: bool,
+        info_seed: i32,
+        gen_seed: i32,
+    ) -> Self {
+        let mut planet = Planet {
+            star,
+            index,
+            seed: gen_seed,
+            info_seed,
             theme_seed: 0,
-            is_birth: false,
-            orbit_around: None,
-            orbit_index: 0,
+            orbit_around: RefCell::new(None),
+            orbit_index,
             radius: 200.0,
             scale: 1.0,
-            orbit_radius: 0.0,
-            orbit_inclination: 0.0,
             orbit_longitude: 0.0,
-            orbital_period: 0.0,
-            sun_orbital_period: 0.0,
             orbit_phase: 0.0,
-            obliquity: Cell::new(0.0),
-            rotation_period: Cell::new(0.0),
             rotation_phase: 0.0,
-            rotation_calculated: Cell::new(false),
-            rotation_params: (0.0, 0.0, 0.0),
-            sun_distance: 0.0,
-            planet_type: PlanetType::None,
-            habitable_bias: 0.0,
-            temperature_bias: 0.0,
-            star_light_balance_radius: 0.0,
-            luminosity: Cell::new(0.0),
-            luminosity_calculated: Cell::new(false),
-            theme_proto: DEFAULT_THEME_PROTO,
             theme_rand1: 0.0,
-            veins: vec![],
-            gases: vec![],
-        }
-    }
-}
+            obliquity_scale: 0.0,
+            rotation_param: 0.0,
+            rotation_scale: 0.0,
+            orbit_inclination_factor: 0.0,
+            orbit_radius_factor: 0.0,
+            habitable_factor: 0.0,
+            type_factor: 0.0,
+            gas_giant,
+            get_orbital_radius: UnsafeCell::new(None),
+            get_sun_distance: UnsafeCell::new(None),
+            get_temperature_factor: UnsafeCell::new(None),
+            get_habitable_bias: UnsafeCell::new(None),
+            get_temperature_bias: UnsafeCell::new(None),
+            get_luminosity: UnsafeCell::new(None),
+            get_unmodified_planet_type: UnsafeCell::new(None),
+            get_orbit_inclination: UnsafeCell::new(None),
+            get_sun_orbital_period: UnsafeCell::new(None),
+            get_orbital_period: UnsafeCell::new(None),
+            get_obliquity: UnsafeCell::new(None),
+            get_eligible_for_resonance: UnsafeCell::new(None),
+            get_rotation_period: UnsafeCell::new(None),
+            get_theme: UnsafeCell::new(None),
+            get_gases: UnsafeCell::new(None),
+            get_veins: UnsafeCell::new(None),
+        };
 
-impl Planet {
-    pub fn new() -> Self {
-        Default::default()
+        let mut rand = DspRandom::new(info_seed);
+
+        let num3 = rand.next_f64();
+        let num4 = rand.next_f64();
+        planet.orbit_radius_factor = num3 * (num4 - 0.5) * 0.5;
+        planet.orbit_inclination_factor = rand.next_f64();
+        planet.orbit_longitude = (rand.next_f64() * 360.0) as f32;
+        planet.orbit_phase = (rand.next_f64() * 360.0) as f32;
+        let num8 = rand.next_f64();
+        let num9 = rand.next_f64();
+        planet.obliquity_scale = num8 * (num9 - 0.5);
+        let num10 = rand.next_f64();
+        let num11 = rand.next_f64();
+        planet.rotation_scale = num10 * num11 * 1000.0 + 400.0;
+        planet.rotation_phase = (rand.next_f64() * 360.0) as f32;
+        planet.habitable_factor = rand.next_f64();
+        planet.type_factor = rand.next_f64();
+        planet.theme_rand1 = rand.next_f64();
+        planet.rotation_param = rand.next_f64();
+        rand.next_f64();
+        rand.next_f64();
+        rand.next_f64();
+        let theme_seed = rand.next_seed();
+        planet.theme_seed = theme_seed;
+
+        if gas_giant {
+            planet.radius = 80.0;
+            planet.scale = 10.0;
+        }
+
+        planet
     }
 
     pub fn real_radius(&self) -> f32 {
         self.radius * self.scale
     }
 
-    fn calculate_luminosity(&self) {
-        if self.luminosity_calculated.get() {
-            return;
+    pub fn is_gas_giant(&self) -> bool {
+        self.gas_giant
+    }
+
+    pub fn is_birth(&self) -> bool {
+        self.orbit_index == 1 && self.star.is_birth() && self.orbit_around.borrow().is_some()
+    }
+
+    lazy_getter!(self, get_orbital_radius, f32, {
+        let a = 1.2_f32.powf(self.orbit_radius_factor as f32);
+        if let Some(orbit_planet) = self.orbit_around.borrow().as_deref() {
+            (((1600.0 * (self.orbit_index as f64) + 200.0)
+                * (self.star.get_orbit_scaler().powf(0.3) as f64)
+                * ((a + (1.0 - a) * 0.5) as f64)
+                + (orbit_planet.real_radius() as f64))
+                / 40000.0) as f32
+        } else {
+            let b = ORBIT_RADIUS[self.orbit_index as usize] * self.star.get_orbit_scaler();
+            let num16 = (((a - 1.0) as f64) / (b.max(1.0) as f64) + 1.0) as f32;
+            b * num16
         }
-        self.luminosity_calculated.set(true);
+    });
+
+    lazy_getter!(self, get_sun_distance, f32, {
+        if let Some(orbit_planet) = self.orbit_around.borrow().as_deref() {
+            orbit_planet.get_orbital_radius()
+        } else {
+            self.get_orbital_radius()
+        }
+    });
+
+    lazy_getter!(self, get_temperature_factor, f32, {
+        let habitable_radius = self.star.get_habitable_radius();
+        if habitable_radius > 0.0 {
+            self.get_sun_distance() / habitable_radius
+        } else {
+            1000.0
+        }
+    });
+
+    lazy_getter!(self, get_habitable_bias, f32, {
+        if self.is_gas_giant() {
+            1000.0
+        } else {
+            let habitable_radius = self.star.get_habitable_radius();
+            let num21 = if habitable_radius > 0.0 {
+                (self.get_sun_distance() / habitable_radius).ln().abs()
+            } else {
+                1000.0
+            };
+            let num22 = habitable_radius.sqrt().clamp(1.0, 2.0) - 0.04;
+            num21 * num22
+        }
+    });
+
+    lazy_getter!(self, get_temperature_bias, f32, {
+        let f2 = self.get_temperature_factor();
+        (1.2 / ((f2 as f64) + 0.2) - 1.0) as f32
+    });
+
+    lazy_getter!(self, get_luminosity, f32, {
         let mut luminosity =
-            (self.star_light_balance_radius / (self.sun_distance + 0.01)).powf(0.6);
+            (self.star.get_light_balance_radius() / (self.get_sun_distance() + 0.01)).powf(0.6);
         if luminosity > 1.0 {
             luminosity = luminosity.ln() + 1.0;
             luminosity = luminosity.ln() + 1.0;
             luminosity = luminosity.ln() + 1.0;
         }
-        luminosity = (luminosity * 100.0).round() / 100.0;
-        self.luminosity.set(luminosity);
+        (luminosity * 100.0).round() / 100.0
+    });
+
+    fn increment_habitable_count(&self) {
+        self.star
+            .game_desc
+            .habitable_count
+            .set(self.star.game_desc.habitable_count.get() + 1);
     }
 
-    pub fn get_luminosity(&self) -> f32 {
-        self.calculate_luminosity();
-        self.luminosity.get()
-    }
+    lazy_getter!(self, get_unmodified_planet_type, &PlanetType, {
+        // can only call once and in order
+        if self.is_gas_giant() {
+            &PlanetType::Gas
+        } else if self.is_birth() {
+            self.increment_habitable_count();
+            &PlanetType::Ocean
+        } else {
+            let f2 = self.get_temperature_factor();
+            if !self.star.is_birth() {
+                let star_count = self.star.game_desc.star_count;
+                let num18 = ((star_count as f32) * 0.29).ceil().max(11.0);
+                let num19 = (num18 as f64) - (self.star.game_desc.habitable_count.get() as f64);
+                let num20 = (star_count - self.star.index) as f32;
+                let num23 = num20 as f64;
+                let a = (num19 / num23) as f32;
+                let num24 = (a + (0.35 - a) * 0.5).clamp(0.08, 0.8);
+                let num25 = (self.get_habitable_bias() / num24)
+                    .clamp(0.0, 1.1)
+                    .powf(num24 * 10.0);
+                if self.habitable_factor > (num25 as f64) {
+                    self.increment_habitable_count();
+                    return &PlanetType::Ocean;
+                }
+            }
+
+            if f2 < 5.0 / 6.0 {
+                let num26 = ((f2 as f64) * 2.5 - 0.85).max(0.15);
+                if self.type_factor >= num26 {
+                    &PlanetType::Vocano
+                } else {
+                    &PlanetType::Desert
+                }
+            } else if f2 < 1.2 {
+                &PlanetType::Desert
+            } else {
+                let num27 = 0.9 / (f2 as f64) - 0.1;
+                if self.type_factor >= num27 {
+                    &PlanetType::Ice
+                } else {
+                    &PlanetType::Desert
+                }
+            }
+        }
+    });
 
     pub fn is_tidal_locked(&self) -> bool {
-        self.get_rotation_period() == self.orbital_period
+        self.get_rotation_period() == self.get_orbital_period()
     }
 
-    fn calculate_rotation(&self) {
-        if self.rotation_calculated.get() {
-            return;
+    lazy_getter!(self, get_orbit_inclination, f32, {
+        let mut orbit_inclination = (self.orbit_inclination_factor * 16.0 - 8.0) as f32;
+        if self.orbit_around.borrow().is_some() {
+            orbit_inclination *= 2.2;
         }
-        self.rotation_calculated.set(true);
-        let (obliquity_scale, num15, rotation_scale) = self.rotation_params;
+        if self.star.star_type == StarType::NeutronStar {
+            if orbit_inclination > 0.0 {
+                orbit_inclination += 3.0;
+            } else {
+                orbit_inclination -= 3.0;
+            }
+        }
+        orbit_inclination
+    });
+
+    lazy_getter!(self, get_sun_orbital_period, f64, {
+        if let Some(orbit_planet) = self.orbit_around.borrow().as_deref() {
+            orbit_planet.get_orbital_period()
+        } else {
+            self.get_orbital_period()
+        }
+    });
+
+    lazy_getter!(self, get_orbital_period, f64, {
+        let f1 = self.get_orbital_radius() as f64;
+        (39.4784176043574 * f1 * f1 * f1
+            / (if self.orbit_around.borrow().is_some() {
+                1.08308421068537e-08
+            } else {
+                1.35385519905204e-06 * (self.star.get_mass() as f64)
+            }))
+        .sqrt()
+    });
+
+    lazy_getter!(self, get_obliquity, f32, {
         let mut obliquity: f32;
-        if num15 < 0.04 {
-            obliquity = (obliquity_scale * 39.9) as f32;
+        if self.rotation_param < 0.04 {
+            obliquity = (self.obliquity_scale * 39.9) as f32;
             if obliquity < 0.0 {
                 obliquity -= 70.0;
             } else {
                 obliquity += 70.0;
             }
-        } else if num15 < 0.1 {
-            obliquity = (obliquity_scale * 80.0) as f32;
+        } else if self.rotation_param < 0.1 {
+            obliquity = (self.obliquity_scale * 80.0) as f32;
             if obliquity < 0.0 {
                 obliquity -= 30.0;
             } else {
                 obliquity += 30.0;
             }
         } else {
-            obliquity = (obliquity_scale * 60.0) as f32;
+            obliquity = (self.obliquity_scale * 60.0) as f32;
         }
-        let gas_giant = self.planet_type == PlanetType::Gas;
-        let mut rotation_period = rotation_scale
-            * (if self.orbit_around.is_none() {
-                self.orbit_radius.powf(0.25) as f64
+
+        if self.get_eligible_for_resonance() {
+            if self.rotation_param > 0.96 {
+                obliquity *= 0.01;
+            } else if self.rotation_param > 0.93 {
+                obliquity *= 0.1;
+            } else if self.rotation_param > 0.9 {
+                obliquity *= 0.2;
+            }
+        }
+
+        obliquity
+    });
+
+    lazy_getter!(self, get_eligible_for_resonance, bool, {
+        let gas_giant = self.is_gas_giant();
+        self.orbit_around.borrow().is_none() && self.orbit_index <= 4 && !gas_giant
+    });
+
+    lazy_getter!(self, get_rotation_period, f64, {
+        let gas_giant = self.is_gas_giant();
+        let mut rotation_period = self.rotation_scale
+            * (if gas_giant {
+                1.0
+            } else {
+                match self.star.star_type {
+                    StarType::WhiteDwarf => 0.5,
+                    StarType::NeutronStar => 0.2,
+                    StarType::BlackHole => 0.15,
+                    _ => 1.0,
+                }
+            })
+            * (if self.orbit_around.borrow().is_none() {
+                self.get_orbital_radius().powf(0.25) as f64
             } else {
                 1.0
             })
             * (if gas_giant { 0.2 } else { 1.0 });
 
-        rotation_period = 1.0 / (1.0 / self.sun_orbital_period + 1.0 / rotation_period);
-        if self.orbit_around.is_none() && self.orbit_index <= 4 && !gas_giant {
-            if num15 > 0.96 {
-                obliquity *= 0.01;
-                rotation_period = self.orbital_period;
-            } else if num15 > 0.930000007152557 {
-                obliquity *= 0.1;
-                rotation_period = self.orbital_period * 0.5;
-            } else if num15 > 0.9 {
-                obliquity *= 0.2;
-                rotation_period = self.orbital_period * 0.25;
+        rotation_period = 1.0 / (1.0 / self.get_sun_orbital_period() + 1.0 / rotation_period);
+        if self.get_eligible_for_resonance() {
+            if self.rotation_param > 0.96 {
+                rotation_period = self.get_orbital_period();
+            } else if self.rotation_param > 0.93 {
+                rotation_period = self.get_orbital_period() * 0.5;
+            } else if self.rotation_param > 0.9 {
+                rotation_period = self.get_orbital_period() * 0.25;
             }
         }
 
-        if num15 > 0.85 && num15 <= 0.9 {
+        if self.rotation_param > 0.85 && self.rotation_param <= 0.9 {
             rotation_period = -rotation_period;
         }
-        self.obliquity.set(obliquity);
-        self.rotation_period.set(rotation_period);
+        rotation_period
+    });
+
+    lazy_getter!(self, get_theme, &'static ThemeProto, {
+        // can only called once and in order
+        let mut potential_themes: Vec<&'static ThemeProto> = vec![];
+        let mut used_theme_ids = self.star.used_theme_ids.borrow_mut();
+        let unused_themes: Vec<&'static ThemeProto> = THEME_PROTOS
+            .iter()
+            .filter(|&theme| !used_theme_ids.contains(&theme.id))
+            .collect();
+
+        let planet_type = self.get_unmodified_planet_type();
+        let temperature_bias = self.get_temperature_bias();
+
+        for theme in &unused_themes {
+            if self.star.is_birth() && planet_type == &PlanetType::Ocean {
+                if theme.distribute == ThemeDistribute::Birth {
+                    potential_themes.push(theme);
+                }
+            } else {
+                let flag2 =
+                    if theme.temperature.abs() < 0.5 && theme.planet_type == PlanetType::Desert {
+                        (temperature_bias.abs() as f64) < (theme.temperature.abs() as f64) + 0.1
+                    } else {
+                        (theme.temperature as f64) * (temperature_bias as f64) >= -0.1
+                    };
+                if (theme.planet_type == *planet_type) && flag2 {
+                    if self.star.is_birth() {
+                        if theme.distribute == ThemeDistribute::Default {
+                            potential_themes.push(theme);
+                        }
+                    } else if theme.distribute == ThemeDistribute::Default
+                        || theme.distribute == ThemeDistribute::Interstellar
+                    {
+                        potential_themes.push(theme);
+                    }
+                }
+            }
+        }
+
+        if potential_themes.is_empty() {
+            for theme in &unused_themes {
+                if theme.planet_type == PlanetType::Desert {
+                    potential_themes.push(theme);
+                }
+            }
+        }
+        if potential_themes.is_empty() {
+            for theme in &*THEME_PROTOS {
+                if theme.planet_type == PlanetType::Desert {
+                    potential_themes.push(theme);
+                }
+            }
+        }
+        let theme_proto = potential_themes[((self.theme_rand1 * (potential_themes.len() as f64))
+            as usize)
+            % potential_themes.len()];
+        used_theme_ids.push(theme_proto.id);
+        theme_proto
+    });
+
+    pub fn get_type(&self) -> &PlanetType {
+        &self.get_theme().planet_type
     }
 
-    pub fn get_rotation_period(&self) -> f64 {
-        self.calculate_rotation();
-        self.rotation_period.get()
-    }
+    lazy_getter_ref!(self, get_gases, Vec<(i32, f32)>, {
+        let gas_coef = self.star.game_desc.gas_coef();
+        let mut rand = DspRandom::new(self.theme_seed);
+        let mut gases: Vec<(i32, f32)> = vec![];
 
-    pub fn get_obliquity(&self) -> f32 {
-        self.calculate_rotation();
-        self.obliquity.get()
-    }
+        let theme_proto = self.get_theme();
+        let coef = self.star.get_resource_coef().powf(0.3);
+
+        for (item, speed) in theme_proto
+            .gas_items
+            .iter()
+            .zip(theme_proto.gas_speeds.iter())
+        {
+            let num2 = speed * (rand.next_f32() * 21.0 / 110.0 + 10.0 / 11.0) * gas_coef;
+            gases.push((*item, num2 * coef))
+        }
+        gases
+    });
+
+    lazy_getter_ref!(self, get_veins, Vec<Vein>, {
+        let mut rand1 = DspRandom::new(self.seed);
+        rand1.next_f64();
+        rand1.next_f64();
+        rand1.next_f64();
+        rand1.next_f64();
+        rand1.next_f64();
+        rand1.next_f64();
+        let theme_proto = self.get_theme();
+        let mut num_array_1: Vec<i32> = (0..15_i32)
+            .map(|i| *theme_proto.vein_spot.get((i - 1) as usize).unwrap_or(&0))
+            .collect();
+        let mut num_array_2: Vec<f32> = (0..15_i32)
+            .map(|i| *theme_proto.vein_count.get((i - 1) as usize).unwrap_or(&0.0))
+            .collect();
+        let mut num_array_3: Vec<f32> = (0..15_i32)
+            .map(|i| {
+                *theme_proto
+                    .vein_opacity
+                    .get((i - 1) as usize)
+                    .unwrap_or(&0.0)
+            })
+            .collect();
+
+        let mut add_until = |i: &mut i32, t: f64| {
+            for _ in 1..12 {
+                if rand1.next_f64() >= t {
+                    break;
+                }
+                *i += 1;
+            }
+        };
+
+        let p: f32 = match self.star.star_type {
+            StarType::MainSeqStar => match self.star.get_spectr() {
+                SpectrType::M => 2.5,
+                SpectrType::G => 0.7,
+                SpectrType::F => 0.6,
+                SpectrType::B => 0.4,
+                SpectrType::O => 1.6,
+                _ => 1.0,
+            },
+            StarType::GiantStar => 2.5,
+            StarType::WhiteDwarf => {
+                num_array_1[9] += 2;
+                add_until(num_array_1.get_mut(9).unwrap(), 0.45);
+                num_array_2[9] = 0.7;
+                num_array_3[9] = 1.0;
+                num_array_1[10] += 2;
+                add_until(num_array_1.get_mut(10).unwrap(), 0.45);
+                num_array_2[10] = 0.7;
+                num_array_3[10] = 1.0;
+                num_array_1[12] += 1;
+                add_until(num_array_1.get_mut(12).unwrap(), 0.5);
+                num_array_2[12] = 0.7;
+                num_array_3[12] = 0.3;
+                3.5
+            }
+            StarType::NeutronStar => {
+                num_array_1[14] += 1;
+                add_until(num_array_1.get_mut(14).unwrap(), 0.65);
+                num_array_2[14] = 0.7;
+                num_array_3[14] = 0.3;
+                4.5
+            }
+            StarType::BlackHole => {
+                num_array_1[14] += 1;
+                add_until(num_array_1.get_mut(14).unwrap(), 0.65);
+                num_array_2[14] = 0.7;
+                num_array_3[14] = 0.3;
+                5.0
+            }
+        };
+        let is_rare_resource = self.star.game_desc.is_rare_resource();
+        let mut f = self.star.get_resource_coef();
+        if theme_proto.distribute == ThemeDistribute::Birth {
+            f *= 0.6666667;
+        } else if is_rare_resource {
+            if f > 1.0 {
+                f = f.powf(0.8)
+            }
+            f *= 0.7;
+        }
+
+        for (index1, rare_vein_ref) in theme_proto.rare_veins.iter().enumerate() {
+            let rare_vein = rare_vein_ref.clone() as usize;
+            let num2 =
+                theme_proto.rare_settings[index1 * 4 + (if self.star.is_birth() { 0 } else { 1 })];
+            let rare_setting_1 = theme_proto.rare_settings[index1 * 4 + 2];
+            let rare_setting_2 = theme_proto.rare_settings[index1 * 4 + 3];
+            let num4 = 1.0 - (1.0 - num2).powf(p);
+            let num5 = 1.0 - (1.0 - rare_setting_2).powf(p);
+            if rand1.next_f64() < (num4 as f64) {
+                num_array_1[rare_vein] += 1;
+                num_array_2[rare_vein] = num5;
+                num_array_3[rare_vein] = num5;
+                for _ in 1..12 {
+                    if rand1.next_f64() >= (rare_setting_1 as f64) {
+                        break;
+                    }
+                    num_array_1[rare_vein] += 1;
+                }
+            }
+        }
+
+        let mut output: Vec<Vein> = vec![];
+        let is_infinite_resource = self.star.game_desc.is_infinite_resource();
+        for index3 in 1..15 {
+            let num8 = num_array_1[index3 as usize];
+            if num8 > 0 {
+                let vein_type: VeinType = unsafe { ::std::mem::transmute(index3) };
+                let mut vein = Vein::new();
+                vein.vein_type = vein_type;
+                vein.min_group = num8 - 1;
+                vein.max_group = num8 + 1;
+                if vein.vein_type == VeinType::Oil {
+                    vein.min_patch = 1;
+                    vein.max_patch = 1;
+                } else {
+                    let num12 = num_array_2[index3 as usize];
+                    vein.min_patch = (num12 * 20.0).round() as i32;
+                    vein.max_patch = (num12 * 24.0).round() as i32;
+                }
+                let num16 = if vein.vein_type == VeinType::Oil {
+                    f.powf(0.5)
+                } else {
+                    f
+                };
+                if is_infinite_resource && vein.vein_type != VeinType::Oil {
+                    vein.min_amount = 1;
+                    vein.max_amount = 1;
+                } else {
+                    let num17 =
+                        ((num_array_3[index3 as usize] * 100000.0 * num16).round() as i32).max(20);
+                    let num18 = if num17 < 16000 {
+                        ((num17 as f32) * (15.0 / 16.0)).floor() as i32
+                    } else {
+                        15000
+                    };
+
+                    let map_amount = |amount: i32| -> i32 {
+                        let x1 = ((amount as f32) * 1.1).round();
+                        let x2 = (if vein.vein_type == VeinType::Oil {
+                            x1 * self.star.game_desc.oil_amount_multipler()
+                        } else {
+                            x1 * self.star.game_desc.resource_multiplier
+                        })
+                        .round() as i32;
+                        x2.max(1)
+                    };
+
+                    vein.min_amount = map_amount(num17 - num18);
+                    vein.max_amount = map_amount(num17 + num18);
+                }
+                output.push(vein);
+            }
+        }
+        output
+    });
 }
 
-impl Serialize for Planet {
+impl Serialize for Planet<'_> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
@@ -185,20 +628,20 @@ impl Serialize for Planet {
         state.serialize_field("index", &self.index)?;
         state.serialize_field("orbitAround", &self.orbit_around)?;
         state.serialize_field("orbitIndex", &self.orbit_index)?;
-        state.serialize_field("orbitRadius", &self.orbit_radius)?;
-        state.serialize_field("orbitInclination", &self.orbit_inclination)?;
+        state.serialize_field("orbitRadius", &self.get_orbital_radius())?;
+        state.serialize_field("orbitInclination", &self.get_orbit_inclination())?;
         state.serialize_field("orbitLongitude", &self.orbit_longitude)?;
-        state.serialize_field("orbitalPeriod", &self.orbital_period)?;
+        state.serialize_field("orbitalPeriod", &self.get_orbital_period())?;
         state.serialize_field("orbitPhase", &self.orbit_phase)?;
         state.serialize_field("obliquity", &self.get_obliquity())?;
         state.serialize_field("rotationPeriod", &self.get_rotation_period())?;
         state.serialize_field("rotationPhase", &self.rotation_phase)?;
-        state.serialize_field("sunDistance", &self.sun_distance)?;
-        state.serialize_field("type", &self.planet_type)?;
+        state.serialize_field("sunDistance", &self.get_sun_distance())?;
+        state.serialize_field("type", &self.get_type())?;
         state.serialize_field("luminosity", &self.get_luminosity())?;
-        state.serialize_field("theme", &self.theme_proto)?;
-        state.serialize_field("veins", &self.veins)?;
-        state.serialize_field("gases", &self.gases)?;
+        state.serialize_field("theme", &self.get_theme())?;
+        state.serialize_field("veins", &self.get_veins())?;
+        state.serialize_field("gases", &self.get_gases())?;
         state.end()
     }
 }

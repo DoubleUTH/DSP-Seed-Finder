@@ -19,7 +19,7 @@ function distanceFromBirth([x, y, z]: [float, float, float]): float {
 }
 
 function type(star: Star) {
-    if (star.starType === StarType.GiantStar) {
+    if (star.type === StarType.GiantStar) {
         switch (star.spectr) {
             case SpectrType.M:
             case SpectrType.K:
@@ -32,11 +32,11 @@ function type(star: Star) {
             default:
                 return "Blue Giant"
         }
-    } else if (star.starType === StarType.WhiteDwarf) {
+    } else if (star.type === StarType.WhiteDwarf) {
         return "White Dwarf"
-    } else if (star.starType === StarType.NeutronStar) {
+    } else if (star.type === StarType.NeutronStar) {
         return "Neutron Star"
-    } else if (star.starType === StarType.BlackHole) {
+    } else if (star.type === StarType.BlackHole) {
         return "Black Hole"
     } else {
         return star.spectr + " type Star"
@@ -291,13 +291,7 @@ const StarDetail: Component<{ star: Star; expand: boolean }> = (props) => (
             <div class={styles.row}>
                 <div class={styles.field}>Age</div>
                 <div class={styles.value}>
-                    {formatNumber(
-                        props.star.age *
-                            props.star.lifetime *
-                            0.999999977648258,
-                        0,
-                    )}{" "}
-                    Myrs
+                    {formatNumber(props.star.age * props.star.lifetime, 0)} Myrs
                 </div>
             </div>
         </Show>

@@ -1,13 +1,15 @@
+use std::cell::Cell;
+use std::rc::Rc;
+
 use super::name_gen::random_name;
-use super::planet_gen::{generate_gases, generate_veins, set_planet_theme};
-use super::random::DspRandom;
-use super::star_gen::{create_birth_star, create_star, create_star_planets};
-use crate::data::enums::{PlanetType, SpectrType, StarType};
+use crate::data::enums::{SpectrType, StarType};
 use crate::data::galaxy::Galaxy;
 use crate::data::game_desc::GameDesc;
 use crate::data::planet::Planet;
+use crate::data::random::DspRandom;
 use crate::data::rule::Rule;
 use crate::data::star::Star;
+use crate::data::star_planets::StarWithPlanets;
 use crate::data::vector3::Vector3;
 
 fn generate_temp_poses(
@@ -119,7 +121,7 @@ fn check_collision(tmp_poses: &Vec<Vector3>, pt: &Vector3, min_dist: f64) -> boo
         .any(|pt1| pt1.distance_sq_from(pt) < min_dist_sq)
 }
 
-fn generate_stars(game_desc: &GameDesc) -> impl Iterator<Item = Star> {
+fn generate_stars<'a>(game_desc: &'a GameDesc) -> Vec<Star<'a>> {
     let galaxy_seed = game_desc.seed;
 
     let mut rand = DspRandom::new(galaxy_seed);
@@ -148,11 +150,21 @@ fn generate_stars(game_desc: &GameDesc) -> impl Iterator<Item = Star> {
     let num12 = (num11 - 1) / num8;
     let num13 = num12 / 2;
 
-    (0..star_count).map(move |index| {
+    let mut stars: Vec<Star> = vec![];
+
+    for (i, position) in tmp_poses.into_iter().enumerate() {
         let seed = rand.next_seed();
-        if index == 0 {
-            create_birth_star(seed)
+        if i == 0 {
+            stars.push(Star::new(
+                game_desc,
+                0,
+                seed,
+                Vector3::zero(),
+                StarType::MainSeqStar,
+                &SpectrType::X,
+            ));
         } else {
+            let index = i as i32;
             let need_spectr = if index == 3 {
                 SpectrType::M
             } else if index == num11 - 1 {
@@ -171,111 +183,105 @@ fn generate_stars(game_desc: &GameDesc) -> impl Iterator<Item = Star> {
             } else {
                 StarType::MainSeqStar
             };
-            create_star(
-                star_count,
-                &tmp_poses[index as usize],
-                index + 1,
+            stars.push(Star::new(
+                game_desc,
+                index,
                 seed,
+                position,
                 need_type,
-                need_spectr,
-            )
-        }
-    })
-}
-
-fn sum_veins(star: &mut Star, planets: &Vec<Planet>) {
-    for planet in planets {
-        for vein in &planet.veins {
-            let avg_patches = ((vein.min_patch + vein.max_patch) as f32)
-                * ((vein.min_group + vein.max_group) as f32)
-                / 4.0;
-            let avg_amount = ((vein.min_amount + vein.max_amount) as f32) * avg_patches / 2.0;
-            if let Some(x) = star.vein_patch.get_mut(&vein.vein_type) {
-                *x += avg_patches;
-            } else {
-                star.vein_patch.insert(vein.vein_type.clone(), avg_patches);
-            }
-            if let Some(x) = star.vein_amount.get_mut(&vein.vein_type) {
-                *x += avg_amount;
-            } else {
-                star.vein_amount.insert(vein.vein_type.clone(), avg_amount);
-            }
+                &need_spectr,
+            ));
         }
     }
+    stars
 }
 
-pub fn create_galaxy(game_desc: &GameDesc) -> Galaxy {
+// fn sum_veins(star: &mut Star, planets: &Vec<Planet>) {
+//     for planet in planets {
+//         for vein in &planet.veins {
+//             let avg_patches = ((vein.min_patch + vein.max_patch) as f32)
+//                 * ((vein.min_group + vein.max_group) as f32)
+//                 / 4.0;
+//             let avg_amount = ((vein.min_amount + vein.max_amount) as f32) * avg_patches / 2.0;
+//             if let Some(x) = star.vein_patch.get_mut(&vein.vein_type) {
+//                 *x += avg_patches;
+//             } else {
+//                 star.vein_patch.insert(vein.vein_type.clone(), avg_patches);
+//             }
+//             if let Some(x) = star.vein_amount.get_mut(&vein.vein_type) {
+//                 *x += avg_amount;
+//             } else {
+//                 star.vein_amount.insert(vein.vein_type.clone(), avg_amount);
+//             }
+//         }
+//     }
+// }
+
+pub fn create_galaxy<'a>(game_desc: &'a GameDesc) -> Galaxy<'a> {
     let mut galaxy = Galaxy::new();
-    let mut habitable_count = 0;
-
-    for mut star in generate_stars(game_desc) {
-        star.name = random_name(star.name_seed, &star, galaxy.stars.iter().map(|s| &s.name));
-        let mut planets = create_star_planets(&star, game_desc.star_count, &mut habitable_count);
-        let mut used_theme_ids: Vec<i32> = vec![];
-        let is_birth_star = star.index == 0;
-        for planet in &mut planets {
-            set_planet_theme(planet, is_birth_star, &mut used_theme_ids);
-            if planet.planet_type == PlanetType::Gas {
-                generate_gases(planet, &star, game_desc);
-            } else {
-                generate_veins(planet, &star, game_desc);
-            }
-        }
-        star.planets = planets;
-        galaxy.stars.push(star);
-    }
-
     galaxy.seed = game_desc.seed;
 
-    return galaxy;
+    for mut star in generate_stars(game_desc) {
+        star.name = random_name(
+            star.name_seed,
+            &star,
+            galaxy.stars.iter().map(|s| &s.star.name),
+        );
+        let s = StarWithPlanets::new(Rc::new(star));
+        for p in s.get_planets() {
+            // load the data
+            p.get_theme();
+        }
+        galaxy.stars.push(s);
+    }
+
+    galaxy
 }
 
 pub fn find_stars(game_desc: &GameDesc, rule: &mut Box<dyn Rule + Send>) -> Vec<i32> {
-    let mut habitable_count = 0;
+    let habitable_count = Rc::new(Cell::new(0));
     let mut output: Vec<i32> = vec![];
-    let mut names: Vec<String> = vec![];
 
-    for mut star in generate_stars(game_desc) {
+    let stars = generate_stars(game_desc);
+
+    for star in stars {
         rule.reset();
-        let name = random_name(star.name_seed, &star, names.iter());
-        names.push(name);
-        let mut planets = create_star_planets(&star, game_desc.star_count, &mut habitable_count);
-        if let Some(x) = rule.on_planets_created(&star, &planets) {
-            if x {
-                output.push(star.index);
-            }
-            continue;
-        }
-        let mut used_theme_ids: Vec<i32> = vec![];
-        let is_birth_star = star.index == 0;
-        for planet in &mut planets {
-            set_planet_theme(planet, is_birth_star, &mut used_theme_ids);
-        }
-        if let Some(x) = rule.on_planets_themed(&star, &planets) {
-            if x {
-                output.push(star.index);
-            }
-            continue;
-        }
-        for planet in &mut planets {
-            if planet.planet_type == PlanetType::Gas {
-                generate_gases(planet, &star, game_desc);
-            } else {
-                generate_veins(planet, &star, game_desc);
-            }
-        }
-        sum_veins(&mut star, &planets);
-        if let Some(x) = rule.on_veins_generated(&star, &planets) {
-            if x {
-                output.push(star.index);
-            }
-            continue;
-        }
-        star.planets = planets;
-        star.name = names.last().unwrap().clone();
-        if star.index == 0 && rule.is_birth() {
-            break;
-        }
+        let s = StarWithPlanets::new(Rc::new(star));
+        // let mut planets = s.get_planets();
+        // if let Some(x) = rule.on_planets_created(&star_rc, &planets) {
+        //     if x {
+        //         output.push(star_index);
+        //     }
+        //     continue;
+        // }
+        // let mut used_theme_ids: Vec<i32> = vec![];
+        // let is_birth_star = star_index == 0;
+        // for planet in &mut planets {
+        //     set_planet_theme(planet, is_birth_star, &mut used_theme_ids);
+        // }
+        // if let Some(x) = rule.on_planets_themed(&star_rc, &planets) {
+        //     if x {
+        //         output.push(star_index);
+        //     }
+        //     continue;
+        // }
+        // for planet in &mut planets {
+        //     if planet.is_gas_giant() {
+        //         generate_gases(planet, game_desc);
+        //     } else {
+        //         generate_veins(planet, game_desc);
+        //     }
+        // }
+        // sum_veins(&mut star, &planets);
+        // if let Some(x) = rule.on_veins_generated(&star_rc, &planets) {
+        //     if x {
+        //         output.push(star_index);
+        //     }
+        //     continue;
+        // }
+        // if is_birth_star && rule.is_birth() {
+        //     break;
+        // }
     }
 
     output

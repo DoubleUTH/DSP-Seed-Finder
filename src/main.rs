@@ -100,10 +100,13 @@ async fn accept_connection(stream: TcpStream) {
                     }
                     IncomingMessage::Generate { game } => {
                         let w = boxed_write.clone();
-                        tokio::spawn(async move {
+                        tokio::task::spawn_blocking(move || {
                             let galaxy = create_galaxy(&game);
                             let output = serde_json::to_string(&galaxy).unwrap();
-                            w.lock().await.send(Message::Text(output)).await.unwrap();
+                            let runtime = Handle::current();
+                            runtime.block_on(async move {
+                                w.lock().await.send(Message::Text(output)).await.unwrap();
+                            })
                         });
                     }
                     IncomingMessage::Find {

@@ -1,5 +1,5 @@
-use super::random::DspRandom;
 use crate::data::enums::StarType;
+use crate::data::random::DspRandom;
 use crate::data::star::Star;
 
 fn gen_random_name(seed: i32, star: &Star) -> String {

@@ -17,7 +17,7 @@ impl Rule for RuleThemeId {
         Some(
             self.theme_ids
                 .iter()
-                .all(|t| planets.iter().any(|p| *t == p.theme_proto.id)),
+                .all(|t| planets.iter().any(|p| *t == p.get_theme().id)),
         )
     }
     fn is_evaluated(&self) -> bool {

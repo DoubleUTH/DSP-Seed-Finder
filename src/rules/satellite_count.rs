@@ -16,7 +16,7 @@ impl Rule for RuleSatelliteCount {
         self.evaluated = true;
         let count = planets
             .iter()
-            .filter(|planet| planet.orbit_around.is_some())
+            .filter(|planet| planet.orbit_around.borrow().is_some())
             .count();
         Some(self.condition.eval(count as f32))
     }

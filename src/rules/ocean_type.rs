@@ -17,7 +17,7 @@ impl Rule for RuleOceanType {
         Some(
             self.ocean_type
                 .iter()
-                .all(|t| planets.iter().any(|p| *t == p.theme_proto.water_item_id)),
+                .all(|t| planets.iter().any(|p| *t == p.get_theme().water_item_id)),
         )
     }
     fn is_evaluated(&self) -> bool {

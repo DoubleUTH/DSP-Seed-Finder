@@ -85,7 +85,7 @@ impl DspRandom {
 
 #[cfg(test)]
 mod tests {
-    use crate::worldgen::random::DspRandom;
+    use crate::data::random::DspRandom;
 
     #[test]
     fn rand_test_1() {

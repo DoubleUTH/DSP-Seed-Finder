@@ -15,7 +15,7 @@ pub struct RuleSpectr {
 impl Rule for RuleSpectr {
     fn on_planets_created(&mut self, star: &Star, _: &Vec<Planet>) -> Option<bool> {
         self.evaluated = true;
-        Some(self.spectr.contains(&star.spectr))
+        Some(self.spectr.contains(&star.get_spectr()))
     }
     fn is_evaluated(&self) -> bool {
         self.evaluated

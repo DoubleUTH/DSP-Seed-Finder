@@ -43,9 +43,8 @@ declare global {
     declare type Gas = [itemId: GasType, rate: float]
 
     declare interface Planet {
-        id: integer
         index: integer
-        orbitAround: integer
+        orbitAround?: integer | null
         orbitIndex: integer
         orbitRadius: float
         orbitInclination: float
@@ -56,11 +55,9 @@ declare global {
         rotationPeriod: float
         rotationPhase: float
         sunDistance: float
-        planetType: PlanetType
-        habitableBias: float
-        temperatureBias: float
+        type: PlanetType
         luminosity: float
-        themeProto: ThemeProto
+        theme: ThemeProto
         veins: Vein[]
         gases: Gas[]
     }

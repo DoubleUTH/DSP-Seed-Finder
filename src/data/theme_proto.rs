@@ -9,25 +9,25 @@ pub struct ThemeProto {
     pub name: &'static str,
     pub wind: f32,
     pub water_item_id: i32,
-    #[serde(skip_serializing)]
+    #[serde(skip)]
     pub distribute: ThemeDistribute,
-    #[serde(skip_serializing)]
+    #[serde(skip)]
     pub temperature: f32,
-    #[serde(skip_serializing)]
+    #[serde(skip)]
     pub planet_type: PlanetType,
-    #[serde(skip_serializing)]
+    #[serde(skip)]
     pub vein_spot: Vec<i32>,
-    #[serde(skip_serializing)]
+    #[serde(skip)]
     pub vein_count: Vec<f32>,
-    #[serde(skip_serializing)]
+    #[serde(skip)]
     pub vein_opacity: Vec<f32>,
-    #[serde(skip_serializing)]
+    #[serde(skip)]
     pub rare_veins: Vec<VeinType>,
-    #[serde(skip_serializing)]
+    #[serde(skip)]
     pub rare_settings: Vec<f32>,
-    #[serde(skip_serializing)]
+    #[serde(skip)]
     pub gas_items: Vec<i32>,
-    #[serde(skip_serializing)]
+    #[serde(skip)]
     pub gas_speeds: Vec<f32>,
 }
 

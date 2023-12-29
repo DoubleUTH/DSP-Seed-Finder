@@ -11,9 +11,7 @@ pub fn create_planet(
     star_count: i32,
     index: i32,
     orbit_around_planet: Option<&Planet>,
-    orbit_around: i32,
     orbit_index: i32,
-    number: i32,
     gas_giant: bool,
     habitable_count: &mut i32,
     info_seed: i32,
@@ -24,10 +22,8 @@ pub fn create_planet(
     planet.index = index;
     planet.seed = gen_seed;
     planet.info_seed = info_seed;
-    planet.orbit_around = orbit_around;
+    planet.orbit_around = orbit_around_planet.map(|p| p.index);
     planet.orbit_index = orbit_index;
-    planet.number = number;
-    planet.id = star.astro_id() + index + 1;
 
     let num3 = rand.next_f64();
     let num4 = rand.next_f64();
@@ -64,7 +60,7 @@ pub fn create_planet(
 
     planet.orbit_radius = f1;
     planet.orbit_inclination = (num5 * 16.0 - 8.0) as f32;
-    if orbit_around > 0 {
+    if orbit_around_planet.is_some() {
         planet.orbit_inclination *= 2.2;
     }
     planet.orbit_longitude = (num6 * 360.0) as f32;
@@ -77,7 +73,7 @@ pub fn create_planet(
     }
 
     planet.orbital_period = (39.4784176043574 * (f1 as f64) * (f1 as f64) * (f1 as f64)
-        / (if orbit_around > 0 {
+        / (if orbit_around_planet.is_some() {
             1.08308421068537e-08
         } else {
             1.35385519905204e-06 * (star.mass as f64)
@@ -86,40 +82,22 @@ pub fn create_planet(
 
     planet.orbit_phase = (num7 * 360.0) as f32;
 
-    if num15 < 0.0399999991059303 {
-        planet.obliquity = (num8 * (num9 - 0.5) * 39.9) as f32;
-        if planet.obliquity < 0.0 {
-            planet.obliquity -= 70.0;
-        } else {
-            planet.obliquity += 70.0;
-        }
-    } else if num15 < 0.100000001490116 {
-        planet.obliquity = (num8 * (num9 - 0.5) * 80.0) as f32;
-        if planet.obliquity < 0.0 {
-            planet.obliquity -= 30.0;
-        } else {
-            planet.obliquity += 30.0;
-        }
-    } else {
-        planet.obliquity = (num8 * (num9 - 0.5) * 60.0) as f32;
-    }
+    planet.rotation_params = (
+        num8 * (num9 - 0.5),
+        num15,
+        (num10 * num11 * 1000.0 + 400.0)
+            * if gas_giant {
+                1.0
+            } else {
+                match star.star_type {
+                    StarType::WhiteDwarf => 0.5,
+                    StarType::NeutronStar => 0.200000002980232,
+                    StarType::BlackHole => 0.150000005960464,
+                    _ => 1.0,
+                }
+            },
+    );
 
-    planet.rotation_period = (num10 * num11 * 1000.0 + 400.0)
-        * (if orbit_around == 0 {
-            f1.powf(0.25) as f64
-        } else {
-            1.0
-        })
-        * (if gas_giant { 0.200000002980232 } else { 1.0 });
-
-    if !gas_giant {
-        planet.rotation_period *= match star.star_type {
-            StarType::WhiteDwarf => 0.5,
-            StarType::NeutronStar => 0.200000002980232,
-            StarType::BlackHole => 0.150000005960464,
-            _ => 1.0,
-        };
-    }
     planet.rotation_phase = (num12 * 360.0) as f32;
     planet.sun_distance = if let Some(orbit_planet) = orbit_around_planet {
         orbit_planet.orbit_radius
@@ -127,29 +105,11 @@ pub fn create_planet(
         planet.orbit_radius
     };
 
-    let num17 = if let Some(orbit_planet) = orbit_around_planet {
+    planet.sun_orbital_period = if let Some(orbit_planet) = orbit_around_planet {
         orbit_planet.orbital_period
     } else {
         planet.orbital_period
     };
-
-    planet.rotation_period = 1.0 / (1.0 / num17 + 1.0 / planet.rotation_period);
-    if orbit_around == 0 && orbit_index <= 4 && !gas_giant {
-        if num15 > 0.959999978542328 {
-            planet.obliquity *= 0.01;
-            planet.rotation_period = planet.orbital_period;
-        } else if num15 > 0.930000007152557 {
-            planet.obliquity *= 0.1;
-            planet.rotation_period = planet.orbital_period * 0.5;
-        } else if num15 > 0.899999976158142 {
-            planet.obliquity *= 0.2;
-            planet.rotation_period = planet.orbital_period * 0.25;
-        }
-    }
-
-    if num15 > 0.85 && num15 <= 0.9 {
-        planet.rotation_period = -planet.rotation_period;
-    }
 
     let habitable_radius = star.habitable_radius;
 
@@ -159,6 +119,9 @@ pub fn create_planet(
         planet.scale = 10.0;
         planet.habitable_bias = 100.0;
     } else {
+        let is_birth = star.index == 0 && orbit_around_planet.is_some() && orbit_index == 1;
+        planet.is_birth = is_birth;
+
         let num18 = ((star_count as f32) * 0.29).ceil().max(11.0);
         let num19 = (num18 as f64) - (*habitable_count as f64);
         let num20 = (star_count - star.index) as f32;
@@ -179,9 +142,8 @@ pub fn create_planet(
         let num25 = (planet.habitable_bias / num24)
             .clamp(0.0, 1.1)
             .powf(num24 * 10.0);
-        if (num13 > (num25 as f64) && star.index > 0)
-            || (orbit_around > 0 && orbit_index == 1 && star.index == 0)
-        {
+
+        if is_birth || (num13 > (num25 as f64) && star.index > 0) {
             planet.planet_type = PlanetType::Ocean;
             *habitable_count += 1;
         } else if f2 < 0.833333015441895 {
@@ -203,13 +165,7 @@ pub fn create_planet(
         }
     }
 
-    planet.luminosity = (star.light_balance_radius / (planet.sun_distance + 0.01)).powf(0.6);
-    if planet.luminosity > 1.0 {
-        planet.luminosity = planet.luminosity.ln() + 1.0;
-        planet.luminosity = planet.luminosity.ln() + 1.0;
-        planet.luminosity = planet.luminosity.ln() + 1.0;
-    }
-    planet.luminosity = (planet.luminosity * 100.0).round() / 100.0;
+    planet.star_light_balance_radius = star.light_balance_radius;
 
     planet
 }

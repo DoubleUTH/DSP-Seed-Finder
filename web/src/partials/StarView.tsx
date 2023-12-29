@@ -141,13 +141,13 @@ function combineGases(star: Star): Gas[] {
 
 function hasWater(star: Star): boolean {
     return !!star.planets.find(
-        (planet) => planet.themeProto.waterItemId === OceanType.Water,
+        (planet) => planet.theme.waterItemId === OceanType.Water,
     )
 }
 
 function hasSulfur(star: Star): boolean {
     return !!star.planets.find(
-        (planet) => planet.themeProto.waterItemId === OceanType.Sulfur,
+        (planet) => planet.theme.waterItemId === OceanType.Sulfur,
     )
 }
 
@@ -361,7 +361,7 @@ const NearbyStar: Component<{ seed: integer; star: Star; distance: float }> = (
 
 const PlanetView: Component<{ star: Star; planet: Planet }> = (props) => {
     function isGas() {
-        return props.planet.planetType === PlanetType.Gas
+        return props.planet.type === PlanetType.Gas
     }
 
     return (
@@ -382,7 +382,7 @@ const PlanetView: Component<{ star: Star; planet: Planet }> = (props) => {
                 </div>
             </Show>
             <Show when={!isGas()}>
-                <Show when={props.planet.orbitAround > 0}>
+                <Show when={props.planet.orbitAround != null}>
                     <div class={styles.row}>Satellite</div>
                 </Show>
                 <Show
@@ -415,7 +415,7 @@ const PlanetView: Component<{ star: Star; planet: Planet }> = (props) => {
                 <div class={styles.row}>
                     <div class={styles.field}>Wind Power</div>
                     <div class={styles.value}>
-                        {toPrecision(props.planet.themeProto.wind * 100, 0)}%
+                        {toPrecision(props.planet.theme.wind * 100, 0)}%
                     </div>
                 </div>
                 <div class={styles.row}>
@@ -427,8 +427,8 @@ const PlanetView: Component<{ star: Star; planet: Planet }> = (props) => {
                 <div class={styles.row}>
                     <div class={styles.field}>Type</div>
                     <div class={styles.value}>
-                        {planetTypes[props.planet.themeProto.id] ||
-                            props.planet.themeProto.id}
+                        {planetTypes[props.planet.theme.id] ||
+                            props.planet.theme.id}
                     </div>
                 </div>
             </Show>
@@ -447,17 +447,13 @@ const PlanetView: Component<{ star: Star; planet: Planet }> = (props) => {
                     </div>
                 )}
             </For>
-            <Show
-                when={props.planet.themeProto.waterItemId === OceanType.Water}
-            >
+            <Show when={props.planet.theme.waterItemId === OceanType.Water}>
                 <div class={styles.row}>
                     <div class={styles.field}>Water</div>
                     <div class={styles.value}>Ocean</div>
                 </div>
             </Show>
-            <Show
-                when={props.planet.themeProto.waterItemId === OceanType.Sulfur}
-            >
+            <Show when={props.planet.theme.waterItemId === OceanType.Sulfur}>
                 <div class={styles.row}>
                     <div class={styles.field}>Sulfuric Acid</div>
                     <div class={styles.value}>Ocean</div>

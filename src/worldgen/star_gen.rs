@@ -219,9 +219,7 @@ pub fn create_star_planets(star: &Star, star_count: i32, habitable_count: &mut i
 
     let mut make_planet = |index: i32,
                            orbit_around_planet: Option<&Planet>,
-                           orbit_around: i32,
                            orbit_index: i32,
-                           number: i32,
                            gas_giant: bool|
      -> Planet {
         let info_seed = rand2.next_seed();
@@ -231,9 +229,7 @@ pub fn create_star_planets(star: &Star, star_count: i32, habitable_count: &mut i
             star_count,
             index,
             orbit_around_planet,
-            orbit_around,
             orbit_index,
-            number,
             gas_giant,
             habitable_count,
             info_seed,
@@ -242,47 +238,47 @@ pub fn create_star_planets(star: &Star, star_count: i32, habitable_count: &mut i
     };
 
     if star.star_type == StarType::BlackHole || star.star_type == StarType::NeutronStar {
-        vec![make_planet(0, None, 0, 3, 1, false)]
+        vec![make_planet(0, None, 3, false)]
     } else if star.star_type == StarType::WhiteDwarf {
         if num1 < 0.699999988079071 {
-            vec![make_planet(0, None, 0, 3, 1, false)]
+            vec![make_planet(0, None, 3, false)]
         } else if num2 < 0.300000011920929 {
-            let planet1 = make_planet(0, None, 0, 3, 1, false);
-            let planet2 = make_planet(1, None, 0, 4, 2, false);
+            let planet1 = make_planet(0, None, 3, false);
+            let planet2 = make_planet(1, None, 4, false);
             vec![planet1, planet2]
         } else {
-            let planet1 = make_planet(0, None, 0, 4, 1, true);
-            let planet2 = make_planet(1, Some(&planet1), 1, 1, 1, false);
+            let planet1 = make_planet(0, None, 4, true);
+            let planet2 = make_planet(1, Some(&planet1), 1, false);
             vec![planet1, planet2]
         }
     } else if star.star_type == StarType::GiantStar {
         if num1 < 0.300000011920929 {
-            vec![make_planet(0, None, 0, 2 + num3, 1, false)]
+            vec![make_planet(0, None, 2 + num3, false)]
         } else if num1 < 0.800000011920929 {
             if num2 < 0.25 {
-                let planet1 = make_planet(0, None, 0, 2 + num3, 1, false);
-                let planet2 = make_planet(1, None, 0, 3 + num3, 2, false);
+                let planet1 = make_planet(0, None, 2 + num3, false);
+                let planet2 = make_planet(1, None, 3 + num3, false);
                 vec![planet1, planet2]
             } else {
-                let planet1 = make_planet(0, None, 0, 3, 1, true);
-                let planet2 = make_planet(1, Some(&planet1), 1, 1, 1, false);
+                let planet1 = make_planet(0, None, 3, true);
+                let planet2 = make_planet(1, Some(&planet1), 1, false);
                 vec![planet1, planet2]
             }
         } else {
             if num2 < 0.150000005960464 {
-                let planet1 = make_planet(0, None, 0, 2 + num3, 1, false);
-                let planet2 = make_planet(1, None, 0, 3 + num3, 2, false);
-                let planet3 = make_planet(2, None, 0, 4 + num3, 3, false);
+                let planet1 = make_planet(0, None, 2 + num3, false);
+                let planet2 = make_planet(1, None, 3 + num3, false);
+                let planet3 = make_planet(2, None, 4 + num3, false);
                 vec![planet1, planet2, planet3]
             } else if num2 < 0.75 {
-                let planet1 = make_planet(0, None, 0, 2 + num3, 1, false);
-                let planet2 = make_planet(1, None, 0, 4, 2, true);
-                let planet3 = make_planet(2, Some(&planet2), 2, 1, 1, false);
+                let planet1 = make_planet(0, None, 2 + num3, false);
+                let planet2 = make_planet(1, None, 4, true);
+                let planet3 = make_planet(2, Some(&planet2), 1, false);
                 vec![planet1, planet2, planet3]
             } else {
-                let planet1 = make_planet(0, None, 0, 3 + num3, 1, true);
-                let planet2 = make_planet(1, Some(&planet1), 1, 1, 1, false);
-                let planet3 = make_planet(2, Some(&planet1), 1, 2, 1, false);
+                let planet1 = make_planet(0, None, 3 + num3, true);
+                let planet2 = make_planet(1, Some(&planet1), 1, false);
+                let planet3 = make_planet(2, Some(&planet1), 2, false);
                 vec![planet1, planet2, planet3]
             }
         }
@@ -408,7 +404,6 @@ pub fn create_star_planets(star: &Star, star_count: i32, habitable_count: &mut i
             let num11 = rand2.next_f64();
             let num12 = rand2.next_f64();
             let mut gas_giant = false;
-            let mut broke_from_loop = false;
             if orbit_around == 0 {
                 num8 += 1;
                 if index < planet_count - 1 && num11 < p_gas[index as usize] {
@@ -417,6 +412,7 @@ pub fn create_star_planets(star: &Star, star_count: i32, habitable_count: &mut i
                         num10 = 3;
                     }
                 }
+                let mut broke_from_loop = false;
                 while star.index != 0 || num10 != 3 {
                     let num13 = planet_count - index;
                     let num14 = 9 - (num10 as i32);
@@ -449,9 +445,7 @@ pub fn create_star_planets(star: &Star, star_count: i32, habitable_count: &mut i
                 } else {
                     output.get((orbit_around - 1) as usize)
                 },
-                orbit_around,
                 if orbit_around == 0 { num10 } else { num9 },
-                if orbit_around == 0 { num8 } else { num9 },
                 gas_giant,
                 habitable_count,
                 info_seed,

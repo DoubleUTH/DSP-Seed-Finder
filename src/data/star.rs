@@ -7,18 +7,18 @@ use std::collections::HashMap;
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Star {
-    #[serde(skip_serializing)]
+    #[serde(skip)]
     pub id: i32,
     pub index: i32,
-    #[serde(skip_serializing)]
+    #[serde(skip)]
     pub seed: i32,
-    #[serde(skip_serializing)]
+    #[serde(skip)]
     pub name_seed: i32,
     pub position: Vector3,
     pub name: String,
-    #[serde(skip_serializing)]
+    #[serde(skip)]
     pub level: f32,
-    #[serde(skip_serializing)]
+    #[serde(skip)]
     pub resource_coef: f32,
     pub mass: f32,
     pub lifetime: f32,
@@ -26,23 +26,23 @@ pub struct Star {
     pub temperature: f32,
     pub star_type: StarType,
     pub spectr: SpectrType,
-    #[serde(skip_serializing)]
+    #[serde(skip)]
     pub color: f32,
-    #[serde(skip_serializing)]
+    #[serde(skip)]
     pub class_factor: f32,
     pub luminosity: f32,
     pub radius: f32,
-    #[serde(skip_serializing)]
+    #[serde(skip)]
     pub habitable_radius: f32,
-    #[serde(skip_serializing)]
+    #[serde(skip)]
     pub light_balance_radius: f32,
-    #[serde(skip_serializing)]
+    #[serde(skip)]
     pub orbit_scaler: f32,
     pub dyson_radius: f32,
     pub planets: Vec<Planet>,
-    #[serde(skip_serializing)]
+    #[serde(skip)]
     pub vein_patch: HashMap<VeinType, f32>,
-    #[serde(skip_serializing)]
+    #[serde(skip)]
     pub vein_amount: HashMap<VeinType, f32>,
 }
 
@@ -85,9 +85,5 @@ impl Star {
 
     pub fn physics_radius(&self) -> f32 {
         return self.radius * 1200.0;
-    }
-
-    pub fn astro_id(&self) -> i32 {
-        return self.id * 100;
     }
 }

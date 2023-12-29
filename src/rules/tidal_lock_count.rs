@@ -15,7 +15,10 @@ pub struct RuleTidalLockCount {
 impl Rule for RuleTidalLockCount {
     fn on_planets_created(&mut self, _: &Star, planets: &Vec<Planet>) -> Option<bool> {
         self.evaluated = true;
-        let count = planets.iter().filter(|planet| { planet.rotation_period == planet.orbital_period }).count();
+        let count = planets
+            .iter()
+            .filter(|planet| planet.is_tidal_locked())
+            .count();
         Some(self.condition.eval(count as f32))
     }
     fn is_evaluated(&self) -> bool {

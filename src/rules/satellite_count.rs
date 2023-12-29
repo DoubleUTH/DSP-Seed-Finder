@@ -1,6 +1,6 @@
-use crate::data::rule::{Rule, Condition};
-use crate::data::star::Star;
 use crate::data::planet::Planet;
+use crate::data::rule::{Condition, Rule};
+use crate::data::star::Star;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -14,7 +14,10 @@ pub struct RuleSatelliteCount {
 impl Rule for RuleSatelliteCount {
     fn on_planets_created(&mut self, _: &Star, planets: &Vec<Planet>) -> Option<bool> {
         self.evaluated = true;
-        let count = planets.iter().filter(|planet| planet.orbit_around != 0).count();
+        let count = planets
+            .iter()
+            .filter(|planet| planet.orbit_around.is_some())
+            .count();
         Some(self.condition.eval(count as f32))
     }
     fn is_evaluated(&self) -> bool {

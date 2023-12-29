@@ -138,14 +138,10 @@ fn generate_stars(game_desc: &GameDesc) -> impl Iterator<Item = Star> {
     let num2 = rand.next_f32();
     let num3 = rand.next_f32();
     let num4 = rand.next_f32();
-    let num5 = (0.00999999977648258 * (star_count as f64) + (num1 as f64) * 0.300000011920929)
-        .ceil() as i32;
-    let num6 = (0.00999999977648258 * (star_count as f64) + (num2 as f64) * 0.300000011920929)
-        .ceil() as i32;
-    let num7 = (0.0160000007599592 * (star_count as f64) + (num3 as f64) * 0.400000005960464).ceil()
-        as i32;
-    let num8 =
-        (0.0130000002682209 * (star_count as f64) + (num4 as f64) * 0.39999997615814).ceil() as i32;
+    let num5 = (0.01 * (star_count as f64) + (num1 as f64) * 0.3).ceil() as i32;
+    let num6 = (0.01 * (star_count as f64) + (num2 as f64) * 0.3).ceil() as i32;
+    let num7 = (0.016 * (star_count as f64) + (num3 as f64) * 0.4).ceil() as i32;
+    let num8 = (0.013 * (star_count as f64) + (num4 as f64) * 0.4).ceil() as i32;
     let num9 = star_count - num5;
     let num10 = num9 - num6;
     let num11 = num10 - num7;

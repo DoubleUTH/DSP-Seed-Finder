@@ -8,9 +8,9 @@ fn gen_random_name(seed: i32, star: &Star) -> String {
     let num1 = rand.next_f64();
     if star.star_type == StarType::GiantStar {
         let num2 = rand.next_f64();
-        if num2 < 0.400000005960464 {
+        if num2 < 0.4 {
             random_giant_star_name_from_raw_names(seed1)
-        } else if num2 < 0.699999988079071 {
+        } else if num2 < 0.7 {
             random_giant_star_name_with_constellation_alpha(seed1)
         } else {
             random_giant_star_name_with_format(seed1)

@@ -85,10 +85,10 @@ pub fn create_star(
             star.lifetime = (10000.0
                 * 0.1_f64.powf(((star.mass as f64) * 0.58).log10() / d.log10() + 1.0)
                 * num4) as f32;
-            star.age = (num2 * 0.0399999991059303 + 0.959999978542328) as f32;
+            star.age = (num2 * 0.04 + 0.96) as f32;
         }
         StarType::WhiteDwarf | StarType::NeutronStar | StarType::BlackHole => {
-            star.age = (num2 * 0.400000005960464 + 1.0) as f32;
+            star.age = (num2 * 0.4 + 1.0) as f32;
             if need_type == StarType::WhiteDwarf {
                 star.lifetime += 10000.0;
             } else if need_type == StarType::NeutronStar {
@@ -97,11 +97,11 @@ pub fn create_star(
         }
         _ => {
             star.age = if star.mass >= 0.8 {
-                num2 * 0.699999988079071 + 0.200000002980232
+                num2 * 0.7 + 0.2
             } else if star.mass >= 0.5 {
-                num2 * 0.400000005960464 + 0.100000001490116
+                num2 * 0.4 + 0.1
             } else {
-                num2 * 0.119999997317791 + 0.0199999995529652
+                num2 * 0.12 + 0.02
             } as f32;
         }
     };
@@ -125,7 +125,7 @@ pub fn create_star(
     }
     num10 = num10.clamp(-4.0, 2.0);
     star.spectr = unsafe { ::std::mem::transmute((num10 + 4.0).round() as i32) };
-    star.color = (((num10 + 3.5) * 0.200000002980232) as f32).clamp(0.0, 1.0);
+    star.color = (((num10 + 3.5) * 0.2) as f32).clamp(0.0, 1.0);
     star.class_factor = num10 as f32;
     star.luminosity = f1.powf(0.7);
     star.radius = ((star.mass as f64).powf(0.4) * num5) as f32;
@@ -180,7 +180,7 @@ pub fn create_birth_star(seed: i32) -> Star {
     }
     num5 = num5.clamp(-4.0, 2.0);
     star.spectr = unsafe { ::std::mem::transmute((num5 + 4.0).round() as i32) };
-    star.color = (((num5 + 3.5) * 0.200000002980232) as f32).clamp(0.0, 1.0);
+    star.color = (((num5 + 3.5) * 0.2) as f32).clamp(0.0, 1.0);
     star.class_factor = num5 as f32;
     star.luminosity = f1.powf(0.7);
     star.radius = ((star.mass as f64).powf(0.4) * num3) as f32;
@@ -199,7 +199,7 @@ pub fn create_birth_star(seed: i32) -> Star {
     }
 
     // displayed luminosity
-    star.luminosity = (star.luminosity.powf(0.330000013113022) * 1000.0) / 1000.0;
+    star.luminosity = (star.luminosity.powf(0.33) * 1000.0) / 1000.0;
     star
 }
 
@@ -240,9 +240,9 @@ pub fn create_star_planets(star: &Star, star_count: i32, habitable_count: &mut i
     if star.star_type == StarType::BlackHole || star.star_type == StarType::NeutronStar {
         vec![make_planet(0, None, 3, false)]
     } else if star.star_type == StarType::WhiteDwarf {
-        if num1 < 0.699999988079071 {
+        if num1 < 0.7 {
             vec![make_planet(0, None, 3, false)]
-        } else if num2 < 0.300000011920929 {
+        } else if num2 < 0.3 {
             let planet1 = make_planet(0, None, 3, false);
             let planet2 = make_planet(1, None, 4, false);
             vec![planet1, planet2]
@@ -252,9 +252,9 @@ pub fn create_star_planets(star: &Star, star_count: i32, habitable_count: &mut i
             vec![planet1, planet2]
         }
     } else if star.star_type == StarType::GiantStar {
-        if num1 < 0.300000011920929 {
+        if num1 < 0.3 {
             vec![make_planet(0, None, 2 + num3, false)]
-        } else if num1 < 0.800000011920929 {
+        } else if num1 < 0.8 {
             if num2 < 0.25 {
                 let planet1 = make_planet(0, None, 2 + num3, false);
                 let planet2 = make_planet(1, None, 3 + num3, false);
@@ -265,7 +265,7 @@ pub fn create_star_planets(star: &Star, star_count: i32, habitable_count: &mut i
                 vec![planet1, planet2]
             }
         } else {
-            if num2 < 0.150000005960464 {
+            if num2 < 0.15 {
                 let planet1 = make_planet(0, None, 2 + num3, false);
                 let planet2 = make_planet(1, None, 3 + num3, false);
                 let planet3 = make_planet(2, None, 4 + num3, false);
@@ -522,7 +522,7 @@ fn set_star_age(star: &mut Star, age: f32, rn: f64, rt: f64) {
             star.color = 0.7;
         }
     } else {
-        if age >= 0.959999978542328 {
+        if age >= 0.96 {
             let mut num4 = (5.0_f64.powf(((star.mass as f64).log10() - 0.7).abs()) * 5.0) as f32;
             if num4 > 10.0 {
                 num4 = ((num4 * 0.1).ln() + 1.0) * 10.0;

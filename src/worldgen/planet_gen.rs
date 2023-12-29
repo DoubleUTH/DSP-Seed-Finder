@@ -91,8 +91,8 @@ pub fn create_planet(
             } else {
                 match star.star_type {
                     StarType::WhiteDwarf => 0.5,
-                    StarType::NeutronStar => 0.200000002980232,
-                    StarType::BlackHole => 0.150000005960464,
+                    StarType::NeutronStar => 0.2,
+                    StarType::BlackHole => 0.15,
                     _ => 1.0,
                 }
             },
@@ -137,8 +137,7 @@ pub fn create_planet(
         let a = (num19 / num23) as f32;
         let num24 = (a + (0.35 - a) * 0.5).clamp(0.08, 0.8);
         planet.habitable_bias = num21 * num22;
-        planet.temperature_bias =
-            (1.20000004768372 / ((f2 as f64) + 0.200000002980232) - 1.0) as f32;
+        planet.temperature_bias = (1.2 / ((f2 as f64) + 0.2) - 1.0) as f32;
         let num25 = (planet.habitable_bias / num24)
             .clamp(0.0, 1.1)
             .powf(num24 * 10.0);
@@ -146,17 +145,17 @@ pub fn create_planet(
         if is_birth || (num13 > (num25 as f64) && star.index > 0) {
             planet.planet_type = PlanetType::Ocean;
             *habitable_count += 1;
-        } else if f2 < 0.833333015441895 {
-            let num26 = ((f2 as f64) * 2.5 - 0.850000023841858).max(0.15);
+        } else if f2 < 5.0 / 6.0 {
+            let num26 = ((f2 as f64) * 2.5 - 0.85).max(0.15);
             planet.planet_type = if num14 >= num26 {
                 PlanetType::Vocano
             } else {
                 PlanetType::Desert
             };
-        } else if f2 < 1.20000004768372 {
+        } else if f2 < 1.2 {
             planet.planet_type = PlanetType::Desert;
         } else {
-            let num27 = 0.899999976158142 / (f2 as f64) - 0.100000001490116;
+            let num27 = 0.9 / (f2 as f64) - 0.1;
             planet.planet_type = if num14 >= num27 {
                 PlanetType::Ice
             } else {
@@ -184,10 +183,9 @@ pub fn set_planet_theme(planet: &mut Planet, is_birth_star: bool, used_theme_ids
         } else {
             let flag2 = if theme.temperature.abs() < 0.5 && theme.planet_type == PlanetType::Desert
             {
-                (planet.temperature_bias.abs() as f64)
-                    < (theme.temperature.abs() as f64) + 0.100000001490116
+                (planet.temperature_bias.abs() as f64) < (theme.temperature.abs() as f64) + 0.1
             } else {
-                (theme.temperature as f64) * (planet.temperature_bias as f64) >= -0.100000001490116
+                (theme.temperature as f64) * (planet.temperature_bias as f64) >= -0.1
             };
             if (theme.planet_type == planet.planet_type) && flag2 {
                 if is_birth_star {
@@ -237,7 +235,7 @@ pub fn generate_gases(planet: &mut Planet, star: &Star, game_desc: &GameDesc) {
         .iter()
         .zip(planet.theme_proto.gas_speeds.iter())
     {
-        let num2 = speed * (rand.next_f32() * 0.190909147262573 + 0.909090876579285) * gas_coef;
+        let num2 = speed * (rand.next_f32() * 21.0 / 110.0 + 10.0 / 11.0) * gas_coef;
         planet
             .gases
             .push((*item, num2 * star.resource_coef.powf(0.3)))
@@ -289,11 +287,11 @@ pub fn generate_veins(planet: &mut Planet, star: &Star, game_desc: &GameDesc) {
         StarType::GiantStar => 2.5,
         StarType::WhiteDwarf => {
             num_array_1[9] += 2;
-            add_until(num_array_1.get_mut(9).unwrap(), 0.449999988079071);
+            add_until(num_array_1.get_mut(9).unwrap(), 0.45);
             num_array_2[9] = 0.7;
             num_array_3[9] = 1.0;
             num_array_1[10] += 2;
-            add_until(num_array_1.get_mut(10).unwrap(), 0.449999988079071);
+            add_until(num_array_1.get_mut(10).unwrap(), 0.45);
             num_array_2[10] = 0.7;
             num_array_3[10] = 1.0;
             num_array_1[12] += 1;
@@ -304,14 +302,14 @@ pub fn generate_veins(planet: &mut Planet, star: &Star, game_desc: &GameDesc) {
         }
         StarType::NeutronStar => {
             num_array_1[14] += 1;
-            add_until(num_array_1.get_mut(14).unwrap(), 0.649999976158142);
+            add_until(num_array_1.get_mut(14).unwrap(), 0.65);
             num_array_2[14] = 0.7;
             num_array_3[14] = 0.3;
             4.5
         }
         StarType::BlackHole => {
             num_array_1[14] += 1;
-            add_until(num_array_1.get_mut(14).unwrap(), 0.649999976158142);
+            add_until(num_array_1.get_mut(14).unwrap(), 0.65);
             num_array_2[14] = 0.7;
             num_array_3[14] = 0.3;
             5.0

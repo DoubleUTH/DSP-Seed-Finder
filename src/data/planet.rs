@@ -118,14 +118,14 @@ impl Planet {
         self.rotation_calculated.set(true);
         let (obliquity_scale, num15, rotation_scale) = self.rotation_params;
         let mut obliquity: f32;
-        if num15 < 0.0399999991059303 {
+        if num15 < 0.04 {
             obliquity = (obliquity_scale * 39.9) as f32;
             if obliquity < 0.0 {
                 obliquity -= 70.0;
             } else {
                 obliquity += 70.0;
             }
-        } else if num15 < 0.100000001490116 {
+        } else if num15 < 0.1 {
             obliquity = (obliquity_scale * 80.0) as f32;
             if obliquity < 0.0 {
                 obliquity -= 30.0;
@@ -142,17 +142,17 @@ impl Planet {
             } else {
                 1.0
             })
-            * (if gas_giant { 0.200000002980232 } else { 1.0 });
+            * (if gas_giant { 0.2 } else { 1.0 });
 
         rotation_period = 1.0 / (1.0 / self.sun_orbital_period + 1.0 / rotation_period);
         if self.orbit_around.is_none() && self.orbit_index <= 4 && !gas_giant {
-            if num15 > 0.959999978542328 {
+            if num15 > 0.96 {
                 obliquity *= 0.01;
                 rotation_period = self.orbital_period;
             } else if num15 > 0.930000007152557 {
                 obliquity *= 0.1;
                 rotation_period = self.orbital_period * 0.5;
-            } else if num15 > 0.899999976158142 {
+            } else if num15 > 0.9 {
                 obliquity *= 0.2;
                 rotation_period = self.orbital_period * 0.25;
             }

@@ -1,7 +1,7 @@
 import styles from "./Modal.module.css"
 import { ParentComponent } from "solid-js"
 import clsx from "clsx"
-import { AiOutlineClose } from "solid-icons/ai"
+import { IoClose } from "solid-icons/io"
 
 const Modal: ParentComponent<{
     class?: string
@@ -24,7 +24,7 @@ const Modal: ParentComponent<{
         >
             <div class={styles.content}>
                 <div class={styles.close} onClick={() => props.onClose?.()}>
-                    <AiOutlineClose />
+                    <IoClose />
                 </div>
                 {props.children}
             </div>

@@ -1,7 +1,7 @@
 import styles from "./Header.module.css"
 import { useStore } from "../store"
 import { A } from "@solidjs/router"
-import { AiOutlineSetting } from "solid-icons/ai"
+import { IoContrast } from "solid-icons/io"
 import { Component } from "solid-js"
 
 const Header: Component = () => {
@@ -21,9 +21,9 @@ const Header: Component = () => {
             <div class={styles.icons}>
                 <div
                     class={styles.icon}
-                    onClick={() => setStore("modals", "settings", true)}
+                    onClick={() => setStore("settings", "darkMode", (x) => !x)}
                 >
-                    <AiOutlineSetting />
+                    <IoContrast />
                 </div>
             </div>
         </div>

@@ -8,9 +8,7 @@ function Select<T>(props: {
     value?: T
     onChange?: (t: T) => void
     getLabel: (t: T) => JSX.Element
-    isSelected: (t: T) => boolean
     options: T[]
-    onSearch?: (text: string) => void
 }): JSX.Element {
     let select: HTMLDivElement
     let dropdown: HTMLDivElement
@@ -35,16 +33,19 @@ function Select<T>(props: {
                 strategy: "fixed",
                 placement: "bottom",
                 middleware: [flip({ fallbackPlacements: ["top"] })],
+                // eslint-disable-next-line solid/reactivity
             }).then(({ x, y }) => {
                 dropdown!.style.left = x + "px"
                 dropdown!.style.top = y + "px"
-                const selected = props.options.findIndex(props.isSelected)
-                if (selected > -1) {
-                    dropdown.children[selected]!.scrollIntoView({
-                        behavior: "instant",
-                        block: "center",
-                        inline: "start",
-                    })
+                if (props.value) {
+                    const selected = props.options.indexOf(props.value)
+                    if (selected > -1) {
+                        dropdown.children[selected]!.scrollIntoView({
+                            behavior: "instant",
+                            block: "center",
+                            inline: "start",
+                        })
+                    }
                 }
             })
         } else {
@@ -66,7 +67,7 @@ function Select<T>(props: {
                         <div
                             class={clsx(
                                 styles.item,
-                                props.isSelected(option) && styles.selected,
+                                props.value === option && styles.selected,
                             )}
                             onClick={() => {
                                 setFocus(false)

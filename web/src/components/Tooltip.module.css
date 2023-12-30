@@ -1,0 +1,17 @@
+.tooltip {
+    cursor: help;
+    text-decoration: underline dotted 1px;
+}
+
+.popup {
+    position: fixed;
+    max-width: 200px;
+    font-size: 0.8em;
+    border-radius: 8px;
+    background-color: var(--modal-background);
+    text-align: left;
+    padding: 4px 12px;
+    height: auto;
+    z-index: 10;
+    user-select: none;
+}

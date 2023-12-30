@@ -9,13 +9,30 @@ import {
 } from "../enums"
 import { formatNumber, toPrecision } from "../util"
 import styles from "./StarView.module.css"
-import { Component, Show, For } from "solid-js"
-import { AiOutlineDown } from "solid-icons/ai"
+import { Component, Show, For, createMemo } from "solid-js"
+import { IoChevronDown } from "solid-icons/io"
 import clsx from "clsx"
 import { A } from "@solidjs/router"
+import Tooltip from "../components/Tooltip"
 
-function distanceFromBirth([x, y, z]: [float, float, float]): float {
+function distanceFromBirth([x, y, z]: Position): float {
     return Math.sqrt(x * x + y * y + z * z)
+}
+
+function distanceFrom([x1, y1, z1]: Position, [x2, y2, z2]: Position): float {
+    const dx = x1 - x2
+    const dy = y1 - y2
+    const dz = z1 - z2
+    return Math.sqrt(dx * dx + dy * dy + dz * dz)
+}
+
+function closestDistanceFrom(
+    reference: Position,
+    positions: Position[],
+): float {
+    return positions
+        .map((p) => distanceFrom(reference, p))
+        .reduce((acc, val) => (acc < val ? acc : val), Infinity)
 }
 
 function type(star: Star) {
@@ -236,11 +253,15 @@ const Expand: Component<{ expand: boolean; toggle: () => void }> = (props) => (
         class={clsx(styles.expand, props.expand && styles.expanded)}
         onClick={() => props.toggle()}
     >
-        <AiOutlineDown />
+        <IoChevronDown />
     </div>
 )
 
-const StarDetail: Component<{ star: Star; expand: boolean }> = (props) => (
+const StarDetail: Component<{
+    star: Star
+    expand: boolean
+    positions?: Position[]
+}> = (props) => (
     <>
         <div class={styles.row}>
             <div class={styles.field}>Type</div>
@@ -259,9 +280,27 @@ const StarDetail: Component<{ star: Star; expand: boolean }> = (props) => (
         <div class={styles.row}>
             <div class={styles.field}>Distance from birth</div>
             <div class={styles.value}>
-                {formatNumber(distanceFromBirth(props.star.position), 2)} ly
+                {formatNumber(distanceFromBirth(props.star.position), 1)} ly
             </div>
         </div>
+        <Show when={props.positions}>
+            <div class={styles.row}>
+                <div class={styles.field}>
+                    Distance from{" "}
+                    <Tooltip text="Black Hole / Neutron Star">X star</Tooltip>
+                </div>
+                <div class={styles.value}>
+                    {formatNumber(
+                        closestDistanceFrom(
+                            props.star.position,
+                            props.positions!,
+                        ),
+                        1,
+                    )}{" "}
+                    ly
+                </div>
+            </div>
+        </Show>
         <div class={styles.row}>
             <div class={styles.field}>Max Dyson Sphere Radius</div>
             <div class={styles.value}>
@@ -285,17 +324,27 @@ const StarDetail: Component<{ star: Star; expand: boolean }> = (props) => (
             <div class={styles.row}>
                 <div class={styles.field}>Temperature</div>
                 <div class={styles.value}>
-                    {formatNumber(props.star.temperature, 0)} K
+                    {toPrecision(props.star.temperature, 0)} K
                 </div>
             </div>
             <div class={styles.row}>
                 <div class={styles.field}>Age</div>
                 <div class={styles.value}>
-                    {formatNumber(props.star.age * props.star.lifetime, 0)} Myrs
+                    {toPrecision(props.star.age * props.star.lifetime, 0)} Myrs
                 </div>
             </div>
         </Show>
     </>
+)
+
+const Vein: Component<{
+    value: integer
+    veinType: VeinType
+    class?: string
+}> = (props) => (
+    <Tooltip class={clsx(props.class, styles.estimate)} text="Estimated value">
+        {formatVein(props.value, props.veinType === VeinType.Oil)}
+    </Tooltip>
 )
 
 const StarVeins: Component<{ star: Star }> = (props) => (
@@ -304,9 +353,11 @@ const StarVeins: Component<{ star: Star }> = (props) => (
             {(vein) => (
                 <div class={styles.row}>
                     <div class={styles.field}>{veinNames[vein.veinType]}</div>
-                    <div class={clsx(styles.value, styles.estimate)}>
-                        {formatVein(vein.avg, vein.veinType === VeinType.Oil)}
-                    </div>
+                    <Vein
+                        class={styles.value}
+                        value={vein.avg}
+                        veinType={vein.veinType}
+                    />
                 </div>
             )}
         </For>
@@ -333,13 +384,13 @@ const StarVeins: Component<{ star: Star }> = (props) => (
     </>
 )
 
-const NearbyStar: Component<{ seed: integer; star: Star; distance: float }> = (
-    props,
-) => (
-    <A
-        href={`/galaxy/${props.seed}/${props.star.index}`}
-        class={clsx(styles.row, styles.nearbyRow)}
-    >
+const NearbyStar: Component<{
+    seed: integer
+    star: Star
+    distance: float
+    url: string
+}> = (props) => (
+    <A href={props.url} class={clsx(styles.row, styles.nearbyRow)}>
         <div>
             <span>{props.star.name}</span>
             <span class={styles.index}>#{props.star.index + 1}</span>
@@ -432,12 +483,11 @@ const PlanetView: Component<{ star: Star; planet: Planet }> = (props) => {
                         <div class={styles.field}>
                             {veinNames[vein.veinType]}
                         </div>
-                        <div class={clsx(styles.value, styles.estimate)}>
-                            {formatVein(
-                                vein.avg,
-                                vein.veinType === VeinType.Oil,
-                            )}
-                        </div>
+                        <Vein
+                            class={styles.value}
+                            value={vein.avg}
+                            veinType={vein.veinType}
+                        />
                     </div>
                 )}
             </For>
@@ -467,11 +517,26 @@ const PlanetView: Component<{ star: Star; planet: Planet }> = (props) => {
     )
 }
 
-const StarView: Component<{ star: Star; galaxy?: Galaxy }> = (props) => {
+const StarView: Component<{
+    star: Star
+    galaxy?: Galaxy
+    buildUrl: (starIndex: integer) => string
+}> = (props) => {
     const [expand, setExpand] = createStore({
         detail: false,
         planets: {} as Record<number, boolean>,
     })
+
+    const xStarPostions = createMemo(
+        () =>
+            props.galaxy?.stars
+                .filter(
+                    (star) =>
+                        star.type === StarType.BlackHole ||
+                        star.type === StarType.NeutronStar,
+                )
+                .map((star) => star.position),
+    )
 
     return (
         <div class={styles.view}>
@@ -488,7 +553,11 @@ const StarView: Component<{ star: Star; galaxy?: Galaxy }> = (props) => {
                                 #{props.star.index + 1}
                             </span>
                         </div>
-                        <StarDetail star={props.star} expand={expand.detail} />
+                        <StarDetail
+                            star={props.star}
+                            expand={expand.detail}
+                            positions={xStarPostions()}
+                        />
                     </div>
                     <div class={styles.card}>
                         <div class={styles.title}>
@@ -514,6 +583,7 @@ const StarView: Component<{ star: Star; galaxy?: Galaxy }> = (props) => {
                                         seed={props.galaxy!.seed}
                                         star={star}
                                         distance={distance}
+                                        url={props.buildUrl(star.index)}
                                     />
                                 )}
                             </For>

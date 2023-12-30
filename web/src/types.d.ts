@@ -24,9 +24,11 @@ declare global {
         stars: Star[]
     }
 
+    declare type Position = [x: float, y: float, z: float]
+
     declare interface Star {
         index: integer
-        position: [float, float, float]
+        position: Position
         name: string
         mass: float
         lifetime: float
@@ -196,27 +198,30 @@ declare global {
 
     declare interface Store {
         settings: Settings
-        modals: {
-            settings: boolean
-        }
         galaxys: Record<
-            number,
-            {
-                loading: boolean
-                seed: integer
-                starCount: integer
-                resourceMultiplier: float
-                stars: Star[]
-            }
+            number, // number of stars
+            Record<
+                number, // resource multipler
+                Record<
+                    number, // seed
+                    {
+                        loading: boolean
+                        seed: integer
+                        starCount: integer
+                        resourceMultiplier: float
+                        stars: Star[]
+                    }
+                >
+            >
         >
     }
 
     declare interface Settings {
-        concurrency: integer
         darkMode: boolean
-        nativeMode: boolean
-        starCount: integer
-        resourceMultiplier: float
+        view: {
+            starCount: integer
+            resourceMultipler: float
+        }
     }
 
     declare interface ProfileSettings {

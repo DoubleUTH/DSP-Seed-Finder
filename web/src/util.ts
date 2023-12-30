@@ -2,7 +2,7 @@ import { RuleType } from "./enums"
 
 export function toPrecision(number: number, precision: number) {
     return number.toLocaleString([], {
-        minimumFractionDigits: precision,
+        minimumFractionDigits: 0,
         maximumFractionDigits: precision,
     })
 }
@@ -23,3 +23,12 @@ export function constructRule(rules: SimpleRule[][]): Rule {
     )
     return rs.length === 1 ? rs[0]! : { type: RuleType.And, rules: rs }
 }
+
+export const minStarCount = 32
+export const maxStarCount = 64
+export const defaultStarCount = 64
+
+export const resourceMultiplers: ReadonlyArray<float> = [
+    0.1, 0.5, 0.8, 1, 1.5, 2, 3, 5, 8, 100,
+]
+export const defaultResourceMultipler = 1

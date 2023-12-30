@@ -4,7 +4,6 @@ import styles from "./App.module.css"
 import { StoreContext, defaultStore } from "./store"
 import Header from "./partials/Header"
 import { ParentComponent } from "solid-js"
-import Settings from "./partials/Settings"
 
 const App: ParentComponent = (props) => {
     const [store, setStore] = createStore<Store>(defaultStore)
@@ -19,7 +18,6 @@ const App: ParentComponent = (props) => {
             >
                 <Header />
                 <div class={styles.content}>{props.children}</div>
-                <Settings />
             </div>
         </StoreContext.Provider>
     )

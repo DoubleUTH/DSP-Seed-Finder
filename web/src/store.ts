@@ -1,16 +1,14 @@
 import { createContext, useContext } from "solid-js"
 import { SetStoreFunction } from "solid-js/store"
+import { defaultResourceMultipler, defaultStarCount } from "./util"
 
 export const defaultStore: Store = {
     settings: {
         darkMode: window.matchMedia("(prefers-color-scheme: dark)").matches,
-        concurrency: Math.max(navigator.hardwareConcurrency, 1),
-        nativeMode: true,
-        starCount: 64,
-        resourceMultiplier: 1,
-    },
-    modals: {
-        settings: false,
+        view: {
+            starCount: defaultStarCount,
+            resourceMultipler: defaultResourceMultipler,
+        },
     },
     galaxys: {},
 }

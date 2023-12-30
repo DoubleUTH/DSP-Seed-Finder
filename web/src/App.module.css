@@ -13,7 +13,7 @@
 .light {
     --text: #213547;
     --background: #ffffff;
-    --modal-background: #ffffff;
+    --modal-background: #f5f5f5;
 }
 
 .dark {

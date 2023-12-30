@@ -1,8 +1,10 @@
 pub mod and;
 pub mod average_vein_amount;
 pub mod birth;
+pub mod birth_distance;
 pub mod dyson_radius;
 pub mod gas_count;
+pub mod gas_rate;
 pub mod luminosity;
 pub mod ocean_type;
 pub mod or;
@@ -12,3 +14,4 @@ pub mod spectr;
 pub mod star_type;
 pub mod theme_id;
 pub mod tidal_lock_count;
+pub mod x_distance;

@@ -132,6 +132,6 @@ impl Evaluaton {
     }
 
     pub fn is_done(&self) -> bool {
-        self.items.iter().all(|item| item.is_some())
+        self.max_len == 0
     }
 }

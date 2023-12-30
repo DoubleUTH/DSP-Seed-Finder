@@ -3,13 +3,13 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct RuleDysonRadius {
+pub struct RuleBirthDistance {
     pub condition: Condition,
 }
 
-impl Rule for RuleDysonRadius {
+impl Rule for RuleBirthDistance {
     fn get_priority(&self) -> i32 {
-        22
+        12
     }
     fn evaluate(
         &self,
@@ -22,7 +22,7 @@ impl Rule for RuleDysonRadius {
                 continue;
             }
             let star = &sp.star;
-            if self.condition.eval(star.get_dyson_radius()) {
+            if self.condition.eval(star.position.magnitude() as f32) {
                 result.push(index)
             }
         }

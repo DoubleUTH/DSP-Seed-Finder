@@ -57,10 +57,17 @@ impl<'a> StarWithPlanets<'a> {
         }
         let mut count = 0_f32;
         let is_rare = vein_type.is_rare();
+        let is_safe = self.is_safe();
         for planet in self.get_planets() {
+            if planet.is_gas_giant() {
+                if !is_safe {
+                    planet.get_theme();
+                }
+                continue;
+            }
             if is_rare {
-                // skip vein generation if possible
                 let theme = planet.get_theme();
+                // skip vein generation if possible
                 if !theme.rare_veins.contains(vein_type) {
                     continue;
                 }

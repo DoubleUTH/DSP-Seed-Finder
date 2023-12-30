@@ -10,7 +10,7 @@ pub struct RuleTidalLockCount {
 
 impl Rule for RuleTidalLockCount {
     fn get_priority(&self) -> i32 {
-        20
+        33
     }
     fn evaluate(
         &self,

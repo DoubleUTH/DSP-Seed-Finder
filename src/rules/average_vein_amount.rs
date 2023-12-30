@@ -12,7 +12,7 @@ pub struct RuleAverageVeinAmount {
 
 impl Rule for RuleAverageVeinAmount {
     fn get_priority(&self) -> i32 {
-        40
+        51
     }
     fn evaluate(
         &self,

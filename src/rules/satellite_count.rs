@@ -10,7 +10,7 @@ pub struct RuleSatelliteCount {
 
 impl Rule for RuleSatelliteCount {
     fn get_priority(&self) -> i32 {
-        20
+        31
     }
     fn evaluate(
         &self,

@@ -46,7 +46,7 @@ declare global {
 
     declare interface Planet {
         index: integer
-        orbitAround?: integer | null
+        orbitAround: integer | null
         orbitIndex: integer
         orbitRadius: float
         orbitInclination: float
@@ -140,6 +140,7 @@ declare global {
         }
         export type GasCount = {
             type: RuleType.GasCount
+            ice: boolean | null
             condition: Condition
         }
         export type SatelliteCount = {
@@ -157,6 +158,19 @@ declare global {
             type: RuleType.PlanetCount
             condition: Condition
         }
+        export type BirthDistance = {
+            type: RuleType.BirthDistance
+            condition: Condition
+        }
+        export type XDistance = {
+            type: RuleType.XDistance
+            condition: Condition
+        }
+        export type GasRate = {
+            type: RuleType.GasRate
+            gasType: GasType
+            condition: Condition
+        }
     }
 
     declare type SimpleRule =
@@ -172,6 +186,9 @@ declare global {
         | Rule.Birth
         | Rule.ThemeId
         | Rule.PlanetCount
+        | Rule.BirthDistance
+        | Rule.XDistance
+        | Rule.GasRate
 
     declare type CompoundRule = Rule.And | Rule.Or
 

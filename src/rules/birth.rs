@@ -7,7 +7,7 @@ pub struct RuleBirth {}
 
 impl Rule for RuleBirth {
     fn get_priority(&self) -> i32 {
-        1
+        10
     }
     fn evaluate(
         &self,

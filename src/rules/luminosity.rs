@@ -9,7 +9,7 @@ pub struct RuleLuminosity {
 
 impl Rule for RuleLuminosity {
     fn get_priority(&self) -> i32 {
-        10
+        20
     }
     fn evaluate(
         &self,

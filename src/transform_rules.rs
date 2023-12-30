@@ -19,6 +19,9 @@ pub enum Rules {
     Birth(rules::birth::RuleBirth),
     ThemeId(rules::theme_id::RuleThemeId),
     PlanetCount(rules::planet_count::RulePlanetCount),
+    BirthDistance(rules::birth_distance::RuleBirthDistance),
+    XDistance(rules::x_distance::RuleXDistance),
+    GasRate(rules::gas_rate::RuleGasRate),
 }
 
 pub fn sort_rules(rules: Vec<Rules>) -> Vec<Box<dyn Rule + Send>> {
@@ -47,5 +50,8 @@ pub fn transform_rules(r: Rules) -> Box<dyn Rule + Send> {
         Rules::Birth(rule) => Box::new(rule),
         Rules::ThemeId(rule) => Box::new(rule),
         Rules::PlanetCount(rule) => Box::new(rule),
+        Rules::BirthDistance(rule) => Box::new(rule),
+        Rules::XDistance(rule) => Box::new(rule),
+        Rules::GasRate(rule) => Box::new(rule),
     }
 }

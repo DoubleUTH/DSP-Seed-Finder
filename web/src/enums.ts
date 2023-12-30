@@ -47,18 +47,21 @@ export enum VeinType {
 export enum RuleType {
     And = "And",
     Or = "Or",
-    Luminosity = "Luminosity",
-    DysonRadius = "DysonRadius",
-    AverageVeinAmount = "AverageVeinAmount",
-    Spectr = "Spectr",
-    TidalLockCount = "TidalLockCount",
-    OceanType = "OceanType",
-    StarType = "StarType",
-    GasCount = "GasCount",
-    SatelliteCount = "SatelliteCount",
-    Birth = "Birth",
-    ThemeId = "ThemeId",
-    PlanetCount = "PlanetCount",
+    Birth = "Birth", // 10
+    StarType = "StarType", // 11
+    BirthDistance = "BirthDistance", // 12
+    XDistance = "XDistance", // 13
+    Luminosity = "Luminosity", // 20
+    Spectr = "Spectr", // 21
+    DysonRadius = "DysonRadius", // 22
+    PlanetCount = "PlanetCount", // 30
+    SatelliteCount = "SatelliteCount", // 31
+    TidalLockCount = "TidalLockCount", // 33
+    ThemeId = "ThemeId", // 40
+    GasCount = "GasCount", // 41 / 32
+    OceanType = "OceanType", // 42
+    GasRate = "GasRate", // 50
+    AverageVeinAmount = "AverageVeinAmount", // 51
 }
 
 export enum ConditionType {

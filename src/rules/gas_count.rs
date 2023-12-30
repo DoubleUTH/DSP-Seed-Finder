@@ -5,16 +5,17 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RuleGasCount {
-    pub cold: Option<bool>,
+    #[serde(default)]
+    pub ice: Option<bool>,
     pub condition: Condition,
 }
 
 impl Rule for RuleGasCount {
     fn get_priority(&self) -> i32 {
-        if self.cold.is_some() {
-            40
+        if self.ice.is_some() {
+            41
         } else {
-            20
+            32
         }
     }
     fn evaluate(
@@ -23,16 +24,23 @@ impl Rule for RuleGasCount {
         evaluation: &crate::data::rule::Evaluaton,
     ) -> Vec<usize> {
         let mut result: Vec<usize> = vec![];
-        if let Some(cold) = self.cold {
+        if let Some(ice) = self.ice {
             for (index, sp) in galaxy.stars.iter().take(evaluation.get_len()).enumerate() {
                 let is_unknown = evaluation.is_unknonwn(index);
-                if !is_unknown && sp.is_safe() {
+                let is_safe = sp.is_safe();
+                if !is_unknown && is_safe {
                     continue;
                 }
                 let mut count = 0;
                 for planet in sp.get_planets() {
+                    if !planet.is_gas_giant() {
+                        if !is_safe {
+                            planet.get_theme();
+                        }
+                        continue;
+                    }
                     let theme = planet.get_theme();
-                    if planet.is_gas_giant() && (theme.temperature < 0.0) == cold {
+                    if (theme.temperature < 0.0) == ice {
                         count += 1;
                     }
                 }

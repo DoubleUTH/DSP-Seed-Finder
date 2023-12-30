@@ -10,7 +10,7 @@ pub struct RuleSpectr {
 
 impl Rule for RuleSpectr {
     fn get_priority(&self) -> i32 {
-        10
+        21
     }
     fn evaluate(
         &self,

@@ -10,7 +10,7 @@ pub struct RuleStarType {
 
 impl Rule for RuleStarType {
     fn get_priority(&self) -> i32 {
-        10
+        11
     }
     fn evaluate(
         &self,

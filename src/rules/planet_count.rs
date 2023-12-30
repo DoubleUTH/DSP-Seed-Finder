@@ -10,7 +10,7 @@ pub struct RulePlanetCount {
 
 impl Rule for RulePlanetCount {
     fn get_priority(&self) -> i32 {
-        20
+        30
     }
     fn evaluate(
         &self,

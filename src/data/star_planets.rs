@@ -1,7 +1,8 @@
 use std::cell::UnsafeCell;
+use std::collections::HashMap;
 use std::rc::Rc;
 
-use super::enums::{SpectrType, StarType};
+use super::enums::{SpectrType, StarType, VeinType};
 use super::planet::Planet;
 use super::random::DspRandom;
 use super::star::Star;
@@ -23,6 +24,10 @@ pub struct StarWithPlanets<'a> {
     pub star: Rc<Star<'a>>,
     #[serde(serialize_with = "serialize_planets")]
     planets: UnsafeCell<Vec<Planet<'a>>>,
+    #[serde(skip)]
+    safe: UnsafeCell<bool>,
+    #[serde(skip)]
+    avg_veins: UnsafeCell<HashMap<VeinType, f32>>,
 }
 
 impl<'a> StarWithPlanets<'a> {
@@ -30,7 +35,49 @@ impl<'a> StarWithPlanets<'a> {
         Self {
             star,
             planets: UnsafeCell::new(vec![]),
+            safe: UnsafeCell::new(false),
+            avg_veins: UnsafeCell::new(HashMap::new()),
         }
+    }
+
+    pub fn is_safe(&self) -> bool {
+        unsafe { *self.safe.get() }
+    }
+
+    pub fn mark_safe(&self) {
+        unsafe {
+            *self.safe.get() = true;
+        }
+    }
+
+    pub fn get_avg_vein(&self, vein_type: &VeinType) -> f32 {
+        let map = unsafe { &mut *self.avg_veins.get() };
+        if let Some(val) = map.get(vein_type) {
+            return *val;
+        }
+        let mut count = 0_f32;
+        let is_rare = vein_type.is_rare();
+        for planet in self.get_planets() {
+            if is_rare {
+                // skip vein generation if possible
+                let theme = planet.get_theme();
+                if !theme.rare_veins.contains(vein_type) {
+                    continue;
+                }
+            }
+            for vein in planet.get_veins() {
+                if &vein.vein_type == vein_type {
+                    let avg_patches = ((vein.min_patch + vein.max_patch) as f32)
+                        * ((vein.min_group + vein.max_group) as f32)
+                        * ((vein.min_amount + vein.max_amount) as f32)
+                        / 8.0;
+                    count += avg_patches;
+                }
+            }
+        }
+        map.insert(vein_type.clone(), count);
+        self.mark_safe();
+        count
     }
 
     pub fn get_planets(&self) -> &Vec<Planet<'a>> {
@@ -47,7 +94,7 @@ impl<'a> StarWithPlanets<'a> {
         rand2.next_f64();
         rand2.next_f64();
 
-        let mut make_planet = |index: i32, orbit_index: i32, gas_giant: bool| -> Planet {
+        let mut make_planet = |index: usize, orbit_index: usize, gas_giant: bool| -> Planet {
             let info_seed = rand2.next_seed();
             let gen_seed = rand2.next_seed();
             Planet::new(
@@ -115,7 +162,7 @@ impl<'a> StarWithPlanets<'a> {
                 }
             }
         } else {
-            let (planet_count, p_gas): (i32, [f64; 6]) = if self.star.is_birth() {
+            let (planet_count, p_gas): (usize, [f64; 6]) = if self.star.is_birth() {
                 (4, P_GASES[0])
             } else {
                 match self.star.get_spectr() {
@@ -236,10 +283,10 @@ impl<'a> StarWithPlanets<'a> {
             };
             let mut num8 = 0;
             let mut num9 = 0;
-            let mut orbit_around: i32 = 0;
-            let mut num10 = 1;
-            let mut orbits: Vec<(i32, i32)> = vec![];
-            for index in 0..planet_count {
+            let mut orbit_around: usize = 0;
+            let mut num10: usize = 1;
+            let mut orbits: Vec<(usize, usize)> = vec![];
+            for index in 0..planet_count as usize {
                 let info_seed = rand2.next_seed();
                 let gen_seed = rand2.next_seed();
                 let num11 = rand2.next_f64();
@@ -256,7 +303,7 @@ impl<'a> StarWithPlanets<'a> {
                     let mut broke_from_loop = false;
                     while !self.star.is_birth() || num10 != 3 {
                         let num13 = planet_count - index;
-                        let num14 = 9 - (num10 as i32);
+                        let num14 = 9 - num10;
                         if num14 > num13 {
                             let a = (num13 as f32) / (num14 as f32);
                             let a2 = if num10 <= 3 { 0.15_f32 } else { 0.45_f32 };

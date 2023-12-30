@@ -11,12 +11,12 @@ use std::rc::Rc;
 #[derive(Debug)]
 pub struct Planet<'a> {
     pub star: Rc<Star<'a>>,
-    pub index: i32,
+    pub index: usize,
     pub seed: i32,
     pub info_seed: i32,
     pub theme_seed: i32,
     pub orbit_around: RefCell<Option<&'a Planet<'a>>>,
-    pub orbit_index: i32,
+    pub orbit_index: usize,
     pub radius: f32,
     pub scale: f32,
     obliquity_scale: f64,
@@ -56,33 +56,63 @@ const ORBIT_RADIUS: &'static [f32] = &[
 impl<'a> Planet<'a> {
     pub fn new(
         star: Rc<Star<'a>>,
-        index: i32,
-        orbit_index: i32,
+        index: usize,
+        orbit_index: usize,
         gas_giant: bool,
         info_seed: i32,
         gen_seed: i32,
     ) -> Self {
-        let mut planet = Planet {
+        let mut rand = DspRandom::new(info_seed);
+
+        let num3 = rand.next_f64();
+        let num4 = rand.next_f64();
+        let orbit_radius_factor = num3 * (num4 - 0.5) * 0.5;
+        let orbit_inclination_factor = rand.next_f64();
+        let orbit_longitude = (rand.next_f64() * 360.0) as f32;
+        let orbit_phase = (rand.next_f64() * 360.0) as f32;
+        let num8 = rand.next_f64();
+        let num9 = rand.next_f64();
+        let obliquity_scale = num8 * (num9 - 0.5);
+        let num10 = rand.next_f64();
+        let num11 = rand.next_f64();
+        let rotation_scale = num10 * num11 * 1000.0 + 400.0;
+        let rotation_phase = (rand.next_f64() * 360.0) as f32;
+        let habitable_factor = rand.next_f64();
+        let type_factor = rand.next_f64();
+        let theme_rand1 = rand.next_f64();
+        let rotation_param = rand.next_f64();
+        rand.next_f64();
+        rand.next_f64();
+        rand.next_f64();
+        let theme_seed = rand.next_seed();
+
+        let (radius, scale) = if gas_giant {
+            (80.0, 10.0)
+        } else {
+            (200.0, 1.0)
+        };
+
+        Self {
             star,
             index,
             seed: gen_seed,
             info_seed,
-            theme_seed: 0,
+            theme_seed,
             orbit_around: RefCell::new(None),
             orbit_index,
-            radius: 200.0,
-            scale: 1.0,
-            orbit_longitude: 0.0,
-            orbit_phase: 0.0,
-            rotation_phase: 0.0,
-            theme_rand1: 0.0,
-            obliquity_scale: 0.0,
-            rotation_param: 0.0,
-            rotation_scale: 0.0,
-            orbit_inclination_factor: 0.0,
-            orbit_radius_factor: 0.0,
-            habitable_factor: 0.0,
-            type_factor: 0.0,
+            radius,
+            scale,
+            orbit_longitude,
+            orbit_phase,
+            rotation_phase,
+            theme_rand1,
+            obliquity_scale,
+            rotation_param,
+            rotation_scale,
+            orbit_inclination_factor,
+            orbit_radius_factor,
+            habitable_factor,
+            type_factor,
             gas_giant,
             get_orbital_radius: UnsafeCell::new(None),
             get_sun_distance: UnsafeCell::new(None),
@@ -100,39 +130,7 @@ impl<'a> Planet<'a> {
             get_theme: UnsafeCell::new(None),
             get_gases: UnsafeCell::new(None),
             get_veins: UnsafeCell::new(None),
-        };
-
-        let mut rand = DspRandom::new(info_seed);
-
-        let num3 = rand.next_f64();
-        let num4 = rand.next_f64();
-        planet.orbit_radius_factor = num3 * (num4 - 0.5) * 0.5;
-        planet.orbit_inclination_factor = rand.next_f64();
-        planet.orbit_longitude = (rand.next_f64() * 360.0) as f32;
-        planet.orbit_phase = (rand.next_f64() * 360.0) as f32;
-        let num8 = rand.next_f64();
-        let num9 = rand.next_f64();
-        planet.obliquity_scale = num8 * (num9 - 0.5);
-        let num10 = rand.next_f64();
-        let num11 = rand.next_f64();
-        planet.rotation_scale = num10 * num11 * 1000.0 + 400.0;
-        planet.rotation_phase = (rand.next_f64() * 360.0) as f32;
-        planet.habitable_factor = rand.next_f64();
-        planet.type_factor = rand.next_f64();
-        planet.theme_rand1 = rand.next_f64();
-        planet.rotation_param = rand.next_f64();
-        rand.next_f64();
-        rand.next_f64();
-        rand.next_f64();
-        let theme_seed = rand.next_seed();
-        planet.theme_seed = theme_seed;
-
-        if gas_giant {
-            planet.radius = 80.0;
-            planet.scale = 10.0;
         }
-
-        planet
     }
 
     pub fn real_radius(&self) -> f32 {
@@ -144,7 +142,11 @@ impl<'a> Planet<'a> {
     }
 
     pub fn is_birth(&self) -> bool {
-        self.orbit_index == 1 && self.star.is_birth() && self.orbit_around.borrow().is_some()
+        self.orbit_index == 1 && self.star.is_birth() && self.has_orbit_around()
+    }
+
+    pub fn has_orbit_around(&self) -> bool {
+        self.orbit_around.borrow().is_some()
     }
 
     lazy_getter!(self, get_orbital_radius, f32, {
@@ -269,7 +271,7 @@ impl<'a> Planet<'a> {
 
     lazy_getter!(self, get_orbit_inclination, f32, {
         let mut orbit_inclination = (self.orbit_inclination_factor * 16.0 - 8.0) as f32;
-        if self.orbit_around.borrow().is_some() {
+        if self.has_orbit_around() {
             orbit_inclination *= 2.2;
         }
         if self.star.star_type == StarType::NeutronStar {
@@ -293,7 +295,7 @@ impl<'a> Planet<'a> {
     lazy_getter!(self, get_orbital_period, f64, {
         let f1 = self.get_orbital_radius() as f64;
         (39.4784176043574 * f1 * f1 * f1
-            / (if self.orbit_around.borrow().is_some() {
+            / (if self.has_orbit_around() {
                 1.08308421068537e-08
             } else {
                 1.35385519905204e-06 * (self.star.get_mass() as f64)
@@ -624,9 +626,9 @@ impl Serialize for Planet<'_> {
     where
         S: Serializer,
     {
-        let mut state = serializer.serialize_struct("Planet", 17)?;
+        let mut state = serializer.serialize_struct("Planet", 16)?;
         state.serialize_field("index", &self.index)?;
-        state.serialize_field("orbitAround", &self.orbit_around)?;
+        state.serialize_field("orbitAround", &self.orbit_around.borrow().map(|p| p.index))?;
         state.serialize_field("orbitIndex", &self.orbit_index)?;
         state.serialize_field("orbitRadius", &self.get_orbital_radius())?;
         state.serialize_field("orbitInclination", &self.get_orbit_inclination())?;
@@ -636,7 +638,6 @@ impl Serialize for Planet<'_> {
         state.serialize_field("obliquity", &self.get_obliquity())?;
         state.serialize_field("rotationPeriod", &self.get_rotation_period())?;
         state.serialize_field("rotationPhase", &self.rotation_phase)?;
-        state.serialize_field("sunDistance", &self.get_sun_distance())?;
         state.serialize_field("type", &self.get_type())?;
         state.serialize_field("luminosity", &self.get_luminosity())?;
         state.serialize_field("theme", &self.get_theme())?;

@@ -46,7 +46,7 @@ enum IncomingMessage {
 #[derive(Serialize)]
 #[serde(tag = "type")]
 enum OutgoingMessage {
-    Result { seed: i32, indexes: Vec<i32> },
+    Result { seed: i32, indexes: Vec<usize> },
     Progress { start: i32, end: i32 },
     Done { start: i32, end: i32 },
 }

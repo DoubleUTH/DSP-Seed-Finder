@@ -1,89 +1,30 @@
-use crate::data::planet::Planet;
 use crate::data::rule::Rule;
-use crate::data::star::Star;
 
 pub struct RuleOr {
-    pub evaluated: bool,
     pub rules: Vec<Box<dyn Rule + Send>>,
 }
 
 impl Rule for RuleOr {
-    fn on_planets_created(&mut self, star: &Star, planets: &Vec<Planet>) -> Option<bool> {
-        let mut has_unknown = false;
-        for rule in self.rules.iter_mut() {
-            if !rule.is_evaluated() {
-                match rule.on_planets_created(star, planets) {
-                    Some(true) => {
-                        self.evaluated = true;
-                        return Some(true);
-                    }
-                    None => {
-                        has_unknown = true;
-                    }
-                    _ => {}
-                };
+    fn get_priority(&self) -> i32 {
+        self.rules
+            .iter()
+            .map(|rule| rule.get_priority())
+            .max()
+            .unwrap_or_default()
+    }
+    fn evaluate(
+        &self,
+        galaxy: &crate::data::galaxy::Galaxy,
+        evaluation: &crate::data::rule::Evaluaton,
+    ) -> Vec<usize> {
+        let mut e = evaluation.clone();
+        for rule in &self.rules {
+            let result = rule.evaluate(galaxy, &e);
+            e.confirm_many(&result);
+            if e.is_done() {
+                return e.collect_known();
             }
         }
-        if has_unknown {
-            None
-        } else {
-            self.evaluated = true;
-            Some(false)
-        }
-    }
-    fn on_planets_themed(&mut self, star: &Star, planets: &Vec<Planet>) -> Option<bool> {
-        let mut has_unknown = false;
-        for rule in self.rules.iter_mut() {
-            if !rule.is_evaluated() {
-                match rule.on_planets_themed(star, planets) {
-                    Some(true) => {
-                        self.evaluated = true;
-                        return Some(true);
-                    }
-                    None => {
-                        has_unknown = true;
-                    }
-                    _ => {}
-                };
-            }
-        }
-        if has_unknown {
-            None
-        } else {
-            self.evaluated = true;
-            Some(false)
-        }
-    }
-    fn on_veins_generated(&mut self, star: &Star, planets: &Vec<Planet>) -> Option<bool> {
-        let mut has_unknown = false;
-        for rule in self.rules.iter_mut() {
-            if !rule.is_evaluated() {
-                match rule.on_veins_generated(star, planets) {
-                    Some(true) => {
-                        self.evaluated = true;
-                        return Some(true);
-                    }
-                    None => {
-                        has_unknown = true;
-                    }
-                    _ => {}
-                };
-            }
-        }
-        if has_unknown {
-            None
-        } else {
-            self.evaluated = true;
-            Some(false)
-        }
-    }
-    fn is_evaluated(&self) -> bool {
-        self.evaluated
-    }
-    fn reset(&mut self) {
-        self.evaluated = false;
-        for rule in self.rules.iter_mut() {
-            rule.reset();
-        }
+        e.collect_known()
     }
 }

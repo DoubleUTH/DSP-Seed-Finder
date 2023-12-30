@@ -8,7 +8,7 @@ pub struct GameDesc {
     #[serde(default)]
     pub seed: i32,
     #[serde(default = "GameDesc::default_star_count")]
-    pub star_count: i32,
+    pub star_count: usize,
     #[serde(default = "GameDesc::default_resource_multiplier")]
     pub resource_multiplier: f32,
     #[serde(skip)]
@@ -16,7 +16,7 @@ pub struct GameDesc {
 }
 
 impl GameDesc {
-    pub fn default_star_count() -> i32 {
+    pub fn default_star_count() -> usize {
         64
     }
     pub fn default_resource_multiplier() -> f32 {

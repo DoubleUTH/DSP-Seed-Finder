@@ -120,11 +120,6 @@ declare global {
             vein: VeinType
             condition: Condition
         }
-        export type AverageVeinPatch = {
-            type: RuleType.AverageVeinPatch
-            vein: VeinType
-            condition: Condition
-        }
         export type Spectr = {
             type: RuleType.Spectr
             spectr: SpectrType[]
@@ -135,7 +130,7 @@ declare global {
         }
         export type OceanType = {
             type: RuleType.OceanType
-            oceanType: integer[]
+            oceanType: integer
         }
         export type StarType = {
             type: RuleType.StarType
@@ -166,7 +161,6 @@ declare global {
         | Rule.Luminosity
         | Rule.DysonRadius
         | Rule.AverageVeinAmount
-        | Rule.AverageVeinPatch
         | Rule.Spectr
         | Rule.TidalLockCount
         | Rule.OceanType

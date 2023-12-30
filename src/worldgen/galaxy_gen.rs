@@ -1,21 +1,18 @@
-use std::cell::Cell;
-use std::rc::Rc;
-
 use super::name_gen::random_name;
 use crate::data::enums::{SpectrType, StarType};
 use crate::data::galaxy::Galaxy;
 use crate::data::game_desc::GameDesc;
-use crate::data::planet::Planet;
 use crate::data::random::DspRandom;
-use crate::data::rule::Rule;
+use crate::data::rule::{Evaluaton, Rule};
 use crate::data::star::Star;
 use crate::data::star_planets::StarWithPlanets;
 use crate::data::vector3::Vector3;
+use std::rc::Rc;
 
 fn generate_temp_poses(
     seed: i32,
-    target_count: i32,
-    iter_count: i32,
+    target_count: usize,
+    iter_count: usize,
     min_dist: f64,
     min_step_len: f64,
     max_step_len: f64,
@@ -26,17 +23,17 @@ fn generate_temp_poses(
     random_poses(
         &mut tmp_poses,
         seed,
-        (target_count * actual_iter_count) as usize,
+        target_count * actual_iter_count,
         min_dist,
         max_step_len - min_step_len,
         flatten,
     );
 
     for index in (0..tmp_poses.len()).rev() {
-        if (index as i32) % iter_count != 0 {
+        if index % iter_count != 0 {
             tmp_poses.remove(index);
         }
-        if (tmp_poses.len() as i32) <= target_count {
+        if tmp_poses.len() <= target_count {
             break;
         }
     }
@@ -134,16 +131,16 @@ fn generate_stars<'a>(game_desc: &'a GameDesc) -> Vec<Star<'a>> {
         3.5,
         0.18,
     );
-    let star_count = tmp_poses.len() as i32;
+    let star_count = tmp_poses.len();
 
     let num1 = rand.next_f32();
     let num2 = rand.next_f32();
     let num3 = rand.next_f32();
     let num4 = rand.next_f32();
-    let num5 = (0.01 * (star_count as f64) + (num1 as f64) * 0.3).ceil() as i32;
-    let num6 = (0.01 * (star_count as f64) + (num2 as f64) * 0.3).ceil() as i32;
-    let num7 = (0.016 * (star_count as f64) + (num3 as f64) * 0.4).ceil() as i32;
-    let num8 = (0.013 * (star_count as f64) + (num4 as f64) * 0.4).ceil() as i32;
+    let num5 = (0.01 * (star_count as f64) + (num1 as f64) * 0.3).ceil() as usize;
+    let num6 = (0.01 * (star_count as f64) + (num2 as f64) * 0.3).ceil() as usize;
+    let num7 = (0.016 * (star_count as f64) + (num3 as f64) * 0.4).ceil() as usize;
+    let num8 = (0.013 * (star_count as f64) + (num4 as f64) * 0.4).ceil() as usize;
     let num9 = star_count - num5;
     let num10 = num9 - num6;
     let num11 = num10 - num7;
@@ -152,9 +149,9 @@ fn generate_stars<'a>(game_desc: &'a GameDesc) -> Vec<Star<'a>> {
 
     let mut stars: Vec<Star> = vec![];
 
-    for (i, position) in tmp_poses.into_iter().enumerate() {
+    for (index, position) in tmp_poses.into_iter().enumerate() {
         let seed = rand.next_seed();
-        if i == 0 {
+        if index == 0 {
             stars.push(Star::new(
                 game_desc,
                 0,
@@ -164,7 +161,6 @@ fn generate_stars<'a>(game_desc: &'a GameDesc) -> Vec<Star<'a>> {
                 &SpectrType::X,
             ));
         } else {
-            let index = i as i32;
             let need_spectr = if index == 3 {
                 SpectrType::M
             } else if index == num11 - 1 {
@@ -238,51 +234,19 @@ pub fn create_galaxy<'a>(game_desc: &'a GameDesc) -> Galaxy<'a> {
     galaxy
 }
 
-pub fn find_stars(game_desc: &GameDesc, rule: &mut Box<dyn Rule + Send>) -> Vec<i32> {
-    let habitable_count = Rc::new(Cell::new(0));
-    let mut output: Vec<i32> = vec![];
+pub fn find_stars(game_desc: &GameDesc, rule: &mut Box<dyn Rule + Send>) -> Vec<usize> {
+    let mut galaxy = Galaxy::new();
+    galaxy.seed = game_desc.seed;
 
-    let stars = generate_stars(game_desc);
-
-    for star in stars {
-        rule.reset();
+    for star in generate_stars(game_desc) {
         let s = StarWithPlanets::new(Rc::new(star));
-        // let mut planets = s.get_planets();
-        // if let Some(x) = rule.on_planets_created(&star_rc, &planets) {
-        //     if x {
-        //         output.push(star_index);
-        //     }
-        //     continue;
-        // }
-        // let mut used_theme_ids: Vec<i32> = vec![];
-        // let is_birth_star = star_index == 0;
-        // for planet in &mut planets {
-        //     set_planet_theme(planet, is_birth_star, &mut used_theme_ids);
-        // }
-        // if let Some(x) = rule.on_planets_themed(&star_rc, &planets) {
-        //     if x {
-        //         output.push(star_index);
-        //     }
-        //     continue;
-        // }
-        // for planet in &mut planets {
-        //     if planet.is_gas_giant() {
-        //         generate_gases(planet, game_desc);
-        //     } else {
-        //         generate_veins(planet, game_desc);
-        //     }
-        // }
-        // sum_veins(&mut star, &planets);
-        // if let Some(x) = rule.on_veins_generated(&star_rc, &planets) {
-        //     if x {
-        //         output.push(star_index);
-        //     }
-        //     continue;
-        // }
-        // if is_birth_star && rule.is_birth() {
-        //     break;
-        // }
+        galaxy.stars.push(s);
     }
 
-    output
+    // TODO: evaluate rules here
+
+    let evaluation = Evaluaton::new(game_desc.star_count);
+    let result = rule.evaluate(&galaxy, &evaluation);
+
+    result
 }

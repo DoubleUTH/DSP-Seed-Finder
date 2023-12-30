@@ -1,30 +1,36 @@
-use crate::data::planet::Planet;
 use crate::data::rule::Condition;
 use crate::data::rule::Rule;
-use crate::data::star::Star;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RuleTidalLockCount {
-    #[serde(skip)]
-    pub evaluated: bool,
     pub condition: Condition,
 }
 
 impl Rule for RuleTidalLockCount {
-    fn on_planets_created(&mut self, _: &Star, planets: &Vec<Planet>) -> Option<bool> {
-        self.evaluated = true;
-        let count = planets
-            .iter()
-            .filter(|planet| planet.is_tidal_locked())
-            .count();
-        Some(self.condition.eval(count as f32))
+    fn get_priority(&self) -> i32 {
+        20
     }
-    fn is_evaluated(&self) -> bool {
-        self.evaluated
-    }
-    fn reset(&mut self) {
-        self.evaluated = false;
+    fn evaluate(
+        &self,
+        galaxy: &crate::data::galaxy::Galaxy,
+        evaluation: &crate::data::rule::Evaluaton,
+    ) -> Vec<usize> {
+        let mut result: Vec<usize> = vec![];
+        for (index, sp) in galaxy.stars.iter().take(evaluation.get_len()).enumerate() {
+            if evaluation.is_known(index) {
+                continue;
+            }
+            let planets = sp.get_planets();
+            let targets = planets
+                .iter()
+                .filter(|planet| planet.is_tidal_locked())
+                .count();
+            if self.condition.eval(targets as f32) {
+                result.push(index)
+            }
+        }
+        result
     }
 }

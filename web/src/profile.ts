@@ -31,7 +31,11 @@ async function openDatabase(id: string): Promise<IDBDatabase> {
             db.createObjectStore(STARS, { keyPath: "id" })
         }
         request.onsuccess = () => {
-            resolve(request.result)
+            const db = request.result
+            db.onclose = () => {
+                databases.delete(id)
+            }
+            resolve(db)
         }
         request.onerror = reject
     })
@@ -87,6 +91,7 @@ export async function saveToProfile(
         const settingsStore = txn.objectStore(SETTINGS)
         const req = settingsStore.get(id)
         req.onsuccess = () => {
+            console.log(req.result)
             settingsStore.put({ ...req.result, current: currentSeed })
         }
 

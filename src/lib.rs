@@ -28,7 +28,7 @@ pub fn generate(gameDesc: JsValue) -> Result<JsValue, serde_wasm_bindgen::Error>
 #[derive(Serialize)]
 struct FindResult {
     seed: i32,
-    indexes: Vec<i32>,
+    indexes: Vec<usize>,
 }
 
 #[wasm_bindgen]

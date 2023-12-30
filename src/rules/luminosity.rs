@@ -1,25 +1,31 @@
-use crate::data::planet::Planet;
 use crate::data::rule::{Condition, Rule};
-use crate::data::star::Star;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RuleLuminosity {
-    #[serde(skip)]
-    pub evaluated: bool,
     pub condition: Condition,
 }
 
 impl Rule for RuleLuminosity {
-    fn on_planets_created(&mut self, star: &Star, _: &Vec<Planet>) -> Option<bool> {
-        self.evaluated = true;
-        Some(self.condition.eval(star.get_luminosity()))
+    fn get_priority(&self) -> i32 {
+        10
     }
-    fn is_evaluated(&self) -> bool {
-        self.evaluated
-    }
-    fn reset(&mut self) {
-        self.evaluated = false;
+    fn evaluate(
+        &self,
+        galaxy: &crate::data::galaxy::Galaxy,
+        evaluation: &crate::data::rule::Evaluaton,
+    ) -> Vec<usize> {
+        let mut result: Vec<usize> = vec![];
+        for (index, sp) in galaxy.stars.iter().take(evaluation.get_len()).enumerate() {
+            if evaluation.is_known(index) {
+                continue;
+            }
+            let star = &sp.star;
+            if self.condition.eval(star.get_luminosity()) {
+                result.push(index)
+            }
+        }
+        result
     }
 }

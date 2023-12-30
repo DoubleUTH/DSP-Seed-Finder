@@ -18,6 +18,7 @@ import { constructRule } from "../util"
 const Find: Component = () => {
     const worldgen = useWorldGen()
     async function search() {
+        const profileName = "test2"
         const rules: SimpleRule[] = [
             {
                 type: RuleType.Spectr,
@@ -25,7 +26,11 @@ const Find: Component = () => {
             },
             {
                 type: RuleType.OceanType,
-                oceanType: [OceanType.Water, OceanType.Sulfur],
+                oceanType: OceanType.Water,
+            },
+            {
+                type: RuleType.OceanType,
+                oceanType: OceanType.Sulfur,
             },
             {
                 type: RuleType.TidalLockCount,
@@ -34,39 +39,39 @@ const Find: Component = () => {
                     value: 3,
                 },
             },
-            {
-                type: RuleType.AverageVeinAmount,
-                vein: VeinType.Oil,
-                condition: {
-                    type: ConditionType.Gte,
-                    value: 2500000,
-                },
-            },
-            {
-                type: RuleType.GasCount,
-                condition: {
-                    type: ConditionType.Gte,
-                    value: 1,
-                },
-            },
-            {
-                type: RuleType.PlanetCount,
-                condition: {
-                    type: ConditionType.Eq,
-                    value: 6,
-                },
-            },
-            {
-                type: RuleType.Luminosity,
-                condition: {
-                    type: ConditionType.Gte,
-                    value: 15,
-                },
-            },
+            // {
+            //     type: RuleType.AverageVeinAmount,
+            //     vein: VeinType.Oil,
+            //     condition: {
+            //         type: ConditionType.Gte,
+            //         value: 2500000,
+            //     },
+            // },
+            // {
+            //     type: RuleType.GasCount,
+            //     condition: {
+            //         type: ConditionType.Gte,
+            //         value: 1,
+            //     },
+            // },
+            // {
+            //     type: RuleType.PlanetCount,
+            //     condition: {
+            //         type: ConditionType.Eq,
+            //         value: 6,
+            //     },
+            // },
+            // {
+            //     type: RuleType.Luminosity,
+            //     condition: {
+            //         type: ConditionType.Gte,
+            //         value: 2.4,
+            //     },
+            // },
         ]
-        const existing = await getProfileSettings("test")
+        const existing = await getProfileSettings(profileName)
         const profile = existing || {
-            id: "test",
+            id: profileName,
             name: "Test",
             starCount: 64,
             resourceMultiplier: 100,
@@ -88,7 +93,7 @@ const Find: Component = () => {
             rule: constructRule(profile.rules),
             concurrency: 7,
             onProgress: (current, galaxys) => {
-                saveToProfile("test", current, galaxys)
+                saveToProfile(profileName, current, galaxys)
             },
             onComplete: () => {
                 console.log("done")

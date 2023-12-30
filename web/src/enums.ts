@@ -50,7 +50,6 @@ export enum RuleType {
     Luminosity = "Luminosity",
     DysonRadius = "DysonRadius",
     AverageVeinAmount = "AverageVeinAmount",
-    AverageVeinPatch = "AverageVeinPatch",
     Spectr = "Spectr",
     TidalLockCount = "TidalLockCount",
     OceanType = "OceanType",

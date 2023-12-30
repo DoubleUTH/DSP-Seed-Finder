@@ -8,7 +8,7 @@ use super::star::Star;
 use serde::Serialize;
 
 pub fn serialize_planets<S>(
-    planets: &UnsafeCell<Vec<Rc<Planet<'_>>>>,
+    planets: &UnsafeCell<Vec<Planet<'_>>>,
     serializer: S,
 ) -> Result<S::Ok, S::Error>
 where
@@ -22,7 +22,7 @@ pub struct StarWithPlanets<'a> {
     #[serde(flatten)]
     pub star: Rc<Star<'a>>,
     #[serde(serialize_with = "serialize_planets")]
-    planets: UnsafeCell<Vec<Rc<Planet<'a>>>>,
+    planets: UnsafeCell<Vec<Planet<'a>>>,
 }
 
 impl<'a> StarWithPlanets<'a> {
@@ -33,7 +33,7 @@ impl<'a> StarWithPlanets<'a> {
         }
     }
 
-    pub fn get_planets(&self) -> &Vec<Rc<Planet<'a>>> {
+    pub fn get_planets(&self) -> &Vec<Planet<'a>> {
         let planets = unsafe { &mut *self.planets.get() };
         if !planets.is_empty() {
             return planets;
@@ -47,17 +47,17 @@ impl<'a> StarWithPlanets<'a> {
         rand2.next_f64();
         rand2.next_f64();
 
-        let mut make_planet = |index: i32, orbit_index: i32, gas_giant: bool| -> Rc<Planet> {
+        let mut make_planet = |index: i32, orbit_index: i32, gas_giant: bool| -> Planet {
             let info_seed = rand2.next_seed();
             let gen_seed = rand2.next_seed();
-            Rc::new(Planet::new(
+            Planet::new(
                 self.star.clone(),
                 index,
                 orbit_index,
                 gas_giant,
                 info_seed,
                 gen_seed,
-            ))
+            )
         };
 
         let star_type = &self.star.star_type;
@@ -75,7 +75,7 @@ impl<'a> StarWithPlanets<'a> {
                 planets.push(make_planet(1, 1, false));
                 let planet1 = &planets[0];
                 let planet2 = &planets[1];
-                planet2.orbit_around.replace(Some(planet1.clone()));
+                planet2.orbit_around.replace(Some(planet1));
             }
         } else if star_type == &StarType::GiantStar {
             if num1 < 0.3 {
@@ -89,7 +89,7 @@ impl<'a> StarWithPlanets<'a> {
                     planets.push(make_planet(1, 1, false));
                     let planet1 = &planets[0];
                     let planet2 = &planets[1];
-                    planet2.orbit_around.replace(Some(planet1.clone()));
+                    planet2.orbit_around.replace(Some(planet1));
                 }
             } else {
                 if num2 < 0.15 {
@@ -102,7 +102,7 @@ impl<'a> StarWithPlanets<'a> {
                     planets.push(make_planet(2, 1, false));
                     let planet2 = &planets[1];
                     let planet3 = &planets[2];
-                    planet3.orbit_around.replace(Some(planet2.clone()));
+                    planet3.orbit_around.replace(Some(planet2));
                 } else {
                     planets.push(make_planet(0, 3 + num3, true));
                     planets.push(make_planet(1, 1, false));
@@ -110,8 +110,8 @@ impl<'a> StarWithPlanets<'a> {
                     let planet1 = &planets[0];
                     let planet2 = &planets[1];
                     let planet3 = &planets[2];
-                    planet2.orbit_around.replace(Some(planet1.clone()));
-                    planet3.orbit_around.replace(Some(planet1.clone()));
+                    planet2.orbit_around.replace(Some(planet1));
+                    planet3.orbit_around.replace(Some(planet1));
                 }
             }
         } else {
@@ -238,6 +238,7 @@ impl<'a> StarWithPlanets<'a> {
             let mut num9 = 0;
             let mut orbit_around: i32 = 0;
             let mut num10 = 1;
+            let mut orbits: Vec<(i32, i32)> = vec![];
             for index in 0..planet_count {
                 let info_seed = rand2.next_seed();
                 let gen_seed = rand2.next_seed();
@@ -285,9 +286,7 @@ impl<'a> StarWithPlanets<'a> {
                     gen_seed,
                 );
                 if orbit_around > 0 {
-                    planet
-                        .orbit_around
-                        .replace(Some(planets[orbit_around as usize - 1].clone()));
+                    orbits.push((index, orbit_around - 1))
                 }
                 num10 += 1;
                 if gas_giant {
@@ -298,7 +297,12 @@ impl<'a> StarWithPlanets<'a> {
                     orbit_around = 0;
                     num9 = 0;
                 }
-                planets.push(Rc::new(planet));
+                planets.push(planet);
+            }
+            for (index, orbit_index) in orbits {
+                let planet = &planets[index as usize];
+                let orbit_planet = &planets[orbit_index as usize];
+                planet.orbit_around.replace(Some(orbit_planet));
             }
         }
 

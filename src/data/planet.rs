@@ -15,7 +15,7 @@ pub struct Planet<'a> {
     pub seed: i32,
     pub info_seed: i32,
     pub theme_seed: i32,
-    pub orbit_around: RefCell<Option<Rc<Planet<'a>>>>,
+    pub orbit_around: RefCell<Option<&'a Planet<'a>>>,
     pub orbit_index: i32,
     pub radius: f32,
     pub scale: f32,

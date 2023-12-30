@@ -1,12 +1,12 @@
-use super::enums::{SpectrType, StarType, VeinType};
+use super::enums::{SpectrType, StarType};
 use super::game_desc::GameDesc;
+use super::macros::macros::{lazy_getter, lazy_getter_ref};
 use super::random::DspRandom;
 use super::vector3::Vector3;
 use serde::ser::{Serialize, SerializeStruct, Serializer};
-use std::cell::RefCell;
-use std::collections::HashMap;
+use std::cell::{RefCell, UnsafeCell};
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct Star<'a> {
     pub game_desc: &'a GameDesc,
     pub used_theme_ids: RefCell<Vec<i32>>,
@@ -17,8 +17,6 @@ pub struct Star<'a> {
     pub name: String,
     pub level: f32,
     pub star_type: StarType,
-    pub vein_patch: HashMap<VeinType, f32>,
-    pub vein_amount: HashMap<VeinType, f32>,
     age_factor: f64,
     age_num1: f32,
     age_num2: f32,
@@ -27,6 +25,22 @@ pub struct Star<'a> {
     radius_factor: f64,
     unmodified_mass: f32,
     pub planets_seed: i32,
+    get_resource_coef: UnsafeCell<Option<f32>>,
+    get_lifetime: UnsafeCell<Option<f32>>,
+    get_age: UnsafeCell<Option<f32>>,
+    get_temperature_factor: UnsafeCell<Option<f32>>,
+    get_unmodified_temperature: UnsafeCell<Option<f32>>,
+    get_temperature: UnsafeCell<Option<f32>>,
+    get_class_factor: UnsafeCell<Option<f64>>,
+    get_spectr: UnsafeCell<Option<SpectrType>>,
+    get_color: UnsafeCell<Option<f32>>,
+    get_luminosity: UnsafeCell<Option<f32>>,
+    get_radius: UnsafeCell<Option<f32>>,
+    get_light_balance_radius: UnsafeCell<Option<f32>>,
+    get_habitable_radius: UnsafeCell<Option<f32>>,
+    get_mass: UnsafeCell<Option<f32>>,
+    get_orbit_scaler: UnsafeCell<Option<f32>>,
+    get_dyson_radius: UnsafeCell<Option<f32>>,
 }
 
 impl<'a> Star<'a> {
@@ -48,8 +62,6 @@ impl<'a> Star<'a> {
             name: Default::default(),
             level: (index as f32) / ((game_desc.star_count - 1) as f32),
             star_type: need_type,
-            vein_patch: HashMap::new(),
-            vein_amount: HashMap::new(),
             age_factor: 0.0,
             age_num1: 0.0,
             age_num2: 0.0,
@@ -58,6 +70,22 @@ impl<'a> Star<'a> {
             radius_factor: 0.0,
             unmodified_mass: 0.0,
             planets_seed: 0,
+            get_resource_coef: UnsafeCell::new(None),
+            get_lifetime: UnsafeCell::new(None),
+            get_age: UnsafeCell::new(None),
+            get_temperature_factor: UnsafeCell::new(None),
+            get_unmodified_temperature: UnsafeCell::new(None),
+            get_temperature: UnsafeCell::new(None),
+            get_class_factor: UnsafeCell::new(None),
+            get_spectr: UnsafeCell::new(None),
+            get_color: UnsafeCell::new(None),
+            get_luminosity: UnsafeCell::new(None),
+            get_radius: UnsafeCell::new(None),
+            get_light_balance_radius: UnsafeCell::new(None),
+            get_habitable_radius: UnsafeCell::new(None),
+            get_mass: UnsafeCell::new(None),
+            get_orbit_scaler: UnsafeCell::new(None),
+            get_dyson_radius: UnsafeCell::new(None),
         };
         let mut rand1 = DspRandom::new(seed);
         star.name_seed = rand1.next_seed();
@@ -126,7 +154,7 @@ impl<'a> Star<'a> {
         return self.index == 0;
     }
 
-    pub fn get_resource_coef(&self) -> f32 {
+    lazy_getter!(self, get_resource_coef, f32, {
         if self.is_birth() {
             0.6
         } else {
@@ -136,9 +164,9 @@ impl<'a> Star<'a> {
             }
             7.0_f32.powf(num1) * 0.6
         }
-    }
+    });
 
-    pub fn get_lifetime(&self) -> f32 {
+    lazy_getter!(self, get_lifetime, f32, {
         let d = if self.unmodified_mass < 2.0 {
             2.0 + 0.4 * (1.0 - (self.unmodified_mass as f64))
         } else {
@@ -173,9 +201,9 @@ impl<'a> Star<'a> {
             }
             num9 / age
         }
-    }
+    });
 
-    pub fn get_age(&self) -> f32 {
+    lazy_getter!(self, get_age, f32, {
         (if self.is_birth() {
             self.age_factor * 0.4 + 0.3
         } else {
@@ -195,19 +223,19 @@ impl<'a> Star<'a> {
                 }
             }
         }) as f32
-    }
+    });
 
-    pub fn get_temperature_factor(&self) -> f32 {
+    lazy_getter!(self, get_temperature_factor, f32, {
         ((1.0 - (self.get_age().clamp(0.0, 1.0).powf(20.0) as f64) * 0.5) as f32)
             * self.unmodified_mass
-    }
+    });
 
-    fn get_unmodified_temperature(&self) -> f32 {
+    lazy_getter!(self, get_unmodified_temperature, f32, {
         let f1 = self.get_temperature_factor() as f64;
         (f1.powf(0.56 + 0.14 / (f1 + 4.0).log(5.0)) * 4450.0 + 1300.0) as f32
-    }
+    });
 
-    pub fn get_temperature(&self) -> f32 {
+    lazy_getter!(self, get_temperature, f32, {
         match self.star_type {
             StarType::BlackHole => 0.0,
             StarType::NeutronStar => self.age_num3 * 1e+7,
@@ -222,34 +250,34 @@ impl<'a> Star<'a> {
                 }
             }
         }
-    }
+    });
 
-    pub fn get_class_factor(&self) -> f64 {
+    lazy_getter!(self, get_class_factor, f64, {
         let temperature = self.get_unmodified_temperature() as f64;
         let mut spectr_factor = ((temperature - 1300.0) / 4500.0).log(2.6) - 0.5;
         if spectr_factor < 0.0 {
             spectr_factor *= 4.0;
         }
         spectr_factor.clamp(-4.0, 2.0)
-    }
+    });
 
-    pub fn get_spectr(&self) -> SpectrType {
+    lazy_getter_ref!(self, get_spectr, SpectrType, {
         if self.get_age() >= 1.0 {
             SpectrType::X
         } else {
             unsafe { ::std::mem::transmute((self.get_class_factor() + 4.0).round() as i32) }
         }
-    }
+    });
 
-    pub fn get_color(&self) -> f32 {
+    lazy_getter!(self, get_color, f32, {
         match self.star_type {
             StarType::BlackHole | StarType::NeutronStar => 1.0,
             StarType::WhiteDwarf => 0.7,
             _ => (((self.get_class_factor() + 3.5) * 0.2) as f32).clamp(0.0, 1.0),
         }
-    }
+    });
 
-    pub fn get_luminosity(&self) -> f32 {
+    lazy_getter!(self, get_luminosity, f32, {
         let base = self.get_temperature_factor().powf(0.7);
         let factor = match self.star_type {
             StarType::BlackHole => 1.0 / 1000.0 * self.age_num1,
@@ -261,9 +289,9 @@ impl<'a> Star<'a> {
         let real = base * factor;
         // displayed
         (real.powf(0.33) * 1000.0).round() / 1000.0
-    }
+    });
 
-    pub fn get_radius(&self) -> f32 {
+    lazy_getter!(self, get_radius, f32, {
         if self.star_type == StarType::GiantStar {
             let mut num4 =
                 (5.0_f64.powf(((self.unmodified_mass as f64).log10() - 0.7).abs()) * 5.0) as f32;
@@ -279,9 +307,9 @@ impl<'a> Star<'a> {
                     _ => 1.0,
                 })
         }
-    }
+    });
 
-    pub fn get_light_balance_radius(&self) -> f32 {
+    lazy_getter!(self, get_light_balance_radius, f32, {
         if self.star_type == StarType::GiantStar {
             3.0 * self.get_habitable_radius()
         } else {
@@ -294,9 +322,9 @@ impl<'a> Star<'a> {
             };
             r * factor
         }
-    }
+    });
 
-    pub fn get_habitable_radius(&self) -> f32 {
+    lazy_getter!(self, get_habitable_radius, f32, {
         let factor = match self.star_type {
             StarType::BlackHole | StarType::NeutronStar => 0.0,
             StarType::WhiteDwarf => 0.15 * self.age_num2,
@@ -310,9 +338,9 @@ impl<'a> Star<'a> {
                 + if self.is_birth() { 0.2 } else { 0.25 })
                 * factor
         }
-    }
+    });
 
-    pub fn get_mass(&self) -> f32 {
+    lazy_getter!(self, get_mass, f32, {
         match self.star_type {
             StarType::BlackHole => self.unmodified_mass * 2.5 * self.age_num2,
             StarType::NeutronStar | StarType::WhiteDwarf => {
@@ -324,9 +352,9 @@ impl<'a> Star<'a> {
             }
             _ => self.unmodified_mass,
         }
-    }
+    });
 
-    pub fn get_orbit_scaler(&self) -> f32 {
+    lazy_getter!(self, get_orbit_scaler, f32, {
         let mut orbit_scaler = 1.35_f32.powf((self.get_class_factor() as f32) + 2.0);
         if orbit_scaler < 1.0 {
             orbit_scaler += (1.0 - orbit_scaler) * 0.6;
@@ -337,11 +365,11 @@ impl<'a> Star<'a> {
                 StarType::GiantStar => 3.3,
                 _ => 1.0,
             })
-    }
+    });
 
-    pub fn get_dyson_radius(&self) -> f32 {
+    lazy_getter!(self, get_dyson_radius, f32, {
         (self.get_orbit_scaler() * 0.28).max(self.get_radius() * 0.045)
-    }
+    });
 }
 
 impl Serialize for Star<'_> {

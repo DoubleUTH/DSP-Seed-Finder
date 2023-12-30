@@ -27,13 +27,14 @@ impl Rule for RuleAverageVeinPatch {
         None
     }
     fn on_veins_generated(&mut self, star: &Star, _: &Vec<Planet>) -> Option<bool> {
-        self.evaluated = true;
-        let value = if let Some(x) = star.vein_patch.get(&self.vein) {
-            *x
-        } else {
-            0.0
-        };
-        Some(self.condition.eval(value))
+        // self.evaluated = true;
+        // let value = if let Some(x) = star.vein_patch.get(&self.vein) {
+        //     *x
+        // } else {
+        //     0.0
+        // };
+        // Some(self.condition.eval(value))
+        None
     }
     fn is_evaluated(&self) -> bool {
         self.evaluated

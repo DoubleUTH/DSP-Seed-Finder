@@ -338,14 +338,22 @@ const StarDetail: Component<{
 )
 
 const Vein: Component<{
-    value: integer
-    veinType: VeinType
+    stat: VeinStat
     class?: string
-}> = (props) => (
-    <Tooltip class={clsx(props.class, styles.estimate)} text="Estimated value">
-        {formatVein(props.value, props.veinType === VeinType.Oil)}
-    </Tooltip>
-)
+}> = (props) => {
+    const isOil = () => props.stat.veinType === VeinType.Oil
+    const avg = () => formatVein(props.stat.avg, isOil())
+    const min = () => formatVein(props.stat.min, isOil())
+    const max = () => formatVein(props.stat.max, isOil())
+    return (
+        <Tooltip
+            class={clsx(props.class, styles.estimate)}
+            text={`Estimated:\n${min()} - ${max()}`}
+        >
+            ~ {avg()}
+        </Tooltip>
+    )
+}
 
 const StarVeins: Component<{ star: Star }> = (props) => (
     <>
@@ -353,11 +361,7 @@ const StarVeins: Component<{ star: Star }> = (props) => (
             {(vein) => (
                 <div class={styles.row}>
                     <div class={styles.field}>{veinNames[vein.veinType]}</div>
-                    <Vein
-                        class={styles.value}
-                        value={vein.avg}
-                        veinType={vein.veinType}
-                    />
+                    <Vein class={styles.value} stat={vein} />
                 </div>
             )}
         </For>
@@ -483,11 +487,7 @@ const PlanetView: Component<{ star: Star; planet: Planet }> = (props) => {
                         <div class={styles.field}>
                             {veinNames[vein.veinType]}
                         </div>
-                        <Vein
-                            class={styles.value}
-                            value={vein.avg}
-                            veinType={vein.veinType}
-                        />
+                        <Vein class={styles.value} stat={vein} />
                     </div>
                 )}
             </For>

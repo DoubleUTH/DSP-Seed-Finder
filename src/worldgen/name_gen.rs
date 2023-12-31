@@ -19,9 +19,9 @@ fn gen_random_name(seed: i32, star: &Star) -> String {
         random_neutron_star_name_with_format(seed1)
     } else if star.star_type == StarType::BlackHole {
         random_black_hole_name_with_format(seed1)
-    } else if num1 < 0.600000023841858 {
+    } else if num1 < 0.6 {
         random_star_name_from_raw_names(seed1)
-    } else if num1 < 0.930000007152557 {
+    } else if num1 < 0.93 {
         random_star_name_with_constellation_alpha(seed1)
     } else {
         random_star_name_with_constellation_number(seed1)

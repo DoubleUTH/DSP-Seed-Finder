@@ -192,27 +192,6 @@ fn generate_stars<'a>(game_desc: &'a GameDesc) -> Vec<Star<'a>> {
     stars
 }
 
-// fn sum_veins(star: &mut Star, planets: &Vec<Planet>) {
-//     for planet in planets {
-//         for vein in &planet.veins {
-//             let avg_patches = ((vein.min_patch + vein.max_patch) as f32)
-//                 * ((vein.min_group + vein.max_group) as f32)
-//                 / 4.0;
-//             let avg_amount = ((vein.min_amount + vein.max_amount) as f32) * avg_patches / 2.0;
-//             if let Some(x) = star.vein_patch.get_mut(&vein.vein_type) {
-//                 *x += avg_patches;
-//             } else {
-//                 star.vein_patch.insert(vein.vein_type.clone(), avg_patches);
-//             }
-//             if let Some(x) = star.vein_amount.get_mut(&vein.vein_type) {
-//                 *x += avg_amount;
-//             } else {
-//                 star.vein_amount.insert(vein.vein_type.clone(), avg_amount);
-//             }
-//         }
-//     }
-// }
-
 pub fn create_galaxy<'a>(game_desc: &'a GameDesc) -> Galaxy<'a> {
     let mut galaxy = Galaxy::new();
     galaxy.seed = game_desc.seed;
@@ -242,8 +221,6 @@ pub fn find_stars(game_desc: &GameDesc, rule: &mut Box<dyn Rule + Send>) -> Vec<
         let s = StarWithPlanets::new(Rc::new(star));
         galaxy.stars.push(s);
     }
-
-    // TODO: evaluate rules here
 
     let evaluation = Evaluaton::new(game_desc.star_count);
     let result = rule.evaluate(&galaxy, &evaluation);

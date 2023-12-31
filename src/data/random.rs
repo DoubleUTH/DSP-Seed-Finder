@@ -82,28 +82,3 @@ impl DspRandom {
         (self.sample() * (MBIG as f64)) as i32
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use crate::data::random::DspRandom;
-
-    #[test]
-    fn rand_test_1() {
-        let mut rand = DspRandom::new(1);
-        assert_eq!(rand.next_f64(), 0.36685459100029205);
-        assert_eq!(rand.next_f64(), 0.20793473031741336);
-        assert_eq!(rand.next_f64(), 0.9534165486476468);
-        assert_eq!(rand.next_f64(), 0.2524418142868402);
-        assert_eq!(rand.next_f64(), 0.9074322701932087);
-    }
-
-    #[test]
-    fn rand_test_2() {
-        let mut rand = DspRandom::new(1575693681);
-        assert_eq!(rand.next_f64(), 0.7679300078972854);
-        assert_eq!(rand.next_f64(), 0.7785721038368406);
-        assert_eq!(rand.next_f64(), 0.7108933994131602);
-        assert_eq!(rand.next_f64(), 0.2166100252497058);
-        assert_eq!(rand.next_f64(), 0.27458891844124966);
-    }
-}

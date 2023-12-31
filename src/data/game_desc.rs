@@ -28,7 +28,7 @@ impl GameDesc {
     }
 
     pub fn is_rare_resource(&self) -> bool {
-        self.resource_multiplier <= 0.100100003182888
+        self.resource_multiplier <= 0.1001
     }
 
     pub fn oil_amount_multipler(&self) -> f32 {

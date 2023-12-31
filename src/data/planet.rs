@@ -37,7 +37,7 @@ pub struct Planet<'a> {
     get_habitable_bias: UnsafeCell<Option<f32>>,
     get_temperature_bias: UnsafeCell<Option<f32>>,
     get_luminosity: UnsafeCell<Option<f32>>,
-    get_unmodified_planet_type: UnsafeCell<Option<&'static PlanetType>>,
+    get_unmodified_planet_type: UnsafeCell<Option<PlanetType>>,
     get_orbit_inclination: UnsafeCell<Option<f32>>,
     get_sun_orbital_period: UnsafeCell<Option<f64>>,
     get_orbital_period: UnsafeCell<Option<f64>>,
@@ -219,13 +219,13 @@ impl<'a> Planet<'a> {
             .set(self.star.game_desc.habitable_count.get() + 1);
     }
 
-    lazy_getter!(self, get_unmodified_planet_type, &PlanetType, {
-        // can only call once and in order
+    lazy_getter_ref!(self, get_unmodified_planet_type, PlanetType, {
+        // can only be called once and in order
         if self.is_gas_giant() {
-            &PlanetType::Gas
+            PlanetType::Gas
         } else if self.is_birth() {
             self.increment_habitable_count();
-            &PlanetType::Ocean
+            PlanetType::Ocean
         } else {
             let f2 = self.get_temperature_factor();
             if !self.star.is_birth() {
@@ -241,25 +241,25 @@ impl<'a> Planet<'a> {
                     .powf(num24 * 10.0);
                 if self.habitable_factor > (num25 as f64) {
                     self.increment_habitable_count();
-                    return &PlanetType::Ocean;
+                    return PlanetType::Ocean;
                 }
             }
 
             if f2 < 5.0 / 6.0 {
                 let num26 = ((f2 as f64) * 2.5 - 0.85).max(0.15);
                 if self.type_factor >= num26 {
-                    &PlanetType::Vocano
+                    PlanetType::Vocano
                 } else {
-                    &PlanetType::Desert
+                    PlanetType::Desert
                 }
             } else if f2 < 1.2 {
-                &PlanetType::Desert
+                PlanetType::Desert
             } else {
                 let num27 = 0.9 / (f2 as f64) - 0.1;
                 if self.type_factor >= num27 {
-                    &PlanetType::Ice
+                    PlanetType::Ice
                 } else {
-                    &PlanetType::Desert
+                    PlanetType::Desert
                 }
             }
         }
@@ -379,7 +379,7 @@ impl<'a> Planet<'a> {
     });
 
     lazy_getter!(self, get_theme, &'static ThemeProto, {
-        // can only called once and in order
+        // can only be called once and in order
         let mut potential_themes: Vec<&'static ThemeProto> = vec![];
         let mut used_theme_ids = self.star.used_theme_ids.borrow_mut();
         let unused_themes: Vec<&'static ThemeProto> = THEME_PROTOS
@@ -443,183 +443,184 @@ impl<'a> Planet<'a> {
 
     lazy_getter_ref!(self, get_gases, Vec<(i32, f32)>, {
         let mut gases: Vec<(i32, f32)> = vec![];
-        if self.is_gas_giant() {
-            let gas_coef = self.star.game_desc.gas_coef();
-            let mut rand = DspRandom::new(self.theme_seed);
+        if !self.is_gas_giant() {
+            return gases;
+        }
+        let gas_coef = self.star.game_desc.gas_coef();
+        let mut rand = DspRandom::new(self.theme_seed);
 
-            let theme_proto = self.get_theme();
-            let coef = self.star.get_resource_coef().powf(0.3);
+        let theme_proto = self.get_theme();
+        let coef = self.star.get_resource_coef().powf(0.3);
 
-            for (item, speed) in theme_proto
-                .gas_items
-                .iter()
-                .zip(theme_proto.gas_speeds.iter())
-            {
-                let num2 = speed * (rand.next_f32() * 21.0 / 110.0 + 10.0 / 11.0) * gas_coef;
-                gases.push((*item, num2 * coef))
-            }
+        for (item, speed) in theme_proto
+            .gas_items
+            .iter()
+            .zip(theme_proto.gas_speeds.iter())
+        {
+            let num2 = speed * (rand.next_f32() * 21.0 / 110.0 + 10.0 / 11.0) * gas_coef;
+            gases.push((*item, num2 * coef))
         }
         gases
     });
 
     lazy_getter_ref!(self, get_veins, Vec<Vein>, {
         let mut output: Vec<Vein> = vec![];
-        if !self.is_gas_giant() {
-            let mut rand1 = DspRandom::new(self.seed);
-            rand1.next_f64();
-            rand1.next_f64();
-            rand1.next_f64();
-            rand1.next_f64();
-            rand1.next_f64();
-            rand1.next_f64();
-            let theme_proto = self.get_theme();
-            let mut num_array_1: Vec<i32> = (0..15_i32)
-                .map(|i| *theme_proto.vein_spot.get((i - 1) as usize).unwrap_or(&0))
-                .collect();
-            let mut num_array_2: Vec<f32> = (0..15_i32)
-                .map(|i| *theme_proto.vein_count.get((i - 1) as usize).unwrap_or(&0.0))
-                .collect();
-            let mut num_array_3: Vec<f32> = (0..15_i32)
-                .map(|i| {
-                    *theme_proto
-                        .vein_opacity
-                        .get((i - 1) as usize)
-                        .unwrap_or(&0.0)
-                })
-                .collect();
+        if self.is_gas_giant() {
+            return output;
+        }
+        let mut rand1 = DspRandom::new(self.seed);
+        rand1.next_f64();
+        rand1.next_f64();
+        rand1.next_f64();
+        rand1.next_f64();
+        rand1.next_f64();
+        rand1.next_f64();
+        let theme_proto = self.get_theme();
+        let mut num_array_1: Vec<i32> = (0..15_i32)
+            .map(|i| *theme_proto.vein_spot.get((i - 1) as usize).unwrap_or(&0))
+            .collect();
+        let mut num_array_2: Vec<f32> = (0..15_i32)
+            .map(|i| *theme_proto.vein_count.get((i - 1) as usize).unwrap_or(&0.0))
+            .collect();
+        let mut num_array_3: Vec<f32> = (0..15_i32)
+            .map(|i| {
+                *theme_proto
+                    .vein_opacity
+                    .get((i - 1) as usize)
+                    .unwrap_or(&0.0)
+            })
+            .collect();
 
-            let mut add_until = |i: &mut i32, t: f64| {
+        let mut add_until = |i: &mut i32, t: f64| {
+            for _ in 1..12 {
+                if rand1.next_f64() >= t {
+                    break;
+                }
+                *i += 1;
+            }
+        };
+
+        let p: f32 = match self.star.star_type {
+            StarType::MainSeqStar => match self.star.get_spectr() {
+                SpectrType::M => 2.5,
+                SpectrType::G => 0.7,
+                SpectrType::F => 0.6,
+                SpectrType::B => 0.4,
+                SpectrType::O => 1.6,
+                _ => 1.0,
+            },
+            StarType::GiantStar => 2.5,
+            StarType::WhiteDwarf => {
+                num_array_1[9] += 2;
+                add_until(num_array_1.get_mut(9).unwrap(), 0.45);
+                num_array_2[9] = 0.7;
+                num_array_3[9] = 1.0;
+                num_array_1[10] += 2;
+                add_until(num_array_1.get_mut(10).unwrap(), 0.45);
+                num_array_2[10] = 0.7;
+                num_array_3[10] = 1.0;
+                num_array_1[12] += 1;
+                add_until(num_array_1.get_mut(12).unwrap(), 0.5);
+                num_array_2[12] = 0.7;
+                num_array_3[12] = 0.3;
+                3.5
+            }
+            StarType::NeutronStar => {
+                num_array_1[14] += 1;
+                add_until(num_array_1.get_mut(14).unwrap(), 0.65);
+                num_array_2[14] = 0.7;
+                num_array_3[14] = 0.3;
+                4.5
+            }
+            StarType::BlackHole => {
+                num_array_1[14] += 1;
+                add_until(num_array_1.get_mut(14).unwrap(), 0.65);
+                num_array_2[14] = 0.7;
+                num_array_3[14] = 0.3;
+                5.0
+            }
+        };
+        let is_rare_resource = self.star.game_desc.is_rare_resource();
+        let mut f = self.star.get_resource_coef();
+        if theme_proto.distribute == ThemeDistribute::Birth {
+            f *= 0.6666667;
+        } else if is_rare_resource {
+            if f > 1.0 {
+                f = f.powf(0.8)
+            }
+            f *= 0.7;
+        }
+
+        for (index1, rare_vein_ref) in theme_proto.rare_veins.iter().enumerate() {
+            let rare_vein = rare_vein_ref.clone() as usize;
+            let num2 =
+                theme_proto.rare_settings[index1 * 4 + (if self.star.is_birth() { 0 } else { 1 })];
+            let rare_setting_1 = theme_proto.rare_settings[index1 * 4 + 2];
+            let rare_setting_2 = theme_proto.rare_settings[index1 * 4 + 3];
+            let num4 = 1.0 - (1.0 - num2).powf(p);
+            let num5 = 1.0 - (1.0 - rare_setting_2).powf(p);
+            if rand1.next_f64() < (num4 as f64) {
+                num_array_1[rare_vein] += 1;
+                num_array_2[rare_vein] = num5;
+                num_array_3[rare_vein] = num5;
                 for _ in 1..12 {
-                    if rand1.next_f64() >= t {
+                    if rand1.next_f64() >= (rare_setting_1 as f64) {
                         break;
                     }
-                    *i += 1;
-                }
-            };
-
-            let p: f32 = match self.star.star_type {
-                StarType::MainSeqStar => match self.star.get_spectr() {
-                    SpectrType::M => 2.5,
-                    SpectrType::G => 0.7,
-                    SpectrType::F => 0.6,
-                    SpectrType::B => 0.4,
-                    SpectrType::O => 1.6,
-                    _ => 1.0,
-                },
-                StarType::GiantStar => 2.5,
-                StarType::WhiteDwarf => {
-                    num_array_1[9] += 2;
-                    add_until(num_array_1.get_mut(9).unwrap(), 0.45);
-                    num_array_2[9] = 0.7;
-                    num_array_3[9] = 1.0;
-                    num_array_1[10] += 2;
-                    add_until(num_array_1.get_mut(10).unwrap(), 0.45);
-                    num_array_2[10] = 0.7;
-                    num_array_3[10] = 1.0;
-                    num_array_1[12] += 1;
-                    add_until(num_array_1.get_mut(12).unwrap(), 0.5);
-                    num_array_2[12] = 0.7;
-                    num_array_3[12] = 0.3;
-                    3.5
-                }
-                StarType::NeutronStar => {
-                    num_array_1[14] += 1;
-                    add_until(num_array_1.get_mut(14).unwrap(), 0.65);
-                    num_array_2[14] = 0.7;
-                    num_array_3[14] = 0.3;
-                    4.5
-                }
-                StarType::BlackHole => {
-                    num_array_1[14] += 1;
-                    add_until(num_array_1.get_mut(14).unwrap(), 0.65);
-                    num_array_2[14] = 0.7;
-                    num_array_3[14] = 0.3;
-                    5.0
-                }
-            };
-            let is_rare_resource = self.star.game_desc.is_rare_resource();
-            let mut f = self.star.get_resource_coef();
-            if theme_proto.distribute == ThemeDistribute::Birth {
-                f *= 0.6666667;
-            } else if is_rare_resource {
-                if f > 1.0 {
-                    f = f.powf(0.8)
-                }
-                f *= 0.7;
-            }
-
-            for (index1, rare_vein_ref) in theme_proto.rare_veins.iter().enumerate() {
-                let rare_vein = rare_vein_ref.clone() as usize;
-                let num2 = theme_proto.rare_settings
-                    [index1 * 4 + (if self.star.is_birth() { 0 } else { 1 })];
-                let rare_setting_1 = theme_proto.rare_settings[index1 * 4 + 2];
-                let rare_setting_2 = theme_proto.rare_settings[index1 * 4 + 3];
-                let num4 = 1.0 - (1.0 - num2).powf(p);
-                let num5 = 1.0 - (1.0 - rare_setting_2).powf(p);
-                if rand1.next_f64() < (num4 as f64) {
                     num_array_1[rare_vein] += 1;
-                    num_array_2[rare_vein] = num5;
-                    num_array_3[rare_vein] = num5;
-                    for _ in 1..12 {
-                        if rand1.next_f64() >= (rare_setting_1 as f64) {
-                            break;
-                        }
-                        num_array_1[rare_vein] += 1;
-                    }
                 }
             }
+        }
 
-            let is_infinite_resource = self.star.game_desc.is_infinite_resource();
-            for index3 in 1..15 {
-                let num8 = num_array_1[index3 as usize];
-                if num8 > 0 {
-                    let vein_type: VeinType = unsafe { ::std::mem::transmute(index3) };
-                    let mut vein = Vein::new();
-                    vein.vein_type = vein_type;
-                    vein.min_group = num8 - 1;
-                    vein.max_group = num8 + 1;
-                    if vein.vein_type == VeinType::Oil {
-                        vein.min_patch = 1;
-                        vein.max_patch = 1;
-                    } else {
-                        let num12 = num_array_2[index3 as usize];
-                        vein.min_patch = (num12 * 20.0).round() as i32;
-                        vein.max_patch = (num12 * 24.0).round() as i32;
-                    }
-                    let num16 = if vein.vein_type == VeinType::Oil {
-                        f.powf(0.5)
-                    } else {
-                        f
-                    };
-                    if is_infinite_resource && vein.vein_type != VeinType::Oil {
-                        vein.min_amount = 1;
-                        vein.max_amount = 1;
-                    } else {
-                        let num17 = ((num_array_3[index3 as usize] * 100000.0 * num16).round()
-                            as i32)
-                            .max(20);
-                        let num18 = if num17 < 16000 {
-                            ((num17 as f32) * (15.0 / 16.0)).floor() as i32
-                        } else {
-                            15000
-                        };
-
-                        let map_amount = |amount: i32| -> i32 {
-                            let x1 = ((amount as f32) * 1.1).round();
-                            let x2 = (if vein.vein_type == VeinType::Oil {
-                                x1 * self.star.game_desc.oil_amount_multipler()
-                            } else {
-                                x1 * self.star.game_desc.resource_multiplier
-                            })
-                            .round() as i32;
-                            x2.max(1)
-                        };
-
-                        vein.min_amount = map_amount(num17 - num18);
-                        vein.max_amount = map_amount(num17 + num18);
-                    }
-                    output.push(vein);
+        let is_infinite_resource = self.star.game_desc.is_infinite_resource();
+        for index3 in 1..15 {
+            let num8 = num_array_1[index3 as usize];
+            if num8 > 0 {
+                let vein_type: VeinType = unsafe { ::std::mem::transmute(index3) };
+                let mut vein = Vein::new();
+                vein.vein_type = vein_type;
+                vein.min_group = num8 - 1;
+                vein.max_group = num8 + 1;
+                if vein.vein_type == VeinType::Oil {
+                    vein.min_patch = 1;
+                    vein.max_patch = 1;
+                } else {
+                    let num12 = num_array_2[index3 as usize];
+                    vein.min_patch = (num12 * 20.0).round() as i32;
+                    vein.max_patch = (num12 * 24.0).round() as i32;
                 }
+                let num16 = if vein.vein_type == VeinType::Oil {
+                    f.powf(0.5)
+                } else {
+                    f
+                };
+                if is_infinite_resource && vein.vein_type != VeinType::Oil {
+                    vein.min_amount = 1;
+                    vein.max_amount = 1;
+                } else {
+                    let num17 =
+                        ((num_array_3[index3 as usize] * 100000.0 * num16).round() as i32).max(20);
+                    let num18 = if num17 < 16000 {
+                        ((num17 as f32) * (15.0 / 16.0)).floor() as i32
+                    } else {
+                        15000
+                    };
+
+                    let map_amount = |amount: i32| -> i32 {
+                        let x1 = ((amount as f32) * 1.1).round();
+                        let x2 = (if vein.vein_type == VeinType::Oil {
+                            x1 * self.star.game_desc.oil_amount_multipler()
+                        } else {
+                            x1 * self.star.game_desc.resource_multiplier
+                        })
+                        .round() as i32;
+                        x2.max(1)
+                    };
+
+                    vein.min_amount = map_amount(num17 - num18);
+                    vein.max_amount = map_amount(num17 + num18);
+                }
+                output.push(vein);
             }
         }
         output

@@ -20,7 +20,7 @@ impl Rule for RuleOr {
         let mut e = evaluation.clone();
         for rule in &self.rules {
             let result = rule.evaluate(galaxy, &e);
-            e.confirm_many(&result);
+            e.accept_many(&result);
             if e.is_done() {
                 return e.collect_known();
             }

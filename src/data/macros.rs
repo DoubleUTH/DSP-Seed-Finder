@@ -7,7 +7,7 @@ pub mod macros {
                     // println!("{:?}", val);
                     val
                 } else {
-                    let val = $b;
+                    let val = (|| $b)();
                     unsafe {
                         let r = $self.$name.get();
                         *r = Some(val);
@@ -25,7 +25,7 @@ pub mod macros {
                 if let Some(val) = unsafe { &*$self.$name.get() }.as_ref() {
                     val
                 } else {
-                    let val = $b;
+                    let val = (|| $b)();
                     unsafe {
                         let r = $self.$name.get();
                         *r = Some(val);

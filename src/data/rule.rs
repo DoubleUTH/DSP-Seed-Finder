@@ -94,7 +94,7 @@ impl Evaluaton {
         }
     }
 
-    pub fn confirm_many(&mut self, indices: &Vec<usize>) {
+    pub fn accept_many(&mut self, indices: &Vec<usize>) {
         for index in indices {
             let item = self.items.get_mut(*index).unwrap();
             if item.is_none() {

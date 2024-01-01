@@ -5,6 +5,7 @@ const ResourceMultiplierSelector: Component<{
     class?: string
     value: float
     onChange: (value: float) => void
+    disabled?: boolean
 }> = (props) => {
     return (
         <Select
@@ -15,6 +16,7 @@ const ResourceMultiplierSelector: Component<{
             getLabel={(x) =>
                 x === 100 ? "Infinite" : x <= 0.2 ? "Scarce" : x + "x"
             }
+            disabled={props.disabled}
         />
     )
 }

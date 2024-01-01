@@ -78,7 +78,7 @@ impl<'a> Star<'a> {
             match need_spectr {
                 SpectrType::M => -3_f32,
                 SpectrType::O => 4.65_f32,
-                _ => 1.0,
+                _ => 0.0,
             },
         );
 
@@ -389,7 +389,7 @@ impl Serialize for Star<'_> {
     where
         S: Serializer,
     {
-        let mut state = serializer.serialize_struct("Planet", 12)?;
+        let mut state = serializer.serialize_struct("Star", 12)?;
         state.serialize_field("index", &self.index)?;
         state.serialize_field("position", &self.position)?;
         state.serialize_field("name", &self.name)?;

@@ -10,7 +10,7 @@ import {
 } from "solid-js"
 import NumberInput from "../components/NumberInput"
 import Button from "../components/Button"
-import { useWorldGen } from "../worldgen"
+import { getWorldGen } from "../worldgen"
 import { useStore } from "../store"
 import clsx from "clsx"
 import StarView from "../partials/StarView"
@@ -21,7 +21,6 @@ import {
     minStarCount,
     resourceMultiplers,
 } from "../util"
-import { produce } from "solid-js/store"
 import StarCountSelector from "../partials/StarCountSelector"
 import ResourceMultiplierSelector from "../partials/ResourceMultiplerSelector"
 
@@ -70,9 +69,6 @@ const Search: Component = () => {
                     class={styles.searchInput}
                     value={value()}
                     onChange={setValue}
-                    min={0}
-                    max={99999999}
-                    step={1}
                     emptyValue={-1}
                 />
                 <Button
@@ -109,9 +105,9 @@ const Search: Component = () => {
 }
 
 const View: Component<{ seed: number; index: number }> = (props) => {
-    const [store, setStore] = useStore()
     const [searchParams] = useSearchParams()
-    const worldgen = useWorldGen()
+    const [galaxy, setGalaxy] = createSignal<Galaxy | null>(null)
+    const [isLoading, setLoading] = createSignal<boolean>(true)
 
     const starCount = createMemo(() => {
         const { count } = searchParams
@@ -135,17 +131,13 @@ const View: Component<{ seed: number; index: number }> = (props) => {
         return defaultResourceMultipler
     })
 
-    const galaxy = createMemo(
-        () => store.galaxys[starCount()]?.[resourcMultipler()]?.[props.seed],
-    )
-
     function requiresLoad() {
         return !galaxy()
     }
 
     function isAvailable() {
         const g = galaxy()
-        return !!g && !g.loading && !requiresLoad()
+        return !!g && !isLoading() && !requiresLoad()
     }
 
     createEffect(() => {
@@ -155,28 +147,11 @@ const View: Component<{ seed: number; index: number }> = (props) => {
                 starCount: starCount(),
                 resourceMultiplier: resourcMultipler(),
             }
-            setStore("galaxys", config.seed, (v) =>
-                v ? { loading: true } : { ...config, loading: true, stars: [] },
-            )
-            worldgen()
+            getWorldGen(false)
                 .generate(config)
                 .then((g): void => {
-                    setStore(
-                        "galaxys",
-                        produce((galaxys) => {
-                            galaxys[config.starCount] ??= {}
-                            galaxys[config.starCount]![
-                                config.resourceMultiplier
-                            ] ??= {}
-                            galaxys[config.starCount]![
-                                config.resourceMultiplier
-                            ]![config.seed] = {
-                                ...config,
-                                loading: false,
-                                stars: g.stars,
-                            }
-                        }),
-                    )
+                    setGalaxy(g)
+                    setLoading(false)
                 })
         }
     })

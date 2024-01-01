@@ -6,6 +6,7 @@ const Button: ParentComponent<{
     class?: string
     type?: "button" | "submit" | "reset"
     kind?: "solid" | "outline"
+    theme?: "default" | "error"
     disabled?: boolean
     onClick?: (ev: MouseEvent) => void
 }> = (props) => {
@@ -16,6 +17,7 @@ const Button: ParentComponent<{
                 styles.button,
                 props.class,
                 props.kind === "outline" ? styles.outline : styles.solid,
+                styles[props.theme || "default"],
             )}
             disabled={props.disabled}
             onClick={(ev) => props.onClick?.(ev)}

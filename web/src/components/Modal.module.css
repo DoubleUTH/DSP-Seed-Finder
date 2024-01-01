@@ -4,12 +4,13 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: rgba(0, 0, 0, 0.45);
+    background-color: rgba(160, 160, 160, 0.45);
     display: grid;
     place-items: center;
     visibility: visible;
     backdrop-filter: blur(4px);
     opacity: 1;
+    z-index: 30;
     transition:
         visibility 0s,
         opacity 0.3s;
@@ -19,7 +20,9 @@
     visibility: hidden;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s;
+    transition:
+        visibility 0.3s,
+        opacity 0.3s;
 }
 
 .content {
@@ -27,10 +30,11 @@
     width: 450px;
     max-height: 80vh;
     min-height: 80px;
-    overflow-y: auto;
     background-color: var(--modal-background);
     border-radius: 16px;
     overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 .close {

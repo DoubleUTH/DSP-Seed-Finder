@@ -1,5 +1,6 @@
 function waitConnect(ws: WebSocket) {
-    return new Promise<void>((resolve) => {
+    return new Promise<void>((resolve, reject) => {
+        ws.addEventListener("error", reject)
         if (ws.readyState === WebSocket.CONNECTING) {
             const handle = () => {
                 resolve()
@@ -38,58 +39,54 @@ export class WorldGenNative implements WorldGen {
         range,
         rule,
         concurrency,
+        autosave,
+        onError,
+        onResult,
         onProgress,
         onComplete,
         onInterrupt,
-    }: {
-        gameDesc: Omit<GameDesc, "seed">
-        range: [integer, integer]
-        rule: Rule
-        concurrency: integer
-        onProgress?: (current: number, results: FindResult[]) => void
-        onComplete?: () => void
-        onInterrupt?: () => void
-    }) {
-        connect().then((ws) => {
-            let results: FindResult[] = []
-            let done = false
+    }: FindOptions) {
+        connect()
+            .then((ws) => {
+                let done = false
 
-            this._stop = () => {
-                if (ws.readyState === WebSocket.OPEN) {
-                    ws.send(JSON.stringify({ type: "Stop" }))
-                }
-            }
-
-            ws.addEventListener("close", () => {
-                if (!done) {
-                    onInterrupt?.()
-                }
-            })
-
-            ws.addEventListener("message", (ev) => {
-                const msg = JSON.parse(ev.data)
-                if (msg.type === "Result") {
-                    results.push({ seed: msg.seed, indexes: msg.indexes })
-                } else {
-                    onProgress?.(msg.end, results)
-                    results = []
-                    if (msg.type === "Done") {
-                        done = true
-                        onComplete?.()
-                        ws.close()
+                this._stop = () => {
+                    if (ws.readyState === WebSocket.OPEN) {
+                        ws.send(JSON.stringify({ type: "Stop" }))
                     }
                 }
+
+                ws.addEventListener("close", () => {
+                    if (!done) {
+                        onInterrupt?.()
+                    }
+                })
+
+                ws.addEventListener("message", (ev) => {
+                    const msg = JSON.parse(ev.data)
+                    if (msg.type === "Result") {
+                        onResult?.({ seed: msg.seed, indexes: msg.indexes })
+                    } else {
+                        onProgress?.(msg.end)
+                        if (msg.type === "Done") {
+                            done = true
+                            onComplete?.()
+                            ws.close()
+                        }
+                    }
+                })
+                ws.send(
+                    JSON.stringify({
+                        type: "Find",
+                        game: { ...gameDesc, seed: 0 },
+                        range,
+                        rule,
+                        concurrency,
+                        autosave,
+                    }),
+                )
             })
-            ws.send(
-                JSON.stringify({
-                    type: "Find",
-                    game: { ...gameDesc, seed: 0 },
-                    range,
-                    rule,
-                    concurrency,
-                }),
-            )
-        })
+            .catch((err) => onError?.(err))
     }
 
     stop() {

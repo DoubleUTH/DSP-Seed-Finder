@@ -45,6 +45,7 @@ export enum VeinType {
 }
 
 export enum RuleType {
+    None = "None",
     And = "And",
     Or = "Or",
     Birth = "Birth", // 10
@@ -76,6 +77,7 @@ export enum ConditionType {
 }
 
 export enum GasType {
+    None = 0,
     Fireice = 1011,
     Hydrogen = 1120,
     Deuterium = 1121,

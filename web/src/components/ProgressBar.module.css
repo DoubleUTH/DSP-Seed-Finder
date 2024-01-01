@@ -1,0 +1,25 @@
+.content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.progressBar {
+    background-color: white;
+    height: 8px;
+    flex: 1 1 0;
+    display: inline-block;
+    border-radius: 20px;
+}
+
+.inner {
+    border-radius: 20px;
+    height: 100%;
+    background-color: var(--primary);
+}
+
+.text {
+    display: inline-block;
+    width: 180px;
+    flex: none;
+}

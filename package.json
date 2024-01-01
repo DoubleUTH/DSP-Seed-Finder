@@ -5,7 +5,8 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "preview": "vite preview",
+        "preview:web": "vite preview",
+        "preview:native": ".\\target\\release\\main.exe",
         "build:web": "vite build",
         "build:browser": "wasm-pack build --target web",
         "build:native": "cargo build --release"

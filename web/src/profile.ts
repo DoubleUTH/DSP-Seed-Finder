@@ -3,20 +3,16 @@ import { customAlphabet } from "nanoid"
 const databases = new Map<string, Promise<IDBDatabase>>()
 const nanoid = customAlphabet(
     "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
-    20,
+    6,
 )
 
-const PREFIX = "profile_"
-const SETTINGS = "settings"
+const PREFIX = "p_"
+const INFO = "info"
+const PROGRESS = "progress"
 const STARS = "stars"
 
-export function generateDatatabaseId(): string {
-    return PREFIX + nanoid()
-}
-
-export async function getDatabases(): Promise<string[]> {
-    const list = await indexedDB.databases()
-    return list.map((v) => v.name!).filter((name) => name.startsWith(PREFIX))
+export function generateProfileId(): string {
+    return PREFIX + Date.now() + nanoid()
 }
 
 async function openDatabase(id: string): Promise<IDBDatabase> {
@@ -27,8 +23,12 @@ async function openDatabase(id: string): Promise<IDBDatabase> {
         request.onblocked = (ev) => console.error(ev)
         request.onupgradeneeded = (ev) => {
             const db: IDBDatabase = (ev.target as any).result
-            db.createObjectStore(SETTINGS, { keyPath: "id" })
-            db.createObjectStore(STARS, { keyPath: "id" })
+            if (id === INFO) {
+                db.createObjectStore(INFO, { keyPath: "id" })
+            } else {
+                db.createObjectStore(PROGRESS, { keyPath: "id" })
+                db.createObjectStore(STARS, { keyPath: "id" })
+            }
         }
         request.onsuccess = () => {
             const db = request.result
@@ -43,12 +43,26 @@ async function openDatabase(id: string): Promise<IDBDatabase> {
     return promise
 }
 
-export async function getProfileSettings(
-    id: string,
-): Promise<ProfileSettings | null> {
-    const db = await openDatabase(id)
-    const txn = db.transaction([SETTINGS], "readonly")
-    const store = txn.objectStore(SETTINGS)
+export async function listProfiles(): Promise<ProfileInfo[]> {
+    const db = await openDatabase(INFO)
+    const txn = db.transaction([INFO], "readonly")
+    const store = txn.objectStore(INFO)
+    const req = store.getAll()
+    return new Promise((resolve, reject) => {
+        txn.onerror = reject
+        req.onerror = reject
+        req.onsuccess = () => {
+            const result = [...req.result]
+            result.reverse()
+            resolve(result)
+        }
+    })
+}
+
+export async function getProfileInfo(id: string): Promise<ProfileInfo | null> {
+    const db = await openDatabase(INFO)
+    const txn = db.transaction([INFO], "readonly")
+    const store = txn.objectStore(INFO)
     const req = store.get(id)
 
     return new Promise((resolve, reject) => {
@@ -60,13 +74,11 @@ export async function getProfileSettings(
     })
 }
 
-export async function setProfileSettings(
-    settings: ProfileSettings,
-): Promise<void> {
-    const db = await openDatabase(settings.id)
-    const txn = db.transaction([SETTINGS], "readwrite")
-    const store = txn.objectStore(SETTINGS)
-    store.put(settings)
+export async function setProfileInfo(info: ProfileInfo): Promise<void> {
+    const db = await openDatabase(INFO)
+    const txn = db.transaction([INFO], "readwrite")
+    const store = txn.objectStore(INFO)
+    store.put(info)
 
     await new Promise((resolve, reject) => {
         txn.onerror = reject
@@ -74,25 +86,42 @@ export async function setProfileSettings(
     })
 }
 
-export async function saveToProfile(
+export async function getProfileProgress(
     id: string,
-    currentSeed: integer,
+): Promise<ProfileProgress | null> {
+    const db = await openDatabase(id)
+    const txn = db.transaction([PROGRESS], "readonly")
+    const store = txn.objectStore(PROGRESS)
+    const req = store.get(id)
+
+    return new Promise((resolve, reject) => {
+        txn.onerror = reject
+        req.onerror = reject
+        req.onsuccess = () => {
+            resolve(req.result || null)
+        }
+    })
+}
+
+export async function setProfileProgress(
+    progress: ProfileProgress,
     results: FindResult[] = [],
 ) {
-    const db = await openDatabase(id)
+    const db = await openDatabase(progress.id)
     const txn = db.transaction(
-        results.length > 0 ? [SETTINGS, STARS] : [SETTINGS],
+        results.length > 0 ? [PROGRESS, STARS] : [PROGRESS],
         "readwrite",
     )
     await new Promise((resolve, reject) => {
         txn.oncomplete = resolve
         txn.onerror = reject
 
-        const settingsStore = txn.objectStore(SETTINGS)
-        const req = settingsStore.get(id)
+        const progressStore = txn.objectStore(PROGRESS)
+        const req = progressStore.get(progress.id)
         req.onsuccess = () => {
-            console.log(req.result)
-            settingsStore.put({ ...req.result, current: currentSeed })
+            if (!req.result || req.result.current <= progress.current) {
+                progressStore.put(progress)
+            }
         }
 
         if (results.length > 0) {
@@ -106,6 +135,32 @@ export async function saveToProfile(
                     })
                 })
             })
+        }
+    })
+}
+
+export async function deleteProfile(id: string) {
+    const conn = databases.get(id)
+    if (conn) {
+        const db = await conn
+        db.close()
+        databases.delete(id)
+    }
+    const deleteRequest = indexedDB.deleteDatabase(id)
+    const db = await openDatabase(INFO)
+    const txn = db.transaction([INFO], "readwrite")
+    const store = txn.objectStore(INFO)
+    store.delete(id)
+
+    await new Promise<void>((resolve, reject) => {
+        let count = 2
+        txn.onerror = reject
+        txn.oncomplete = () => {
+            if (!--count) resolve()
+        }
+        deleteRequest.onerror = reject
+        deleteRequest.onsuccess = () => {
+            if (!--count) resolve()
         }
     })
 }

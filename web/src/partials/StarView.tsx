@@ -7,7 +7,7 @@ import {
     StarType,
     VeinType,
 } from "../enums"
-import { formatNumber, toPrecision } from "../util"
+import { formatNumber, gasNames, toPrecision, veinNames } from "../util"
 import styles from "./StarView.module.css"
 import { Component, Show, For, createMemo } from "solid-js"
 import { IoChevronDown } from "solid-icons/io"
@@ -82,30 +82,6 @@ const veinOrder: VeinType[] = [
     VeinType.Bamboo,
     VeinType.Mag,
 ]
-
-const veinNames: Record<VeinType, string> = {
-    [VeinType.None]: "",
-    [VeinType.Iron]: "Iron Ore",
-    [VeinType.Copper]: "Copper Ore",
-    [VeinType.Silicium]: "Silicon Ore",
-    [VeinType.Titanium]: "Titanium Ore",
-    [VeinType.Stone]: "Stone",
-    [VeinType.Coal]: "Coal",
-    [VeinType.Oil]: "Crude Oil",
-    [VeinType.Fireice]: "Fire Ice",
-    [VeinType.Diamond]: "Kimberlite Ore",
-    [VeinType.Fractal]: "Fractal Silicon",
-    [VeinType.Crysrub]: "Organic Crystal",
-    [VeinType.Grat]: "Grating Crystal",
-    [VeinType.Bamboo]: "Stalagmite Crystal",
-    [VeinType.Mag]: "Unipolar Magnet",
-}
-
-const gasNames: Record<GasType, string> = {
-    [GasType.Fireice]: "Fire Ice",
-    [GasType.Hydrogen]: "Hydrogen",
-    [GasType.Deuterium]: "Deuterium",
-}
 
 type VeinStat = {
     veinType: VeinType
@@ -278,7 +254,7 @@ const StarDetail: Component<{
             </div>
         </div>
         <div class={styles.row}>
-            <div class={styles.field}>Distance from birth</div>
+            <div class={styles.field}>Distance from Start</div>
             <div class={styles.value}>
                 {formatNumber(distanceFromBirth(props.star.position), 1)} ly
             </div>
@@ -346,12 +322,10 @@ const Vein: Component<{
     const min = () => formatVein(props.stat.min, isOil())
     const max = () => formatVein(props.stat.max, isOil())
     return (
-        <Tooltip
-            class={clsx(props.class, styles.estimate)}
-            text={`Estimated:\n${min()} - ${max()}`}
-        >
-            ~ {avg()}
-        </Tooltip>
+        <div class={props.class}>
+            ~{" "}
+            <Tooltip text={`Estimated:\n${min()} - ${max()}`}>{avg()}</Tooltip>
+        </div>
     )
 }
 

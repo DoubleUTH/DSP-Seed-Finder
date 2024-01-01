@@ -12,6 +12,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 use std::sync::atomic::{AtomicBool, AtomicI32, Ordering};
 use std::sync::Arc;
+use std::time::SystemTime;
 use tokio::net::{TcpListener, TcpStream};
 use tokio::runtime::Handle;
 use tokio_tungstenite::accept_async;
@@ -39,6 +40,7 @@ enum IncomingMessage {
         rule: Rules,
         range: (i32, i32),
         concurrency: i32,
+        autosave: u64,
     },
     Stop,
 }
@@ -56,6 +58,8 @@ struct FindState {
     pub progress_end: i32,
     pub pending_seeds: HashSet<i32>,
     pub running: i32,
+    pub autosave: u64,
+    pub last_notify: SystemTime,
 }
 
 impl FindState {
@@ -67,7 +71,9 @@ impl FindState {
                 e += 1;
             }
             self.progress_end = e;
-            if self.progress_end >= self.progress_start + 10000 {
+            let now = SystemTime::now();
+            if now.duration_since(self.last_notify).unwrap().as_secs() >= self.autosave {
+                self.last_notify = now;
                 let start = self.progress_start;
                 self.progress_start = self.progress_end;
                 Some((start, self.progress_end))
@@ -114,14 +120,17 @@ async fn accept_connection(stream: TcpStream) {
                         rule,
                         range: (start, end),
                         concurrency,
+                        autosave,
                     } => {
-                        let threads = concurrency.min(end - start + 1);
+                        let threads = concurrency.min(end - start);
                         let current_seed = Arc::new(AtomicI32::new(start));
                         let state = Arc::new(std::sync::Mutex::new(FindState {
                             progress_end: start,
                             progress_start: start,
                             running: threads,
                             pending_seeds: HashSet::new(),
+                            autosave,
+                            last_notify: SystemTime::now(),
                         }));
                         stopped.store(false, Ordering::SeqCst);
                         for _ in 0..threads {
@@ -139,7 +148,7 @@ async fn accept_connection(stream: TcpStream) {
                                             Some(x + 1)
                                         })
                                         .unwrap();
-                                    if seed > end {
+                                    if seed >= end {
                                         break;
                                     }
                                     g.seed = seed;

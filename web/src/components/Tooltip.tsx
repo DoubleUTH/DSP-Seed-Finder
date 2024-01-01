@@ -1,7 +1,7 @@
 import { ParentComponent, createEffect, createSignal } from "solid-js"
 import clsx from "clsx"
 import styles from "./Tooltip.module.css"
-import { computePosition, flip } from "@floating-ui/dom"
+import { computePosition, flip, shift } from "@floating-ui/dom"
 
 const Tooltip: ParentComponent<{ text: string; class?: string }> = (props) => {
     let root: HTMLDivElement
@@ -15,7 +15,7 @@ const Tooltip: ParentComponent<{ text: string; class?: string }> = (props) => {
             computePosition(root!, popup!, {
                 strategy: "fixed",
                 placement: "top",
-                middleware: [flip({ fallbackPlacements: ["bottom"] })],
+                middleware: [flip({ fallbackPlacements: ["bottom"] }), shift()],
                 // eslint-disable-next-line solid/reactivity
             }).then(({ x, y }) => {
                 popup!.style.left = x + "px"

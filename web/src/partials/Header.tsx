@@ -9,7 +9,7 @@ const Header: Component = () => {
 
     return (
         <div class={styles.header}>
-            <div class={styles.title}>Dyson Sphere Program</div>
+            <div class={styles.title}>DSP Seed Finder</div>
             <div class={styles.buttons}>
                 <A href="/" class={styles.button}>
                     Star Finder

@@ -4,6 +4,7 @@
     left: 0;
     right: 0;
     line-height: 2;
+    z-index: 20;
     display: flex;
     align-items: center;
     flex: none;

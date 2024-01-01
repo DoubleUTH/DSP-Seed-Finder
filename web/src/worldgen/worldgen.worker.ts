@@ -33,12 +33,12 @@ self.onmessage = (ev) => {
         })
     } else if (type === FIND_NAME) {
         const {
-            game: { resourceMultiplier = 1, starCount = 64 },
+            game: { seed, resourceMultiplier = 1, starCount = 64 },
             rule,
         } = input
 
         initPromise.then(() => {
-            findStars({ starCount, resourceMultiplier }, rule)
+            findStars({ seed, starCount, resourceMultiplier }, rule)
         })
     } else if (type === FIND_NEXT_NAME) {
         emitter.emit(FIND_NEXT_NAME, input)

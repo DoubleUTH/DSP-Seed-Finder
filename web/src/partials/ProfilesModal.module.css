@@ -1,0 +1,45 @@
+.title {
+    flex: none;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 20px 20px 0;
+}
+
+.profiles {
+    flex: 1 1 auto;
+    margin: 20px;
+    min-height: 360px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.profile {
+    background-color: rgba(160, 160, 160, 0.25);
+    padding: 12px;
+    border: 1px solid rgba(160, 160, 160, 0.25);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.profile:hover {
+    border-color: var(--primary);
+}
+
+.profile + .profile {
+    margin-top: 8px;
+}
+
+.name {
+    flex: 1 1 0;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.time {
+    color: rgba(160, 160, 160, 0.8);
+    font-size: 14px;
+}

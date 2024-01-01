@@ -1,4 +1,4 @@
-import { RuleType } from "./enums"
+import { GasType, RuleType, VeinType } from "./enums"
 
 export function toPrecision(number: number, precision: number) {
     return number.toLocaleString([], {
@@ -32,3 +32,28 @@ export const resourceMultiplers: ReadonlyArray<float> = [
     0.1, 0.5, 0.8, 1, 1.5, 2, 3, 5, 8, 100,
 ]
 export const defaultResourceMultipler = 1
+
+export const veinNames: Record<VeinType, string> = {
+    [VeinType.None]: "",
+    [VeinType.Iron]: "Iron Ore",
+    [VeinType.Copper]: "Copper Ore",
+    [VeinType.Silicium]: "Silicon Ore",
+    [VeinType.Titanium]: "Titanium Ore",
+    [VeinType.Stone]: "Stone",
+    [VeinType.Coal]: "Coal",
+    [VeinType.Oil]: "Crude Oil",
+    [VeinType.Fireice]: "Fire Ice",
+    [VeinType.Diamond]: "Kimberlite Ore",
+    [VeinType.Fractal]: "Fractal Silicon",
+    [VeinType.Crysrub]: "Organic Crystal",
+    [VeinType.Grat]: "Grating Crystal",
+    [VeinType.Bamboo]: "Stalagmite Crystal",
+    [VeinType.Mag]: "Unipolar Magnet",
+}
+
+export const gasNames: Record<GasType, string> = {
+    [GasType.None]: "",
+    [GasType.Fireice]: "Fire Ice",
+    [GasType.Hydrogen]: "Hydrogen",
+    [GasType.Deuterium]: "Deuterium",
+}

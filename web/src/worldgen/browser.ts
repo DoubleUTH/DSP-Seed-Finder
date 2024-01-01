@@ -33,31 +33,24 @@ export class WorldGenBrowser implements WorldGen {
         range,
         rule,
         concurrency,
+        autosave,
+        onResult,
         onProgress,
         onComplete,
-    }: {
-        gameDesc: Omit<GameDesc, "seed">
-        range: [integer, integer]
-        rule: Rule
-        concurrency: integer
-        onProgress?: (current: number, results: FindResult[]) => void
-        onComplete?: () => void
-        onInterrupt?: () => void
-    }) {
+    }: FindOptions) {
         let currentSeed = range[0]
-        const finalSeed = range[1]
+        const endSeed = range[1]
 
         let stopped = false
         this._stop = () => {
             stopped = true
         }
 
-        const maxWorker = Math.min(concurrency, finalSeed - currentSeed + 1)
-        let progressStart = currentSeed
+        const maxWorker = Math.min(concurrency, endSeed - currentSeed)
         let progressEnd = currentSeed
         const pendingSeeds = new Set<integer>()
-        let results: FindResult[] = []
         let done = maxWorker
+        let lastNotify = Date.now()
 
         function run(worker: Worker) {
             const eventHandler = (ev: MessageEvent) => {
@@ -66,22 +59,22 @@ export class WorldGenBrowser implements WorldGen {
                     const result: FindResult = message.data
                     const seed = result.seed
                     if (result.indexes.length > 0) {
-                        results.push(result)
+                        onResult?.(result)
                     }
                     if (progressEnd === seed) {
                         ++progressEnd
                         while (pendingSeeds.delete(progressEnd)) {
                             ++progressEnd
                         }
-                        if (progressEnd >= progressStart + 1000) {
-                            progressStart = progressEnd
-                            onProgress?.(progressEnd, results)
-                            results = []
-                        }
                     } else {
                         pendingSeeds.add(seed)
                     }
-                    if (!stopped && currentSeed <= finalSeed) {
+                    const now = Date.now()
+                    if (now - lastNotify >= autosave * 1000) {
+                        lastNotify = now
+                        onProgress?.(progressEnd)
+                    }
+                    if (!stopped && currentSeed < endSeed) {
                         worker.postMessage({
                             type: FIND_NEXT_NAME,
                             input: currentSeed++,
@@ -89,8 +82,7 @@ export class WorldGenBrowser implements WorldGen {
                     } else {
                         worker.terminate()
                         if (--done === 0) {
-                            onProgress?.(progressEnd, results)
-                            results = []
+                            onProgress?.(progressEnd)
                             onComplete?.()
                         }
                     }

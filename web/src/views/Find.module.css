@@ -1,0 +1,91 @@
+.content {
+    margin: 0 auto;
+    max-width: 1200px;
+    padding: 20px;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 12px 0;
+}
+
+.fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.field {
+    display: flex;
+    align-items: center;
+    height: 32px;
+}
+
+.execute {
+    flex: 1 1 0;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.label {
+    width: 160px;
+    flex: none;
+}
+
+.input {
+    flex: 1 1 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.modalTitle {
+    margin: 20px;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.warnText {
+    margin: 20px;
+    line-height: 1.5;
+}
+
+.warnButtons {
+    margin: 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.progress {
+    display: flex;
+    align-items: center;
+    flex: 1 1 0;
+    gap: 12px;
+}
+
+.progressBar {
+    flex: 1 1 0;
+}
+
+.rules {
+    margin: 20px 0 12px;
+}
+
+.inputSeed {
+    width: 100px;
+}
+
+.inputStandard {
+    width: 120px;
+}
+
+.inputSmall {
+    width: 80px;
+}

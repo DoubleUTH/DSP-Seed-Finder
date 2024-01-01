@@ -1,7 +1,7 @@
 .select {
     position: relative;
-    min-width: 90px;
     cursor: pointer;
+    display: inline-block;
 }
 
 .content {
@@ -24,6 +24,7 @@
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     max-height: 200px;
     overflow-y: auto;
+    z-index: 10;
 }
 
 .item {
@@ -33,10 +34,19 @@
 }
 
 .item:hover {
-    background-color: rgba(255, 255, 255, 0.25);
+    background-color: rgba(160, 160, 160, 0.4);
 }
 
 .selected,
 .selected:hover {
     background-color: var(--primary);
+    color: #fff;
+}
+
+.error .content {
+    border-color: var(--error);
+}
+
+.disabled {
+    cursor: not-allowed;
 }

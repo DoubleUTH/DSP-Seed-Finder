@@ -6,14 +6,22 @@ import { computePosition, flip } from "@floating-ui/dom"
 function Select<T>(props: {
     class?: string
     value?: T
+    placeholder?: string
     onChange?: (t: T) => void
     getLabel: (t: T) => JSX.Element
     options: T[]
+    isSelected?: (t: T) => boolean
+    error?: boolean
+    disabled?: boolean
 }): JSX.Element {
     let select: HTMLDivElement
     let dropdown: HTMLDivElement
 
     const [focus, setFocus] = createSignal(false)
+
+    function isSelected(option: T): boolean {
+        return props.isSelected?.(option) || props.value === option
+    }
 
     createEffect(() => {
         const handler = (ev: MouseEvent) => {
@@ -37,15 +45,13 @@ function Select<T>(props: {
             }).then(({ x, y }) => {
                 dropdown!.style.left = x + "px"
                 dropdown!.style.top = y + "px"
-                if (props.value) {
-                    const selected = props.options.indexOf(props.value)
-                    if (selected > -1) {
-                        dropdown.children[selected]!.scrollIntoView({
-                            behavior: "instant",
-                            block: "center",
-                            inline: "start",
-                        })
-                    }
+                const selected = props.options.findIndex(isSelected)
+                if (selected > -1) {
+                    dropdown.children[selected]!.scrollIntoView({
+                        behavior: "instant",
+                        block: "center",
+                        inline: "start",
+                    })
                 }
             })
         } else {
@@ -53,13 +59,27 @@ function Select<T>(props: {
         }
     })
 
+    function onClick() {
+        if (!props.disabled) {
+            setFocus(true)
+        }
+    }
+
     return (
         <div
             ref={select!}
-            class={clsx(styles.select, props.class, focus() && styles.focus)}
+            class={clsx(
+                styles.select,
+                props.class,
+                focus() && styles.focus,
+                props.error && styles.error,
+                props.disabled && styles.disabled,
+            )}
         >
-            <div class={styles.content} onClick={() => setFocus(true)}>
-                {props.value ? props.getLabel(props.value) : ""}
+            <div class={styles.content} onClick={onClick}>
+                {props.value !== undefined
+                    ? props.getLabel(props.value)
+                    : props.placeholder}
             </div>
             <div ref={dropdown!} class={styles.dropdown}>
                 <For each={props.options}>
@@ -67,7 +87,7 @@ function Select<T>(props: {
                         <div
                             class={clsx(
                                 styles.item,
-                                props.value === option && styles.selected,
+                                isSelected(option) && styles.selected,
                             )}
                             onClick={() => {
                                 setFocus(false)

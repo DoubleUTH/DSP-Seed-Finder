@@ -30,9 +30,30 @@
     border-color: var(--primary-light);
 }
 
-.button:disabled {
+.error.solid {
+    color: #fff;
+    background-color: var(--error);
+    border-color: var(--error);
+}
+
+.error.solid:hover {
+    background-color: var(--error-light);
+    border-color: var(--error-light);
+}
+
+.error.outline {
+    border-color: var(--error);
+}
+
+.error.outline:hover {
+    color: var(--error-light);
+    border-color: var(--error-light);
+}
+
+.button:disabled,
+.error.button:disabled {
     cursor: not-allowed;
     border-color: #424242;
-    color: rgba(255, 255, 255, 0.25);
-    background-color: rgba(255, 255, 255, 0.08);
+    color: rgba(160, 160, 160, 0.8);
+    background-color: rgba(160, 160, 160, 0.08);
 }

@@ -1,0 +1,101 @@
+.ruleBuilder {
+    padding: 12px;
+    border: 1px solid #424242;
+    border-radius: 8px;
+}
+
+.block {
+    background-color: rgba(160, 160, 160, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.birth {
+    line-height: 32px;
+}
+
+.row {
+    display: flex;
+}
+
+.editRow {
+    margin: 0 20px;
+    height: 32px;
+}
+
+.delete {
+    color: var(--error);
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    cursor: pointer;
+}
+
+.or {
+    margin: 8px;
+}
+
+.and {
+    margin: 12px 0 12px 20px;
+}
+
+.orRule {
+    margin-top: 8px;
+}
+
+.addAnd {
+    margin-top: 8px;
+    margin-left: 20px;
+}
+
+.selectRule {
+    width: 240px;
+}
+
+.selectVein {
+    width: 180px;
+}
+
+.inputVein {
+    width: 180px;
+}
+
+.inputCount {
+    width: 40px;
+}
+
+.inputLuminosity {
+    width: 60px;
+}
+
+.inputGasRate {
+    width: 80px;
+}
+
+.inputDyson {
+    width: 80px;
+}
+
+.inputDistance {
+    width: 60px;
+}
+
+.selectSpectr {
+    width: 60px;
+}
+
+.selectStarType {
+    width: 140px;
+}
+
+.selectGas {
+    width: 84px;
+}
+
+.selectGasType {
+    width: 100px;
+}
+
+.selectOcean {
+    width: 120px;
+}

@@ -14,12 +14,16 @@
     --text: #213547;
     --background: #ffffff;
     --modal-background: #f5f5f5;
+    --error: #931212;
+    --error-light: #7f1410;
 }
 
 .dark {
     --text: #ffffff;
     --background: #242424;
     --modal-background: #1f1f1f;
+    --error: #ec5b59;
+    --error-light: #ee7770;
 }
 
 .content {

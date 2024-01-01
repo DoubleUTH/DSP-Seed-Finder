@@ -173,11 +173,15 @@ impl<'a> Planet<'a> {
     });
 
     lazy_getter!(self, get_temperature_factor, f32, {
-        let habitable_radius = self.star.get_habitable_radius();
-        if habitable_radius > 0.0 {
-            self.get_sun_distance() / habitable_radius
+        if self.is_gas_giant() {
+            0.0
         } else {
-            1000.0
+            let habitable_radius = self.star.get_habitable_radius();
+            if habitable_radius > 0.0 {
+                self.get_sun_distance() / habitable_radius
+            } else {
+                1000.0
+            }
         }
     });
 
@@ -197,8 +201,12 @@ impl<'a> Planet<'a> {
     });
 
     lazy_getter!(self, get_temperature_bias, f32, {
-        let f2 = self.get_temperature_factor();
-        (1.2 / ((f2 as f64) + 0.2) - 1.0) as f32
+        if self.is_gas_giant() {
+            0.0
+        } else {
+            let f2 = self.get_temperature_factor();
+            (1.2 / ((f2 as f64) + 0.2) - 1.0) as f32
+        }
     });
 
     lazy_getter!(self, get_luminosity, f32, {

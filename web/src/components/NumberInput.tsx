@@ -1,29 +1,62 @@
 import clsx from "clsx"
 import styles from "./NumberInput.module.css"
-import { Component } from "solid-js"
+import { Component, batch, createRenderEffect, createSignal } from "solid-js"
 
 const NumberInput: Component<{
     class?: string
     value: number
     onChange?: (value: number) => void
-    min?: number
-    max?: number
-    step?: number
+    error?: boolean
     emptyValue: number
+    disabled?: boolean
+    maxLength?: number
 }> = (props) => {
+    const getText = () =>
+        props.value === props.emptyValue ? "" : String(props.value)
+    // eslint-disable-next-line solid/reactivity
+    const [text, setText] = createSignal(getText())
+
     function handleInput(value: string) {
-        props.onChange?.(value ? Number(value) : props.emptyValue)
+        batch(() => {
+            setText(value)
+            if (value) {
+                const num = Number(value)
+                if (!Number.isNaN(num)) {
+                    props.onChange?.(Number(num))
+                } else {
+                    props.onChange?.(props.emptyValue)
+                }
+            } else {
+                props.onChange?.(props.emptyValue)
+            }
+        })
     }
+
+    createRenderEffect(() => {
+        const t = text()
+        if (t === "" && props.value !== props.emptyValue) {
+            setText(getText())
+        } else {
+            const num = Number(t)
+            if (!Number.isNaN(num) && props.value !== num) {
+                setText(getText())
+            }
+        }
+    })
 
     return (
         <input
-            class={clsx(styles.input, props.class)}
-            type="number"
+            class={clsx(
+                styles.input,
+                props.class,
+                props.error && styles.error,
+                props.disabled && styles.disabled,
+            )}
             onInput={(ev) => handleInput(ev.currentTarget.value)}
-            value={props.value === props.emptyValue ? "" : props.value}
-            min={props.min}
-            max={props.max}
-            step={props.step}
+            value={text()}
+            maxLength={props.maxLength}
+            pattern="\\d+"
+            disabled={props.disabled}
         />
     )
 }

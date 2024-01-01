@@ -1,12 +1,12 @@
 import type {
     SpectrType,
-    StarType,
+    StarType as EStarType,
     PlanetType,
     VeinType,
     ConditionType,
     RuleType,
     GasType,
-    OceanType,
+    OceanType as EOceanType,
 } from "./enums"
 
 declare global {
@@ -34,7 +34,7 @@ declare global {
         lifetime: float
         age: float
         temperature: float
-        type: StarType
+        type: EStarType
         spectr: SpectrType
         luminosity: float
         radius: float
@@ -67,7 +67,7 @@ declare global {
     declare interface ThemeProto {
         id: integer
         name: string
-        waterItemId: OceanType
+        waterItemId: EOceanType
         wind: float
     }
 
@@ -107,6 +107,7 @@ declare global {
         | Condition.Gte
 
     declare namespace Rule {
+        export type None = { type: RuleType.None }
         export type And = { type: RuleType.And; rules: Rule[] }
         export type Or = { type: RuleType.Or; rules: Rule[] }
         export type Luminosity = {
@@ -132,11 +133,11 @@ declare global {
         }
         export type OceanType = {
             type: RuleType.OceanType
-            oceanType: integer
+            oceanType: EOceanType
         }
         export type StarType = {
             type: RuleType.StarType
-            starType: StarType[]
+            starType: EStarType[]
         }
         export type GasCount = {
             type: RuleType.GasCount
@@ -174,6 +175,7 @@ declare global {
     }
 
     declare type SimpleRule =
+        | Rule.None
         | Rule.Luminosity
         | Rule.DysonRadius
         | Rule.AverageVeinAmount
@@ -194,17 +196,22 @@ declare global {
 
     declare type Rule = SimpleRule | CompoundRule
 
+    declare interface FindOptions {
+        gameDesc: Omit<GameDesc, "seed">
+        range: [number, number]
+        rule: Rule
+        concurrency: integer
+        autosave: integer
+        onError?: (error?: any) => void
+        onResult?: (result: FindResult) => void
+        onProgress?: (current: number) => void
+        onComplete?: () => void
+        onInterrupt?: () => void
+    }
+
     declare interface WorldGen {
         generate(gameDesc: GameDesc): Promise<Galaxy>
-        find(options: {
-            gameDesc: Omit<GameDesc, "seed">
-            range: [number, number]
-            rule: Rule
-            concurrency: integer
-            onProgress?: (current: number, results: FindResult[]) => void
-            onComplete?: () => void
-            onInterrupt?: () => void
-        }): void
+        find(options: FindOptions): void
         stop(): void
     }
 
@@ -215,22 +222,6 @@ declare global {
 
     declare interface Store {
         settings: Settings
-        galaxys: Record<
-            number, // number of stars
-            Record<
-                number, // resource multipler
-                Record<
-                    number, // seed
-                    {
-                        loading: boolean
-                        seed: integer
-                        starCount: integer
-                        resourceMultiplier: float
-                        stars: Star[]
-                    }
-                >
-            >
-        >
     }
 
     declare interface Settings {
@@ -241,11 +232,18 @@ declare global {
         }
     }
 
-    declare interface ProfileSettings {
+    declare interface ProfileInfo {
         id: string
         name: string
+        createdAt: integer
+    }
+
+    declare interface ProfileProgress {
+        id: string
         starCount: integer
         resourceMultiplier: float
+        autosave: float
+        concurrency: integer
         start: integer
         end: integer
         current: integer

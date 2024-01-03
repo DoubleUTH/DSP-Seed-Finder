@@ -118,7 +118,7 @@ fn check_collision(tmp_poses: &Vec<Vector3>, pt: &Vector3, min_dist: f64) -> boo
         .any(|pt1| pt1.distance_sq_from(pt) < min_dist_sq)
 }
 
-fn generate_stars<'a>(game_desc: &'a GameDesc) -> Vec<Star<'a>> {
+fn generate_stars<'a>(game_desc: &'a GameDesc) -> Vec<StarWithPlanets<'a>> {
     let galaxy_seed = game_desc.seed;
 
     let mut rand = DspRandom::new(galaxy_seed);
@@ -147,19 +147,19 @@ fn generate_stars<'a>(game_desc: &'a GameDesc) -> Vec<Star<'a>> {
     let num12 = (num11 - 1) / num8;
     let num13 = num12 / 2;
 
-    let mut stars: Vec<Star> = vec![];
+    let mut stars: Vec<StarWithPlanets> = vec![];
 
     for (index, position) in tmp_poses.into_iter().enumerate() {
         let seed = rand.next_seed();
         if index == 0 {
-            stars.push(Star::new(
+            stars.push(StarWithPlanets::new(Rc::new(Star::new(
                 game_desc,
                 0,
                 seed,
                 Vector3::zero(),
                 StarType::MainSeqStar,
                 &SpectrType::X,
-            ));
+            ))));
         } else {
             let need_spectr = if index == 3 {
                 SpectrType::M
@@ -179,48 +179,41 @@ fn generate_stars<'a>(game_desc: &'a GameDesc) -> Vec<Star<'a>> {
             } else {
                 StarType::MainSeqStar
             };
-            stars.push(Star::new(
+            stars.push(StarWithPlanets::new(Rc::new(Star::new(
                 game_desc,
                 index,
                 seed,
                 position,
                 need_type,
                 &need_spectr,
-            ));
+            ))));
         }
     }
     stars
 }
 
 pub fn create_galaxy<'a>(game_desc: &'a GameDesc) -> Galaxy<'a> {
-    let mut galaxy = Galaxy::new();
-    galaxy.seed = game_desc.seed;
+    let mut stars = generate_stars(game_desc);
+    let mut names: Vec<&str> = vec![];
 
-    for mut star in generate_stars(game_desc) {
-        star.name = random_name(
-            star.name_seed,
-            &star,
-            galaxy.stars.iter().map(|s| &s.star.name),
-        );
-        let s = StarWithPlanets::new(Rc::new(star));
-        for p in s.get_planets() {
-            // load the data
-            p.get_theme();
-        }
-        galaxy.stars.push(s);
+    for sp in stars.iter_mut() {
+        let name = random_name(sp.star.name_seed, &sp.star, names.iter());
+        sp.name = name;
+        names.push(&sp.name);
+        sp.load_planets();
     }
 
-    galaxy
+    Galaxy {
+        seed: game_desc.seed,
+        stars,
+    }
 }
 
 pub fn find_stars(game_desc: &GameDesc, rule: &mut Box<dyn Rule + Send>) -> Vec<usize> {
-    let mut galaxy = Galaxy::new();
-    galaxy.seed = game_desc.seed;
-
-    for star in generate_stars(game_desc) {
-        let s = StarWithPlanets::new(Rc::new(star));
-        galaxy.stars.push(s);
-    }
+    let galaxy = Galaxy {
+        seed: game_desc.seed,
+        stars: generate_stars(game_desc),
+    };
 
     let evaluation = Evaluaton::new(game_desc.star_count);
     let result = rule.evaluate(&galaxy, &evaluation);

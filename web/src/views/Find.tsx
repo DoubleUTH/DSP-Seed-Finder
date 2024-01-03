@@ -1,5 +1,6 @@
 import {
     Component,
+    Index,
     Match,
     Show,
     Switch,
@@ -7,19 +8,20 @@ import {
     createEffect,
     createMemo,
     createSignal,
+    on,
 } from "solid-js"
 import Button from "../components/Button"
 import { getWorldGen } from "../worldgen"
-import { ConditionType, OceanType, RuleType, SpectrType } from "../enums"
+import { RuleType } from "../enums"
 import {
+    clearProfile,
     deleteProfile,
     generateProfileId,
-    getProfileProgress,
-    listProfiles,
+    getProfileResult,
     setProfileInfo,
     setProfileProgress,
 } from "../profile"
-import { constructRule, maxStarCount, minStarCount } from "../util"
+import { constructRule, getSearch, maxStarCount, minStarCount } from "../util"
 import RuleEditor from "../partials/RuleEditor"
 import styles from "./Find.module.css"
 import Input from "../components/Input"
@@ -32,6 +34,10 @@ import ProfilesModal from "../partials/ProfilesModal"
 import Modal from "../components/Modal"
 import Toggle from "../components/Toggle"
 import ProgressBar from "../components/ProgressBar"
+import { IoChevronBack, IoChevronForward, IoOpenOutline } from "solid-icons/io"
+import StarView from "../partials/StarView"
+import ExeUrl from "../../../target/release/dsp_seed.exe?url"
+import { A } from "@solidjs/router"
 
 const defaultProgress: ProfileProgress = {
     id: "",
@@ -42,6 +48,7 @@ const defaultProgress: ProfileProgress = {
     start: 0,
     end: 1e8,
     current: 0,
+    found: 0,
     rules: [],
 }
 
@@ -57,21 +64,224 @@ function validateRules(rules: SimpleRule[][]): boolean {
     return true
 }
 
+const PAGE_SIZE = 100
+
+const Pagination: Component<{
+    current: integer
+    total: integer
+    onChange: (page: integer) => void
+}> = (props) => {
+    // eslint-disable-next-line solid/reactivity
+    const [page, setPage] = createSignal(props.current)
+
+    function onChange(value: number) {
+        if (value >= 1 && value <= props.total) {
+            props.onChange(value)
+            setPage(value)
+        }
+    }
+
+    function handleSubmit(ev: Event) {
+        ev.preventDefault()
+        onChange(page())
+    }
+
+    return (
+        <form class={styles.pagination} onSubmit={handleSubmit}>
+            <button
+                type="button"
+                class={styles.paginationButton}
+                disabled={props.current <= 1}
+                onClick={() => onChange(props.current - 1)}
+            >
+                <IoChevronBack />
+            </button>
+            Page{" "}
+            <NumberInput
+                class={styles.paginationInput}
+                value={page()}
+                onChange={setPage}
+                onBlur={() => onChange(page())}
+                emptyValue={-1}
+                error={
+                    !Number.isInteger(page()) ||
+                    page() <= 0 ||
+                    page() > props.total
+                }
+            />{" "}
+            of {props.total}{" "}
+            <button
+                type="button"
+                class={styles.paginationButton}
+                disabled={props.current >= props.total}
+                onClick={() => onChange(props.current + 1)}
+            >
+                <IoChevronForward />
+            </button>
+        </form>
+    )
+}
+
+const StarViewModal: Component<{
+    seed: integer
+    index: integer
+    starCount: integer
+    resourceMultiplier: float
+    search: string
+}> = (props) => {
+    const [galaxy, setGalaxy] = createSignal<Galaxy | null>(null)
+
+    createEffect(() => {
+        getWorldGen(false)
+            .generate({
+                seed: props.seed,
+                starCount: props.starCount,
+                resourceMultiplier: props.resourceMultiplier,
+            })
+            .then((g): void => {
+                setGalaxy(g)
+            })
+    })
+
+    function buildUrl(starIndex: integer) {
+        return `/galaxy/${props.seed}/${starIndex}${props.search}`
+    }
+
+    return (
+        <Show when={!!galaxy()}>
+            <div class={styles.viewTop}>
+                <div class={styles.viewTitle}>
+                    Seed: {String(props.seed).padStart(8, "0")}
+                </div>
+                <A
+                    class={styles.viewNewTab}
+                    href={buildUrl(props.index)}
+                    target="_blank"
+                >
+                    View in new tab
+                    <IoOpenOutline />
+                </A>
+            </div>
+            <StarView
+                star={galaxy()!.stars[props.index]!}
+                galaxy={galaxy()!}
+                buildUrl={buildUrl}
+                newPage
+            />
+        </Show>
+    )
+}
+
+const SearchResult: Component<{
+    id: string
+    page: integer
+    updateKey: number
+    starCount: integer
+    resourceMultiplier: float
+}> = (props) => {
+    const [results, setResults] = createSignal<ProgressResult[]>([])
+    const [active, setActive] = createSignal<ProgressResult | null>(null)
+    let isLoading = -1
+
+    const searchString = createMemo(() =>
+        getSearch({
+            count: props.starCount,
+            multipler: props.resourceMultiplier,
+        }),
+    )
+
+    function update() {
+        if (isLoading === props.page) return
+        const page = props.page
+        isLoading = page
+        console.debug("results loading")
+        getProfileResult(props.id, (page - 1) * PAGE_SIZE, PAGE_SIZE).then(
+            (list) => {
+                console.debug("results loaded", list)
+                if (isLoading === page) {
+                    setResults(list)
+                    isLoading = -1
+                }
+            },
+        )
+    }
+
+    createEffect(update)
+
+    createEffect(
+        on(
+            () => props.updateKey,
+            () => {
+                if (results().length < PAGE_SIZE) {
+                    update()
+                }
+            },
+        ),
+    )
+
+    function buildUrl(item: ProgressResult) {
+        return `/galaxy/${item.seed}/${item.index}${searchString()}`
+    }
+
+    return (
+        <>
+            <div class={styles.results}>
+                <Index each={results()}>
+                    {(result) => (
+                        <A
+                            href={buildUrl(result())}
+                            target="_blank"
+                            class={styles.result}
+                            onClick={(ev) => {
+                                ev.preventDefault()
+                                setActive(result())
+                            }}
+                        >
+                            <span class={styles.resultSeed}>
+                                {String(result().seed).padStart(8, "0")}
+                            </span>
+                            <span class={styles.resultIndex}>
+                                #{result().index + 1}
+                            </span>
+                        </A>
+                    )}
+                </Index>
+            </div>
+            <Show when={!!active()}>
+                <Modal visible onClose={() => setActive(null)}>
+                    <StarViewModal
+                        seed={active()!.seed}
+                        index={active()!.index}
+                        starCount={props.starCount}
+                        resourceMultiplier={props.resourceMultiplier}
+                        search={searchString()}
+                    />
+                </Modal>
+            </Show>
+        </>
+    )
+}
+
 const Find: Component = () => {
-    const [name, setName] = createSignal("")
+    const [name, setName] = createSignal("Untitled")
     const [profile, setProfile] = createSignal<ProfileInfo | null>()
     const [progress, setProgress] = createStore<ProfileProgress>({
         ...defaultProgress,
     })
     const [nativeMode, setNativeMode] = createSignal(false)
     const [profileModal, setProfileModal] = createSignal(false)
+    const [clearModal, setClearModal] = createSignal(false)
     const [deleteModal, setDeleteModal] = createSignal(false)
     const [newModal, setNewModal] = createSignal(false)
     const [searching, setSearching] = createSignal(false)
+    const [currentPage, setCurrentPage] = createSignal(1)
+    const [tick, setTick] = createSignal(0)
     const isLoaded = () => !!profile()
-    const hasProgress = () => progress.current > progress.start
+    const hasProgress = () =>
+        progress.start > -1 && progress.current > progress.start
     const isDisabled = () => searching() || hasProgress()
-    const hasCompleted = () => progress.current >= progress.end
+    const hasCompleted = () =>
+        progress.start > -1 && progress.current >= progress.end
 
     function onSelectProfile(profile: ProfileInfo, progress: ProfileProgress) {
         batch(() => {
@@ -148,6 +358,19 @@ const Find: Component = () => {
         }
     }
 
+    async function onClearProfile() {
+        const existingProfile = profile()
+        if (existingProfile) {
+            await clearProfile(existingProfile.id)
+        }
+        batch(() => {
+            setCurrentPage(1)
+            setProgress("current", 0)
+            setProgress("found", 0)
+            setClearModal(false)
+        })
+    }
+
     async function onDeleteProfile() {
         const existingProfile = profile()
         if (existingProfile) {
@@ -159,7 +382,8 @@ const Find: Component = () => {
         })
     }
 
-    function onStartSearching() {
+    async function onStartSearching() {
+        await onSaveProfile()
         setSearching(true)
         let results: FindResult[] = []
         getWorldGen(nativeMode()).find({
@@ -172,17 +396,16 @@ const Find: Component = () => {
             autosave: progress.autosave,
             rule: constructRule(unwrap(progress.rules)),
             onResult: (result) => {
+                console.debug("result", result)
                 results.push(result)
             },
             onProgress: (current) => {
-                setProfileProgress(
-                    {
-                        ...unwrap(progress),
-                        current,
-                    },
-                    results,
-                ).then(() => {
+                batch(() => {
                     setProgress("current", (c) => Math.max(c, current))
+                    setProgress("found", (found) => found + results.length)
+                })
+                setProfileProgress(unwrap(progress), results).then(() => {
+                    setTick((prev) => (prev + 1) % 1024)
                 })
                 results = []
             },
@@ -191,11 +414,11 @@ const Find: Component = () => {
                 setSearching(false)
             },
             onComplete: () => {
-                console.log("done")
+                console.debug("done")
                 setSearching(false)
             },
             onInterrupt: () => {
-                console.log("interrupt")
+                console.debug("interrupt")
                 setSearching(false)
             },
         })
@@ -230,6 +453,13 @@ const Find: Component = () => {
                     </Button>
                     <Button onClick={onCloneProfile} disabled={searching()}>
                         Clone
+                    </Button>
+                    <Button
+                        theme="error"
+                        onClick={() => setClearModal(true)}
+                        disabled={searching()}
+                    >
+                        Clear
                     </Button>
                     <Button
                         theme="error"
@@ -270,7 +500,7 @@ const Find: Component = () => {
                 </div>
                 <div class={styles.field}>
                     <div class={styles.label}>
-                        <Tooltip text="To run the search in native mode, click the download button and run the program on your PC.">
+                        <Tooltip text="To run the search in (faster) native mode, click the download button and run the program on your PC, then enable this option.">
                             Native Mode
                         </Tooltip>
                     </div>
@@ -280,9 +510,9 @@ const Find: Component = () => {
                             onChange={setNativeMode}
                             disabled={searching()}
                         />
-                        <Button kind="outline" disabled={searching()}>
-                            Download
-                        </Button>
+                        <a href={ExeUrl} download>
+                            <Button kind="outline">Download</Button>
+                        </a>
                     </div>
                 </div>
                 <div class={styles.field}>
@@ -364,7 +594,6 @@ const Find: Component = () => {
                             value={progress.autosave}
                             onChange={(value) => setProgress("autosave", value)}
                             emptyValue={-1}
-                            maxLength={2}
                             error={progress.autosave <= 0}
                             disabled={searching()}
                         />{" "}
@@ -386,7 +615,7 @@ const Find: Component = () => {
                         <div class={styles.progressText}>Progress:</div>
                         <ProgressBar
                             class={styles.progressBar}
-                            current={progress.current}
+                            current={progress.current - progress.start}
                             total={progress.end - progress.start}
                         />
                     </Show>
@@ -409,11 +638,45 @@ const Find: Component = () => {
                     </Match>
                 </Switch>
             </div>
+            <Show when={hasProgress()}>
+                <Pagination
+                    current={currentPage()}
+                    total={
+                        Math.max(
+                            0,
+                            Math.floor((progress.found - 1) / PAGE_SIZE),
+                        ) + 1
+                    }
+                    onChange={setCurrentPage}
+                />
+                <SearchResult
+                    id={profile()!.id}
+                    page={currentPage()}
+                    updateKey={tick()}
+                    starCount={progress.starCount}
+                    resourceMultiplier={progress.resourceMultiplier}
+                />
+            </Show>
             <ProfilesModal
                 visible={profileModal()}
                 onClose={() => setProfileModal(false)}
                 onSelect={onSelectProfile}
             />
+            <Modal visible={clearModal()} onClose={() => setClearModal(false)}>
+                <div class={styles.modalTitle}>Are you sure?</div>
+                <div class={styles.warnText}>
+                    Do you really want to clear all progress? This cannot be
+                    undone.
+                </div>
+                <div class={styles.warnButtons}>
+                    <Button theme="error" onClick={onClearProfile}>
+                        Clear
+                    </Button>
+                    <Button kind="outline" onClick={() => setClearModal(false)}>
+                        Cancel
+                    </Button>
+                </div>
+            </Modal>
             <Modal
                 visible={deleteModal()}
                 onClose={() => setDeleteModal(false)}

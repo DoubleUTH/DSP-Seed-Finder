@@ -418,43 +418,68 @@ const EditGasRate: Component<{
     )
 }
 
+function isType<T extends SimpleRule, K extends RuleType>(
+    rule: T,
+    type: K,
+): T extends { type: K } ? T | false : never {
+    return rule.type === type ? (rule as any) : false
+}
+
 const EditSimpleRule: Component<{
     value: SimpleRule
     onChange: (value: SimpleRule) => void
     disabled?: boolean
 }> = (props) => (
     <div class={styles.editRow}>
-        {props.value.type === RuleType.Luminosity ? (
-            EditLuminosity({ ...props, value: props.value })
-        ) : props.value.type === RuleType.DysonRadius ? (
-            EditDysonRadius({ ...props, value: props.value })
-        ) : props.value.type === RuleType.AverageVeinAmount ? (
-            EditAverageVeinAmount({ ...props, value: props.value })
-        ) : props.value.type === RuleType.Spectr ? (
-            EditSpectr({ ...props, value: props.value })
-        ) : props.value.type === RuleType.TidalLockCount ? (
-            EditTidalLockCount({ ...props, value: props.value })
-        ) : props.value.type === RuleType.OceanType ? (
-            EditOceanType({ ...props, value: props.value })
-        ) : props.value.type === RuleType.StarType ? (
-            EditStarType({ ...props, value: props.value })
-        ) : props.value.type === RuleType.GasCount ? (
-            EditGasCount({ ...props, value: props.value })
-        ) : props.value.type === RuleType.SatelliteCount ? (
-            EditSatelliteCount({ ...props, value: props.value })
-        ) : props.value.type === RuleType.PlanetCount ? (
-            EditPlanetCount({ ...props, value: props.value })
-        ) : props.value.type === RuleType.BirthDistance ? (
-            EditBirthDistance({ ...props, value: props.value })
-        ) : props.value.type === RuleType.XDistance ? (
-            EditXDistance({ ...props, value: props.value })
-        ) : props.value.type === RuleType.GasRate ? (
-            EditGasRate({ ...props, value: props.value })
-        ) : props.value.type === RuleType.Birth ? (
-            <div class={styles.birth}>Is the starting system</div>
-        ) : (
-            <></>
-        )}
+        <Switch>
+            <Match when={isType(props.value, RuleType.Luminosity)}>
+                {(value) => <EditLuminosity {...props} value={value()} />}
+            </Match>
+            <Match when={isType(props.value, RuleType.DysonRadius)}>
+                {(value) => <EditDysonRadius {...props} value={value()} />}
+            </Match>
+            <Match when={isType(props.value, RuleType.AverageVeinAmount)}>
+                {(value) => (
+                    <EditAverageVeinAmount {...props} value={value()} />
+                )}
+            </Match>
+            <Match when={isType(props.value, RuleType.Spectr)}>
+                {(value) => <EditSpectr {...props} value={value()} />}
+            </Match>
+            <Match when={isType(props.value, RuleType.TidalLockCount)}>
+                {(value) => <EditTidalLockCount {...props} value={value()} />}
+            </Match>
+            <Match when={isType(props.value, RuleType.OceanType)}>
+                {(value) => <EditOceanType {...props} value={value()} />}
+            </Match>
+            <Match when={isType(props.value, RuleType.StarType)}>
+                {(value) => <EditStarType {...props} value={value()} />}
+            </Match>
+            <Match when={isType(props.value, RuleType.GasCount)}>
+                {(value) => <EditGasCount {...props} value={value()} />}
+            </Match>
+            <Match when={isType(props.value, RuleType.SatelliteCount)}>
+                {(value) => <EditSatelliteCount {...props} value={value()} />}
+            </Match>
+            <Match when={isType(props.value, RuleType.DysonRadius)}>
+                {(value) => <EditDysonRadius {...props} value={value()} />}
+            </Match>
+            <Match when={isType(props.value, RuleType.PlanetCount)}>
+                {(value) => <EditPlanetCount {...props} value={value()} />}
+            </Match>
+            <Match when={isType(props.value, RuleType.BirthDistance)}>
+                {(value) => <EditBirthDistance {...props} value={value()} />}
+            </Match>
+            <Match when={isType(props.value, RuleType.XDistance)}>
+                {(value) => <EditXDistance {...props} value={value()} />}
+            </Match>
+            <Match when={isType(props.value, RuleType.GasRate)}>
+                {(value) => <EditGasRate {...props} value={value()} />}
+            </Match>
+            <Match when={isType(props.value, RuleType.Birth)}>
+                <div class={styles.birth}>Is the starting system</div>
+            </Match>
+        </Switch>
     </div>
 )
 

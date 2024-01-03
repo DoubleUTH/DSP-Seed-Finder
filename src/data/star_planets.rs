@@ -28,6 +28,7 @@ pub struct StarWithPlanets<'a> {
     safe: UnsafeCell<bool>,
     #[serde(skip)]
     avg_veins: UnsafeCell<HashMap<VeinType, f32>>,
+    pub name: String,
 }
 
 impl<'a> StarWithPlanets<'a> {
@@ -37,6 +38,7 @@ impl<'a> StarWithPlanets<'a> {
             planets: UnsafeCell::new(vec![]),
             safe: UnsafeCell::new(false),
             avg_veins: UnsafeCell::new(HashMap::new()),
+            name: Default::default(),
         }
     }
 
@@ -50,7 +52,21 @@ impl<'a> StarWithPlanets<'a> {
         }
     }
 
+    pub fn load_planets(&self) {
+        for p in self.get_planets() {
+            // load the data
+            p.get_theme();
+        }
+        self.mark_safe();
+    }
+
     pub fn get_avg_vein(&self, vein_type: &VeinType) -> f32 {
+        if vein_type == &VeinType::Mag
+            && self.star.star_type != StarType::BlackHole
+            && self.star.star_type != StarType::NeutronStar
+        {
+            return 0.0;
+        }
         let map = unsafe { &mut *self.avg_veins.get() };
         if let Some(val) = map.get(vein_type) {
             return *val;

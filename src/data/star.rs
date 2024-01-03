@@ -14,7 +14,6 @@ pub struct Star<'a> {
     pub seed: i32,
     pub name_seed: i32,
     pub position: Vector3,
-    pub name: String,
     pub level: f32,
     pub star_type: StarType,
     age_factor: f64,
@@ -89,7 +88,6 @@ impl<'a> Star<'a> {
             seed,
             name_seed,
             position,
-            name: Default::default(),
             level: (index as f32) / ((game_desc.star_count - 1) as f32),
             star_type: need_type,
             age_factor,
@@ -389,10 +387,9 @@ impl Serialize for Star<'_> {
     where
         S: Serializer,
     {
-        let mut state = serializer.serialize_struct("Star", 12)?;
+        let mut state = serializer.serialize_struct("Star", 11)?;
         state.serialize_field("index", &self.index)?;
         state.serialize_field("position", &self.position)?;
-        state.serialize_field("name", &self.name)?;
         state.serialize_field("mass", &self.get_mass())?;
         state.serialize_field("lifetime", &self.get_lifetime())?;
         state.serialize_field("age", &self.get_age())?;

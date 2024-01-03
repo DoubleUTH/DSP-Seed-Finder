@@ -13,9 +13,9 @@ function waitConnect(ws: WebSocket) {
 
 async function connect() {
     const ws = new WebSocket("ws://127.0.0.1:62879")
-    console.log("connecting")
+    console.debug("connecting")
     await waitConnect(ws)
-    console.log("connected")
+    console.debug("connected")
     return ws
 }
 

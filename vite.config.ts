@@ -4,8 +4,10 @@ import path from "path"
 
 export default defineConfig({
     root: path.resolve(process.cwd(), "web"),
+    base: "/DSP-Seed-Finder/",
     build: {
         outDir: path.resolve(process.cwd(), "dist"),
+        emptyOutDir: true,
     },
     plugins: [solid()],
     resolve: {

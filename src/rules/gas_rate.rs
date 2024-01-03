@@ -20,9 +20,11 @@ impl Rule for RuleGasRate {
     ) -> Vec<usize> {
         let mut result: Vec<usize> = vec![];
         for (index, sp) in galaxy.stars.iter().take(evaluation.get_len()).enumerate() {
-            let is_unknown = evaluation.is_unknonwn(index);
             let is_safe = sp.is_safe();
-            if !is_unknown && is_safe {
+            if !evaluation.is_unknown(index) {
+                if !is_safe {
+                    sp.load_planets()
+                }
                 continue;
             }
             let mut total = 0.0;

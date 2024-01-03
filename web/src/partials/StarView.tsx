@@ -367,8 +367,13 @@ const NearbyStar: Component<{
     star: Star
     distance: float
     url: string
+    newPage?: boolean
 }> = (props) => (
-    <A href={props.url} class={clsx(styles.row, styles.nearbyRow)}>
+    <A
+        href={props.url}
+        target={props.newPage ? "_blank" : undefined}
+        class={clsx(styles.row, styles.nearbyRow)}
+    >
         <div>
             <span>{props.star.name}</span>
             <span class={styles.index}>#{props.star.index + 1}</span>
@@ -495,6 +500,7 @@ const StarView: Component<{
     star: Star
     galaxy?: Galaxy
     buildUrl: (starIndex: integer) => string
+    newPage?: boolean
 }> = (props) => {
     const [expand, setExpand] = createStore({
         detail: false,
@@ -558,6 +564,7 @@ const StarView: Component<{
                                         star={star}
                                         distance={distance}
                                         url={props.buildUrl(star.index)}
+                                        newPage={props.newPage}
                                     />
                                 )}
                             </For>

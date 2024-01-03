@@ -247,6 +247,12 @@ declare global {
         start: integer
         end: integer
         current: integer
+        found: integer
         rules: SimpleRule[][]
+    }
+    declare interface ProgressResult {
+        id: integer
+        seed: integer
+        index: integer
     }
 }

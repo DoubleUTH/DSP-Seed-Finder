@@ -18,14 +18,16 @@ impl Rule for RuleOceanType {
     ) -> Vec<usize> {
         let mut result: Vec<usize> = vec![];
         for (index, sp) in galaxy.stars.iter().take(evaluation.get_len()).enumerate() {
-            let is_unknown = evaluation.is_unknonwn(index);
-            if !is_unknown && sp.is_safe() {
+            if !evaluation.is_unknown(index) {
+                if !sp.is_safe() {
+                    sp.load_planets()
+                }
                 continue;
             }
             let mut found = false;
             for planet in sp.get_planets() {
                 let theme = planet.get_theme();
-                if is_unknown && self.ocean_type == theme.water_item_id {
+                if self.ocean_type == theme.water_item_id {
                     found = true;
                     // cannot early break because it is not safe
                 }

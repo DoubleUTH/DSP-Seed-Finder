@@ -31,7 +31,7 @@ fn gen_random_name(seed: i32, star: &Star) -> String {
 pub fn random_name<'a>(
     seed: i32,
     star: &Star,
-    mut names: impl Iterator<Item = &'a String>,
+    mut names: impl Iterator<Item = &'a &'a str>,
 ) -> String {
     let mut rand = DspRandom::new(seed);
     for _ in 0..256 {

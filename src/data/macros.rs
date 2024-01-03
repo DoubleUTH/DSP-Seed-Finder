@@ -4,7 +4,6 @@ pub mod macros {
         ($self:ident, $name:ident, $t:ty, $b:block) => {
             pub fn $name(&$self) -> $t {
                 if let Some(val) = unsafe { *$self.$name.get() } {
-                    // println!("{:?}", val);
                     val
                 } else {
                     let val = (|| $b)();

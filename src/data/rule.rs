@@ -65,7 +65,7 @@ impl Evaluaton {
         self.items[index]
     }
 
-    pub fn is_unknonwn(&self, index: usize) -> bool {
+    pub fn is_unknown(&self, index: usize) -> bool {
         self.get_result(index).is_none()
     }
 

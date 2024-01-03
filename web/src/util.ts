@@ -17,9 +17,27 @@ export function formatNumber(number: number, precision: number): string {
     }
 }
 
+function fixRule(rule: SimpleRule): SimpleRule {
+    if (
+        rule.type === RuleType.AverageVeinAmount &&
+        rule.vein === VeinType.Oil
+    ) {
+        return {
+            ...rule,
+            condition: {
+                ...rule.condition,
+                value: rule.condition.value * 25e3,
+            },
+        }
+    }
+    return rule
+}
+
 export function constructRule(rules: SimpleRule[][]): Rule {
     const rs: Rule[] = rules.map((r) =>
-        r.length === 1 ? r[0]! : { type: RuleType.Or, rules: r },
+        r.length === 1
+            ? fixRule(r[0]!)
+            : { type: RuleType.Or, rules: r.map(fixRule) },
     )
     return rs.length === 1 ? rs[0]! : { type: RuleType.And, rules: rs }
 }
@@ -56,4 +74,22 @@ export const gasNames: Record<GasType, string> = {
     [GasType.Fireice]: "Fire Ice",
     [GasType.Hydrogen]: "Hydrogen",
     [GasType.Deuterium]: "Deuterium",
+}
+
+export function getSearch({
+    count,
+    multipler,
+}: {
+    count: integer
+    multipler: float
+}) {
+    const params = new URLSearchParams()
+    if (count !== defaultStarCount) {
+        params.set("count", String(count))
+    }
+    if (multipler !== defaultResourceMultipler) {
+        params.set("multipler", String(multipler))
+    }
+    const str = params.toString()
+    return str ? "?" + str : ""
 }

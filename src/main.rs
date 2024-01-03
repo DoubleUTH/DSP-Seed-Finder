@@ -22,7 +22,10 @@ use worldgen::galaxy_gen::{create_galaxy, find_stars};
 
 #[tokio::main]
 async fn main() -> Result<(), std::io::Error> {
+    println!("Starting...");
     let listener = TcpListener::bind("127.0.0.1:62879").await?;
+    println!("Started.");
+    println!("You may now turn on native mode to search.");
     while let Ok((stream, _)) = listener.accept().await {
         tokio::spawn(accept_connection(stream));
     }
@@ -102,6 +105,7 @@ async fn accept_connection(stream: TcpStream) {
                 let msg: IncomingMessage = serde_json::from_str(&msg.to_string()).unwrap();
                 match msg {
                     IncomingMessage::Stop => {
+                        println!("Stopping");
                         stopped.store(true, Ordering::SeqCst);
                     }
                     IncomingMessage::Generate { game } => {
@@ -122,6 +126,8 @@ async fn accept_connection(stream: TcpStream) {
                         concurrency,
                         autosave,
                     } => {
+                        println!("Receive search request.");
+                        println!("Concurrency: {}.", concurrency);
                         let threads = concurrency.min(end - start);
                         let current_seed = Arc::new(AtomicI32::new(start));
                         let state = Arc::new(std::sync::Mutex::new(FindState {
@@ -172,6 +178,7 @@ async fn accept_connection(stream: TcpStream) {
                                                 stream.send(Message::Text(output)).await.unwrap();
                                             }
                                             if let Some((start, end)) = notify_progress {
+                                                println!("Processing: {}.", end);
                                                 let output = serde_json::to_string(
                                                     &OutgoingMessage::Progress { start, end },
                                                 )
@@ -189,6 +196,7 @@ async fn accept_connection(stream: TcpStream) {
                                 if x.running == 0 {
                                     let progress_start = x.progress_start;
                                     let progress_end = x.progress_end;
+                                    println!("Completed: {}.", progress_end);
                                     runtime.block_on(async move {
                                         w.lock()
                                             .await

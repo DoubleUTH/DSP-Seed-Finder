@@ -89,3 +89,47 @@
 .inputSmall {
     width: 80px;
 }
+
+.paginationButton {
+    padding: 0 4px;
+    line-height: 32px;
+    display: inline-block;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+.paginationButton:disabled {
+    color: rgba(160, 160, 160, 0.8);
+}
+
+.paginationInput {
+    width: 60px;
+}
+
+.results {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    padding: 12px 0;
+}
+
+.result {
+    background-color: rgba(160, 160, 160, 0.1);
+    border-radius: 8px;
+    padding: 8px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.resultIndex {
+    color: #808080;
+}
+
+.viewTop {
+    padding: 16px 20px 4px;
+    display: flex;
+}
+
+.viewTitle {
+    margin-right: 12px;
+}

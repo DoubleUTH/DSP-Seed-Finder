@@ -139,6 +139,31 @@ export async function setProfileProgress(
     })
 }
 
+export async function clearProfile(id: string) {
+    const db = await openDatabase(id)
+    const txn = db.transaction([PROGRESS, STARS], "readwrite")
+
+    const progressStore = txn.objectStore(PROGRESS)
+    const req = progressStore.get(id)
+    req.onsuccess = () => {
+        if (req.result) {
+            progressStore.put({
+                ...req.result,
+                current: req.result.start,
+                found: 0,
+            })
+        }
+    }
+
+    const store = txn.objectStore(STARS)
+    store.clear()
+
+    await new Promise((resolve, reject) => {
+        txn.oncomplete = resolve
+        txn.onerror = reject
+    })
+}
+
 export async function deleteProfile(id: string) {
     const conn = databases.get(id)
     if (conn) {
@@ -162,5 +187,39 @@ export async function deleteProfile(id: string) {
         deleteRequest.onsuccess = () => {
             if (!--count) resolve()
         }
+    })
+}
+
+export async function getProfileResult(
+    id: string,
+    start: number,
+    count: number,
+) {
+    const db = await openDatabase(id)
+    const txn = db.transaction([STARS], "readonly")
+    const store = txn.objectStore(STARS)
+    const cursor = store.openCursor()
+    let advanced = false
+    const results: ProgressResult[] = []
+    cursor.onsuccess = () => {
+        const result = cursor.result
+        if (!result) return
+        if (start > 0 && !advanced) {
+            advanced = true
+            cursor.result?.advance(start)
+            return
+        }
+        results.push(result.value)
+        if (results.length < count) {
+            result.continue()
+        }
+    }
+
+    return new Promise<ProgressResult[]>((resolve, reject) => {
+        txn.onerror = reject
+        txn.oncomplete = () => {
+            resolve(results)
+        }
+        cursor.onerror = reject
     })
 }

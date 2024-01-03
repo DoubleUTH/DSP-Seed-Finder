@@ -17,6 +17,7 @@ import StarView from "../partials/StarView"
 import {
     defaultResourceMultipler,
     defaultStarCount,
+    getSearch,
     maxStarCount,
     minStarCount,
     resourceMultiplers,
@@ -26,18 +27,6 @@ import ResourceMultiplierSelector from "../partials/ResourceMultiplerSelector"
 
 function randomSeed() {
     return Math.floor(Math.random() * 1e8)
-}
-
-function getSearch({ count, multipler }: { count: integer; multipler: float }) {
-    const params = new URLSearchParams()
-    if (count !== defaultStarCount) {
-        params.set("count", String(count))
-    }
-    if (multipler !== defaultResourceMultipler) {
-        params.set("multipler", String(multipler))
-    }
-    const str = params.toString()
-    return str ? "?" + str : ""
 }
 
 const Search: Component = () => {

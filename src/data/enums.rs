@@ -101,8 +101,7 @@ impl VeinType {
             | VeinType::Fractal
             | VeinType::Crysrub
             | VeinType::Grat
-            | VeinType::Bamboo
-            | VeinType::Mag => true,
+            | VeinType::Bamboo => true,
             _ => false,
         }
     }

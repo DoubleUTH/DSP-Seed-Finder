@@ -6,6 +6,7 @@ const NumberInput: Component<{
     class?: string
     value: number
     onChange?: (value: number) => void
+    onBlur?: () => void
     error?: boolean
     emptyValue: number
     disabled?: boolean
@@ -52,6 +53,7 @@ const NumberInput: Component<{
                 props.error && styles.error,
                 props.disabled && styles.disabled,
             )}
+            onBlur={() => props.onBlur?.()}
             onInput={(ev) => handleInput(ev.currentTarget.value)}
             value={text()}
             maxLength={props.maxLength}

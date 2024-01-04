@@ -30,9 +30,11 @@
 .icons {
     display: flex;
     align-items: center;
+    gap: 12px;
 }
 
 .icon {
+    display: block;
     padding: 8px;
     line-height: 1;
     font-size: 24px;

@@ -1,7 +1,7 @@
 import styles from "./Header.module.css"
 import { useStore } from "../store"
 import { A } from "@solidjs/router"
-import { IoContrast } from "solid-icons/io"
+import { IoContrast, IoLogoGithub } from "solid-icons/io"
 import { Component } from "solid-js"
 
 const Header: Component = () => {
@@ -19,6 +19,14 @@ const Header: Component = () => {
                 </A>
             </div>
             <div class={styles.icons}>
+                <a
+                    href="https://github.com/DoubleUTH/DSP-Seed-Finder"
+                    target="_blank"
+                    class={styles.icon}
+                    onClick={() => setStore("settings", "darkMode", (x) => !x)}
+                >
+                    <IoLogoGithub />
+                </a>
                 <div
                     class={styles.icon}
                     onClick={() => setStore("settings", "darkMode", (x) => !x)}

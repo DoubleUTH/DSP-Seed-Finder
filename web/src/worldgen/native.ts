@@ -78,7 +78,7 @@ export class WorldGenNative implements WorldGen {
                 ws.send(
                     JSON.stringify({
                         type: "Find",
-                        game: { ...gameDesc, seed: 0 },
+                        game: gameDesc,
                         range,
                         rule,
                         concurrency,

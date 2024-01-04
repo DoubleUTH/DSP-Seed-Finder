@@ -2,6 +2,7 @@ pub mod and;
 pub mod average_vein_amount;
 pub mod birth;
 pub mod birth_distance;
+pub mod composite;
 pub mod dyson_radius;
 pub mod gas_count;
 pub mod gas_rate;

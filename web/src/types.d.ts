@@ -194,10 +194,20 @@ declare global {
 
     declare type Rule = SimpleRule | CompoundRule
 
+    declare type MultiRule = {
+        rule: Rule
+        condition: Condition
+    }
+
+    declare type CompositeRule = {
+        type: "Composite"
+        rules: MultiRule[]
+    }
+
     declare interface FindOptions {
         gameDesc: Omit<GameDesc, "seed">
         range: [number, number]
-        rule: Rule
+        rule: Rule | CompositeRule
         concurrency: integer
         autosave: integer
         onError?: (error?: any) => void
@@ -236,7 +246,7 @@ declare global {
         createdAt: integer
     }
 
-    declare interface ProfileProgress {
+    declare interface ProfileProgressInfo {
         id: string
         starCount: integer
         resourceMultiplier: float
@@ -246,11 +256,26 @@ declare global {
         end: integer
         current: integer
         found: integer
+    }
+
+    declare interface ProfileProgress extends ProfileProgressInfo {
         rules: SimpleRule[][]
     }
+
+    declare interface MultiProfileProgress extends ProfileProgressInfo {
+        profiles: {
+            id: string
+            condition: Condition
+        }[]
+    }
+
     declare interface ProgressResult {
         id: integer
         seed: integer
         index: integer
+    }
+
+    declare interface MultiProgressResult {
+        seed: integer
     }
 }

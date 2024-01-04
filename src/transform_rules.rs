@@ -1,10 +1,17 @@
-use crate::data::rule::Rule;
+use crate::data::rule::{Condition, Rule};
 use crate::rules;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MultiRules {
+    pub rule: Rules,
+    pub condition: Condition,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "type")]
 pub enum Rules {
+    Composite { rules: Vec<MultiRules> },
     And { rules: Vec<Rules> },
     Or { rules: Vec<Rules> },
     Luminosity(rules::luminosity::RuleLuminosity),
@@ -33,6 +40,15 @@ pub fn sort_rules(rules: Vec<Rules>) -> Vec<Box<dyn Rule + Send>> {
 
 pub fn transform_rules(r: Rules) -> Box<dyn Rule + Send> {
     match r {
+        Rules::Composite { rules } => Box::new(rules::composite::RuleComposite {
+            rules: rules
+                .into_iter()
+                .map(|rs| rules::composite::MultiRule {
+                    rule: transform_rules(rs.rule),
+                    condition: rs.condition,
+                })
+                .collect(),
+        }),
         Rules::And { rules } => Box::new(rules::and::RuleAnd {
             rules: sort_rules(rules),
         }),

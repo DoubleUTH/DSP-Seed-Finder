@@ -13,7 +13,7 @@ const root = document.getElementById("root")
 const dispose = render(
     () => (
         <Router base="/DSP-Seed-Finder" root={App}>
-            <Route path="/" component={Find} />
+            <Route path="/:profileId?" component={Find} />
             <Route path="/galaxy/:seed?/:index?" component={Galaxy} />
         </Router>
     ),

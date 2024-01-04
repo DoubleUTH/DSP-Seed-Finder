@@ -17,6 +17,8 @@ import {
     clearProfile,
     deleteProfile,
     generateProfileId,
+    getProfileInfo,
+    getProfileProgress,
     getProfileResult,
     setProfileInfo,
     setProfileProgress,
@@ -37,7 +39,7 @@ import ProgressBar from "../components/ProgressBar"
 import { IoChevronBack, IoChevronForward, IoOpenOutline } from "solid-icons/io"
 import StarView from "../partials/StarView"
 import ExeUrl from "../../../target/release/dsp_seed.exe?url"
-import { A } from "@solidjs/router"
+import { A, useNavigate, useParams } from "@solidjs/router"
 
 const defaultProgress: ProfileProgress = {
     id: "",
@@ -263,6 +265,8 @@ const SearchResult: Component<{
 }
 
 const Find: Component = () => {
+    const params = useParams()
+    const navigate = useNavigate()
     const [name, setName] = createSignal("Untitled")
     const [profile, setProfile] = createSignal<ProfileInfo | null>()
     const [progress, setProgress] = createStore<ProfileProgress>({
@@ -283,10 +287,23 @@ const Find: Component = () => {
     const hasCompleted = () =>
         progress.start > -1 && progress.current >= progress.end
 
+    function changeProfile(profile: ProfileInfo | null) {
+        batch(() => {
+            if (profile) {
+                navigate(`/${profile.id}`)
+                setProfile(profile)
+                setName(profile.name)
+            } else {
+                navigate(`/`)
+                setProfile(null)
+                setName("")
+            }
+        })
+    }
+
     function onSelectProfile(profile: ProfileInfo, progress: ProfileProgress) {
         batch(() => {
-            setProfile(profile)
-            setName(profile.name)
+            changeProfile(profile)
             setProgress(progress)
             setProfileModal(false)
         })
@@ -295,8 +312,7 @@ const Find: Component = () => {
     function onNewProfile() {
         batch(() => {
             setProgress({ ...defaultProgress })
-            setProfile(null)
-            setName("")
+            changeProfile(null)
             setNewModal(false)
         })
     }
@@ -304,8 +320,6 @@ const Find: Component = () => {
     function onCloneProfile() {
         batch(() => {
             setProgress({ id: "", current: 0 })
-            setProfile(null)
-            setName(name() + " - Copy")
         })
     }
 
@@ -338,7 +352,7 @@ const Find: Component = () => {
                     name: name(),
                 }
                 await setProfileInfo(newProfile)
-                setProfile(newProfile)
+                changeProfile(newProfile)
             }
         } else {
             const id = generateProfileId()
@@ -352,7 +366,7 @@ const Find: Component = () => {
             await setProfileProgress(newProgress)
             batch(() => {
                 setProgress(newProgress)
-                setProfile(newProfile)
+                changeProfile(newProfile)
             })
             return
         }
@@ -427,6 +441,23 @@ const Find: Component = () => {
     function onStopSearching() {
         getWorldGen(nativeMode()).stop()
     }
+
+    createEffect(() => {
+        const { profileId } = params
+        if (profileId && profile()?.id !== profileId) {
+            Promise.all([
+                getProfileInfo(profileId),
+                getProfileProgress(profileId),
+            ]).then(([info, progress]): void => {
+                if (info && info.id === profileId) {
+                    setProfileInfo(info)
+                }
+                if (progress && progress.id === profileId) {
+                    setProgress(progress)
+                }
+            })
+        }
+    })
 
     return (
         <div class={styles.content}>

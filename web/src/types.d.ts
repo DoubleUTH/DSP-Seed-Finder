@@ -263,8 +263,9 @@ declare global {
     }
 
     declare interface MultiProfileProgress extends ProfileProgressInfo {
-        profiles: {
-            id: string
+        multiRules: {
+            name: string
+            rules: SimpleRule[][]
             condition: Condition
         }[]
     }

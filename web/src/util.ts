@@ -45,6 +45,17 @@ export function constructRule(rules: SimpleRule[][]): Rule {
     )
     return rs.length === 1 ? rs[0]! : { type: RuleType.And, rules: rs }
 }
+export function constructMultiRule(
+    multiRules: MultiProfileProgress["multiRules"],
+): CompositeRule {
+    return {
+        type: "Composite",
+        rules: multiRules.map(({ condition, rules }) => ({
+            condition,
+            rule: constructRule(rules),
+        })),
+    }
+}
 
 export const minStarCount = 32
 export const maxStarCount = 64

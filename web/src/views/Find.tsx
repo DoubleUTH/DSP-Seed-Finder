@@ -290,11 +290,11 @@ const Find: Component = () => {
     function changeProfile(profile: ProfileInfo | null) {
         batch(() => {
             if (profile) {
-                navigate(`/${profile.id}`)
+                navigate(`/find-star/${profile.id}`)
                 setProfile(profile)
                 setName(profile.name)
             } else {
-                navigate(`/`)
+                navigate(`/find-star`)
                 setProfile(null)
                 setName("")
             }
@@ -319,6 +319,9 @@ const Find: Component = () => {
 
     function onCloneProfile() {
         batch(() => {
+            const origName = name()
+            changeProfile(null)
+            setName(origName + " - Copy")
             setProgress({ id: "", current: 0 })
         })
     }
@@ -442,22 +445,29 @@ const Find: Component = () => {
         getWorldGen(nativeMode()).stop()
     }
 
-    createEffect(() => {
-        const { profileId } = params
-        if (profileId && profile()?.id !== profileId) {
-            Promise.all([
-                getProfileInfo(profileId),
-                getProfileProgress(profileId),
-            ]).then(([info, progress]): void => {
-                if (info && info.id === profileId) {
-                    setProfileInfo(info)
+    createEffect(
+        on(
+            () => params.profileId,
+            (profileId) => {
+                if (profileId && profile()?.id !== profileId) {
+                    console.log(profileId, profile()?.id)
+                    Promise.all([
+                        getProfileInfo(profileId),
+                        getProfileProgress(profileId),
+                    ]).then(([info, progress]): void => {
+                        if (info && info.id === profileId) {
+                            batch(() => {
+                                setProfile(info)
+                                if (progress && progress.id === profileId) {
+                                    setProgress(progress)
+                                }
+                            })
+                        }
+                    })
                 }
-                if (progress && progress.id === profileId) {
-                    setProgress(progress)
-                }
-            })
-        }
-    })
+            },
+        ),
+    )
 
     return (
         <div class={styles.content}>

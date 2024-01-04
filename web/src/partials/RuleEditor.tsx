@@ -68,6 +68,7 @@ const ConditionValueInput: Component<{
         emptyValue={props.emptyValue}
         disabled={props.disabled}
         maxLength={props.maxLength}
+        error={props.error}
     />
 )
 
@@ -486,7 +487,7 @@ const EditPlanetInDysonCount: Component<{
                 error={condition().value <= 0}
                 disabled={props.disabled}
             />{" "}
-            that are within max dyson sphere radius,{" "}
+            planet(s) within max dyson sphere radius,{" "}
             <Select
                 class={styles.selectGasType}
                 value={props.value.includeGiant}
@@ -505,7 +506,7 @@ const EditPlanetInDysonCount: Component<{
 }
 
 const themeIds = [
-    1, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 23, 24, 25,
+    16, 14, 19, 11, 7, 10, 12, 17, 24, 9, 1, 20, 23, 25, 15, 18, 22, 6, 13, 8,
 ]
 
 const EditThemeId: Component<{
@@ -925,7 +926,7 @@ const starTypes: StarType[] = [
 
 const starTypeNames: Record<StarType, string> = {
     [StarType.MainSeqStar]: "Normal Star",
-    [StarType.GiantStar]: "Red/Blue Giant",
+    [StarType.GiantStar]: "Giant Star",
     [StarType.WhiteDwarf]: "White Dwarf",
     [StarType.BlackHole]: "Black Hole",
     [StarType.NeutronStar]: "Neutron Star",

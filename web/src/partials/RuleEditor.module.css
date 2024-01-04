@@ -101,5 +101,9 @@
 }
 
 .selectPlanetType {
-    width: 120px;
+    width: 152px;
+}
+
+.selectConditionType {
+    width: 80px;
 }

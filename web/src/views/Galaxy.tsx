@@ -4,8 +4,8 @@ import {
     Component,
     For,
     Show,
-    createEffect,
     createMemo,
+    createResource,
     createSignal,
 } from "solid-js"
 import NumberInput from "../components/NumberInput"
@@ -95,8 +95,6 @@ const Search: Component = () => {
 
 const View: Component<{ seed: number; index: number }> = (props) => {
     const [searchParams] = useSearchParams()
-    const [galaxy, setGalaxy] = createSignal<Galaxy | null>(null)
-    const [isLoading, setLoading] = createSignal<boolean>(true)
 
     const starCount = createMemo(() => {
         const { count } = searchParams
@@ -120,29 +118,13 @@ const View: Component<{ seed: number; index: number }> = (props) => {
         return defaultResourceMultipler
     })
 
-    function requiresLoad() {
-        return !galaxy()
-    }
-
-    function isAvailable() {
-        const g = galaxy()
-        return !!g && !isLoading() && !requiresLoad()
-    }
-
-    createEffect(() => {
-        if (requiresLoad()) {
-            const config = {
-                seed: props.seed,
-                starCount: starCount(),
-                resourceMultiplier: resourcMultipler(),
-            }
-            getWorldGen(false)
-                .generate(config)
-                .then((g): void => {
-                    setGalaxy(g)
-                    setLoading(false)
-                })
+    const [galaxy] = createResource<Galaxy>(async () => {
+        const config = {
+            seed: props.seed,
+            starCount: starCount(),
+            resourceMultiplier: resourcMultipler(),
         }
+        return getWorldGen(false).generate(config)
     })
 
     const search = createMemo(() =>
@@ -158,7 +140,7 @@ const View: Component<{ seed: number; index: number }> = (props) => {
 
     return (
         <Show
-            when={isAvailable()}
+            when={!!galaxy()}
             fallback={<div class={styles.loading}>Loading...</div>}
         >
             <div class={styles.view}>

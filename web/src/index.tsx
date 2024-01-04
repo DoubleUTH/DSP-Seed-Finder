@@ -1,6 +1,6 @@
 /* @refresh reload */
 import { render } from "solid-js/web"
-import { Route, Router } from "@solidjs/router"
+import { Navigate, Route, Router } from "@solidjs/router"
 
 import "./reset.css"
 import "./index.css"
@@ -13,8 +13,9 @@ const root = document.getElementById("root")
 const dispose = render(
     () => (
         <Router base="/DSP-Seed-Finder" root={App}>
-            <Route path="/:profileId?" component={Find} />
+            <Route path="/find-star/:profileId?" component={Find} />
             <Route path="/galaxy/:seed?/:index?" component={Galaxy} />
+            <Route path="" component={() => <Navigate href="/find-star" />} />
         </Router>
     ),
     root!,

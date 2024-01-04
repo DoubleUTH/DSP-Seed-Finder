@@ -140,7 +140,7 @@ fn generate_stars<'a>(game_desc: &'a GameDesc) -> Vec<StarWithPlanets<'a>> {
     let num5 = (0.01 * (star_count as f64) + (num1 as f64) * 0.3).ceil() as usize;
     let num6 = (0.01 * (star_count as f64) + (num2 as f64) * 0.3).ceil() as usize;
     let num7 = (0.016 * (star_count as f64) + (num3 as f64) * 0.4).ceil() as usize;
-    let num8 = (0.013 * (star_count as f64) + (num4 as f64) * 0.4).ceil() as usize;
+    let num8 = (0.013 * (star_count as f64) + (num4 as f64) * 1.3).ceil() as usize;
     let num9 = star_count - num5;
     let num10 = num9 - num6;
     let num11 = num10 - num7;

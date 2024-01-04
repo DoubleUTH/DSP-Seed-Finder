@@ -317,7 +317,7 @@ export async function getMultiProfileProgress(
 }
 
 export async function setMultiProfileProgress(
-    progress: ProfileProgress,
+    progress: MultiProfileProgress,
     results: FindResult[] = [],
 ) {
     const db = await openMultiProfileDatabase(progress.id)

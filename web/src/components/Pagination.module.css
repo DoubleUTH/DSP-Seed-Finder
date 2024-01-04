@@ -1,0 +1,15 @@
+.paginationButton {
+    padding: 0 4px;
+    line-height: 32px;
+    display: inline-block;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+.paginationButton:disabled {
+    color: rgba(160, 160, 160, 0.8);
+}
+
+.paginationInput {
+    width: 60px;
+}

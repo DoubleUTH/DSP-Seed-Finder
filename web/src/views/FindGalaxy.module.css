@@ -1,0 +1,52 @@
+.content {
+    margin: 0 auto;
+    max-width: 1200px;
+    padding: 20px;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.execute {
+    flex: 1 1 0;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.progress {
+    display: flex;
+    align-items: center;
+    flex: 1 1 0;
+    gap: 12px;
+}
+
+.progressBar {
+    flex: 1 1 0;
+}
+
+.rules {
+    margin: 20px 0 12px;
+}
+
+.results {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    padding: 12px 0;
+}
+
+.result {
+    background-color: rgba(160, 160, 160, 0.1);
+    border-radius: 8px;
+    padding: 8px;
+}
+
+.viewTop {
+    padding: 16px 20px 4px;
+    display: flex;
+}
+
+.viewTitle {
+    margin-right: 12px;
+}

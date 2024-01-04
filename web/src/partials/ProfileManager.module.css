@@ -1,0 +1,24 @@
+.top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 12px 0;
+}
+
+.modalTitle {
+    margin: 20px;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.warnText {
+    margin: 20px;
+    line-height: 1.5;
+}
+
+.warnButtons {
+    margin: 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}

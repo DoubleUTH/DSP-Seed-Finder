@@ -1,0 +1,35 @@
+.fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.field {
+    display: flex;
+    align-items: center;
+    height: 32px;
+}
+
+.label {
+    width: 160px;
+    flex: none;
+}
+
+.input {
+    flex: 1 1 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.inputStandard {
+    width: 120px;
+}
+
+.inputSeed {
+    width: 100px;
+}
+
+.inputSmall {
+    width: 80px;
+}

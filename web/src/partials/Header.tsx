@@ -11,8 +11,11 @@ const Header: Component = () => {
         <div class={styles.header}>
             <div class={styles.title}>DSP Seed Finder</div>
             <div class={styles.buttons}>
-                <A href="/" class={styles.button}>
+                <A href="/find-star" class={styles.button}>
                     Star Finder
+                </A>
+                <A href="/find-galaxy" class={styles.button}>
+                    Galaxy Finder
                 </A>
                 <A href="/galaxy" class={styles.button}>
                     Galaxy Viewer

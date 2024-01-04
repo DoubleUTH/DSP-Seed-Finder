@@ -45,9 +45,7 @@ export function constructRule(rules: SimpleRule[][]): Rule {
     )
     return rs.length === 1 ? rs[0]! : { type: RuleType.And, rules: rs }
 }
-export function constructMultiRule(
-    multiRules: MultiProfileProgress["multiRules"],
-): CompositeRule {
+export function constructMultiRule(multiRules: MultiRules): CompositeRule {
     return {
         type: "Composite",
         rules: multiRules.map(({ condition, rules }) => ({
@@ -139,4 +137,23 @@ export const conditionTypeNames: Record<ConditionType, string> = {
     [ConditionType.Gte]: "at least",
     [ConditionType.Lt]: "less than",
     [ConditionType.Lte]: "at most",
+}
+
+export function validateRules(rules: SimpleRule[][]): boolean {
+    if (rules.length === 0) return false
+    for (const group of rules) {
+        if (group.length === 0) return false
+        for (const rule of group) {
+            if (rule.type === RuleType.None) return false
+            // TODO: Validate individual rule here
+        }
+    }
+    return true
+}
+
+export function validateMultiRule(rules: MultiRules): boolean {
+    return (
+        rules.length > 0 &&
+        rules.every((rs) => rs.rules.length > 0 && validateRules(rs.rules))
+    )
 }

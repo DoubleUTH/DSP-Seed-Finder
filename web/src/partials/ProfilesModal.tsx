@@ -1,26 +1,19 @@
-import { Component, For, Show, createEffect, createSignal } from "solid-js"
-import { getProfileProgress, listProfiles } from "../profile"
+import { For, JSX, Show, createEffect, createSignal } from "solid-js"
 import Modal from "../components/Modal"
 import styles from "./ProfilesModal.module.css"
 
-const ProfilesModal: Component<{
+function ProfilesModal(props: {
     visible: boolean
     onClose: () => void
-    onSelect: (profile: ProfileInfo, progress: ProfileProgress) => void
-}> = (props) => {
+    onSelect: (profile: ProfileInfo) => void
+    loadProfiles: () => Promise<ProfileInfo[]>
+}): JSX.Element {
     const [profiles, setProfiles] = createSignal<ProfileInfo[]>()
     createEffect(() => {
         if (props.visible) {
-            listProfiles().then(setProfiles)
+            props.loadProfiles().then(setProfiles)
         }
     })
-
-    async function onSelect(profile: ProfileInfo) {
-        const progress = await getProfileProgress(profile.id)
-        if (progress) {
-            props.onSelect(profile, progress)
-        }
-    }
 
     return (
         <Modal visible={props.visible} onClose={props.onClose}>
@@ -36,7 +29,7 @@ const ProfilesModal: Component<{
                         {(profile) => (
                             <div
                                 class={styles.profile}
-                                onClick={() => onSelect(profile)}
+                                onClick={() => props.onSelect(profile)}
                             >
                                 <span class={styles.name}>{profile.name}</span>
                                 <span class={styles.time}>

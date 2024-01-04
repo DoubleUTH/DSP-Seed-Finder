@@ -9,6 +9,7 @@ pub mod luminosity;
 pub mod ocean_type;
 pub mod or;
 pub mod planet_count;
+pub mod planet_in_dyson_count;
 pub mod satellite_count;
 pub mod spectr;
 pub mod star_type;

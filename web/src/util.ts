@@ -93,3 +93,26 @@ export function getSearch({
     const str = params.toString()
     return str ? "?" + str : ""
 }
+
+export const planetTypes: Record<number, string> = {
+    1: "Mariterra",
+    6: "Scorchedia",
+    7: "Geloterra",
+    8: "Tropicana",
+    9: "Lava",
+    10: "Glacieon",
+    11: "Desolus",
+    12: "Gobi",
+    13: "Sulfuria",
+    14: "Crimsonis",
+    15: "Prairiea",
+    16: "Aquatica",
+    17: "Halitum",
+    18: "Sakura Ocean",
+    19: "Cyclonius",
+    20: "Maroonfrost",
+    22: "Savanna",
+    23: "Onyxtopia",
+    24: "Icefrostia",
+    25: "Pandora Swamp",
+}

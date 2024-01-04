@@ -7,7 +7,13 @@ import {
     StarType,
     VeinType,
 } from "../enums"
-import { formatNumber, gasNames, toPrecision, veinNames } from "../util"
+import {
+    formatNumber,
+    gasNames,
+    planetTypes,
+    toPrecision,
+    veinNames,
+} from "../util"
 import styles from "./StarView.module.css"
 import { Component, Show, For, createMemo } from "solid-js"
 import { IoChevronDown } from "solid-icons/io"
@@ -201,29 +207,6 @@ function nearbyStars(
 
 const Romans = ["I", "II", "III", "IV", "V", "VI"]
 
-const planetTypes: Record<number, string> = {
-    1: "Mariterra",
-    6: "Scorchedia",
-    7: "Geloterra",
-    8: "Tropicana",
-    9: "Lava",
-    10: "Glacieon",
-    11: "Desolus",
-    12: "Gobi",
-    13: "Sulfuria",
-    14: "Crimsonis",
-    15: "Prairiea",
-    16: "Aquatica",
-    17: "Halitum",
-    18: "Sakura Ocean",
-    19: "Cyclonius",
-    20: "Maroonfrost",
-    22: "Savanna",
-    23: "Onyxtopia",
-    24: "Icefrostia",
-    25: "Pandora Swamp",
-}
-
 const Expand: Component<{ expand: boolean; toggle: () => void }> = (props) => (
     <div
         class={clsx(styles.expand, props.expand && styles.expanded)}
@@ -280,8 +263,7 @@ const StarDetail: Component<{
         <div class={styles.row}>
             <div class={styles.field}>Max Dyson Sphere Radius</div>
             <div class={styles.value}>
-                {toPrecision(Math.round(props.star.dysonRadius * 800) * 100, 0)}{" "}
-                m
+                {toPrecision(props.star.dysonRadius, 0)} m
             </div>
         </div>
         <Show when={props.expand}>

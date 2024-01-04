@@ -172,6 +172,11 @@ declare global {
             gasType: GasType
             condition: Condition
         }
+        export type PlanetInDysonCount = {
+            type: RuleType.PlanetInDysonCount
+            includeGiant: boolean
+            condition: Condition
+        }
     }
 
     declare type SimpleRule =
@@ -191,6 +196,7 @@ declare global {
         | Rule.BirthDistance
         | Rule.XDistance
         | Rule.GasRate
+        | Rule.PlanetInDysonCount
 
     declare type CompoundRule = Rule.And | Rule.Or
 

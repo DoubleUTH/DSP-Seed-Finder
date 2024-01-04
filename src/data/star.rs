@@ -40,7 +40,7 @@ pub struct Star<'a> {
     get_habitable_radius: UnsafeCell<Option<f32>>,
     get_mass: UnsafeCell<Option<f32>>,
     get_orbit_scaler: UnsafeCell<Option<f32>>,
-    get_dyson_radius: UnsafeCell<Option<f32>>,
+    get_dyson_radius: UnsafeCell<Option<i32>>,
 }
 
 impl<'a> Star<'a> {
@@ -377,8 +377,9 @@ impl<'a> Star<'a> {
             })
     });
 
-    lazy_getter!(self, get_dyson_radius, f32, {
-        (self.get_orbit_scaler() * 0.28).max(self.get_radius() * 0.045)
+    lazy_getter!(self, get_dyson_radius, i32, {
+        (((self.get_orbit_scaler() * 0.28).max(self.get_radius() * 0.045) * 800.0).round() as i32)
+            * 100
     });
 }
 

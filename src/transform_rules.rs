@@ -22,6 +22,7 @@ pub enum Rules {
     BirthDistance(rules::birth_distance::RuleBirthDistance),
     XDistance(rules::x_distance::RuleXDistance),
     GasRate(rules::gas_rate::RuleGasRate),
+    PlanetInDysonCount(rules::planet_in_dyson_count::RulePlanetInDysonCount),
 }
 
 pub fn sort_rules(rules: Vec<Rules>) -> Vec<Box<dyn Rule + Send>> {
@@ -53,5 +54,6 @@ pub fn transform_rules(r: Rules) -> Box<dyn Rule + Send> {
         Rules::BirthDistance(rule) => Box::new(rule),
         Rules::XDistance(rule) => Box::new(rule),
         Rules::GasRate(rule) => Box::new(rule),
+        Rules::PlanetInDysonCount(rule) => Box::new(rule),
     }
 }

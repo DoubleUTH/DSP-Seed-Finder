@@ -58,6 +58,7 @@ export enum RuleType {
     PlanetCount = "PlanetCount", // 30
     SatelliteCount = "SatelliteCount", // 31
     TidalLockCount = "TidalLockCount", // 33
+    PlanetInDysonCount = "PlanetInDysonCount", // 34
     ThemeId = "ThemeId", // 40
     GasCount = "GasCount", // 41 / 32
     OceanType = "OceanType", // 42

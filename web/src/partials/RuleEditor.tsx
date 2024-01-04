@@ -13,7 +13,7 @@ import Select from "../components/Select"
 import { IoTrash } from "solid-icons/io"
 import Button from "../components/Button"
 import NumberInput from "../components/NumberInput"
-import { veinNames } from "../util"
+import { planetTypes, veinNames } from "../util"
 
 const SelectSimpleRule: Component<{
     value?: SimpleRule
@@ -418,6 +418,74 @@ const EditGasRate: Component<{
     )
 }
 
+const EditPlanetInDysonCount: Component<{
+    value: Rule.PlanetInDysonCount
+    onChange: (value: Rule.PlanetInDysonCount) => void
+    disabled?: boolean
+}> = (props) => {
+    const condition = () => props.value.condition.value
+    const setCondition = (value: number) => {
+        props.onChange({
+            ...props.value,
+            condition: { ...props.value.condition, value },
+        })
+    }
+    return (
+        <>
+            Has at least{" "}
+            <NumberInput
+                class={styles.inputCount}
+                value={condition()}
+                onChange={setCondition}
+                emptyValue={-1}
+                error={condition() <= 0}
+                disabled={props.disabled}
+            />{" "}
+            that are within max dyson sphere radius,{" "}
+            <Select
+                class={styles.selectGasType}
+                value={props.value.includeGiant}
+                onChange={(includeGiant) =>
+                    props.onChange({ ...props.value, includeGiant })
+                }
+                options={[false, true]}
+                getLabel={(includeGiant) =>
+                    includeGiant ? "including" : "excluding"
+                }
+                disabled={props.disabled}
+            />{" "}
+            gas/ice giants.
+        </>
+    )
+}
+
+const themeIds = [
+    1, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 23, 24, 25,
+]
+
+const EditThemeId: Component<{
+    value: Rule.ThemeId
+    onChange: (value: Rule.ThemeId) => void
+    disabled?: boolean
+}> = (props) => {
+    return (
+        <>
+            Has a{" "}
+            <Select
+                class={styles.selectPlanetType}
+                value={props.value.themeIds[0]!}
+                onChange={(themeId) =>
+                    props.onChange({ ...props.value, themeIds: [themeId] })
+                }
+                options={themeIds}
+                getLabel={(themeId) => planetTypes[themeId]!}
+                disabled={props.disabled}
+            />{" "}
+            planet.
+        </>
+    )
+}
+
 function isType<T extends SimpleRule, K extends RuleType>(
     rule: T,
     type: K,
@@ -475,6 +543,14 @@ const EditSimpleRule: Component<{
             </Match>
             <Match when={isType(props.value, RuleType.GasRate)}>
                 {(value) => <EditGasRate {...props} value={value()} />}
+            </Match>
+            <Match when={isType(props.value, RuleType.PlanetInDysonCount)}>
+                {(value) => (
+                    <EditPlanetInDysonCount {...props} value={value()} />
+                )}
+            </Match>
+            <Match when={isType(props.value, RuleType.ThemeId)}>
+                {(value) => <EditThemeId {...props} value={value()} />}
             </Match>
             <Match when={isType(props.value, RuleType.Birth)}>
                 <div class={styles.birth}>Is the starting system</div>
@@ -653,11 +729,12 @@ const ruleNames: Record<RuleType, string> = {
     [RuleType.PlanetCount]: "Planet Count",
     [RuleType.SatelliteCount]: "Satellite Count",
     [RuleType.TidalLockCount]: "Tidally Locked Planet Count",
-    [RuleType.ThemeId]: "",
+    [RuleType.ThemeId]: "Planet Themes",
     [RuleType.GasCount]: "Gas/Ice Giant Count",
     [RuleType.OceanType]: "Ocean",
     [RuleType.GasRate]: "Gas Rate",
     [RuleType.AverageVeinAmount]: "Vein Amount",
+    [RuleType.PlanetInDysonCount]: "Planets in Dyson Sphere",
 }
 
 const rules: SimpleRule[] = [
@@ -714,6 +791,18 @@ const rules: SimpleRule[] = [
         condition: {
             type: ConditionType.Gte,
             value: 2,
+        },
+    },
+    {
+        type: RuleType.ThemeId,
+        themeIds: [1],
+    },
+    {
+        type: RuleType.PlanetInDysonCount,
+        includeGiant: false,
+        condition: {
+            type: ConditionType.Gte,
+            value: 1,
         },
     },
     {

@@ -3,13 +3,14 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct RuleDysonRadius {
+pub struct RulePlanetInDysonCount {
+    pub include_giant: bool,
     pub condition: Condition,
 }
 
-impl Rule for RuleDysonRadius {
+impl Rule for RulePlanetInDysonCount {
     fn get_priority(&self) -> i32 {
-        22
+        34
     }
     fn evaluate(
         &self,
@@ -21,8 +22,16 @@ impl Rule for RuleDysonRadius {
             if evaluation.is_known(index) {
                 continue;
             }
-            let star = &sp.star;
-            if self.condition.eval(star.get_dyson_radius() as f32) {
+            let planets = sp.get_planets();
+            let dyson_radius = sp.star.get_dyson_radius() as f32;
+            let targets = planets
+                .iter()
+                .filter(|planet| {
+                    (self.include_giant || !planet.is_gas_giant())
+                        && planet.get_sun_distance() * 1600.0 < dyson_radius
+                })
+                .count();
+            if self.condition.eval(targets as f32) {
                 result.push(index)
             }
         }

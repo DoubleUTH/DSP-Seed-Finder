@@ -73,8 +73,6 @@ export enum ConditionType {
     Lte = "Lte",
     Gt = "Gt",
     Gte = "Gte",
-    Between = "Between",
-    NotBetween = "NotBetween",
 }
 
 export enum GasType {

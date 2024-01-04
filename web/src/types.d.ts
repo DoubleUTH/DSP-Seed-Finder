@@ -88,14 +88,6 @@ declare global {
         export type Lte = { type: ConditionType.Lte; value: float }
         export type Gt = { type: ConditionType.Gt; value: float }
         export type Gte = { type: ConditionType.Gte; value: float }
-        export type Between = {
-            type: ConditionType.Between
-            value: [float, float]
-        }
-        export type NotBetween = {
-            type: ConditionType.NotBetween
-            value: [float, float]
-        }
     }
 
     declare type Condition =

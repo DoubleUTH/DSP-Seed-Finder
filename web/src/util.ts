@@ -1,4 +1,4 @@
-import { GasType, RuleType, VeinType } from "./enums"
+import { ConditionType, GasType, RuleType, VeinType } from "./enums"
 
 export function toPrecision(number: number, precision: number) {
     return number.toLocaleString([], {
@@ -17,6 +17,13 @@ export function formatNumber(number: number, precision: number): string {
     }
 }
 
+function modifyCondition(condition: Condition, fn: (value: float) => float) {
+    return {
+        ...condition,
+        value: fn(condition.value),
+    }
+}
+
 function fixRule(rule: SimpleRule): SimpleRule {
     if (
         rule.type === RuleType.AverageVeinAmount &&
@@ -24,10 +31,7 @@ function fixRule(rule: SimpleRule): SimpleRule {
     ) {
         return {
             ...rule,
-            condition: {
-                ...rule.condition,
-                value: rule.condition.value * 25e3,
-            },
+            condition: modifyCondition(rule.condition, (value) => value * 25e3),
         }
     }
     return rule
@@ -115,4 +119,13 @@ export const planetTypes: Record<number, string> = {
     23: "Onyxtopia",
     24: "Icefrostia",
     25: "Pandora Swamp",
+}
+
+export const conditionTypeNames: Record<ConditionType, string> = {
+    [ConditionType.Eq]: "exactly",
+    [ConditionType.Neq]: "not equal to",
+    [ConditionType.Gt]: "greater than",
+    [ConditionType.Gte]: "at least",
+    [ConditionType.Lt]: "less than",
+    [ConditionType.Lte]: "at most",
 }

@@ -13,7 +13,7 @@ import Select from "../components/Select"
 import { IoTrash } from "solid-icons/io"
 import Button from "../components/Button"
 import NumberInput from "../components/NumberInput"
-import { planetTypes, veinNames } from "../util"
+import { conditionTypeNames, planetTypes, veinNames } from "../util"
 
 const SelectSimpleRule: Component<{
     value?: SimpleRule
@@ -37,27 +37,62 @@ const SelectSimpleRule: Component<{
     )
 }
 
+const ConditionTypeSelector: Component<{
+    value: Condition
+    onChange: (value: Condition) => void
+    disabled?: boolean
+}> = (props) => (
+    <Select
+        class={styles.selectConditionType}
+        value={props.value.type}
+        onChange={(type) => props.onChange({ ...props.value, type })}
+        options={[ConditionType.Gte, ConditionType.Lte, ConditionType.Eq]}
+        getLabel={(type) => conditionTypeNames[type]}
+        disabled={props.disabled}
+    />
+)
+
+const ConditionValueInput: Component<{
+    value: Condition
+    onChange: (value: Condition) => void
+    disabled?: boolean
+    class?: string
+    error?: boolean
+    emptyValue: number
+    maxLength?: number
+}> = (props) => (
+    <NumberInput
+        class={props.class}
+        value={props.value.value}
+        onChange={(value) => props.onChange({ ...props.value, value })}
+        emptyValue={props.emptyValue}
+        disabled={props.disabled}
+        maxLength={props.maxLength}
+    />
+)
+
 const EditLuminosity: Component<{
     value: Rule.Luminosity
     onChange: (value: Rule.Luminosity) => void
     disabled?: boolean
 }> = (props) => {
-    const condition = () => props.value.condition.value
-    const setCondition = (value: number) => {
-        props.onChange({
-            ...props.value,
-            condition: { ...props.value.condition, value },
-        })
-    }
+    const condition = () => props.value.condition
+    const setCondition = (condition: Condition) =>
+        props.onChange({ ...props.value, condition })
     return (
         <>
-            Is at least{" "}
-            <NumberInput
+            Is{" "}
+            <ConditionTypeSelector
+                value={condition()}
+                onChange={setCondition}
+                disabled={props.disabled}
+            />{" "}
+            <ConditionValueInput
                 class={styles.inputLuminosity}
                 value={condition()}
                 onChange={setCondition}
                 emptyValue={-1}
-                error={condition() <= 0 || condition() >= 3}
+                error={condition().value <= 0 || condition().value >= 3}
                 disabled={props.disabled}
             />
             L
@@ -70,23 +105,24 @@ const EditDysonRadius: Component<{
     onChange: (value: Rule.DysonRadius) => void
     disabled?: boolean
 }> = (props) => {
-    const condition = () => props.value.condition.value
-    const setCondition = (value: number) => {
-        props.onChange({
-            ...props.value,
-            condition: { ...props.value.condition, value },
-        })
-    }
+    const condition = () => props.value.condition
+    const setCondition = (condition: Condition) =>
+        props.onChange({ ...props.value, condition })
     return (
         <>
-            Is at least{" "}
-            <NumberInput
+            Is{" "}
+            <ConditionTypeSelector
+                value={condition()}
+                onChange={setCondition}
+                disabled={props.disabled}
+            />{" "}
+            <ConditionValueInput
                 class={styles.inputDyson}
                 maxLength={6}
                 value={condition()}
                 onChange={setCondition}
                 emptyValue={-1}
-                error={condition() <= 0}
+                error={condition().value <= 0}
                 disabled={props.disabled}
             />
             m
@@ -99,13 +135,9 @@ const EditAverageVeinAmount: Component<{
     onChange: (value: Rule.AverageVeinAmount) => void
     disabled?: boolean
 }> = (props) => {
-    const condition = () => props.value.condition.value
-    const setCondition = (value: number) => {
-        props.onChange({
-            ...props.value,
-            condition: { ...props.value.condition, value },
-        })
-    }
+    const condition = () => props.value.condition
+    const setCondition = (condition: Condition) =>
+        props.onChange({ ...props.value, condition })
     return (
         <>
             Has{" "}
@@ -117,13 +149,18 @@ const EditAverageVeinAmount: Component<{
                 getLabel={(vein) => veinNames[vein]}
                 disabled={props.disabled}
             />{" "}
-            and the estimated amount is at least{" "}
-            <NumberInput
+            and the estimated amount is{" "}
+            <ConditionTypeSelector
+                value={condition()}
+                onChange={setCondition}
+                disabled={props.disabled}
+            />{" "}
+            <ConditionValueInput
                 class={styles.inputVein}
                 value={condition()}
                 onChange={setCondition}
                 emptyValue={-1}
-                error={condition() <= 0}
+                error={condition().value <= 0}
                 disabled={props.disabled}
             />
             {props.value.vein === VeinType.Oil ? " /s" : " "}
@@ -159,22 +196,23 @@ const EditTidalLockCount: Component<{
     onChange: (value: Rule.TidalLockCount) => void
     disabled?: boolean
 }> = (props) => {
-    const condition = () => props.value.condition.value
-    const setCondition = (value: number) => {
-        props.onChange({
-            ...props.value,
-            condition: { ...props.value.condition, value },
-        })
-    }
+    const condition = () => props.value.condition
+    const setCondition = (condition: Condition) =>
+        props.onChange({ ...props.value, condition })
     return (
         <>
-            Has at least{" "}
-            <NumberInput
+            Has{" "}
+            <ConditionTypeSelector
+                value={condition()}
+                onChange={setCondition}
+                disabled={props.disabled}
+            />{" "}
+            <ConditionValueInput
                 class={styles.inputCount}
                 value={condition()}
                 onChange={setCondition}
                 emptyValue={-1}
-                error={condition() <= 0}
+                error={condition().value <= 0}
                 disabled={props.disabled}
             />{" "}
             tidally locked planets
@@ -234,22 +272,23 @@ const EditGasCount: Component<{
     onChange: (value: Rule.GasCount) => void
     disabled?: boolean
 }> = (props) => {
-    const condition = () => props.value.condition.value
-    const setCondition = (value: number) => {
-        props.onChange({
-            ...props.value,
-            condition: { ...props.value.condition, value },
-        })
-    }
+    const condition = () => props.value.condition
+    const setCondition = (condition: Condition) =>
+        props.onChange({ ...props.value, condition })
     return (
         <>
-            Has at least{" "}
-            <NumberInput
+            Has{" "}
+            <ConditionTypeSelector
+                value={condition()}
+                onChange={setCondition}
+                disabled={props.disabled}
+            />{" "}
+            <ConditionValueInput
                 class={styles.inputCount}
                 value={condition()}
                 onChange={setCondition}
                 emptyValue={-1}
-                error={condition() <= 0}
+                error={condition().value <= 0}
                 disabled={props.disabled}
             />{" "}
             <Select
@@ -272,22 +311,23 @@ const EditSatelliteCount: Component<{
     onChange: (value: Rule.SatelliteCount) => void
     disabled?: boolean
 }> = (props) => {
-    const condition = () => props.value.condition.value
-    const setCondition = (value: number) => {
-        props.onChange({
-            ...props.value,
-            condition: { ...props.value.condition, value },
-        })
-    }
+    const condition = () => props.value.condition
+    const setCondition = (condition: Condition) =>
+        props.onChange({ ...props.value, condition })
     return (
         <>
-            Has at least{" "}
-            <NumberInput
+            Has{" "}
+            <ConditionTypeSelector
+                value={condition()}
+                onChange={setCondition}
+                disabled={props.disabled}
+            />{" "}
+            <ConditionValueInput
                 class={styles.inputCount}
                 value={condition()}
                 onChange={setCondition}
                 emptyValue={-1}
-                error={condition() <= 0}
+                error={condition().value <= 0}
                 disabled={props.disabled}
             />{" "}
             satellite(s)
@@ -300,22 +340,23 @@ const EditPlanetCount: Component<{
     onChange: (value: Rule.PlanetCount) => void
     disabled?: boolean
 }> = (props) => {
-    const condition = () => props.value.condition.value
-    const setCondition = (value: number) => {
-        props.onChange({
-            ...props.value,
-            condition: { ...props.value.condition, value },
-        })
-    }
+    const condition = () => props.value.condition
+    const setCondition = (condition: Condition) =>
+        props.onChange({ ...props.value, condition })
     return (
         <>
-            Has at least{" "}
-            <NumberInput
+            Has{" "}
+            <ConditionTypeSelector
+                value={condition()}
+                onChange={setCondition}
+                disabled={props.disabled}
+            />{" "}
+            <ConditionValueInput
                 class={styles.inputCount}
                 value={condition()}
                 onChange={setCondition}
                 emptyValue={-1}
-                error={condition() <= 1}
+                error={condition().value <= 1}
                 disabled={props.disabled}
             />{" "}
             planets
@@ -328,22 +369,23 @@ const EditBirthDistance: Component<{
     onChange: (value: Rule.BirthDistance) => void
     disabled?: boolean
 }> = (props) => {
-    const condition = () => props.value.condition.value
-    const setCondition = (value: number) => {
-        props.onChange({
-            ...props.value,
-            condition: { ...props.value.condition, value },
-        })
-    }
+    const condition = () => props.value.condition
+    const setCondition = (condition: Condition) =>
+        props.onChange({ ...props.value, condition })
     return (
         <>
-            Is at most{" "}
-            <NumberInput
+            Is{" "}
+            <ConditionTypeSelector
+                value={condition()}
+                onChange={setCondition}
+                disabled={props.disabled}
+            />{" "}
+            <ConditionValueInput
                 class={styles.inputDistance}
                 value={condition()}
                 onChange={setCondition}
                 emptyValue={-1}
-                error={condition() <= 0}
+                error={condition().value <= 0}
                 disabled={props.disabled}
             />
             ly away from the starting system
@@ -356,22 +398,23 @@ const EditXDistance: Component<{
     onChange: (value: Rule.XDistance) => void
     disabled?: boolean
 }> = (props) => {
-    const condition = () => props.value.condition.value
-    const setCondition = (value: number) => {
-        props.onChange({
-            ...props.value,
-            condition: { ...props.value.condition, value },
-        })
-    }
+    const condition = () => props.value.condition
+    const setCondition = (condition: Condition) =>
+        props.onChange({ ...props.value, condition })
     return (
         <>
-            Is at most{" "}
-            <NumberInput
+            Is{" "}
+            <ConditionTypeSelector
+                value={condition()}
+                onChange={setCondition}
+                disabled={props.disabled}
+            />{" "}
+            <ConditionValueInput
                 class={styles.inputDistance}
                 value={condition()}
                 onChange={setCondition}
                 emptyValue={-1}
-                error={condition() <= 0}
+                error={condition().value <= 0}
                 disabled={props.disabled}
             />
             ly away from a black hole / neutron star.
@@ -384,13 +427,9 @@ const EditGasRate: Component<{
     onChange: (value: Rule.GasRate) => void
     disabled?: boolean
 }> = (props) => {
-    const condition = () => props.value.condition.value
-    const setCondition = (value: number) => {
-        props.onChange({
-            ...props.value,
-            condition: { ...props.value.condition, value },
-        })
-    }
+    const condition = () => props.value.condition
+    const setCondition = (condition: Condition) =>
+        props.onChange({ ...props.value, condition })
     return (
         <>
             Has{" "}
@@ -404,13 +443,18 @@ const EditGasRate: Component<{
                 getLabel={(vein) => gasTypeNames[vein]}
                 disabled={props.disabled}
             />{" "}
-            and at least{" "}
-            <NumberInput
+            and{" "}
+            <ConditionTypeSelector
+                value={condition()}
+                onChange={setCondition}
+                disabled={props.disabled}
+            />{" "}
+            <ConditionValueInput
                 class={styles.inputGasRate}
                 value={condition()}
                 onChange={setCondition}
                 emptyValue={-1}
-                error={condition() <= 0}
+                error={condition().value <= 0}
                 disabled={props.disabled}
             />
             /s of it
@@ -423,22 +467,23 @@ const EditPlanetInDysonCount: Component<{
     onChange: (value: Rule.PlanetInDysonCount) => void
     disabled?: boolean
 }> = (props) => {
-    const condition = () => props.value.condition.value
-    const setCondition = (value: number) => {
-        props.onChange({
-            ...props.value,
-            condition: { ...props.value.condition, value },
-        })
-    }
+    const condition = () => props.value.condition
+    const setCondition = (condition: Condition) =>
+        props.onChange({ ...props.value, condition })
     return (
         <>
-            Has at least{" "}
-            <NumberInput
+            Has{" "}
+            <ConditionTypeSelector
+                value={condition()}
+                onChange={setCondition}
+                disabled={props.disabled}
+            />{" "}
+            <ConditionValueInput
                 class={styles.inputCount}
                 value={condition()}
                 onChange={setCondition}
                 emptyValue={-1}
-                error={condition() <= 0}
+                error={condition().value <= 0}
                 disabled={props.disabled}
             />{" "}
             that are within max dyson sphere radius,{" "}

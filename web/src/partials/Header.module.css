@@ -27,6 +27,14 @@
     padding: 0 8px;
 }
 
+.buttonsDisabled {
+    cursor: not-allowed;
+}
+
+.buttonsDisabled .button {
+    pointer-events: none;
+}
+
 .icons {
     display: flex;
     align-items: center;

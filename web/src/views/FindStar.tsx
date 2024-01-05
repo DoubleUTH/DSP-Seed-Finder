@@ -42,6 +42,7 @@ import { A, useNavigate, useParams } from "@solidjs/router"
 import ProgressEditor from "../partials/ProgressEditor"
 import ProfileManager from "../partials/ProfileManager"
 import Pagination from "../components/Pagination"
+import { useStore } from "../store"
 
 const defaultProgress: () => ProfileProgress = () => ({
     id: "",
@@ -207,13 +208,13 @@ const FindStar: Component = () => {
         createStore<ProfileProgress>(defaultProgress())
     const [nativeMode, setNativeMode] = createSignal(false)
     const [profileModal, setProfileModal] = createSignal(false)
-    const [searching, setSearching] = createSignal(false)
+    const [store, setStore] = useStore()
     const [currentPage, setCurrentPage] = createSignal(1)
     const [tick, setTick] = createSignal(0)
     const isLoaded = () => !!profile()
     const hasProgress = () =>
         progress.start > -1 && progress.current > progress.start
-    const isDisabled = () => searching() || hasProgress()
+    const isDisabled = () => store.searching || hasProgress()
     const hasCompleted = () =>
         progress.start > -1 && progress.current >= progress.end
 
@@ -329,7 +330,7 @@ const FindStar: Component = () => {
 
     async function onStartSearching() {
         await onSaveProfile()
-        setSearching(true)
+        setStore("searching", true)
         let results: FindResult[] = []
         getWorldGen(nativeMode()).find({
             gameDesc: {
@@ -356,15 +357,15 @@ const FindStar: Component = () => {
             },
             onError: (err) => {
                 console.error(err)
-                setSearching(false)
+                setStore("searching", false)
             },
             onComplete: () => {
                 console.debug("done")
-                setSearching(false)
+                setStore("searching", false)
             },
             onInterrupt: () => {
                 console.debug("interrupt")
-                setSearching(false)
+                setStore("searching", false)
             },
         })
     }
@@ -407,7 +408,7 @@ const FindStar: Component = () => {
                 onClone={onCloneProfile}
                 onClear={onClearProfile}
                 onDelete={onDeleteProfile}
-                disabled={searching()}
+                disabled={store.searching}
                 isValid={isValid()}
                 isLoaded={isLoaded()}
             />
@@ -419,7 +420,7 @@ const FindStar: Component = () => {
                 nativeMode={nativeMode()}
                 onNativeModeChange={setNativeMode}
                 isLoaded={isLoaded()}
-                searching={searching()}
+                searching={store.searching}
             />
             <div class={styles.rules}>Rules</div>
             <RuleEditor
@@ -430,7 +431,10 @@ const FindStar: Component = () => {
             <div class={styles.execute}>
                 <div class={styles.progress}>
                     <Show
-                        when={searching() || (hasProgress() && !hasCompleted())}
+                        when={
+                            store.searching ||
+                            (hasProgress() && !hasCompleted())
+                        }
                     >
                         <div class={styles.progressText}>Progress:</div>
                         <ProgressBar
@@ -450,7 +454,7 @@ const FindStar: Component = () => {
                         </Button>
                     }
                 >
-                    <Match when={searching()}>
+                    <Match when={store.searching}>
                         <Button onClick={onStopSearching}>Pause</Button>
                     </Match>
                     <Match when={hasCompleted()}>

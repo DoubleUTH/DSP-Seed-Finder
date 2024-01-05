@@ -243,6 +243,7 @@ declare global {
 
     declare interface Store {
         settings: Settings
+        searching: boolean
     }
 
     declare interface Settings {

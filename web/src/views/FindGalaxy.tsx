@@ -40,6 +40,7 @@ import Pagination from "../components/Pagination"
 import ProfilesModal from "../partials/ProfilesModal"
 import MultiRuleEditor from "../partials/MultiRuleEditor"
 import { ConditionType } from "../enums"
+import { useStore } from "../store"
 
 const PAGE_SIZE = 100
 
@@ -140,13 +141,13 @@ const FindGalaxy: Component = () => {
         createStore<MultiProfileProgress>(defaultProgress())
     const [nativeMode, setNativeMode] = createSignal(false)
     const [profileModal, setProfileModal] = createSignal(false)
-    const [searching, setSearching] = createSignal(false)
+    const [store, setStore] = useStore()
     const [currentPage, setCurrentPage] = createSignal(1)
     const [tick, setTick] = createSignal(0)
     const isLoaded = () => !!profile()
     const hasProgress = () =>
         progress.start > -1 && progress.current > progress.start
-    const isDisabled = () => searching() || hasProgress()
+    const isDisabled = () => store.searching || hasProgress()
     const hasCompleted = () =>
         progress.start > -1 && progress.current >= progress.end
 
@@ -172,7 +173,6 @@ const FindGalaxy: Component = () => {
                 setProgress(progress)
                 setProfileModal(false)
             })
-            console.log(unwrap(progress))
         }
     }
 
@@ -190,7 +190,6 @@ const FindGalaxy: Component = () => {
             setName(origName + " - Copy")
             setProgress({ id: "", current: 0 })
         })
-        console.log(unwrap(progress))
     }
 
     const isRuleValid = createMemo(() => validateMultiRule(progress.multiRules))
@@ -269,7 +268,7 @@ const FindGalaxy: Component = () => {
 
     async function onStartSearching() {
         await onSaveProfile()
-        setSearching(true)
+        setStore("searching", true)
         let results: FindResult[] = []
         getWorldGen(nativeMode()).find({
             gameDesc: {
@@ -296,15 +295,15 @@ const FindGalaxy: Component = () => {
             },
             onError: (err) => {
                 console.error(err)
-                setSearching(false)
+                setStore("searching", false)
             },
             onComplete: () => {
                 console.debug("done")
-                setSearching(false)
+                setStore("searching", false)
             },
             onInterrupt: () => {
                 console.debug("interrupt")
-                setSearching(false)
+                setStore("searching", false)
             },
         })
     }
@@ -319,7 +318,6 @@ const FindGalaxy: Component = () => {
             (profileId) => {
                 if (profileId) {
                     if (profile()?.id !== profileId) {
-                        console.log(profileId, profile()?.id)
                         Promise.all([
                             getMultiProfileInfo(profileId),
                             getMultiProfileProgress(profileId),
@@ -348,7 +346,7 @@ const FindGalaxy: Component = () => {
                 onClone={onCloneProfile}
                 onClear={onClearProfile}
                 onDelete={onDeleteProfile}
-                disabled={searching()}
+                disabled={store.searching}
                 isValid={isValid()}
                 isLoaded={isLoaded()}
             />
@@ -360,7 +358,7 @@ const FindGalaxy: Component = () => {
                 nativeMode={nativeMode()}
                 onNativeModeChange={setNativeMode}
                 isLoaded={isLoaded()}
-                searching={searching()}
+                searching={store.searching}
             />
             <div class={styles.rules}>Rules</div>
             <MultiRuleEditor
@@ -371,7 +369,10 @@ const FindGalaxy: Component = () => {
             <div class={styles.execute}>
                 <div class={styles.progress}>
                     <Show
-                        when={searching() || (hasProgress() && !hasCompleted())}
+                        when={
+                            store.searching ||
+                            (hasProgress() && !hasCompleted())
+                        }
                     >
                         <div class={styles.progressText}>Progress:</div>
                         <ProgressBar
@@ -391,7 +392,7 @@ const FindGalaxy: Component = () => {
                         </Button>
                     }
                 >
-                    <Match when={searching()}>
+                    <Match when={store.searching}>
                         <Button onClick={onStopSearching}>Pause</Button>
                     </Match>
                     <Match when={hasCompleted()}>

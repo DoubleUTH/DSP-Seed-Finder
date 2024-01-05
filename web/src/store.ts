@@ -10,6 +10,7 @@ export const defaultStore: Store = {
             resourceMultipler: defaultResourceMultipler,
         },
     },
+    searching: false,
 }
 
 type ContextType = [get: Store, set: SetStoreFunction<Store>]

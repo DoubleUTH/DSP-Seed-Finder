@@ -3,14 +3,20 @@ import { useStore } from "../store"
 import { A } from "@solidjs/router"
 import { IoContrast, IoLogoGithub } from "solid-icons/io"
 import { Component } from "solid-js"
+import clsx from "clsx"
 
 const Header: Component = () => {
-    const [, setStore] = useStore()
+    const [store, setStore] = useStore()
 
     return (
         <div class={styles.header}>
             <div class={styles.title}>DSP Seed Finder</div>
-            <div class={styles.buttons}>
+            <div
+                class={clsx(
+                    styles.buttons,
+                    store.searching && styles.buttonsDisabled,
+                )}
+            >
                 <A href="/find-star" class={styles.button}>
                     Star Finder
                 </A>

@@ -39,7 +39,7 @@ module.exports = {
             },
         },
         {
-            files: ["app/**"],
+            files: ["web/**"],
             env: {
                 browser: true,
             },

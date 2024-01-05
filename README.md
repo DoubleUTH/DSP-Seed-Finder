@@ -4,7 +4,11 @@ DSP Seed Finder is a tool designed to assist you in finding seeds for Dyson Sphe
 
 [Link to DSP Seed Finder](https://doubleuth.github.io/DSP-Seed-Finder/).
 
-This tool offers two primary functions. The star finder enables you to search for star systems that meet specific criteria tailored to your preferences. The galaxy viewer provides a overview of galaxy details, allowing you to view different galaxies in the game.
+This tool offers three functions.
+
+1. **Star Finder**: You can search for star systems that match your preferences and criteria, such as luminosity, the presence of gas giants or tidally locked planets, vein amounts, and more.
+2. **Galaxy Finder**: Similar to the star finder, the galaxy finder function focuses on searching for galaxies based on the number of stars that meet your specified criteria.
+3. **Galaxy Viewer**: The galaxy viewer provides a overview of galaxy details, allowing you to explore different galaxies in the game.
 
 This tool is not official and is not affiliated with the game developers.
 

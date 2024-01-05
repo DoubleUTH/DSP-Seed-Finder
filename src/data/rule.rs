@@ -46,13 +46,6 @@ pub struct Evaluaton {
     max_len: usize,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub enum RuleTarget {
-    Galaxy,
-    Star,
-    Planet,
-}
-
 impl Evaluaton {
     pub fn new(size: usize) -> Self {
         Self {

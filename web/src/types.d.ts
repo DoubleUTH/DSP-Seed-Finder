@@ -7,6 +7,7 @@ import type {
     RuleType,
     GasType,
     OceanType as EOceanType,
+    CompositeRuleType,
 } from "./enums"
 
 declare global {
@@ -169,6 +170,22 @@ declare global {
             includeGiant: boolean
             condition: Condition
         }
+
+        export type Composite = {
+            type: CompositeRuleType.Composite
+            rule: Rule
+            condition: Condition
+        }
+
+        export type CompositeAnd = {
+            type: CompositeRuleType.CompositeAnd
+            rules: CompositeRule[]
+        }
+
+        export type CompositeOr = {
+            type: CompositeRuleType.CompositeOr
+            rules: CompositeRule[]
+        }
     }
 
     declare type SimpleRule =
@@ -194,15 +211,10 @@ declare global {
 
     declare type Rule = SimpleRule | CompoundRule
 
-    declare type MultiRule = {
-        rule: Rule
-        condition: Condition
-    }
-
-    declare type CompositeRule = {
-        type: "Composite"
-        rules: MultiRule[]
-    }
+    declare type CompositeRule =
+        | Rule.Composite
+        | Rule.CompositeAnd
+        | Rule.CompositeOr
 
     declare interface FindOptions {
         gameDesc: Omit<GameDesc, "seed">
@@ -263,14 +275,14 @@ declare global {
     }
 
     declare interface MultiProfileProgress extends ProfileProgressInfo {
-        multiRules: MultiRules
+        multiRules: MultiRule[][]
     }
 
-    declare type MultiRules = {
+    declare interface MultiRule {
         name: string
         rules: SimpleRule[][]
         condition: Condition
-    }[]
+    }
 
     declare interface ProgressResult {
         id: integer

@@ -14,6 +14,7 @@ import { IoTrash } from "solid-icons/io"
 import Button from "../components/Button"
 import NumberInput from "../components/NumberInput"
 import { conditionTypeNames, planetTypes, veinNames } from "../util"
+import clsx from "clsx"
 
 const SelectSimpleRule: Component<{
     value?: SimpleRule
@@ -680,7 +681,7 @@ const RuleBlockContent: Component<{
             </Index>
 
             <Show when={!props.disabled}>
-                <Button class={styles.orRule} kind="outline" onClick={onAdd}>
+                <Button class={styles.addOr} kind="outline" onClick={onAdd}>
                     Add OR rule
                 </Button>
             </Show>
@@ -689,6 +690,7 @@ const RuleBlockContent: Component<{
 }
 
 const RuleEditor: Component<{
+    class?: string
     value: SimpleRule[][]
     onChange: (value: SimpleRule[][]) => void
     disabled?: boolean
@@ -710,7 +712,7 @@ const RuleEditor: Component<{
     }
 
     return (
-        <div class={styles.ruleBuilder}>
+        <div class={clsx(styles.ruleBuilder, props.class)}>
             <Show
                 when={props.value.length > 0}
                 fallback={

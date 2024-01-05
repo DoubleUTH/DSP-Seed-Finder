@@ -28,7 +28,6 @@
 .content {
     position: relative;
     min-width: 450px;
-    max-width: 80vw;
     max-height: 80vh;
     min-height: 80px;
     background-color: var(--modal-background);

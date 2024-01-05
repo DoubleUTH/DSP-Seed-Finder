@@ -66,6 +66,12 @@ export enum RuleType {
     AverageVeinAmount = "AverageVeinAmount", // 51
 }
 
+export enum CompositeRuleType {
+    Composite = "Composite",
+    CompositeAnd = "CompositeAnd",
+    CompositeOr = "CompositeOr",
+}
+
 export enum ConditionType {
     Eq = "Eq",
     Neq = "Neq",

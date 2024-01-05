@@ -1,4 +1,10 @@
-import { ConditionType, GasType, RuleType, VeinType } from "./enums"
+import {
+    CompositeRuleType,
+    ConditionType,
+    GasType,
+    RuleType,
+    VeinType,
+} from "./enums"
 
 export function toPrecision(number: number, precision: number) {
     return number.toLocaleString([], {
@@ -45,14 +51,23 @@ export function constructRule(rules: SimpleRule[][]): Rule {
     )
     return rs.length === 1 ? rs[0]! : { type: RuleType.And, rules: rs }
 }
-export function constructMultiRule(multiRules: MultiRules): CompositeRule {
-    return {
-        type: "Composite",
-        rules: multiRules.map(({ condition, rules }) => ({
-            condition,
-            rule: constructRule(rules),
-        })),
-    }
+
+export function constructMultiRule(multiRules: MultiRule[][]): CompositeRule {
+    const raw: CompositeRule[] = multiRules.map((rs): CompositeRule => {
+        const x = rs.map(
+            ({ condition, rules }): Rule.Composite => ({
+                type: CompositeRuleType.Composite,
+                condition,
+                rule: constructRule(rules),
+            }),
+        )
+        return x.length === 1
+            ? x[0]!
+            : { type: CompositeRuleType.CompositeOr, rules: x }
+    })
+    return raw.length === 1
+        ? raw[0]!
+        : { type: CompositeRuleType.CompositeAnd, rules: raw }
 }
 
 export const minStarCount = 32
@@ -151,9 +166,11 @@ export function validateRules(rules: SimpleRule[][]): boolean {
     return true
 }
 
-export function validateMultiRule(rules: MultiRules): boolean {
+export function validateMultiRule(rules: MultiRule[][]): boolean {
     return (
         rules.length > 0 &&
-        rules.every((rs) => rs.rules.length > 0 && validateRules(rs.rules))
+        rules.every(
+            (rs) => rs.length > 0 && rs.every((r) => validateRules(r.rules)),
+        )
     )
 }

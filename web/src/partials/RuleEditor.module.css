@@ -2,6 +2,7 @@
     padding: 12px;
     border: 1px solid #424242;
     border-radius: 8px;
+    min-width: 1080px;
 }
 
 .block {
@@ -39,7 +40,7 @@
     margin: 12px 0 12px 20px;
 }
 
-.orRule {
+.addOr {
     margin-top: 8px;
 }
 

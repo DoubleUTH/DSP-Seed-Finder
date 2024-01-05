@@ -39,6 +39,7 @@ import Button from "../components/Button"
 import Pagination from "../components/Pagination"
 import ProfilesModal from "../partials/ProfilesModal"
 import MultiRuleEditor from "../partials/MultiRuleEditor"
+import { ConditionType } from "../enums"
 
 const PAGE_SIZE = 100
 
@@ -52,7 +53,15 @@ const defaultProgress: () => MultiProfileProgress = () => ({
     end: 1e8,
     current: 0,
     found: 0,
-    multiRules: [],
+    multiRules: [
+        [
+            {
+                rules: [],
+                condition: { type: ConditionType.Gte, value: 1 },
+                name: "",
+            },
+        ],
+    ],
 })
 
 const SearchResult: Component<{

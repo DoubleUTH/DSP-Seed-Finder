@@ -1,0 +1,73 @@
+.multiRuleEditor {
+    padding: 12px;
+    border: 1px solid #424242;
+    border-radius: 8px;
+    min-width: 1080px;
+}
+
+.block {
+    background-color: rgba(160, 160, 160, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.delete {
+    color: var(--error);
+    flex: none;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    cursor: pointer;
+}
+
+.row {
+    display: flex;
+}
+
+.editRow {
+    flex: none;
+    margin-right: 4px;
+}
+
+.description {
+    flex: 1 1 0;
+}
+
+.buttonRuleset {
+    padding-left: 11px;
+    padding-right: 11px;
+}
+
+.or {
+    margin: 8px;
+}
+
+.and {
+    margin: 12px 0 12px 20px;
+}
+
+.addOr {
+    margin-top: 8px;
+}
+
+.addAnd {
+    margin-top: 8px;
+    margin-left: 20px;
+}
+
+.selectConditionType {
+    width: 80px;
+}
+
+.inputCount {
+    width: 40px;
+}
+
+.ruleBuilderTitle {
+    padding: 12px;
+    font-weight: bold;
+}
+
+.ruleEditor {
+    border: none;
+}

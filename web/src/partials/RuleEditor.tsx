@@ -432,7 +432,63 @@ const EditXDistance: Component<{
                 error={condition().value <= 0}
                 disabled={props.disabled}
             />
-            ly away from a black hole / neutron star.
+            ly away from any black hole / neutron star.
+        </>
+    )
+}
+
+const EditSpectrDistance: Component<{
+    value: Rule.SpectrDistance
+    onChange: (value: Rule.SpectrDistance) => void
+    disabled?: boolean
+}> = (props) => {
+    const countCondition = () => props.value.countCondition
+    const setCountCondition = (countCondition: Condition) =>
+        props.onChange({ ...props.value, countCondition })
+    const distanceCondition = () => props.value.distanceCondition
+    const setDistanceCondition = (distanceCondition: Condition) =>
+        props.onChange({ ...props.value, distanceCondition })
+    return (
+        <>
+            Has{" "}
+            <ConditionTypeSelector
+                value={countCondition()}
+                onChange={setCountCondition}
+                disabled={props.disabled}
+            />{" "}
+            <ConditionValueInput
+                class={styles.inputCount}
+                value={countCondition()}
+                onChange={setCountCondition}
+                emptyValue={-1}
+                error={countCondition().value <= 0}
+                disabled={props.disabled}
+            />{" "}
+            <Select
+                class={styles.selectSpectr}
+                value={props.value.spectr}
+                onChange={(spectr) =>
+                    props.onChange({ ...props.value, spectr })
+                }
+                options={spectrs}
+                getLabel={(spectr) => spectr}
+                disabled={props.disabled}
+            />{" "}
+            type stars that are{" "}
+            <ConditionTypeSelector
+                value={distanceCondition()}
+                onChange={setDistanceCondition}
+                disabled={props.disabled}
+            />{" "}
+            <ConditionValueInput
+                class={styles.inputDistance}
+                value={distanceCondition()}
+                onChange={setDistanceCondition}
+                emptyValue={-1}
+                error={distanceCondition().value <= 0}
+                disabled={props.disabled}
+            />{" "}
+            ly away.
         </>
     )
 }
@@ -600,6 +656,9 @@ const EditSimpleRule: Component<{
             </Match>
             <Match when={isType(props.value, RuleType.XDistance)}>
                 {(value) => <EditXDistance {...props} value={value()} />}
+            </Match>
+            <Match when={isType(props.value, RuleType.SpectrDistance)}>
+                {(value) => <EditSpectrDistance {...props} value={value()} />}
             </Match>
             <Match when={isType(props.value, RuleType.GasRate)}>
                 {(value) => <EditGasRate {...props} value={value()} />}
@@ -784,6 +843,7 @@ const ruleNames: Record<RuleType, string> = {
     [RuleType.StarType]: "Type of star",
     [RuleType.BirthDistance]: "Distance from Start",
     [RuleType.XDistance]: "Distance from X Star",
+    [RuleType.SpectrDistance]: "Distance from Other Stars",
     [RuleType.Luminosity]: "Luminosity",
     [RuleType.Spectr]: "Spectral Class",
     [RuleType.DysonRadius]: "Max Dyson Sphere Radius",
@@ -802,6 +862,18 @@ const rules: SimpleRule[] = [
     {
         type: RuleType.BirthDistance,
         condition: {
+            type: ConditionType.Lte,
+            value: 0,
+        },
+    },
+    {
+        type: RuleType.SpectrDistance,
+        spectr: SpectrType.O,
+        countCondition: {
+            type: ConditionType.Gte,
+            value: 1,
+        },
+        distanceCondition: {
             type: ConditionType.Lte,
             value: 0,
         },

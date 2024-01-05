@@ -13,6 +13,7 @@ pub mod planet_count;
 pub mod planet_in_dyson_count;
 pub mod satellite_count;
 pub mod spectr;
+pub mod spectr_distance;
 pub mod star_type;
 pub mod theme_id;
 pub mod tidal_lock_count;

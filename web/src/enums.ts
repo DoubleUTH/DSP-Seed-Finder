@@ -52,6 +52,7 @@ export enum RuleType {
     StarType = "StarType", // 11
     BirthDistance = "BirthDistance", // 12
     XDistance = "XDistance", // 13
+    SpectrDistance = "SpectrDistance", // 14
     Luminosity = "Luminosity", // 20
     Spectr = "Spectr", // 21
     DysonRadius = "DysonRadius", // 22

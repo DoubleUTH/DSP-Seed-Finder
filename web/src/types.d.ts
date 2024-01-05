@@ -161,6 +161,12 @@ declare global {
             type: RuleType.XDistance
             condition: Condition
         }
+        export type SpectrDistance = {
+            type: RuleType.SpectrDistance
+            spectr: SpectrType
+            countCondition: Condition
+            distanceCondition: Condition
+        }
         export type GasRate = {
             type: RuleType.GasRate
             gasType: GasType
@@ -205,6 +211,7 @@ declare global {
         | Rule.PlanetCount
         | Rule.BirthDistance
         | Rule.XDistance
+        | Rule.SpectrDistance
         | Rule.GasRate
         | Rule.PlanetInDysonCount
 

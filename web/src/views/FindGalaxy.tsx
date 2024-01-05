@@ -172,6 +172,7 @@ const FindGalaxy: Component = () => {
                 setProgress(progress)
                 setProfileModal(false)
             })
+            console.log(unwrap(progress))
         }
     }
 
@@ -189,6 +190,7 @@ const FindGalaxy: Component = () => {
             setName(origName + " - Copy")
             setProgress({ id: "", current: 0 })
         })
+        console.log(unwrap(progress))
     }
 
     const isRuleValid = createMemo(() => validateMultiRule(progress.multiRules))
@@ -332,11 +334,6 @@ const FindGalaxy: Component = () => {
                             }
                         })
                     }
-                } else {
-                    batch(() => {
-                        onNewProfile()
-                        setName("Untitled")
-                    })
                 }
             },
         ),

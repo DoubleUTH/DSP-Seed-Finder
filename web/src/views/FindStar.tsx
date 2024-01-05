@@ -393,11 +393,6 @@ const FindStar: Component = () => {
                             }
                         })
                     }
-                } else {
-                    batch(() => {
-                        onNewProfile()
-                        setName("Untitled")
-                    })
                 }
             },
         ),

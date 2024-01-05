@@ -201,13 +201,14 @@ const MultiRuleEditor: Component<{
             <Show when={editing()}>
                 {(editing) => (
                     <Modal visible onClose={() => setEditing(null)}>
-                        <div class={styles.ruleBuilderTitle}>Rule Builder</div>
+                        <div class={styles.ruleBuilderTitle}>Ruleset</div>
                         <RuleEditor
                             class={styles.ruleEditor}
                             value={
                                 props.value[editing()[0]]![editing()[1]]!.rules
                             }
                             onChange={onRulesChange}
+                            disabled={props.disabled}
                         />
                     </Modal>
                 )}

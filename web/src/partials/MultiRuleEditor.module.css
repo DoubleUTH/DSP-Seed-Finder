@@ -70,4 +70,6 @@
 
 .ruleEditor {
     border: none;
+    padding: 12px 20px;
+    min-height: calc(80vh - 40px);
 }

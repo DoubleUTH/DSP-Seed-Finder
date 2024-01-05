@@ -40,13 +40,10 @@ impl Rule for RuleXDistance {
                 continue;
             }
             let star = &sp.star;
-            let min_distance = x_stars
+            if x_stars
                 .iter()
-                .map(|p| star.position.distance_sq_from(p))
-                .reduce(f64::min)
-                .unwrap()
-                .sqrt();
-            if self.condition.eval(min_distance as f32) {
+                .any(|p| self.condition.eval(star.position.distance_from(p) as f32))
+            {
                 result.push(index)
             }
         }

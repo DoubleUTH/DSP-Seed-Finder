@@ -15,6 +15,10 @@ impl Vector3 {
         dx * dx + dy * dy + dz * dz
     }
 
+    pub fn distance_from(&self, pt: &Self) -> f64 {
+        self.distance_sq_from(pt).sqrt()
+    }
+
     pub fn magnitude_sq(&self) -> f64 {
         self.0 * self.0 + self.1 * self.1 + self.2 * self.2
     }

@@ -151,6 +151,7 @@ declare global {
         export type PlanetCount = {
             type: RuleType.PlanetCount
             condition: Condition
+            excludeGiant: boolean
         }
         export type BirthDistance = {
             type: RuleType.BirthDistance

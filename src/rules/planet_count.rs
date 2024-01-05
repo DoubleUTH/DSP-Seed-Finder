@@ -5,6 +5,8 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RulePlanetCount {
+    #[serde(default)]
+    pub exclude_giant: bool,
     pub condition: Condition,
 }
 
@@ -23,7 +25,15 @@ impl Rule for RulePlanetCount {
                 continue;
             }
             let planets = sp.get_planets();
-            if self.condition.eval(planets.len() as f32) {
+            let len = if self.exclude_giant {
+                planets
+                    .iter()
+                    .filter(|planet| !planet.is_gas_giant())
+                    .count()
+            } else {
+                planets.len()
+            };
+            if self.condition.eval(len as f32) {
                 result.push(index)
             }
         }

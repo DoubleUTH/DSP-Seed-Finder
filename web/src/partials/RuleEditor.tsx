@@ -361,7 +361,20 @@ const EditPlanetCount: Component<{
                 error={condition().value <= 1}
                 disabled={props.disabled}
             />{" "}
-            planets
+            planets,{" "}
+            <Select
+                class={styles.selectGasType}
+                value={props.value.excludeGiant}
+                onChange={(excludeGiant) =>
+                    props.onChange({ ...props.value, excludeGiant })
+                }
+                options={[false, true]}
+                getLabel={(excludeGiant) =>
+                    excludeGiant ? "excluding" : "including"
+                }
+                disabled={props.disabled}
+            />{" "}
+            gas/ice giants.
         </>
     )
 }
@@ -840,6 +853,7 @@ const rules: SimpleRule[] = [
             type: ConditionType.Gte,
             value: 2,
         },
+        excludeGiant: false,
     },
     {
         type: RuleType.ThemeId,

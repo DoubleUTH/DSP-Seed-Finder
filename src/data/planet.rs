@@ -353,7 +353,7 @@ impl<'a> Planet<'a> {
         let gas_giant = self.is_gas_giant();
         let mut rotation_period = self.rotation_scale
             * (if gas_giant {
-                1.0
+                0.2
             } else {
                 match self.star.star_type {
                     StarType::WhiteDwarf => 0.5,
@@ -366,8 +366,7 @@ impl<'a> Planet<'a> {
                 self.get_orbital_radius().powf(0.25) as f64
             } else {
                 1.0
-            })
-            * (if gas_giant { 0.2 } else { 1.0 });
+            });
 
         rotation_period = 1.0 / (1.0 / self.get_sun_orbital_period() + 1.0 / rotation_period);
         if self.get_eligible_for_resonance() {

@@ -116,7 +116,6 @@ const RuleBlockContent: Component<{
                                         name,
                                     }))
                                 }
-                                disabled={props.disabled}
                             />
                             <Show when={!props.disabled}>
                                 <DeleteButton

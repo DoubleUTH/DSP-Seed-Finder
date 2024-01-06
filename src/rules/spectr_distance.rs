@@ -1,7 +1,7 @@
 use crate::data::{
     enums::SpectrType,
     rule::{Condition, Rule},
-    vector3::Vector3,
+    star_planets::StarWithPlanets,
 };
 use serde::{Deserialize, Serialize};
 
@@ -23,11 +23,10 @@ impl Rule for RuleSpectrDistance {
         evaluation: &crate::data::rule::Evaluaton,
     ) -> Vec<usize> {
         let mut result: Vec<usize> = vec![];
-        let good_stars: Vec<&Vector3> = galaxy
+        let good_stars: Vec<&StarWithPlanets> = galaxy
             .stars
             .iter()
             .filter(|sp| sp.star.get_spectr() == &self.spectr)
-            .map(|sp| &sp.star.position)
             .collect();
 
         if good_stars.is_empty() {
@@ -41,9 +40,11 @@ impl Rule for RuleSpectrDistance {
             let star = &sp.star;
             let count = good_stars
                 .iter()
-                .filter(|p| {
-                    self.distance_condition
-                        .eval(star.position.distance_from(p) as f32)
+                .filter(|sp2| {
+                    sp2.star.index != star.index
+                        && self
+                            .distance_condition
+                            .eval(star.position.distance_from(&sp2.star.position) as f32)
                 })
                 .count();
             if self.count_condition.eval(count as f32) {

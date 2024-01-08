@@ -9,7 +9,6 @@ const App: ParentComponent = (props) => {
     const [store, setStore] = createStore<Store>(defaultStore)
 
     createEffect(() => {
-        console.log(store.searching)
         if (store.searching) {
             const unload = (ev: Event) => {
                 ev.preventDefault()

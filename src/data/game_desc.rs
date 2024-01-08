@@ -13,6 +13,8 @@ pub struct GameDesc {
     pub resource_multiplier: f32,
     #[serde(skip)]
     pub habitable_count: Cell<i32>,
+    #[serde(default)]
+    pub until: Option<usize>,
 }
 
 impl GameDesc {

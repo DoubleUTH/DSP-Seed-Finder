@@ -3,6 +3,8 @@ import {
     ConditionType,
     GasType,
     RuleType,
+    SpectrType,
+    StarType,
     VeinType,
 } from "./enums"
 
@@ -104,6 +106,40 @@ export const gasNames: Record<GasType, string> = {
     [GasType.Deuterium]: "Deuterium",
 }
 
+export const veinOrder: VeinType[] = [
+    VeinType.Iron,
+    VeinType.Copper,
+    VeinType.Silicium,
+    VeinType.Titanium,
+    VeinType.Stone,
+    VeinType.Coal,
+    VeinType.Oil,
+    VeinType.Fireice,
+    VeinType.Diamond,
+    VeinType.Fractal,
+    VeinType.Crysrub,
+    VeinType.Grat,
+    VeinType.Bamboo,
+    VeinType.Mag,
+]
+
+export const gasOrder: GasType[] = [
+    GasType.Fireice,
+    GasType.Hydrogen,
+    GasType.Deuterium,
+]
+
+export function statVein(vein: Vein): VeinStat {
+    const min = vein.minGroup * vein.minPatch * vein.minAmount
+    const max = vein.maxGroup * vein.maxPatch * vein.maxAmount
+    const avg =
+        ((vein.minGroup + vein.maxGroup) *
+            (vein.minPatch + vein.maxPatch) *
+            (vein.minAmount + vein.maxAmount)) /
+        8
+    return { veinType: vein.veinType, min, max, avg }
+}
+
 export function getSearch({
     count,
     multipler,
@@ -122,8 +158,14 @@ export function getSearch({
     return str ? "?" + str : ""
 }
 
+export const romans = ["I", "II", "III", "IV", "V", "VI"]
+
 export const planetTypes: Record<number, string> = {
     1: "Mariterra",
+    2: "Gas Giant",
+    3: "Gas Giant",
+    4: "Ice Giant",
+    5: "Ice Giant",
     6: "Scorchedia",
     7: "Geloterra",
     8: "Tropicana",
@@ -139,6 +181,7 @@ export const planetTypes: Record<number, string> = {
     18: "Sakura Ocean",
     19: "Cyclonius",
     20: "Maroonfrost",
+    21: "Gas Giant",
     22: "Savanna",
     23: "Onyxtopia",
     24: "Icefrostia",
@@ -173,4 +216,61 @@ export function validateMultiRule(rules: MultiRule[][]): boolean {
             (rs) => rs.length > 0 && rs.every((r) => validateRules(r.rules)),
         )
     )
+}
+
+export function getStarType(star: Star) {
+    if (star.type === StarType.GiantStar) {
+        switch (star.spectr) {
+            case SpectrType.M:
+            case SpectrType.K:
+                return "Red Giant"
+            case SpectrType.G:
+            case SpectrType.F:
+                return "Yellow Giant"
+            case SpectrType.A:
+                return "White Giant"
+            default:
+                return "Blue Giant"
+        }
+    } else if (star.type === StarType.WhiteDwarf) {
+        return "White Dwarf"
+    } else if (star.type === StarType.NeutronStar) {
+        return "Neutron Star"
+    } else if (star.type === StarType.BlackHole) {
+        return "Black Hole"
+    } else {
+        return star.spectr + " type Star"
+    }
+}
+
+export function distanceFromBirth([x, y, z]: Position): float {
+    return Math.sqrt(x * x + y * y + z * z)
+}
+
+export function distanceFrom(
+    [x1, y1, z1]: Position,
+    [x2, y2, z2]: Position,
+): float {
+    const dx = x1 - x2
+    const dy = y1 - y2
+    const dz = z1 - z2
+    return Math.sqrt(dx * dx + dy * dy + dz * dz)
+}
+
+export function nearestDistanceFrom(
+    reference: Position,
+    positions: Position[],
+): float {
+    return positions
+        .map((p) => distanceFrom(reference, p))
+        .reduce((acc, val) => (acc < val ? acc : val), Infinity)
+}
+
+export function furthestDistanceFrom(
+    reference: Position,
+    positions: Position[],
+): float {
+    return positions
+        .map((p) => distanceFrom(reference, p))
+        .reduce((acc, val) => (acc > val ? acc : val), Infinity)
 }

@@ -148,8 +148,13 @@ fn generate_stars<'a>(game_desc: &'a GameDesc) -> Vec<StarWithPlanets<'a>> {
     let num13 = num12 / 2;
 
     let mut stars: Vec<StarWithPlanets> = vec![];
+    let until = if let Some(u) = game_desc.until {
+        u.clamp(0, star_count)
+    } else {
+        star_count
+    };
 
-    for (index, position) in tmp_poses.into_iter().enumerate() {
+    for (index, position) in tmp_poses.into_iter().take(until).enumerate() {
         let seed = rand.next_seed();
         if index == 0 {
             stars.push(StarWithPlanets::new(Rc::new(Star::new(

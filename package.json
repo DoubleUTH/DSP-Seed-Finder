@@ -18,6 +18,8 @@
         "@floating-ui/dom": "^1.5.3",
         "@solidjs/router": "^0.10.5",
         "clsx": "^2.0.0",
+        "exceljs": "^4.4.0",
+        "jszip": "^3.10.1",
         "nanoid": "^5.0.4",
         "solid-icons": "^1.1.0",
         "solid-js": "^1.8.7",

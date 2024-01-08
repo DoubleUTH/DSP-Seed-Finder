@@ -1,18 +1,19 @@
 import { createStore } from "solid-js/store"
+import { GasType, OceanType, PlanetType, StarType, VeinType } from "../enums"
 import {
-    GasType,
-    OceanType,
-    PlanetType,
-    SpectrType,
-    StarType,
-    VeinType,
-} from "../enums"
-import {
+    distanceFromBirth,
     formatNumber,
+    furthestDistanceFrom,
     gasNames,
+    gasOrder,
+    getStarType,
+    nearestDistanceFrom,
     planetTypes,
+    romans,
+    statVein,
     toPrecision,
     veinNames,
+    veinOrder,
 } from "../util"
 import styles from "./StarView.module.css"
 import { Component, Show, For, createMemo } from "solid-js"
@@ -20,92 +21,6 @@ import { IoChevronDown } from "solid-icons/io"
 import clsx from "clsx"
 import { A } from "@solidjs/router"
 import Tooltip from "../components/Tooltip"
-
-function distanceFromBirth([x, y, z]: Position): float {
-    return Math.sqrt(x * x + y * y + z * z)
-}
-
-function distanceFrom([x1, y1, z1]: Position, [x2, y2, z2]: Position): float {
-    const dx = x1 - x2
-    const dy = y1 - y2
-    const dz = z1 - z2
-    return Math.sqrt(dx * dx + dy * dy + dz * dz)
-}
-
-function closestDistanceFrom(
-    reference: Position,
-    positions: Position[],
-): float {
-    return positions
-        .map((p) => distanceFrom(reference, p))
-        .reduce((acc, val) => (acc < val ? acc : val), Infinity)
-}
-
-function type(star: Star) {
-    if (star.type === StarType.GiantStar) {
-        switch (star.spectr) {
-            case SpectrType.M:
-            case SpectrType.K:
-                return "Red Giant"
-            case SpectrType.G:
-            case SpectrType.F:
-                return "Yellow Giant"
-            case SpectrType.A:
-                return "White Giant"
-            default:
-                return "Blue Giant"
-        }
-    } else if (star.type === StarType.WhiteDwarf) {
-        return "White Dwarf"
-    } else if (star.type === StarType.NeutronStar) {
-        return "Neutron Star"
-    } else if (star.type === StarType.BlackHole) {
-        return "Black Hole"
-    } else {
-        return star.spectr + " type Star"
-    }
-}
-
-const gasOrder: GasType[] = [
-    GasType.Fireice,
-    GasType.Hydrogen,
-    GasType.Deuterium,
-]
-
-const veinOrder: VeinType[] = [
-    VeinType.Iron,
-    VeinType.Copper,
-    VeinType.Silicium,
-    VeinType.Titanium,
-    VeinType.Stone,
-    VeinType.Coal,
-    VeinType.Oil,
-    VeinType.Fireice,
-    VeinType.Diamond,
-    VeinType.Fractal,
-    VeinType.Crysrub,
-    VeinType.Grat,
-    VeinType.Bamboo,
-    VeinType.Mag,
-]
-
-type VeinStat = {
-    veinType: VeinType
-    min: integer
-    max: integer
-    avg: float
-}
-
-function statVein(vein: Vein): VeinStat {
-    const min = vein.minGroup * vein.minPatch * vein.minAmount
-    const max = vein.maxGroup * vein.maxPatch * vein.maxAmount
-    const avg =
-        ((vein.minGroup + vein.maxGroup) *
-            (vein.minPatch + vein.maxPatch) *
-            (vein.minAmount + vein.maxAmount)) /
-        8
-    return { veinType: vein.veinType, min, max, avg }
-}
 
 function combineVeins(star: Star): VeinStat[] {
     const veins: Record<VeinType, VeinStat> = {} as any
@@ -205,8 +120,6 @@ function nearbyStars(
     return result
 }
 
-const Romans = ["I", "II", "III", "IV", "V", "VI"]
-
 const Expand: Component<{ expand: boolean; toggle: () => void }> = (props) => (
     <div
         class={clsx(styles.expand, props.expand && styles.expanded)}
@@ -224,7 +137,7 @@ const StarDetail: Component<{
     <>
         <div class={styles.row}>
             <div class={styles.field}>Type</div>
-            <div class={styles.value}>{type(props.star)}</div>
+            <div class={styles.value}>{getStarType(props.star)}</div>
         </div>
         <div class={styles.row}>
             <div class={styles.field}>Spectral Class</div>
@@ -245,12 +158,30 @@ const StarDetail: Component<{
         <Show when={props.positions}>
             <div class={styles.row}>
                 <div class={styles.field}>
-                    Distance from{" "}
+                    Distance from nearest{" "}
                     <Tooltip text="Black Hole / Neutron Star">X star</Tooltip>
                 </div>
                 <div class={styles.value}>
                     {formatNumber(
-                        closestDistanceFrom(
+                        nearestDistanceFrom(
+                            props.star.position,
+                            props.positions!,
+                        ),
+                        1,
+                    )}{" "}
+                    ly
+                </div>
+            </div>
+        </Show>
+        <Show when={props.positions}>
+            <div class={styles.row}>
+                <div class={styles.field}>
+                    Distance from furthest{" "}
+                    <Tooltip text="Black Hole / Neutron Star">X star</Tooltip>
+                </div>
+                <div class={styles.value}>
+                    {formatNumber(
+                        furthestDistanceFrom(
                             props.star.position,
                             props.positions!,
                         ),
@@ -361,7 +292,7 @@ const NearbyStar: Component<{
             <span class={styles.index}>#{props.star.index + 1}</span>
         </div>
         <div>
-            <span class={styles.nearbyType}>{type(props.star)}</span>
+            <span class={styles.nearbyType}>{getStarType(props.star)}</span>
             <span class={styles.nearbyDistance}>
                 {formatNumber(props.distance, 1)} ly
             </span>
@@ -377,7 +308,7 @@ const PlanetView: Component<{ star: Star; planet: Planet }> = (props) => {
     return (
         <div class={styles.planet}>
             <div class={styles.planetName}>
-                {props.star.name} {Romans[props.planet.index]}
+                {props.star.name} {romans[props.planet.index]}
             </div>
             <Show when={isGas()}>
                 <div class={styles.row}>

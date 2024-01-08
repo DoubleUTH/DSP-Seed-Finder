@@ -5,5 +5,11 @@
         "lib": ["ESNext", "WebWorker"],
         "types": ["vite/client"]
     },
-    "include": ["../**/*.worker.ts"]
+    "include": [
+        "../**/*.worker.ts",
+        "../**/util.ts",
+        "../**/enums.ts",
+        "../**/types.d.ts",
+        "../**/exporter/common.ts"
+    ]
 }

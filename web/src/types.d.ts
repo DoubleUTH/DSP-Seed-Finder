@@ -82,6 +82,13 @@ declare global {
         maxAmount: integer
     }
 
+    declare interface VeinStat {
+        veinType: VeinType
+        min: integer
+        max: integer
+        avg: float
+    }
+
     declare namespace Condition {
         export type Eq = { type: ConditionType.Eq; value: float }
         export type Neq = { type: ConditionType.Neq; value: float }
@@ -301,5 +308,24 @@ declare global {
 
     declare interface MultiProgressResult {
         seed: integer
+    }
+
+    declare interface Exporter {
+        (options: ExportOptions): Promise<Blob>
+    }
+
+    declare interface ExportOptions {
+        format: "csv" | "xlsx"
+        concurrency: integer
+        starCount?: integer
+        resourceMultiplier?: float
+        exportAllStars: boolean // always true for galaxy finder
+        results: FindResult[]
+    }
+
+    declare interface ExportData {
+        seed: integer
+        stars: any[]
+        planets: any[]
     }
 }

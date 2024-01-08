@@ -62,12 +62,13 @@ function createWorkbook() {
     }
 }
 
-export async function browserExportGalaxies(options: ExportOptions) {
-    const { format, concurrency, exportAllStars, results } = options
+export const browserExportGalaxies: Exporter = async (options) => {
+    const { format, concurrency, exportAllStars, results, onProgress } = options
     const emitter = new TinyEmitter()
     const workbook = createWorkbook()
     const threads = Math.min(concurrency, results.length)
     let index = 0
+    let count = 0
     let running = threads
     for (let i = 0; i < threads; ++i) {
         const worker = new ExporterWorker()
@@ -89,14 +90,13 @@ export async function browserExportGalaxies(options: ExportOptions) {
         }
         worker.addEventListener("message", (ev) => {
             workbook.add(ev.data)
+            onProgress(++count)
             sendNext()
         })
         sendNext()
     }
-    const blob = await new Promise<Blob>((resolve) => {
-        emitter.once("end", () => {
-            workbook.blob(format, results).then(resolve)
-        })
+    await new Promise<void>((resolve) => {
+        emitter.once("end", resolve)
     })
-    return blob
+    return () => workbook.blob(format, results)
 }

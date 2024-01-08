@@ -16,7 +16,7 @@ function ProfilesModal(props: {
     })
 
     return (
-        <Modal visible={props.visible} onClose={props.onClose}>
+        <Modal visible={props.visible} onClose={props.onClose} backdropDismiss>
             <div class={styles.title}>Profiles</div>
             <div class={styles.profiles}>
                 <Show

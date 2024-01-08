@@ -55,7 +55,11 @@ const ProfileManager: Component<{
                     Delete
                 </Button>
             </Show>
-            <Modal visible={clearModal()} onClose={() => setClearModal(false)}>
+            <Modal
+                visible={clearModal()}
+                onClose={() => setClearModal(false)}
+                backdropDismiss
+            >
                 <div class={styles.modalTitle}>Are you sure?</div>
                 <div class={styles.warnText}>
                     Do you really want to clear all progress? This cannot be
@@ -79,6 +83,7 @@ const ProfileManager: Component<{
             <Modal
                 visible={deleteModal()}
                 onClose={() => setDeleteModal(false)}
+                backdropDismiss
             >
                 <div class={styles.modalTitle}>Are you sure?</div>
                 <div class={styles.warnText}>
@@ -103,7 +108,11 @@ const ProfileManager: Component<{
                     </Button>
                 </div>
             </Modal>
-            <Modal visible={newModal()} onClose={() => setNewModal(false)}>
+            <Modal
+                visible={newModal()}
+                onClose={() => setNewModal(false)}
+                backdropDismiss
+            >
                 <div class={styles.modalTitle}>Are you sure?</div>
                 <div class={styles.warnText}>
                     Do you really want to create a new profile? All unsaved

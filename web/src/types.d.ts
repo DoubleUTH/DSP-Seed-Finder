@@ -311,16 +311,17 @@ declare global {
     }
 
     declare interface Exporter {
-        (options: ExportOptions): Promise<Blob>
+        (options: ExportOptions): Promise<() => Promise<Blob>>
     }
 
     declare interface ExportOptions {
         format: "csv" | "xlsx"
         concurrency: integer
-        starCount?: integer
-        resourceMultiplier?: float
+        starCount: integer
+        resourceMultiplier: float
         exportAllStars: boolean // always true for galaxy finder
         results: FindResult[]
+        onProgress: (current: integer) => void
     }
 
     declare interface ExportData {

@@ -254,6 +254,24 @@ export async function getProfileResult(
     })
 }
 
+export async function getProfileResultRange(
+    id: string,
+    start: number,
+    end: number,
+): Promise<ProgressResult[]> {
+    const db = await openProfileDatabase(id)
+    const txn = db.transaction([STARS], "readonly")
+    const store = txn.objectStore(STARS)
+    const req = store.getAll(IDBKeyRange.bound(start, end))
+    return new Promise((resolve, reject) => {
+        txn.onerror = reject
+        req.onerror = reject
+        req.onsuccess = () => {
+            resolve(req.result)
+        }
+    })
+}
+
 export async function listMultiProfiles(): Promise<ProfileInfo[]> {
     const db = await openMultiInfoDatabase()
     const txn = db.transaction([INFO], "readonly")
@@ -430,5 +448,23 @@ export async function getMultiProfileResult(
             resolve(results)
         }
         cursor.onerror = reject
+    })
+}
+
+export async function getMultiProfileResultRange(
+    id: string,
+    start: number,
+    end: number,
+): Promise<MultiProgressResult[]> {
+    const db = await openMultiProfileDatabase(id)
+    const txn = db.transaction([GALAXIES], "readonly")
+    const store = txn.objectStore(GALAXIES)
+    const req = store.getAll(IDBKeyRange.bound(start, end))
+    return new Promise((resolve, reject) => {
+        txn.onerror = reject
+        req.onerror = reject
+        req.onsuccess = () => {
+            resolve(req.result)
+        }
     })
 }

@@ -199,7 +199,11 @@ const MultiRuleEditor: Component<{
             </Show>
             <Show when={editing()}>
                 {(editing) => (
-                    <Modal visible onClose={() => setEditing(null)}>
+                    <Modal
+                        visible
+                        onClose={() => setEditing(null)}
+                        backdropDismiss
+                    >
                         <div class={styles.ruleBuilderTitle}>Ruleset</div>
                         <RuleEditor
                             class={styles.ruleEditor}

@@ -185,7 +185,7 @@ const SearchResult: Component<{
                 </Index>
             </div>
             <Show when={!!active()}>
-                <Modal visible onClose={() => setActive(null)}>
+                <Modal visible onClose={() => setActive(null)} backdropDismiss>
                     <StarViewModal
                         seed={active()!.seed}
                         index={active()!.index}

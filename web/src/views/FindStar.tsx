@@ -43,6 +43,7 @@ import ProgressEditor from "../partials/ProgressEditor"
 import ProfileManager from "../partials/ProfileManager"
 import Pagination from "../components/Pagination"
 import { useStore } from "../store"
+import ExportModal from "../partials/ExportModal"
 
 const defaultProgress: () => ProfileProgress = () => ({
     id: "",
@@ -208,6 +209,7 @@ const FindStar: Component = () => {
         createStore<ProfileProgress>(defaultProgress())
     const [nativeMode, setNativeMode] = createSignal(false)
     const [profileModal, setProfileModal] = createSignal(false)
+    const [exportModal, setExportModal] = createSignal(false)
     const [store, setStore] = useStore()
     const [currentPage, setCurrentPage] = createSignal(1)
     const [tick, setTick] = createSignal(0)
@@ -444,6 +446,9 @@ const FindStar: Component = () => {
                         />
                     </Show>
                 </div>
+                <Show when={hasProgress()}>
+                    <Button onClick={() => setExportModal(true)}>Export</Button>
+                </Show>
                 <Switch
                     fallback={
                         <Button
@@ -486,6 +491,15 @@ const FindStar: Component = () => {
                 onClose={() => setProfileModal(false)}
                 onSelect={onSelectProfile}
                 loadProfiles={listProfiles}
+            />
+            <ExportModal
+                visible={exportModal()}
+                onClose={() => setExportModal(false)}
+                mode="star"
+                id={profile()?.id || ""}
+                name={profile()?.name || ""}
+                starCount={progress.starCount}
+                resourceMultiplier={progress.resourceMultiplier}
             />
         </div>
     )

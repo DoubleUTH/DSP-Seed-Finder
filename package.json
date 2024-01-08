@@ -7,7 +7,7 @@
     "scripts": {
         "dev": "vite",
         "deploy": "node -e \"require('fs').copyFileSync('dist/index.html', 'dist/404.html')\" && gh-pages -d dist",
-        "preview:web": "vite preview",
+        "preview:web": "vite preview --port 5173",
         "preview:native": ".\\target\\release\\dsp_seed.exe",
         "build:web": "vite build",
         "build:browser:dev": "wasm-pack build --target web --dev",

@@ -262,7 +262,7 @@ export async function getProfileResultRange(
     const db = await openProfileDatabase(id)
     const txn = db.transaction([STARS], "readonly")
     const store = txn.objectStore(STARS)
-    const req = store.getAll(IDBKeyRange.bound(start, end))
+    const req = store.getAll(IDBKeyRange.bound(start * 100, end * 100 + 99))
     return new Promise((resolve, reject) => {
         txn.onerror = reject
         req.onerror = reject

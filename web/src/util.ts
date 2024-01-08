@@ -272,5 +272,5 @@ export function furthestDistanceFrom(
 ): float {
     return positions
         .map((p) => distanceFrom(reference, p))
-        .reduce((acc, val) => (acc > val ? acc : val), Infinity)
+        .reduce((acc, val) => (acc > val ? acc : val), -Infinity)
 }

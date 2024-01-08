@@ -9,6 +9,9 @@ export default defineConfig({
         outDir: path.resolve(process.cwd(), "dist"),
         emptyOutDir: true,
     },
+    worker: {
+        format: "es",
+    },
     plugins: [solid()],
     resolve: {
         alias: [

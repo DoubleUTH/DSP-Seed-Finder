@@ -41,6 +41,7 @@ import ProfilesModal from "../partials/ProfilesModal"
 import MultiRuleEditor from "../partials/MultiRuleEditor"
 import { ConditionType } from "../enums"
 import { useStore } from "../store"
+import ExportModal from "../partials/ExportModal"
 
 const PAGE_SIZE = 100
 
@@ -141,6 +142,7 @@ const FindGalaxy: Component = () => {
         createStore<MultiProfileProgress>(defaultProgress())
     const [nativeMode, setNativeMode] = createSignal(false)
     const [profileModal, setProfileModal] = createSignal(false)
+    const [exportModal, setExportModal] = createSignal(false)
     const [store, setStore] = useStore()
     const [currentPage, setCurrentPage] = createSignal(1)
     const [tick, setTick] = createSignal(0)
@@ -382,6 +384,9 @@ const FindGalaxy: Component = () => {
                         />
                     </Show>
                 </div>
+                <Show when={hasProgress()}>
+                    <Button onClick={() => setExportModal(true)}>Export</Button>
+                </Show>
                 <Switch
                     fallback={
                         <Button
@@ -424,6 +429,15 @@ const FindGalaxy: Component = () => {
                 onClose={() => setProfileModal(false)}
                 onSelect={onSelectProfile}
                 loadProfiles={listMultiProfiles}
+            />
+            <ExportModal
+                visible={exportModal()}
+                onClose={() => setExportModal(false)}
+                mode="galaxy"
+                id={profile()?.id || ""}
+                name={profile()?.name || ""}
+                starCount={progress.starCount}
+                resourceMultiplier={progress.resourceMultiplier}
             />
         </div>
     )

@@ -311,7 +311,7 @@ declare global {
     }
 
     declare interface Exporter {
-        (options: ExportOptions): Promise<() => Promise<Blob>>
+        (options: ExportOptions): Promise<Blob | null>
     }
 
     declare interface ExportOptions {
@@ -321,7 +321,8 @@ declare global {
         resourceMultiplier: float
         exportAllStars: boolean // always true for galaxy finder
         results: FindResult[]
-        onProgress: (current: integer) => void
+        onProgress: (current: integer) => boolean
+        onGenerate: () => void
     }
 
     declare interface ExportData {

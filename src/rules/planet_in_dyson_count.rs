@@ -28,7 +28,7 @@ impl Rule for RulePlanetInDysonCount {
                 .iter()
                 .filter(|planet| {
                     (self.include_giant || !planet.is_gas_giant())
-                        && planet.get_sun_distance() * 1600.0 < dyson_radius
+                        && planet.get_sun_distance() * 40000.0 < dyson_radius
                 })
                 .count();
             if self.condition.eval(targets as f32) {

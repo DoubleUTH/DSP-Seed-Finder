@@ -304,9 +304,8 @@ impl<'a> StarWithPlanets<'a> {
                     _ => (1, P_GASES[0]),
                 }
             };
-            let mut num8 = 0;
-            let mut num9 = 0;
-            let mut orbit_around: usize = 0;
+            let mut satellite_count = 0;
+            let mut orbit_around: Option<usize> = None;
             let mut num10: usize = 1;
             let mut orbits: Vec<(usize, usize)> = vec![];
             for index in 0..planet_count as usize {
@@ -315,8 +314,7 @@ impl<'a> StarWithPlanets<'a> {
                 let num11 = rand2.next_f64();
                 let num12 = rand2.next_f64();
                 let mut gas_giant = false;
-                if orbit_around == 0 {
-                    num8 += 1;
+                if orbit_around.is_none() {
                     if index < planet_count - 1 && num11 < p_gas[index as usize] {
                         gas_giant = true;
                         if num10 < 3 {
@@ -345,33 +343,37 @@ impl<'a> StarWithPlanets<'a> {
                         gas_giant = true;
                     }
                 } else {
-                    num9 += 1;
+                    satellite_count += 1;
                 }
                 let planet = Planet::new(
                     self.star.clone(),
                     index,
-                    if orbit_around == 0 { num10 } else { num9 },
+                    if orbit_around.is_none() {
+                        num10
+                    } else {
+                        satellite_count
+                    },
                     gas_giant,
                     info_seed,
                     gen_seed,
                 );
-                if orbit_around > 0 {
-                    orbits.push((index, orbit_around - 1))
+                if let Some(around) = orbit_around {
+                    orbits.push((index, around))
                 }
                 num10 += 1;
                 if gas_giant {
-                    orbit_around = num8;
-                    num9 = 0;
+                    orbit_around = Some(index);
+                    satellite_count = 0;
                 }
-                if num9 >= 1 && num12 < 0.8 {
-                    orbit_around = 0;
-                    num9 = 0;
+                if satellite_count >= 1 && num12 < 0.8 {
+                    orbit_around = None;
+                    satellite_count = 0;
                 }
                 planets.push(planet);
             }
             for (index, orbit_index) in orbits {
-                let planet = &planets[index as usize];
-                let orbit_planet = &planets[orbit_index as usize];
+                let planet = &planets[index];
+                let orbit_planet = &planets[orbit_index];
                 planet.orbit_around.replace(Some(orbit_planet));
             }
         }

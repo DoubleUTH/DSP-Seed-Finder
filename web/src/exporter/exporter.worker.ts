@@ -9,7 +9,7 @@ import {
     statVein,
     veinOrder,
 } from "../util"
-import { GasType, OceanType, VeinType } from "../enums"
+import { GasType, OceanType, StarType, VeinType } from "../enums"
 import {
     PlanetField,
     StarField,
@@ -97,7 +97,13 @@ function normalizeVein(vein: VeinStat): VeinStat {
 
 function constructStarData(galaxy: Galaxy, star: Star) {
     const output: any[] = []
-    const positions = galaxy.stars.map((x) => x.position)
+    const positions = galaxy.stars
+        .filter(
+            (x) =>
+                x.type === StarType.BlackHole ||
+                x.type === StarType.NeutronStar,
+        )
+        .map((x) => x.position)
     for (const field of starFieldsOrder) {
         switch (field) {
             case StarField.DistanceFromNearestX:

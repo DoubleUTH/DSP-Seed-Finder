@@ -32,7 +32,6 @@ const Header: Component = () => {
                     href="https://github.com/DoubleUTH/DSP-Seed-Finder"
                     target="_blank"
                     class={styles.icon}
-                    onClick={() => setStore("settings", "darkMode", (x) => !x)}
                 >
                     <IoLogoGithub />
                 </a>

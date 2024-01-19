@@ -21,14 +21,14 @@ impl Default for StarType {
 #[repr(i32)]
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Deserialize, Serialize)]
 pub enum SpectrType {
-    M,
-    K,
-    G,
-    F,
-    A,
-    B,
-    O,
-    X,
+    M = -4,
+    K = -3,
+    G = -2,
+    F = -1,
+    A = 0,
+    B = 1,
+    O = 2,
+    X = 3,
 }
 
 #[allow(dead_code)]

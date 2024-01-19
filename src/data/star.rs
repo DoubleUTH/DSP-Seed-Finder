@@ -5,6 +5,7 @@ use super::random::DspRandom;
 use super::vector3::Vector3;
 use serde::ser::{Serialize, SerializeStruct, Serializer};
 use std::cell::{RefCell, UnsafeCell};
+use std::f64::consts::PI;
 
 #[derive(Debug)]
 pub struct Star<'a> {
@@ -272,10 +273,13 @@ impl<'a> Star<'a> {
     });
 
     lazy_getter_ref!(self, get_spectr, SpectrType, {
-        if self.get_age() >= 1.0 {
+        if matches!(
+            self.star_type,
+            StarType::WhiteDwarf | StarType::NeutronStar | StarType::BlackHole
+        ) {
             SpectrType::X
         } else {
-            unsafe { ::std::mem::transmute((self.get_class_factor() + 4.0).round() as i32) }
+            unsafe { ::std::mem::transmute(self.get_class_factor().round() as i32) }
         }
     });
 
@@ -404,7 +408,6 @@ impl Serialize for Star<'_> {
     }
 }
 
-const PI: f64 = 3.14159265358979;
 fn rand_normal(average_value: f32, standard_deviation: f32, r1: f64, r2: f64) -> f32 {
     average_value
         + standard_deviation * ((-2.0 * (1.0 - r1).ln()).sqrt() * (2.0 * PI * r2).sin()) as f32

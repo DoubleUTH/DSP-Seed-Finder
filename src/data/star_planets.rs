@@ -314,8 +314,9 @@ impl<'a> StarWithPlanets<'a> {
                 let num11 = rand2.next_f64();
                 let num12 = rand2.next_f64();
                 let mut gas_giant = false;
+
                 if orbit_around.is_none() {
-                    if index < planet_count - 1 && num11 < p_gas[index as usize] {
+                    if index < planet_count - 1 && num11 < p_gas[index] {
                         gas_giant = true;
                         if num10 < 3 {
                             num10 = 3;

@@ -6,6 +6,7 @@ use super::theme_proto::{ThemeProto, THEME_PROTOS};
 use super::vein::Vein;
 use serde::ser::{Serialize, SerializeStruct, Serializer};
 use std::cell::{RefCell, UnsafeCell};
+use std::f64::consts::PI;
 use std::rc::Rc;
 
 #[derive(Debug)]
@@ -301,10 +302,11 @@ impl<'a> Planet<'a> {
     });
 
     lazy_getter!(self, get_orbital_period, f64, {
+        const FOUR_PI_SQUARE: f64 = 4.0 * PI * PI;
         let f1 = self.get_orbital_radius() as f64;
-        (39.4784176043574 * f1 * f1 * f1
+        (FOUR_PI_SQUARE * f1 * f1 * f1
             / (if self.has_orbit_around() {
-                1.08308421068537e-08
+                1.08308421068537e-08 // cannot figure out what this is, probably related to Kepler's third law
             } else {
                 1.35385519905204e-06 * (self.star.get_mass() as f64)
             }))
@@ -329,15 +331,14 @@ impl<'a> Planet<'a> {
             }
         } else {
             obliquity = (self.obliquity_scale * 60.0) as f32;
-        }
-
-        if self.get_eligible_for_resonance() {
-            if self.rotation_param > 0.96 {
-                obliquity *= 0.01;
-            } else if self.rotation_param > 0.93 {
-                obliquity *= 0.1;
-            } else if self.rotation_param > 0.9 {
-                obliquity *= 0.2;
+            if self.get_eligible_for_resonance() {
+                if self.rotation_param > 0.96 {
+                    obliquity *= 0.01;
+                } else if self.rotation_param > 0.93 {
+                    obliquity *= 0.1;
+                } else if self.rotation_param > 0.9 {
+                    obliquity *= 0.2;
+                }
             }
         }
 
@@ -346,10 +347,20 @@ impl<'a> Planet<'a> {
 
     lazy_getter!(self, get_eligible_for_resonance, bool, {
         let gas_giant = self.is_gas_giant();
-        self.orbit_around.borrow().is_none() && self.orbit_index <= 4 && !gas_giant
+        !self.has_orbit_around() && self.orbit_index <= 4 && !gas_giant
     });
 
     lazy_getter!(self, get_rotation_period, f64, {
+        if self.get_eligible_for_resonance() {
+            if self.rotation_param > 0.96 {
+                return self.get_orbital_period();
+            } else if self.rotation_param > 0.93 {
+                return self.get_orbital_period() * 0.5;
+            } else if self.rotation_param > 0.9 {
+                return self.get_orbital_period() * 0.25;
+            }
+        }
+
         let gas_giant = self.is_gas_giant();
         let mut rotation_period = self.rotation_scale
             * (if gas_giant {
@@ -362,22 +373,13 @@ impl<'a> Planet<'a> {
                     _ => 1.0,
                 }
             })
-            * (if self.orbit_around.borrow().is_none() {
-                self.get_orbital_radius().powf(0.25) as f64
-            } else {
+            * (if self.has_orbit_around() {
                 1.0
+            } else {
+                self.get_orbital_radius().powf(0.25) as f64
             });
 
         rotation_period = 1.0 / (1.0 / self.get_sun_orbital_period() + 1.0 / rotation_period);
-        if self.get_eligible_for_resonance() {
-            if self.rotation_param > 0.96 {
-                rotation_period = self.get_orbital_period();
-            } else if self.rotation_param > 0.93 {
-                rotation_period = self.get_orbital_period() * 0.5;
-            } else if self.rotation_param > 0.9 {
-                rotation_period = self.get_orbital_period() * 0.25;
-            }
-        }
 
         if self.rotation_param > 0.85 && self.rotation_param <= 0.9 {
             rotation_period = -rotation_period;
@@ -550,7 +552,7 @@ impl<'a> Planet<'a> {
         let is_rare_resource = self.star.game_desc.is_rare_resource();
         let mut f = self.star.get_resource_coef();
         if theme_proto.distribute == ThemeDistribute::Birth {
-            f *= 0.6666667;
+            f *= 2.0 / 3.0;
         } else if is_rare_resource {
             if f > 1.0 {
                 f = f.powf(0.8)

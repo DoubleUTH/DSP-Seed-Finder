@@ -46,8 +46,8 @@ pub fn random_name<'a>(
 fn random_giant_star_name_with_constellation_alpha(seed: i32) -> String {
     let mut rand = DspRandom::new(seed);
     let num1 = rand.next_usize();
-    let num2 = rand.next_i32(15, 26);
-    let num3 = rand.next_i32(0, 26);
+    let num2 = rand.next_i32(11) + 15;
+    let num3 = rand.next_i32(26);
     let index = num1 % CONSTELLATIONS.len();
     (130 + num2 + num3).to_string() + " " + CONSTELLATIONS[index]
 }
@@ -55,8 +55,8 @@ fn random_giant_star_name_with_constellation_alpha(seed: i32) -> String {
 fn random_giant_star_name_with_format(seed: i32) -> String {
     let mut rand = DspRandom::new(seed);
     let num1 = rand.next_usize();
-    let num2 = rand.next_i32(0, 10000);
-    let num3 = rand.next_i32(0, 100);
+    let num2 = rand.next_i32(10000);
+    let num3 = rand.next_i32(100);
     let index = num1 % GIANT_NAME_FORMATS.len();
     GIANT_NAME_FORMATS[index](num2, num3)
 }
@@ -64,9 +64,9 @@ fn random_giant_star_name_with_format(seed: i32) -> String {
 fn random_neutron_star_name_with_format(seed: i32) -> String {
     let mut rand = DspRandom::new(seed);
     let num1 = rand.next_usize();
-    let num2 = rand.next_i32(0, 24);
-    let num3 = rand.next_i32(0, 60);
-    let num4 = rand.next_i32(0, 60);
+    let num2 = rand.next_i32(24);
+    let num3 = rand.next_i32(60);
+    let num4 = rand.next_i32(60);
     let index = num1 % NEUTRON_STAR_NAME_FORMATS.len();
     NEUTRON_STAR_NAME_FORMATS[index](num2, num3, num4)
 }
@@ -74,9 +74,9 @@ fn random_neutron_star_name_with_format(seed: i32) -> String {
 fn random_black_hole_name_with_format(seed: i32) -> String {
     let mut rand = DspRandom::new(seed);
     let num1 = rand.next_usize();
-    let num2 = rand.next_i32(0, 24);
-    let num3 = rand.next_i32(0, 60);
-    let num4 = rand.next_i32(0, 60);
+    let num2 = rand.next_i32(24);
+    let num3 = rand.next_i32(60);
+    let num4 = rand.next_i32(60);
     let index = num1 % BLACK_HOLE_NAME_FORMATS.len();
     BLACK_HOLE_NAME_FORMATS[index](num2, num3, num4)
 }
@@ -104,7 +104,7 @@ fn random_star_name_with_constellation_alpha(seed: i32) -> String {
 fn random_star_name_with_constellation_number(seed: i32) -> String {
     let mut rand = DspRandom::new(seed);
     let num1 = rand.next_usize();
-    let num2 = rand.next_i32(27, 75);
+    let num2 = rand.next_i32(48) + 27;
     let index = num1 % CONSTELLATIONS.len();
     num2.to_string() + " " + CONSTELLATIONS[index]
 }

@@ -431,8 +431,17 @@ const EditXDistance: Component<{
                 emptyValue={-1}
                 error={condition().value <= 0}
                 disabled={props.disabled}
-            />
-            ly away from any black hole / neutron star.
+            />{" "}
+            ly away from{" "}
+            <Select
+                class={styles.selectAllOrAny}
+                value={props.value.all}
+                onChange={(all) => props.onChange({ ...props.value, all })}
+                options={[false, true]}
+                getLabel={(all) => (all ? "all" : "any")}
+                disabled={props.disabled}
+            />{" "}
+            black hole / neutron star{props.value.all ? "s" : ""}.
         </>
     )
 }
@@ -884,6 +893,7 @@ const rules: SimpleRule[] = [
             type: ConditionType.Lte,
             value: 0,
         },
+        all: false,
     },
     {
         type: RuleType.GasCount,

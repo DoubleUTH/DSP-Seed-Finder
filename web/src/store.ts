@@ -2,23 +2,24 @@ import { createContext, useContext } from "solid-js"
 import { SetStoreFunction } from "solid-js/store"
 import { defaultResourceMultipler, defaultStarCount } from "./util"
 
-const localStorageKey = "dsp-seed-finder-theme";
+const localStorageKey = "dsp-seed-finder-theme"
 const initializeTheme = () => {
-    let theme;
+    let theme
 
     if (typeof localStorage !== "undefined" && localStorage.getItem("theme")) {
-        theme = localStorage.getItem(localStorageKey) === "dark" ? "dark" : "light";
+        theme =
+            localStorage.getItem(localStorageKey) === "dark" ? "dark" : "light"
     } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-        theme = "dark";
+        theme = "dark"
     } else {
-        theme = "light";
+        theme = "light"
     }
-    return theme;
+    return theme
 }
 
 export const setDarkMode = (isDarkMode: boolean) => {
     if (typeof localStorage !== "undefined") {
-        localStorage.setItem(localStorageKey, isDarkMode ? "dark" : "light");
+        localStorage.setItem(localStorageKey, isDarkMode ? "dark" : "light")
     }
 }
 

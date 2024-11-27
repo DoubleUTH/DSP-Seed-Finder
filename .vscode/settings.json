@@ -34,6 +34,7 @@
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "[yaml]": {
+        "editor.tabSize": 2,
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "[css]": {

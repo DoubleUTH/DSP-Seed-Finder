@@ -1,5 +1,5 @@
 import styles from "./Header.module.css"
-import { setDarkMode, useStore } from "../store"
+import { toggleDarkMode, useStore } from "../store"
 import { A } from "@solidjs/router"
 import { IoContrast, IoLogoGithub } from "solid-icons/io"
 import { Component } from "solid-js"
@@ -38,8 +38,7 @@ const Header: Component = () => {
                 <div
                     class={styles.icon}
                     onClick={() => {
-                        setDarkMode(!store.settings.darkMode)
-                        setStore("settings", "darkMode", (x) => !x)
+                        setStore("settings", "darkMode", toggleDarkMode)
                     }}
                 >
                     <IoContrast />

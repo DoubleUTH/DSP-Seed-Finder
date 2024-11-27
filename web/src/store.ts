@@ -3,29 +3,22 @@ import { SetStoreFunction } from "solid-js/store"
 import { defaultResourceMultipler, defaultStarCount } from "./util"
 
 const localStorageKey = "dsp-seed-finder-theme"
-const initializeTheme = () => {
-    let theme
 
-    if (typeof localStorage !== "undefined" && localStorage.getItem("theme")) {
-        theme =
-            localStorage.getItem(localStorageKey) === "dark" ? "dark" : "light"
-    } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-        theme = "dark"
-    } else {
-        theme = "light"
-    }
-    return theme
+function isInitialDarkMode() {
+    const value = localStorage.getItem(localStorageKey)
+    if (value != null) return value === "dark"
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
 }
 
-export const setDarkMode = (isDarkMode: boolean) => {
-    if (typeof localStorage !== "undefined") {
-        localStorage.setItem(localStorageKey, isDarkMode ? "dark" : "light")
-    }
+export function toggleDarkMode(wasDarkMode: boolean) {
+    const isDarkMode = !wasDarkMode
+    localStorage.setItem(localStorageKey, isDarkMode ? "dark" : "light")
+    return isDarkMode
 }
 
 export const defaultStore: Store = {
     settings: {
-        darkMode: initializeTheme() === "dark",
+        darkMode: isInitialDarkMode(),
         view: {
             starCount: defaultStarCount,
             resourceMultipler: defaultResourceMultipler,

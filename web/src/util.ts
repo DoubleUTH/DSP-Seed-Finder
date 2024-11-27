@@ -42,6 +42,12 @@ function fixRule(rule: SimpleRule): SimpleRule {
             condition: modifyCondition(rule.condition, (value) => value * 25e3),
         }
     }
+    if (rule.type === RuleType.XDistance) {
+        return {
+            ...rule,
+            all: !!rule.all,
+        }
+    }
     return rule
 }
 

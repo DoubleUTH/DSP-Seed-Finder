@@ -435,7 +435,7 @@ const EditXDistance: Component<{
             ly away from{" "}
             <Select
                 class={styles.selectAllOrAny}
-                value={props.value.all}
+                value={!!props.value.all}
                 onChange={(all) => props.onChange({ ...props.value, all })}
                 options={[false, true]}
                 getLabel={(all) => (all ? "all" : "any")}

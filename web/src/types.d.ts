@@ -166,7 +166,7 @@ declare global {
         }
         export type XDistance = {
             type: RuleType.XDistance
-            all: boolean
+            all?: boolean
             condition: Condition
         }
         export type SpectrDistance = {

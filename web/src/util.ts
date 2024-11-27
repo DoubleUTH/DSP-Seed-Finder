@@ -75,6 +75,7 @@ export function constructMultiRule(multiRules: MultiRule[][]): CompositeRule {
 export const minStarCount = 32
 export const maxStarCount = 64
 export const defaultStarCount = 64
+export const metersPerAU = 40000
 
 export const resourceMultiplers: ReadonlyArray<float> = [
     0.1, 0.5, 0.8, 1, 1.5, 2, 3, 5, 8, 100,

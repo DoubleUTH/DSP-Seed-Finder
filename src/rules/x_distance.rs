@@ -9,6 +9,7 @@ use serde::{Deserialize, Serialize};
 #[serde(rename_all = "camelCase")]
 pub struct RuleXDistance {
     pub condition: Condition,
+    pub all: bool,
 }
 
 impl Rule for RuleXDistance {
@@ -40,11 +41,21 @@ impl Rule for RuleXDistance {
                 continue;
             }
             let star = &sp.star;
-            if x_stars
-                .iter()
-                .any(|p| self.condition.eval(star.position.distance_from(p) as f32))
-            {
-                result.push(index)
+            if self.all {
+                if x_stars
+                    .iter()
+                    .all(|p| self.condition.eval(star.position.distance_from(p) as f32))
+                {
+                    result.push(index)
+                }
+            }
+            else {
+                if x_stars
+                    .iter()
+                    .any(|p| self.condition.eval(star.position.distance_from(p) as f32))
+                {
+                    result.push(index)
+                }
             }
         }
         result

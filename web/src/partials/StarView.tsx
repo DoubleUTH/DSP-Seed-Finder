@@ -7,6 +7,7 @@ import {
     gasNames,
     gasOrder,
     getStarType,
+    metersPerAU,
     nearestDistanceFrom,
     planetTypes,
     romans,
@@ -352,6 +353,18 @@ const PlanetView: Component<{ star: Star; planet: Planet }> = (props) => {
                 </Show>
                 <Show when={Math.abs(props.planet.obliquity) > 70}>
                     <div class={styles.row}>Horizontal Rotation</div>
+                </Show>
+                <Show when={props.planet.orbitAround == null}>
+                    <div class={styles.row}>
+                        <div class={styles.field}>Orbit Radius</div>
+                        <div class={styles.value}>
+                            {toPrecision(
+                                props.planet.orbitRadius * metersPerAU,
+                                0,
+                            )}{" "}
+                            m
+                        </div>
+                    </div>
                 </Show>
                 <div class={styles.row}>
                     <div class={styles.field}>Wind Power</div>

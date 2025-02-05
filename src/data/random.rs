@@ -7,6 +7,7 @@ pub struct DspRandom {
 impl DspRandom {
     pub fn new(seed: i32) -> Self {
         let mut seed_array = [0; 56];
+        // It would panic if seed==i32::MIN, what is just how game behaves.
         let mut num1 = 161803398 - seed.abs();
         seed_array[55] = num1;
         let mut num2 = 1;
@@ -19,13 +20,27 @@ impl DspRandom {
             }
             num1 = seed_array[index2]
         }
-        for _index3 in 1..5 {
-            for index4 in 1..56 {
-                let mut val = seed_array[index4].wrapping_sub(seed_array[1 + (index4 + 30) % 55]);
-                if val < 0 {
-                    val += i32::MAX;
-                }
-                seed_array[index4] = val;
+        let update = |(lhs, rhs): (&mut i32, &i32)| {
+            *lhs = lhs.wrapping_sub(*rhs);
+            if lhs.is_negative() {
+                *lhs += i32::MAX;
+            }
+        };
+        for _ in 1..5 {
+            // Write in form of iterators to hint compiler taking use of SIMD.
+            unsafe {
+                let ptr = (&mut seed_array as *mut [i32; 56]).cast::<i32>();
+                // [1..24] subtract [32..55]
+                let chunk_1 = &mut *ptr.add(1).cast::<[i32; 24]>();
+                let chunk_2 = &*ptr.add(32).cast::<[i32; 24]>();
+                chunk_1.iter_mut().zip(chunk_2.iter()).for_each(update);
+                // [25..48] subtract [1..24]
+                let chunk_3 = &mut *ptr.add(25).cast::<[i32; 24]>();
+                chunk_3.iter_mut().zip(chunk_1.iter()).for_each(update);
+                // [49..55] subtract [25..31]
+                let chunk_4 = &*ptr.add(25).cast::<[i32; 7]>();
+                let chunk_5 = &mut *ptr.add(49).cast::<[i32; 7]>();
+                chunk_5.iter_mut().zip(chunk_4.iter()).for_each(update);
             }
         }
 

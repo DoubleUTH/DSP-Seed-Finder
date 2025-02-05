@@ -1,6 +1,6 @@
 use super::enums::{SpectrType, StarType};
 use super::game_desc::GameDesc;
-use super::macros::macros::{lazy_getter, lazy_getter_ref};
+use super::macros::{lazy_getter, lazy_getter_ref};
 use super::random::DspRandom;
 use super::vector3::Vector3;
 use serde::ser::{Serialize, SerializeStruct, Serializer};
@@ -12,7 +12,7 @@ pub struct Star<'a> {
     pub game_desc: &'a GameDesc,
     pub used_theme_ids: RefCell<Vec<i32>>,
     pub index: usize,
-    pub seed: i32,
+
     pub name_seed: i32,
     pub position: Vector3,
     pub level: f32,
@@ -86,7 +86,6 @@ impl<'a> Star<'a> {
             game_desc,
             used_theme_ids: RefCell::new(vec![]),
             index,
-            seed,
             name_seed,
             position,
             level: (index as f32) / ((game_desc.star_count - 1) as f32),
@@ -120,7 +119,7 @@ impl<'a> Star<'a> {
     }
 
     pub fn is_birth(&self) -> bool {
-        return self.index == 0;
+        self.index == 0
     }
 
     lazy_getter!(self, get_unmodified_mass, f32, {
@@ -279,7 +278,9 @@ impl<'a> Star<'a> {
         ) {
             SpectrType::X
         } else {
-            unsafe { ::std::mem::transmute(self.get_class_factor().round() as i32) }
+            unsafe {
+                ::std::mem::transmute::<i32, SpectrType>(self.get_class_factor().round() as i32)
+            }
         }
     });
 

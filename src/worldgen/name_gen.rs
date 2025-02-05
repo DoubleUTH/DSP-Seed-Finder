@@ -40,7 +40,7 @@ pub fn random_name<'a>(
             return str;
         }
     }
-    return "XStar".to_owned();
+    "XStar".to_owned()
 }
 
 fn random_giant_star_name_with_constellation_alpha(seed: i32) -> String {
@@ -118,7 +118,7 @@ fn random_giant_star_name_from_raw_names(seed: i32) -> String {
 type Fn2 = fn(i1: i32, i2: i32) -> String;
 type Fn3 = fn(i1: i32, i2: i32, i3: i32) -> String;
 
-const GIANT_NAME_FORMATS: &'static [Fn2] = &[
+const GIANT_NAME_FORMATS: &[Fn2] = &[
     |i1, i2| format!("HD {:04}{:02}", i1, i2),
     |i1, i2| format!("HDE {:04}{:02}", i1, i2),
     |i1, _| format!("HR {:04}", i1),
@@ -128,17 +128,17 @@ const GIANT_NAME_FORMATS: &'static [Fn2] = &[
     |i1, i2| format!("YSC {:04}-{:02}", i1, i2),
 ];
 
-const NEUTRON_STAR_NAME_FORMATS: &'static [Fn3] = &[
+const NEUTRON_STAR_NAME_FORMATS: &[Fn3] = &[
     |i1, i2, i3| format!("NTR J{:02}{:02}+{:02}", i1, i2, i3),
     |i1, i2, i3| format!("NTR J{:02}{:02}-{:02}", i1, i2, i3),
 ];
 
-const BLACK_HOLE_NAME_FORMATS: &'static [Fn3] = &[
+const BLACK_HOLE_NAME_FORMATS: &[Fn3] = &[
     |i1, i2, i3| format!("DSR J{:02}{:02}+{:02}", i1, i2, i3),
     |i1, i2, i3| format!("DSR J{:02}{:02}-{:02}", i1, i2, i3),
 ];
 
-const RAW_GIANT_NAMES: &'static [&'static str] = &[
+const RAW_GIANT_NAMES: &[&str] = &[
     "AH Scorpii",
     "Aldebaran",
     "Alpha Herculis",
@@ -201,14 +201,13 @@ const RAW_GIANT_NAMES: &'static [&'static str] = &[
     "XX Persei",
 ];
 
-const ALPHABETA: &'static [&'static str] = &[
+const ALPHABETA: &[&str] = &[
     "Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta", "Eta", "Theta", "Iota", "Kappa", "Lambda",
 ];
 
-const ALPHABETA_LETTER: &'static [&'static str] =
-    &["α", "β", "γ", "δ", "ε", "ζ", "η", "θ", "ι", "κ", "λ"];
+const ALPHABETA_LETTER: &[&str] = &["α", "β", "γ", "δ", "ε", "ζ", "η", "θ", "ι", "κ", "λ"];
 
-const CONSTELLATIONS: &'static [&'static str] = &[
+const CONSTELLATIONS: &[&str] = &[
     "Andromedae",
     "Antliae",
     "Apodis",
@@ -299,7 +298,7 @@ const CONSTELLATIONS: &'static [&'static str] = &[
     "Vulpeculae",
 ];
 
-const RAW_STAR_NAMES: &'static [&'static str] = &[
+const RAW_STAR_NAMES: &[&str] = &[
     "Acamar",
     "Achernar",
     "Achird",

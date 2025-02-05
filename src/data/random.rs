@@ -1,7 +1,6 @@
 pub struct DspRandom {
     inext: usize,
     inextp: usize,
-    pub seed: i32,
     seed_array: [i32; 56],
 }
 
@@ -33,7 +32,6 @@ impl DspRandom {
         Self {
             inext: 0,
             inextp: 31,
-            seed,
             seed_array,
         }
     }

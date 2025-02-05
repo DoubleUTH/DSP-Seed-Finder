@@ -1,6 +1,7 @@
 pub mod enums;
 pub mod galaxy;
 pub mod game_desc;
+#[macro_use]
 pub mod macros;
 pub mod planet;
 pub mod random;

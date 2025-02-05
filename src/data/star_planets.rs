@@ -161,28 +161,26 @@ impl<'a> StarWithPlanets<'a> {
                     let planet2 = &planets[1];
                     planet2.orbit_around.replace(Some(planet1));
                 }
+            } else if num2 < 0.15 {
+                planets.push(make_planet(0, 2 + num3, false));
+                planets.push(make_planet(1, 3 + num3, false));
+                planets.push(make_planet(2, 4 + num3, false));
+            } else if num2 < 0.75 {
+                planets.push(make_planet(0, 2 + num3, false));
+                planets.push(make_planet(1, 4, true));
+                planets.push(make_planet(2, 1, false));
+                let planet2 = &planets[1];
+                let planet3 = &planets[2];
+                planet3.orbit_around.replace(Some(planet2));
             } else {
-                if num2 < 0.15 {
-                    planets.push(make_planet(0, 2 + num3, false));
-                    planets.push(make_planet(1, 3 + num3, false));
-                    planets.push(make_planet(2, 4 + num3, false));
-                } else if num2 < 0.75 {
-                    planets.push(make_planet(0, 2 + num3, false));
-                    planets.push(make_planet(1, 4, true));
-                    planets.push(make_planet(2, 1, false));
-                    let planet2 = &planets[1];
-                    let planet3 = &planets[2];
-                    planet3.orbit_around.replace(Some(planet2));
-                } else {
-                    planets.push(make_planet(0, 3 + num3, true));
-                    planets.push(make_planet(1, 1, false));
-                    planets.push(make_planet(2, 2, false));
-                    let planet1 = &planets[0];
-                    let planet2 = &planets[1];
-                    let planet3 = &planets[2];
-                    planet2.orbit_around.replace(Some(planet1));
-                    planet3.orbit_around.replace(Some(planet1));
-                }
+                planets.push(make_planet(0, 3 + num3, true));
+                planets.push(make_planet(1, 1, false));
+                planets.push(make_planet(2, 2, false));
+                let planet1 = &planets[0];
+                let planet2 = &planets[1];
+                let planet3 = &planets[2];
+                planet2.orbit_around.replace(Some(planet1));
+                planet3.orbit_around.replace(Some(planet1));
             }
         } else {
             let (planet_count, p_gas): (usize, [f64; 6]) = if self.star.is_birth() {
@@ -308,7 +306,7 @@ impl<'a> StarWithPlanets<'a> {
             let mut orbit_around: Option<usize> = None;
             let mut num10: usize = 1;
             let mut orbits: Vec<(usize, usize)> = vec![];
-            for index in 0..planet_count as usize {
+            for (index, _) in p_gas.iter().enumerate().take(planet_count) {
                 let info_seed = rand2.next_seed();
                 let gen_seed = rand2.next_seed();
                 let num11 = rand2.next_f64();

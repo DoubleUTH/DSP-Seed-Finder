@@ -97,7 +97,7 @@ impl Evaluaton {
         self.load_max_len();
     }
 
-    pub fn reject_others(&mut self, indices: &Vec<usize>) {
+    pub fn reject_others(&mut self, indices: &[usize]) {
         for (index, val) in self.items.iter_mut().enumerate() {
             if val.is_none() && !indices.contains(&index) {
                 *val = Some(false)

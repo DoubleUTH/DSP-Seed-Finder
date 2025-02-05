@@ -1,12 +1,12 @@
 #[macro_use]
-pub mod macros {
+mod macro_impl {
     macro_rules! lazy_getter {
         ($self:ident, $name:ident, $t:ty, $b:block) => {
             pub fn $name(&$self) -> $t {
                 if let Some(val) = unsafe { *$self.$name.get() } {
                     val
                 } else {
-                    let val = (|| $b)();
+                    let val = $b;
                     unsafe {
                         let r = $self.$name.get();
                         *r = Some(val);
@@ -24,6 +24,7 @@ pub mod macros {
                 if let Some(val) = unsafe { &*$self.$name.get() }.as_ref() {
                     val
                 } else {
+
                     let val = (|| $b)();
                     unsafe {
                         let r = $self.$name.get();
@@ -36,3 +37,5 @@ pub mod macros {
     }
     pub(crate) use lazy_getter_ref;
 }
+
+pub(crate) use macro_impl::{lazy_getter, lazy_getter_ref};

@@ -48,13 +48,11 @@ impl Rule for RuleXDistance {
                 {
                     result.push(index)
                 }
-            } else {
-                if x_stars
-                    .iter()
-                    .any(|p| self.condition.eval(star.position.distance_from(p) as f32))
-                {
-                    result.push(index)
-                }
+            } else if x_stars
+                .iter()
+                .any(|p| self.condition.eval(star.position.distance_from(p) as f32))
+            {
+                result.push(index)
             }
         }
         result

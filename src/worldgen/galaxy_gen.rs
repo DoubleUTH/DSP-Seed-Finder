@@ -64,7 +64,7 @@ fn random_poses(
             let num9 = rand.next_f64() * 2.0 - 1.0;
             let num10 = rand.next_f64();
             let d = num7 * num7 + num8 * num8 + num9 * num9;
-            if d <= 1.0 && d >= 1e-8 {
+            if (1e-8..=1.0).contains(&d) {
                 let num11 = d.sqrt();
                 let num12 = (num10 * step_diff + min_dist) / num11;
                 let pt = Vector3(num7 * num12, num8 * num12, num9 * num12);
@@ -88,7 +88,7 @@ fn random_poses(
                     let num17 = rand.next_f64() * 2.0 - 1.0;
                     let num18 = rand.next_f64();
                     let d = num15 * num15 + num16 * num16 + num17 * num17;
-                    if d <= 1.0 && d >= 1e-8 {
+                    if (1e-8..=1.0).contains(&d) {
                         let num19 = d.sqrt();
                         let num20 = (num18 * step_diff + min_dist) / num19;
                         let new_pt = Vector3(
@@ -111,14 +111,14 @@ fn random_poses(
     }
 }
 
-fn check_collision(tmp_poses: &Vec<Vector3>, pt: &Vector3, min_dist: f64) -> bool {
+fn check_collision(tmp_poses: &[Vector3], pt: &Vector3, min_dist: f64) -> bool {
     let min_dist_sq = min_dist * min_dist;
     tmp_poses
         .iter()
         .any(|pt1| pt1.distance_sq_from(pt) < min_dist_sq)
 }
 
-fn generate_stars<'a>(game_desc: &'a GameDesc) -> Vec<StarWithPlanets<'a>> {
+fn generate_stars(game_desc: &GameDesc) -> Vec<StarWithPlanets<'_>> {
     let galaxy_seed = game_desc.seed;
 
     let mut rand = DspRandom::new(galaxy_seed);
@@ -192,7 +192,7 @@ fn generate_stars<'a>(game_desc: &'a GameDesc) -> Vec<StarWithPlanets<'a>> {
     stars
 }
 
-pub fn create_galaxy<'a>(game_desc: &'a GameDesc) -> Galaxy<'a> {
+pub fn create_galaxy(game_desc: &GameDesc) -> Galaxy<'_> {
     let mut stars = generate_stars(game_desc);
     let mut names: Vec<&str> = vec![];
 
@@ -216,7 +216,6 @@ pub fn find_stars(game_desc: &GameDesc, rule: &mut Box<dyn Rule + Send>) -> Vec<
     };
 
     let evaluation = Evaluaton::new(game_desc.star_count);
-    let result = rule.evaluate(&galaxy, &evaluation);
 
-    result
+    rule.evaluate(&galaxy, &evaluation)
 }

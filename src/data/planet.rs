@@ -1,5 +1,5 @@
 use super::enums::{PlanetType, SpectrType, StarType, ThemeDistribute, VeinType};
-use super::macros::macros::{lazy_getter, lazy_getter_ref};
+use super::macros::{lazy_getter, lazy_getter_ref};
 use super::random::DspRandom;
 use super::star::Star;
 use super::theme_proto::{ThemeProto, THEME_PROTOS};
@@ -14,6 +14,7 @@ pub struct Planet<'a> {
     pub star: Rc<Star<'a>>,
     pub index: usize,
     pub seed: i32,
+    #[expect(unused)]
     pub info_seed: i32,
     pub theme_seed: i32,
     pub orbit_around: RefCell<Option<&'a Planet<'a>>>,
@@ -50,7 +51,7 @@ pub struct Planet<'a> {
     get_veins: UnsafeCell<Option<Vec<Vein>>>,
 }
 
-const ORBIT_RADIUS: &'static [f32] = &[
+const ORBIT_RADIUS: &[f32] = &[
     0.0, 0.4, 0.7, 1.0, 1.4, 1.9, 2.5, 3.3, 4.3, 5.5, 6.9, 8.4, 10.0, 11.7, 13.5, 15.4, 17.5,
 ];
 
@@ -159,7 +160,7 @@ impl<'a> Planet<'a> {
                 + (orbit_planet.real_radius() as f64))
                 / 40000.0) as f32
         } else {
-            let b = ORBIT_RADIUS[self.orbit_index as usize] * self.star.get_orbit_scaler();
+            let b = ORBIT_RADIUS[self.orbit_index] * self.star.get_orbit_scaler();
             let num16 = (((a - 1.0) as f64) / (b.max(1.0) as f64) + 1.0) as f32;
             b * num16
         }

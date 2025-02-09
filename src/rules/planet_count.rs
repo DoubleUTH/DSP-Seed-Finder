@@ -26,12 +26,9 @@ impl Rule for RulePlanetCount {
             }
             let planets = sp.get_planets();
             let len = if self.exclude_giant {
-                planets
-                    .iter()
-                    .filter(|planet| !planet.is_gas_giant())
-                    .count()
+                planets.filter(|planet| !planet.is_gas_giant()).count()
             } else {
-                planets.len()
+                planets.count()
             };
             if self.condition.eval(len as f32) {
                 result.push(index)

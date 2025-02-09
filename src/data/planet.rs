@@ -16,7 +16,7 @@ pub struct Planet<'a> {
     #[expect(unused)]
     pub info_seed: i32,
     pub theme_seed: i32,
-    pub orbit_around: RefCell<Option<&'a Planet<'a>>>,
+    pub orbit_around: Option<Rc<RefCell<Planet<'a>>>>,
     pub orbit_index: usize,
     pub radius: f32,
     pub scale: f32,
@@ -99,7 +99,7 @@ impl<'a> Planet<'a> {
             seed: gen_seed,
             info_seed,
             theme_seed,
-            orbit_around: RefCell::new(None),
+            orbit_around: None,
             orbit_index,
             radius,
             scale,
@@ -147,13 +147,13 @@ impl<'a> Planet<'a> {
     }
 
     pub fn has_orbit_around(&self) -> bool {
-        self.orbit_around.borrow().is_some()
+        self.orbit_around.is_some()
     }
 
     pub fn get_orbital_radius(&self) -> f32 {
         *self.orbital_radius.get_or_init(|| {
             let a = 1.2_f32.powf(self.orbit_radius_factor as f32);
-            if let Some(orbit_planet) = self.orbit_around.borrow().as_deref() {
+            if let Some(orbit_planet) = self.orbit_around.as_deref().map(RefCell::borrow) {
                 (((1600.0 * (self.orbit_index as f64) + 200.0)
                     * (self.star.get_orbit_scaler().powf(0.3) as f64)
                     * ((a + (1.0 - a) * 0.5) as f64)
@@ -169,7 +169,7 @@ impl<'a> Planet<'a> {
 
     pub fn get_sun_distance(&self) -> f32 {
         *self.sun_distance.get_or_init(|| {
-            if let Some(orbit_planet) = self.orbit_around.borrow().as_deref() {
+            if let Some(orbit_planet) = self.orbit_around.as_deref().map(RefCell::borrow) {
                 orbit_planet.get_orbital_radius()
             } else {
                 self.get_orbital_radius()
@@ -309,7 +309,7 @@ impl<'a> Planet<'a> {
 
     pub fn get_sun_orbital_period(&self) -> f64 {
         *self.sun_orbital_period.get_or_init(|| {
-            if let Some(orbit_planet) = self.orbit_around.borrow().as_deref() {
+            if let Some(orbit_planet) = self.orbit_around.as_deref().map(RefCell::borrow) {
                 orbit_planet.get_orbital_period()
             } else {
                 self.get_orbital_period()
@@ -658,7 +658,10 @@ impl Serialize for Planet<'_> {
     {
         let mut state = serializer.serialize_struct("Planet", 16)?;
         state.serialize_field("index", &self.index)?;
-        state.serialize_field("orbitAround", &self.orbit_around.borrow().map(|p| p.index))?;
+        state.serialize_field(
+            "orbitAround",
+            &self.orbit_around.as_deref().map(|p| p.borrow().index),
+        )?;
         state.serialize_field("orbitIndex", &self.orbit_index)?;
         state.serialize_field("orbitRadius", &self.get_orbital_radius())?;
         state.serialize_field("orbitInclination", &self.get_orbit_inclination())?;

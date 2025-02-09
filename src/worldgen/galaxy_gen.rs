@@ -50,24 +50,28 @@ fn random_poses(
     flatten: f64,
 ) {
     let mut rand = DspRandom::new(seed);
-    let num1 = rand.next_f64();
+    let r1 = rand.next_f64();
     let mut tmp_drunk: Vec<Vector3> = vec![];
     tmp_poses.push(Vector3::zero());
-    let num2 = 6;
-    let num3 = 8;
-    let num4 = (num3 - num2) as f64;
-    let num5 = (num1 * num4 + (num2 as f64)) as i32;
-    for _ in 0..num5 {
+    let min_drunk_num = 6;
+    let max_drunk_num = 8;
+    let drunk_num_range = (max_drunk_num - min_drunk_num) as f64;
+    let drunk_num = (r1 * drunk_num_range + (min_drunk_num as f64)) as i32;
+    // First try to place drunks, other stars are produced around them.
+    // Apparently they are drunks tied to some utility poles.
+    for _ in 0..drunk_num {
         for _ in 0..256 {
-            let num7 = rand.next_f64() * 2.0 - 1.0;
-            let num8 = (rand.next_f64() * 2.0 - 1.0) * flatten;
-            let num9 = rand.next_f64() * 2.0 - 1.0;
-            let num10 = rand.next_f64();
-            let d = num7 * num7 + num8 * num8 + num9 * num9;
+            let u = rand.next_f64() * 2.0 - 1.0;
+            // Stars should not leave central plane too far
+            let w = (rand.next_f64() * 2.0 - 1.0) * flatten;
+            let v = rand.next_f64() * 2.0 - 1.0;
+            let r2 = rand.next_f64();
+            let d = u * u + w * w + v * v;
             if (1e-8..=1.0).contains(&d) {
-                let num11 = d.sqrt();
-                let num12 = (num10 * step_diff + min_dist) / num11;
-                let pt = Vector3(num7 * num12, num8 * num12, num9 * num12);
+                let distance = d.sqrt();
+                let step_len_mult = (r2 * step_diff + min_dist) / distance;
+                let pt = Vector3(u * step_len_mult, w * step_len_mult, v * step_len_mult);
+                // Now pt is placed along (u, v, w) and (r2 * step_diff + min_dist) away
                 if !check_collision(tmp_poses, &pt, min_dist) {
                     tmp_drunk.push(pt.clone());
                     tmp_poses.push(pt);
@@ -83,18 +87,18 @@ fn random_poses(
         for pt in tmp_drunk.iter_mut() {
             if rand.next_f64() <= 0.7 {
                 for _ in 0..256 {
-                    let num15 = rand.next_f64() * 2.0 - 1.0;
-                    let num16 = (rand.next_f64() * 2.0 - 1.0) * flatten;
-                    let num17 = rand.next_f64() * 2.0 - 1.0;
-                    let num18 = rand.next_f64();
-                    let d = num15 * num15 + num16 * num16 + num17 * num17;
+                    let u = rand.next_f64() * 2.0 - 1.0;
+                    let w = (rand.next_f64() * 2.0 - 1.0) * flatten;
+                    let v = rand.next_f64() * 2.0 - 1.0;
+                    let r3 = rand.next_f64();
+                    let d = u * u + w * w + v * v;
                     if (1e-8..=1.0).contains(&d) {
-                        let num19 = d.sqrt();
-                        let num20 = (num18 * step_diff + min_dist) / num19;
+                        let distance = d.sqrt();
+                        let step_len_mult = (r3 * step_diff + min_dist) / distance;
                         let new_pt = Vector3(
-                            pt.0 + num15 * num20,
-                            pt.1 + num16 * num20,
-                            pt.2 + num17 * num20,
+                            pt.0 + u * step_len_mult,
+                            pt.1 + w * step_len_mult,
+                            pt.2 + v * step_len_mult,
                         );
                         if !check_collision(tmp_poses, &new_pt, min_dist) {
                             *pt = new_pt.clone();
@@ -133,19 +137,20 @@ fn generate_stars(game_desc: &GameDesc) -> Vec<StarWithPlanets<'_>> {
     );
     let star_count = tmp_poses.len();
 
-    let num1 = rand.next_f32();
-    let num2 = rand.next_f32();
-    let num3 = rand.next_f32();
-    let num4 = rand.next_f32();
-    let num5 = (0.01 * (star_count as f64) + (num1 as f64) * 0.3).ceil() as usize;
-    let num6 = (0.01 * (star_count as f64) + (num2 as f64) * 0.3).ceil() as usize;
-    let num7 = (0.016 * (star_count as f64) + (num3 as f64) * 0.4).ceil() as usize;
-    let num8 = (0.013 * (star_count as f64) + (num4 as f64) * 1.3).ceil() as usize;
-    let num9 = star_count - num5;
-    let num10 = num9 - num6;
-    let num11 = num10 - num7;
-    let num12 = (num11 - 1) / num8;
-    let num13 = num12 / 2;
+    let r1 = rand.next_f32();
+    let r2 = rand.next_f32();
+    let r3 = rand.next_f32();
+    let r4 = rand.next_f32();
+    let black_hole_num = (0.01 * (star_count as f64) + (r1 as f64) * 0.3).ceil() as usize;
+    let neutro_star_num = (0.01 * (star_count as f64) + (r2 as f64) * 0.3).ceil() as usize;
+    let white_dwarf_num = (0.016 * (star_count as f64) + (r3 as f64) * 0.4).ceil() as usize;
+    let giant_star_num = (0.013 * (star_count as f64) + (r4 as f64) * 1.3).ceil() as usize;
+    let black_hole_start = star_count - black_hole_num;
+    let neutron_star_start = black_hole_start - neutro_star_num;
+    let white_dwarf_start = neutron_star_start - white_dwarf_num;
+    // Pick a giant star from main seq stars in each giant group
+    let giant_group_num = (white_dwarf_start - 1) / giant_star_num;
+    let giant_offset = giant_group_num / 2;
 
     let mut stars: Vec<StarWithPlanets> = vec![];
 
@@ -163,18 +168,18 @@ fn generate_stars(game_desc: &GameDesc) -> Vec<StarWithPlanets<'_>> {
         } else {
             let need_spectr = if index == 3 {
                 SpectrType::M
-            } else if index == num11 - 1 {
+            } else if index == white_dwarf_start - 1 {
                 SpectrType::O
             } else {
                 SpectrType::X
             };
-            let need_type = if index % num12 == num13 {
+            let need_type = if index % giant_group_num == giant_offset {
                 StarType::GiantStar
-            } else if index >= num9 {
+            } else if index >= black_hole_start {
                 StarType::BlackHole
-            } else if index >= num10 {
+            } else if index >= neutron_star_start {
                 StarType::NeutronStar
-            } else if index >= num11 {
+            } else if index >= white_dwarf_start {
                 StarType::WhiteDwarf
             } else {
                 StarType::MainSeqStar

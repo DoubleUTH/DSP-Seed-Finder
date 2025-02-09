@@ -19,7 +19,7 @@ impl Default for StarType {
 
 #[allow(dead_code)]
 #[repr(i32)]
-#[derive(Debug, PartialEq, Eq, Hash, Clone, Deserialize, Serialize)]
+#[derive(Debug, Copy, PartialEq, Eq, Hash, Clone, Deserialize, Serialize)]
 pub enum SpectrType {
     M = -4,
     K = -3,

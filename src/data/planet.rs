@@ -13,7 +13,7 @@ pub struct Planet<'a> {
     pub star: Rc<Star<'a>>,
     pub index: usize,
     pub seed: i32,
-    #[expect(unused)]
+    #[allow(dead_code)]
     pub info_seed: i32,
     pub theme_seed: i32,
     pub orbit_around: Option<Rc<RefCell<Planet<'a>>>>,

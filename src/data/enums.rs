@@ -19,7 +19,7 @@ impl Default for StarType {
 
 #[allow(dead_code)]
 #[repr(i32)]
-#[derive(Debug, PartialEq, Eq, Hash, Clone, Deserialize, Serialize)]
+#[derive(Debug, Copy, PartialEq, Eq, Hash, Clone, Deserialize, Serialize)]
 pub enum SpectrType {
     M = -4,
     K = -3,
@@ -95,14 +95,14 @@ impl Default for VeinType {
 
 impl VeinType {
     pub fn is_rare(&self) -> bool {
-        match self {
+        matches!(
+            self,
             VeinType::Fireice
-            | VeinType::Diamond
-            | VeinType::Fractal
-            | VeinType::Crysrub
-            | VeinType::Grat
-            | VeinType::Bamboo => true,
-            _ => false,
-        }
+                | VeinType::Diamond
+                | VeinType::Fractal
+                | VeinType::Crysrub
+                | VeinType::Grat
+                | VeinType::Bamboo
+        )
     }
 }

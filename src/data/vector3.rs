@@ -34,11 +34,11 @@ impl Vector3 {
         } else {
             *self = Self::zero();
         }
-        return self;
+        self
     }
 
     pub fn dot(&self, rhs: &Vector3) -> f64 {
-        return self.0 * rhs.0 + self.1 * rhs.1 + self.2 * rhs.2;
+        self.0 * rhs.0 + self.1 * rhs.1 + self.2 * rhs.2
     }
 
     pub fn slerp(lhs: &Vector3, rhs: &Vector3, percent: f64) -> Vector3 {
@@ -54,7 +54,7 @@ impl std::ops::Add<&Vector3> for &Vector3 {
     type Output = Vector3;
 
     fn add(self, rhs: &Vector3) -> Vector3 {
-        return Vector3(self.0 + rhs.0, self.1 + rhs.1, self.2 + rhs.2);
+        Vector3(self.0 + rhs.0, self.1 + rhs.1, self.2 + rhs.2)
     }
 }
 
@@ -70,7 +70,7 @@ impl std::ops::Sub<&Vector3> for &Vector3 {
     type Output = Vector3;
 
     fn sub(self, rhs: &Vector3) -> Vector3 {
-        return Vector3(self.0 - rhs.0, self.1 - rhs.1, self.2 - rhs.2);
+        Vector3(self.0 - rhs.0, self.1 - rhs.1, self.2 - rhs.2)
     }
 }
 
@@ -86,7 +86,7 @@ impl std::ops::Mul<f64> for &Vector3 {
     type Output = Vector3;
 
     fn mul(self, rhs: f64) -> Vector3 {
-        return Vector3(self.0 * rhs, self.1 * rhs, self.2 * rhs);
+        Vector3(self.0 * rhs, self.1 * rhs, self.2 * rhs)
     }
 }
 
@@ -102,7 +102,7 @@ impl std::ops::Div<f64> for &Vector3 {
     type Output = Vector3;
 
     fn div(self, rhs: f64) -> Vector3 {
-        return Vector3(self.0 / rhs, self.1 / rhs, self.2 / rhs);
+        Vector3(self.0 / rhs, self.1 / rhs, self.2 / rhs)
     }
 }
 

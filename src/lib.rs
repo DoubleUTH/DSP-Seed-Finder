@@ -13,6 +13,10 @@ mod wasm {
     use serde::Serialize;
     use wasm_bindgen::prelude::*;
     use wasm_bindgen_futures::spawn_local;
+    use crate::GameDesc;
+    use crate::create_galaxy;
+    use crate::transform_rules;
+    use crate::find_stars;
     #[wasm_bindgen]
     extern "C" {
         #[wasm_bindgen(js_namespace = worldgen)]

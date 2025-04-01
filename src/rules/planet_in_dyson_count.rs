@@ -25,6 +25,7 @@ impl Rule for RulePlanetInDysonCount {
             let planets = sp.get_planets();
             let dyson_radius = sp.star.get_dyson_radius() as f32;
             let targets = planets
+                .iter()
                 .filter(|planet| {
                     (self.include_giant || !planet.is_gas_giant())
                         && planet.get_sun_distance() * 40000.0 < dyson_radius

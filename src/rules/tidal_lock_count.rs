@@ -23,7 +23,10 @@ impl Rule for RuleTidalLockCount {
                 continue;
             }
             let planets = sp.get_planets();
-            let targets = planets.filter(|planet| planet.is_tidal_locked()).count();
+            let targets = planets
+                .iter()
+                .filter(|planet| planet.is_tidal_locked())
+                .count();
             if self.condition.eval(targets as f32) {
                 result.push(index)
             }

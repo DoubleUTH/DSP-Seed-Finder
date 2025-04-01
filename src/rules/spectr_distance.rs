@@ -26,7 +26,7 @@ impl Rule for RuleSpectrDistance {
         let good_stars: Vec<&StarWithPlanets> = galaxy
             .stars
             .iter()
-            .filter(|sp| sp.star.get_spectr() == self.spectr)
+            .filter(|sp| sp.star.get_spectr() == &self.spectr)
             .collect();
 
         if good_stars.is_empty() {

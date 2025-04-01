@@ -23,7 +23,7 @@ impl Rule for RuleSpectr {
                 continue;
             }
             let star = &sp.star;
-            if self.spectr.contains(&star.get_spectr()) {
+            if self.spectr.contains(star.get_spectr()) {
                 result.push(index)
             }
         }

@@ -31,7 +31,7 @@ pub struct ThemeProto {
     pub gas_speeds: Vec<f32>,
 }
 
-pub const DEFAULT_THEME_PROTO: &ThemeProto = &ThemeProto {
+pub const DEFAULT_THEME_PROTO: &'static ThemeProto = &ThemeProto {
     id: 0,
     name: "",
     water_item_id: 0,

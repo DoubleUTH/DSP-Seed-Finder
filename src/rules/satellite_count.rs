@@ -23,7 +23,10 @@ impl Rule for RuleSatelliteCount {
                 continue;
             }
             let planets = sp.get_planets();
-            let targets = planets.filter(|planet| planet.has_orbit_around()).count();
+            let targets = planets
+                .iter()
+                .filter(|planet| planet.has_orbit_around())
+                .count();
             if self.condition.eval(targets as f32) {
                 result.push(index)
             }

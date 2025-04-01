@@ -57,7 +57,10 @@ impl Rule for RuleGasCount {
                     continue;
                 }
                 let planets = sp.get_planets();
-                let targets = planets.filter(|planet| planet.is_gas_giant()).count();
+                let targets = planets
+                    .iter()
+                    .filter(|planet| planet.is_gas_giant())
+                    .count();
                 if self.condition.eval(targets as f32) {
                     result.push(index)
                 }

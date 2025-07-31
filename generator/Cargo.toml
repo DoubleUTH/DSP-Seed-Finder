@@ -1,8 +1,0 @@
-[package]
-name = "generator"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-dsp_seed_finder = { path = "../core" }
-serde_json = "1.0.108"

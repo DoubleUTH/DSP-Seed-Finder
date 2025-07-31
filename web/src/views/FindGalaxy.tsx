@@ -67,15 +67,10 @@ const defaultProgress: () => MultiProfileProgress = () => ({
 })
 
 const SearchResult: Component<{
-    id: string
-    page: integer
-    updateKey: number
+    results: any[]
     starCount: integer
     resourceMultiplier: float
 }> = (props) => {
-    const [results, setResults] = createSignal<MultiProgressResult[]>([])
-    let isLoading = -1
-
     const searchString = createMemo(() =>
         getSearch({
             count: props.starCount,
@@ -83,42 +78,13 @@ const SearchResult: Component<{
         }),
     )
 
-    function update() {
-        if (isLoading === props.page) return
-        const page = props.page
-        isLoading = page
-        console.debug("results loading")
-        getMultiProfileResult(props.id, (page - 1) * PAGE_SIZE, PAGE_SIZE).then(
-            (list) => {
-                console.debug("results loaded", list)
-                if (isLoading === page) {
-                    setResults(list)
-                    isLoading = -1
-                }
-            },
-        )
-    }
-
-    createEffect(update)
-
-    createEffect(
-        on(
-            () => props.updateKey,
-            () => {
-                if (results().length < PAGE_SIZE) {
-                    update()
-                }
-            },
-        ),
-    )
-
-    function buildUrl(item: MultiProgressResult) {
+    function buildUrl(item: any) {
         return `/galaxy/${item.seed}/0${searchString()}`
     }
 
     return (
         <div class={styles.results}>
-            <Index each={results()}>
+            <Index each={props.results}>
                 {(result) => (
                     <A
                         href={buildUrl(result())}
@@ -140,18 +106,52 @@ const FindGalaxy: Component = () => {
     const [profile, setProfile] = createSignal<ProfileInfo | null>()
     const [progress, setProgress] =
         createStore<MultiProfileProgress>(defaultProgress())
-    const [nativeMode, setNativeMode] = createSignal(false)
     const [profileModal, setProfileModal] = createSignal(false)
     const [exportModal, setExportModal] = createSignal(false)
     const [store, setStore] = useStore()
     const [currentPage, setCurrentPage] = createSignal(1)
     const [tick, setTick] = createSignal(0)
+    const [filteredData, setFilteredData] = createSignal<any[]>([])
     const isLoaded = () => !!profile()
     const hasProgress = () =>
         progress.start > -1 && progress.current > progress.start
     const isDisabled = () => store.searching || hasProgress()
     const hasCompleted = () =>
         progress.start > -1 && progress.current >= progress.end
+
+    const [galaxyData, setGalaxyData] = createSignal<any[]>([])
+
+    createEffect(() => {
+        fetch("/galaxy_data.jsonl")
+            .then((response) => response.text())
+            .then((text) => {
+                const lines = text.trim().split("\n")
+                const data = lines.map((line) => JSON.parse(line))
+                setGalaxyData(data)
+            })
+    })
+
+    function onSearch() {
+        const rules = unwrap(progress.multiRules)
+        const filteredData = galaxyData().filter((galaxy) => {
+            // NOTE: This is a simplified search implementation.
+            // A more robust implementation would involve a proper query engine.
+            for (const ruleGroup of rules) {
+                let groupMatch = true
+                for (const rule of ruleGroup) {
+                    let ruleMatch = false
+                    // TODO: Implement rule matching logic
+                    groupMatch = groupMatch && ruleMatch
+                }
+                if (groupMatch) {
+                    return true
+                }
+            }
+            return false
+        })
+        // TODO: Display the filtered data
+        console.log("Filtered data:", filteredData)
+    }
 
     function changeProfile(profile: ProfileInfo | null) {
         batch(() => {
@@ -268,51 +268,6 @@ const FindGalaxy: Component = () => {
         })
     }
 
-    async function onStartSearching() {
-        await onSaveProfile()
-        setStore("searching", true)
-        let results: FindResult[] = []
-        getWorldGen(nativeMode()).find({
-            gameDesc: {
-                resourceMultiplier: progress.resourceMultiplier,
-                starCount: progress.starCount,
-            },
-            range: [Math.max(progress.start, progress.current), progress.end],
-            concurrency: progress.concurrency,
-            autosave: progress.autosave,
-            rule: constructMultiRule(unwrap(progress.multiRules)),
-            onResult: (result) => {
-                console.debug("result", result)
-                results.push(result)
-            },
-            onProgress: (current) => {
-                batch(() => {
-                    setProgress("current", (c) => Math.max(c, current))
-                    setProgress("found", (found) => found + results.length)
-                })
-                setMultiProfileProgress(unwrap(progress), results).then(() => {
-                    setTick((prev) => (prev + 1) % 1024)
-                })
-                results = []
-            },
-            onError: (err) => {
-                console.error(err)
-                setStore("searching", false)
-            },
-            onComplete: () => {
-                console.debug("done")
-                setStore("searching", false)
-            },
-            onInterrupt: () => {
-                console.debug("interrupt")
-                setStore("searching", false)
-            },
-        })
-    }
-
-    function onStopSearching() {
-        getWorldGen(nativeMode()).stop()
-    }
 
     createEffect(
         on(
@@ -352,16 +307,6 @@ const FindGalaxy: Component = () => {
                 isValid={isValid()}
                 isLoaded={isLoaded()}
             />
-            <ProgressEditor
-                progress={progress}
-                onProgressChange={setProgress}
-                name={name()}
-                onNameChange={setName}
-                nativeMode={nativeMode()}
-                onNativeModeChange={setNativeMode}
-                isLoaded={isLoaded()}
-                searching={store.searching}
-            />
             <div class={styles.rules}>Rules</div>
             <MultiRuleEditor
                 value={progress.multiRules}
@@ -369,57 +314,11 @@ const FindGalaxy: Component = () => {
                 disabled={isDisabled()}
             />
             <div class={styles.execute}>
-                <div class={styles.progress}>
-                    <Show
-                        when={
-                            store.searching ||
-                            (hasProgress() && !hasCompleted())
-                        }
-                    >
-                        <div class={styles.progressText}>Progress:</div>
-                        <ProgressBar
-                            class={styles.progressBar}
-                            current={progress.current - progress.start}
-                            total={progress.end - progress.start}
-                        />
-                    </Show>
-                </div>
-                <Show when={hasProgress()}>
-                    <Button onClick={() => setExportModal(true)}>Export</Button>
-                </Show>
-                <Switch
-                    fallback={
-                        <Button
-                            disabled={!isValid()}
-                            onClick={onStartSearching}
-                        >
-                            {hasProgress() ? "Resume" : "Start"}
-                        </Button>
-                    }
-                >
-                    <Match when={store.searching}>
-                        <Button onClick={onStopSearching}>Pause</Button>
-                    </Match>
-                    <Match when={hasCompleted()}>
-                        <span class={styles.completed}>Completed!</span>
-                    </Match>
-                </Switch>
+                <Button onClick={onSearch}>Search</Button>
             </div>
-            <Show when={hasProgress()}>
-                <Pagination
-                    current={currentPage()}
-                    total={
-                        Math.max(
-                            0,
-                            Math.floor((progress.found - 1) / PAGE_SIZE),
-                        ) + 1
-                    }
-                    onChange={setCurrentPage}
-                />
+            <Show when={filteredData().length > 0}>
                 <SearchResult
-                    id={profile()!.id}
-                    page={currentPage()}
-                    updateKey={tick()}
+                    results={filteredData()}
                     starCount={progress.starCount}
                     resourceMultiplier={progress.resourceMultiplier}
                 />

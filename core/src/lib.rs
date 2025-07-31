@@ -1,22 +1,29 @@
-#![cfg(target_arch = "wasm32")]
+pub mod data;
+pub mod worldgen;
 
-mod data;
 mod rules;
 mod transform_rules;
-mod worldgen;
 
-use data::game_desc::GameDesc;
-use serde::Serialize;
+#[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
+#[cfg(target_arch = "wasm32")]
 use wasm_bindgen_futures::spawn_local;
+#[cfg(target_arch = "wasm32")]
 use worldgen::galaxy_gen::{create_galaxy, find_stars};
+#[cfg(target_arch = "wasm32")]
+use data::game_desc::GameDesc;
+#[cfg(target_arch = "wasm32")]
+use serde::Serialize;
 
+
+#[cfg(target_arch = "wasm32")]
 #[wasm_bindgen]
 extern "C" {
     #[wasm_bindgen(js_namespace = worldgen)]
     async fn found(value: JsValue) -> JsValue;
 }
 
+#[cfg(target_arch = "wasm32")]
 #[wasm_bindgen]
 #[allow(non_snake_case)]
 pub fn generate(gameDesc: JsValue) -> Result<JsValue, serde_wasm_bindgen::Error> {
@@ -25,12 +32,14 @@ pub fn generate(gameDesc: JsValue) -> Result<JsValue, serde_wasm_bindgen::Error>
     galaxy.serialize(&serde_wasm_bindgen::Serializer::json_compatible())
 }
 
+#[cfg(target_arch = "wasm32")]
 #[derive(Serialize)]
 struct FindResult {
     seed: i32,
     indexes: Vec<usize>,
 }
 
+#[cfg(target_arch = "wasm32")]
 #[wasm_bindgen]
 #[allow(non_snake_case)]
 pub fn findStars(gameDesc: JsValue, rule: JsValue) {

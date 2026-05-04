@@ -115,7 +115,11 @@ async fn accept_connection(stream: TcpStream) {
                             let output = serde_json::to_string(&galaxy).unwrap();
                             let runtime = Handle::current();
                             runtime.block_on(async move {
-                                w.lock().await.send(Message::Text(output)).await.unwrap();
+                                w.lock()
+                                    .await
+                                    .send(Message::Text(output.into()))
+                                    .await
+                                    .unwrap();
                             })
                         });
                     }
@@ -175,7 +179,10 @@ async fn accept_connection(stream: TcpStream) {
                                                     },
                                                 )
                                                 .unwrap();
-                                                stream.send(Message::Text(output)).await.unwrap();
+                                                stream
+                                                    .send(Message::Text(output.into()))
+                                                    .await
+                                                    .unwrap();
                                             }
                                             if let Some((start, end)) = notify_progress {
                                                 println!("Processing: {}.", end);
@@ -183,7 +190,10 @@ async fn accept_connection(stream: TcpStream) {
                                                     &OutgoingMessage::Progress { start, end },
                                                 )
                                                 .unwrap();
-                                                stream.send(Message::Text(output)).await.unwrap();
+                                                stream
+                                                    .send(Message::Text(output.into()))
+                                                    .await
+                                                    .unwrap();
                                             }
                                         });
                                     }
@@ -205,7 +215,8 @@ async fn accept_connection(stream: TcpStream) {
                                                     start: progress_start,
                                                     end: progress_end,
                                                 })
-                                                .unwrap(),
+                                                .unwrap()
+                                                .into(),
                                             ))
                                             .await
                                             .unwrap();

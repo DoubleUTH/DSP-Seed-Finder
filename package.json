@@ -15,29 +15,30 @@
         "build": "npm run build:browser && npm run build:native && npm run build:web"
     },
     "dependencies": {
-        "@floating-ui/dom": "^1.5.3",
-        "@solidjs/router": "^0.10.5",
-        "clsx": "^2.0.0",
+        "@floating-ui/dom": "^1.7.6",
+        "@solidjs/router": "^0.16.1",
+        "clsx": "^2.1.1",
         "exceljs": "^4.4.0",
         "jszip": "^3.10.1",
-        "nanoid": "^5.0.4",
-        "solid-icons": "^1.1.0",
-        "solid-js": "^1.8.7",
+        "nanoid": "^5.1.11",
+        "solid-icons": "^1.2.0",
+        "solid-js": "^1.9.12",
         "tiny-emitter": "^2.1.0",
-        "typescript": "^5.2.2",
-        "vite": "^5.0.8",
-        "vite-plugin-solid": "^2.8.0"
+        "typescript": "^5.9.3",
+        "vite": "^5.4.21",
+        "vite-plugin-solid": "^2.11.12"
     },
     "devDependencies": {
-        "@typescript-eslint/eslint-plugin": "^6.15.0",
-        "@typescript-eslint/parser": "^6.15.0",
-        "eslint": "^8.56.0",
-        "eslint-config-prettier": "^9.1.0",
-        "eslint-plugin-prettier": "^5.0.1",
-        "eslint-plugin-solid": "^0.13.0",
-        "prettier": "^3.1.1"
+        "@types/node": "^24.12.2",
+        "@typescript-eslint/eslint-plugin": "^6.21.0",
+        "@typescript-eslint/parser": "^6.21.0",
+        "eslint": "^8.57.1",
+        "eslint-config-prettier": "^9.1.2",
+        "eslint-plugin-prettier": "^5.5.5",
+        "eslint-plugin-solid": "^0.14.5",
+        "prettier": "^3.8.3"
     },
     "optionalDependencies": {
-        "@rollup/rollup-linux-x64-gnu": "^4.9.1"
+        "@rollup/rollup-linux-x64-gnu": "^4.60.2"
     }
 }

@@ -198,6 +198,14 @@ const StarDetail: Component<{
                 {toPrecision(props.star.dysonRadius, 0)} m
             </div>
         </div>
+        <div class={styles.row}>
+            <div class={styles.field}>Initial Hive Count</div>
+            <div class={styles.value}>{props.star.initialHiveCount}</div>
+        </div>
+        <div class={styles.row}>
+            <div class={styles.field}>Max Hive Count</div>
+            <div class={styles.value}>{props.star.maxHiveCount}</div>
+        </div>
         <Show when={props.expand}>
             <div class={styles.row}>
                 <div class={styles.field}>Radius</div>
@@ -433,15 +441,14 @@ const StarView: Component<{
         planets: {} as Record<number, boolean>,
     })
 
-    const xStarPostions = createMemo(
-        () =>
-            props.galaxy?.stars
-                .filter(
-                    (star) =>
-                        star.type === StarType.BlackHole ||
-                        star.type === StarType.NeutronStar,
-                )
-                .map((star) => star.position),
+    const xStarPostions = createMemo(() =>
+        props.galaxy?.stars
+            .filter(
+                (star) =>
+                    star.type === StarType.BlackHole ||
+                    star.type === StarType.NeutronStar,
+            )
+            .map((star) => star.position),
     )
 
     return (

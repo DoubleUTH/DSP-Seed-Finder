@@ -13,6 +13,10 @@ pub struct GameDesc {
     pub resource_multiplier: f32,
     #[serde(skip)]
     pub habitable_count: Cell<i32>,
+    #[serde(default = "GameDesc::default_hive_initial_colonize")]
+    pub hive_initial_colonize: f64,
+    #[serde(default = "GameDesc::default_hive_max_density")]
+    pub hive_max_density: f64,
 }
 
 impl GameDesc {
@@ -20,6 +24,12 @@ impl GameDesc {
         64
     }
     pub fn default_resource_multiplier() -> f32 {
+        1.0
+    }
+    pub fn default_hive_initial_colonize() -> f64 {
+        1.0
+    }
+    pub fn default_hive_max_density() -> f64 {
         1.0
     }
 

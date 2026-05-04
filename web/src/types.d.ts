@@ -40,6 +40,8 @@ declare global {
         luminosity: float
         radius: float
         dysonRadius: float
+        initialHiveCount: integer
+        maxHiveCount: integer
         planets: Planet[]
     }
 

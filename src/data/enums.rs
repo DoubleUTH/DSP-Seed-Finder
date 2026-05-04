@@ -36,7 +36,7 @@ pub enum SpectrType {
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Deserialize, Serialize)]
 pub enum PlanetType {
     None,
-    Vocano,
+    Volcano,
     Ocean,
     Desert,
     Ice,

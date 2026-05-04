@@ -19,7 +19,7 @@ export enum SpectrType {
 
 export enum PlanetType {
     None = "None",
-    Vocano = "Vocano",
+    Volcano = "Volcano",
     Ocean = "Ocean",
     Desert = "Desert",
     Ice = "Ice",

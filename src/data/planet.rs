@@ -257,7 +257,7 @@ impl<'a> Planet<'a> {
             if f2 < 5.0 / 6.0 {
                 let num26 = ((f2 as f64) * 2.5 - 0.85).max(0.15);
                 if self.type_factor >= num26 {
-                    PlanetType::Vocano
+                    PlanetType::Volcano
                 } else {
                     PlanetType::Desert
                 }

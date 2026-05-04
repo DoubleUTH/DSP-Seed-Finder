@@ -20,18 +20,27 @@ import NumberInput from "../components/NumberInput"
 import Tooltip from "../components/Tooltip"
 import Toggle from "../components/Toggle"
 import Select from "../components/Select"
+import {
+    defaultHiveInitialColonize,
+    defaultHiveMaxDensity,
+    defaultResourceMultipler,
+    defaultStarCount,
+} from "../util"
+import HiveInitialColonizeSelector from "./HiveInitialColonizeSelector"
+import HiveMaxDensitySelector from "./HiveMaxDensitySelector"
 
 type Mode = "star" | "galaxy"
 
-interface Options
-    extends Pick<
-        ExportOptions,
-        | "format"
-        | "concurrency"
-        | "exportAllStars"
-        | "starCount"
-        | "resourceMultiplier"
-    > {
+interface Options extends Pick<
+    ExportOptions,
+    | "format"
+    | "concurrency"
+    | "exportAllStars"
+    | "starCount"
+    | "resourceMultiplier"
+    | "hiveInitialColonize"
+    | "hiveMaxDensity"
+> {
     start: number
     end: number
 }
@@ -87,6 +96,8 @@ async function execute(
         exportAllStars,
         starCount,
         resourceMultiplier,
+        hiveInitialColonize,
+        hiveMaxDensity,
     }: Options,
 ) {
     const fn = mode === "star" ? getStarResults : getGalaxyResults
@@ -101,6 +112,8 @@ async function execute(
         concurrency,
         starCount,
         resourceMultiplier,
+        hiveInitialColonize,
+        hiveMaxDensity,
         exportAllStars: mode === "galaxy" || exportAllStars,
         results: results,
         onProgress: (current) => {
@@ -231,12 +244,16 @@ const ExportModal: Component<{
     name: string
     starCount: integer
     resourceMultiplier: float
+    hiveInitialColonize: float
+    hiveMaxDensity: float
 }> = (props) => {
     const [options, setOptions] = createStore<Options>({
         start: 0,
         end: 99999999,
-        starCount: 0,
-        resourceMultiplier: 0,
+        starCount: defaultStarCount,
+        resourceMultiplier: defaultResourceMultipler,
+        hiveInitialColonize: defaultHiveInitialColonize,
+        hiveMaxDensity: defaultHiveMaxDensity,
         format: "csv",
         concurrency: navigator.hardwareConcurrency,
         exportAllStars: false,
@@ -249,6 +266,8 @@ const ExportModal: Component<{
             setOptions({
                 starCount: props.starCount,
                 resourceMultiplier: props.resourceMultiplier,
+                hiveInitialColonize: props.hiveInitialColonize,
+                hiveMaxDensity: props.hiveMaxDensity,
             })
         } else {
             setProgressModal(false)
@@ -289,6 +308,26 @@ const ExportModal: Component<{
                         value={options.resourceMultiplier}
                         onChange={(value) =>
                             setOptions("resourceMultiplier", value)
+                        }
+                    />
+                </div>
+                <div class={styles.label}>Dark Fog Initial Occupation</div>
+                <div class={styles.input}>
+                    <HiveInitialColonizeSelector
+                        class={styles.inputStandard}
+                        value={options.hiveInitialColonize}
+                        onChange={(value) =>
+                            setOptions("hiveInitialColonize", value)
+                        }
+                    />
+                </div>
+                <div class={styles.label}>Dark Fog Max Density</div>
+                <div class={styles.input}>
+                    <HiveMaxDensitySelector
+                        class={styles.inputStandard}
+                        value={options.hiveMaxDensity}
+                        onChange={(value) =>
+                            setOptions("hiveMaxDensity", value)
                         }
                     />
                 </div>

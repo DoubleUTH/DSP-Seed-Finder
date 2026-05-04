@@ -44,6 +44,8 @@ const starFieldsGetter: Partial<
     [StarField.DysonRadius]: (galaxy, star) => trim(star.dysonRadius, 0),
     [StarField.DistanceFromBirth]: (galaxy, star) =>
         trim(distanceFromBirth(star.position), 3),
+    [StarField.MaxHiveCount]: (galaxy, star) => star.maxHiveCount,
+    [StarField.InitialHiveCount]: (galaxy, star) => star.initialHiveCount,
 }
 
 const planetFieldsGetter: Partial<

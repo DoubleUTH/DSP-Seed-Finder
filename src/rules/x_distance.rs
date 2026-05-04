@@ -14,7 +14,7 @@ pub struct RuleXDistance {
 
 impl Rule for RuleXDistance {
     fn get_priority(&self) -> i32 {
-        13
+        14
     }
     fn evaluate(
         &self,

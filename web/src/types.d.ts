@@ -18,6 +18,8 @@ declare global {
         seed: integer
         starCount?: integer
         resourceMultiplier?: float
+        hiveInitialColonize?: float
+        hiveMaxDensity?: float
     }
 
     declare interface Galaxy {
@@ -187,6 +189,11 @@ declare global {
             includeGiant: boolean
             condition: Condition
         }
+        export type HiveCount = {
+            type: RuleType.HiveCount
+            condition: Condition
+            initial: boolean
+        }
 
         export type Composite = {
             type: CompositeRuleType.Composite
@@ -224,6 +231,7 @@ declare global {
         | Rule.SpectrDistance
         | Rule.GasRate
         | Rule.PlanetInDysonCount
+        | Rule.HiveCount
 
     declare type CompoundRule = Rule.And | Rule.Or
 
@@ -268,6 +276,8 @@ declare global {
         view: {
             starCount: integer
             resourceMultipler: float
+            hiveInitialColonize: float
+            hiveMaxDensity: float
         }
     }
 
@@ -281,6 +291,8 @@ declare global {
         id: string
         starCount: integer
         resourceMultiplier: float
+        hiveInitialColonize: float
+        hiveMaxDensity: float
         autosave: float
         concurrency: integer
         start: integer
@@ -322,6 +334,8 @@ declare global {
         concurrency: integer
         starCount: integer
         resourceMultiplier: float
+        hiveInitialColonize: float
+        hiveMaxDensity: float
         exportAllStars: boolean // always true for galaxy finder
         results: FindResult[]
         onProgress: (current: integer) => boolean

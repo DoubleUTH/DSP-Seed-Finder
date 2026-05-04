@@ -9,7 +9,7 @@ function Select<T>(props: {
     placeholder?: string
     onChange?: (t: T) => void
     getLabel: (t: T) => JSX.Element
-    options: T[]
+    options: readonly T[]
     isSelected?: (t: T) => boolean
     error?: boolean
     disabled?: boolean
@@ -36,7 +36,7 @@ function Select<T>(props: {
     createEffect(() => {
         if (focus()) {
             dropdown!.style.display = ""
-            dropdown.style.width = select.clientWidth + "px"
+            dropdown!.style.width = select!.clientWidth + "px"
             computePosition(select!, dropdown!, {
                 strategy: "fixed",
                 placement: "bottom",
@@ -47,7 +47,7 @@ function Select<T>(props: {
                 dropdown!.style.top = y + "px"
                 const selected = props.options.findIndex(isSelected)
                 if (selected > -1) {
-                    dropdown.children[selected]!.scrollIntoView({
+                    dropdown!.children[selected]!.scrollIntoView({
                         behavior: "instant",
                         block: "center",
                         inline: "start",

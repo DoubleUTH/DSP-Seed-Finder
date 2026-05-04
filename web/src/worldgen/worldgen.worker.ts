@@ -25,20 +25,47 @@ self.onmessage = (ev) => {
     const { type, input } = ev.data
 
     if (type === GENERATE_NAME) {
-        const { seed, resourceMultiplier = 1, starCount = 64 } = input
+        const {
+            seed,
+            resourceMultiplier = 1,
+            starCount = 64,
+            hiveInitialColonize = 1,
+            hiveMaxDensity = 1,
+        } = input
 
         initPromise.then(() => {
-            const result = generate({ seed, starCount, resourceMultiplier })
+            const result = generate({
+                seed,
+                starCount,
+                resourceMultiplier,
+                hiveInitialColonize,
+                hiveMaxDensity,
+            })
             self.postMessage({ type: GENERATE_NAME, data: result })
         })
     } else if (type === FIND_NAME) {
         const {
-            game: { seed, resourceMultiplier = 1, starCount = 64 },
+            game: {
+                seed,
+                resourceMultiplier = 1,
+                starCount = 64,
+                hiveInitialColonize = 1,
+                hiveMaxDensity = 1,
+            },
             rule,
         } = input
 
         initPromise.then(() => {
-            findStars({ seed, starCount, resourceMultiplier }, rule)
+            findStars(
+                {
+                    seed,
+                    starCount,
+                    resourceMultiplier,
+                    hiveInitialColonize,
+                    hiveMaxDensity,
+                },
+                rule,
+            )
         })
     } else if (type === FIND_NEXT_NAME) {
         emitter.emit(FIND_NEXT_NAME, input)

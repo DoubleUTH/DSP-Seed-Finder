@@ -6,6 +6,7 @@ pub mod composite;
 pub mod dyson_radius;
 pub mod gas_count;
 pub mod gas_rate;
+pub mod hive_count;
 pub mod luminosity;
 pub mod ocean_type;
 pub mod or;

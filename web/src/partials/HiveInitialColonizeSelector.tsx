@@ -1,8 +1,8 @@
 import { Component } from "solid-js"
 import Select from "../components/Select"
-import { resourceMultiplers } from "../util"
+import { hiveInitialColonizeValues } from "../util"
 
-const ResourceMultiplierSelector: Component<{
+const HiveInitialColonizeSelector: Component<{
     class?: string
     value: float
     onChange: (value: float) => void
@@ -13,13 +13,11 @@ const ResourceMultiplierSelector: Component<{
             class={props.class}
             value={props.value}
             onChange={(v) => props.onChange(v)}
-            options={resourceMultiplers}
-            getLabel={(x) =>
-                x === 100 ? "Infinite" : x <= 0.2 ? "Scarce" : x + "x"
-            }
+            options={hiveInitialColonizeValues}
+            getLabel={(x) => x * 100 + "%"}
             disabled={props.disabled}
         />
     )
 }
 
-export default ResourceMultiplierSelector
+export default HiveInitialColonizeSelector

@@ -18,6 +18,8 @@ export enum StarField {
     DistanceFromBirth = "Distance From Start",
     DistanceFromNearestX = "Distance From Nearest X Star",
     DistanceFromFurthestX = "Distance From Furthest X Star",
+    InitialHiveCount = "Initial Number of Hives",
+    MaxHiveCount = "Maximum Number of Hives",
 }
 
 export const starFieldsOrder = [
@@ -38,6 +40,8 @@ export const starFieldsOrder = [
     StarField.Mass,
     StarField.Age,
     StarField.Temperature,
+    StarField.InitialHiveCount,
+    StarField.MaxHiveCount,
 ]
 
 export enum PlanetField {

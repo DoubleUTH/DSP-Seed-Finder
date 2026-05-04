@@ -86,7 +86,13 @@ export const metersPerAU = 40000
 export const resourceMultiplers: ReadonlyArray<float> = [
     0.1, 0.5, 0.8, 1, 1.5, 2, 3, 5, 8, 100,
 ]
+export const hiveInitialColonizeValues: ReadonlyArray<integer> = [
+    0.01, 0.25, 0.5, 0.75, 1, 1.5, 2,
+]
+export const hiveMaxDensityValues: ReadonlyArray<float> = [1, 1.5, 2, 2.5, 3]
 export const defaultResourceMultipler = 1
+export const defaultHiveInitialColonize = 1
+export const defaultHiveMaxDensity = 1
 
 export const veinNames: Record<VeinType, string> = {
     [VeinType.None]: "",
@@ -150,9 +156,13 @@ export function statVein(vein: Vein): VeinStat {
 export function getSearch({
     count,
     multipler,
+    hiveInitialColonize,
+    hiveMaxDensity,
 }: {
     count: integer
     multipler: float
+    hiveInitialColonize: integer
+    hiveMaxDensity: float
 }) {
     const params = new URLSearchParams()
     if (count !== defaultStarCount) {
@@ -160,6 +170,12 @@ export function getSearch({
     }
     if (multipler !== defaultResourceMultipler) {
         params.set("multipler", String(multipler))
+    }
+    if (hiveInitialColonize !== defaultHiveInitialColonize) {
+        params.set("hiveInitialColonize", String(hiveInitialColonize))
+    }
+    if (hiveMaxDensity !== defaultHiveMaxDensity) {
+        params.set("hiveMaxDensity", String(hiveMaxDensity))
     }
     const str = params.toString()
     return str ? "?" + str : ""

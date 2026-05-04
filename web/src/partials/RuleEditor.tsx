@@ -611,11 +611,50 @@ const EditThemeId: Component<{
     )
 }
 
+const EditHiveCount: Component<{
+    value: Rule.HiveCount
+    onChange: (value: Rule.HiveCount) => void
+    disabled?: boolean
+}> = (props) => {
+    const condition = () => props.value.condition
+    const setCondition = (condition: Condition) =>
+        props.onChange({ ...props.value, condition })
+    return (
+        <>
+            <Select
+                class={styles.selectInitialOrMax}
+                value={!!props.value.initial}
+                onChange={(initial) =>
+                    props.onChange({ ...props.value, initial })
+                }
+                options={[true, false]}
+                getLabel={(initial) => (initial ? "Initial" : "Max")}
+                disabled={props.disabled}
+            />{" "}
+            number of hives is{" "}
+            <ConditionTypeSelector
+                value={condition()}
+                onChange={setCondition}
+                disabled={props.disabled}
+            />{" "}
+            <ConditionValueInput
+                class={styles.inputCount}
+                value={condition()}
+                onChange={setCondition}
+                emptyValue={-1}
+                error={condition().value <= 0}
+                disabled={props.disabled}
+            />
+            .
+        </>
+    )
+}
+
 function isType<T extends SimpleRule, K extends RuleType>(
     rule: T,
     type: K,
 ): T extends { type: K } ? T | false : never {
-    return rule.type === type ? (rule as any) : false
+    return rule.type === type ? (rule as any) : (false as any)
 }
 
 const EditSimpleRule: Component<{
@@ -679,6 +718,9 @@ const EditSimpleRule: Component<{
             </Match>
             <Match when={isType(props.value, RuleType.ThemeId)}>
                 {(value) => <EditThemeId {...props} value={value()} />}
+            </Match>
+            <Match when={isType(props.value, RuleType.HiveCount)}>
+                {(value) => <EditHiveCount {...props} value={value()} />}
             </Match>
             <Match when={isType(props.value, RuleType.Birth)}>
                 <div class={styles.birth}>Is the starting system</div>
@@ -865,6 +907,7 @@ const ruleNames: Record<RuleType, string> = {
     [RuleType.GasRate]: "Gas Rate",
     [RuleType.AverageVeinAmount]: "Vein Amount",
     [RuleType.PlanetInDysonCount]: "Planets in Dyson Sphere",
+    [RuleType.HiveCount]: "Hive Count",
 }
 
 const rules: SimpleRule[] = [
@@ -909,6 +952,14 @@ const rules: SimpleRule[] = [
         condition: {
             type: ConditionType.Gte,
             value: 0,
+        },
+    },
+    {
+        type: RuleType.HiveCount,
+        initial: true,
+        condition: {
+            type: ConditionType.Gte,
+            value: 1,
         },
     },
     {

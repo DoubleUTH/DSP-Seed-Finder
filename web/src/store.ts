@@ -1,6 +1,11 @@
 import { createContext, useContext } from "solid-js"
 import { SetStoreFunction } from "solid-js/store"
-import { defaultResourceMultipler, defaultStarCount } from "./util"
+import {
+    defaultHiveInitialColonize,
+    defaultHiveMaxDensity,
+    defaultResourceMultipler,
+    defaultStarCount,
+} from "./util"
 
 const localStorageKey = "dsp-seed-finder-theme"
 
@@ -22,6 +27,8 @@ export const defaultStore: Store = {
         view: {
             starCount: defaultStarCount,
             resourceMultipler: defaultResourceMultipler,
+            hiveInitialColonize: defaultHiveInitialColonize,
+            hiveMaxDensity: defaultHiveMaxDensity,
         },
     },
     searching: false,

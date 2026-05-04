@@ -15,15 +15,21 @@ import { useStore } from "../store"
 import clsx from "clsx"
 import StarView from "../partials/StarView"
 import {
+    defaultHiveInitialColonize,
+    defaultHiveMaxDensity,
     defaultResourceMultipler,
     defaultStarCount,
     getSearch,
+    hiveInitialColonizeValues,
+    hiveMaxDensityValues,
     maxStarCount,
     minStarCount,
     resourceMultiplers,
 } from "../util"
 import StarCountSelector from "../partials/StarCountSelector"
 import ResourceMultiplierSelector from "../partials/ResourceMultiplerSelector"
+import HiveInitialColonizeSelector from "../partials/HiveInitialColonizeSelector"
+import HiveMaxDensitySelector from "../partials/HiveMaxDensitySelector"
 
 function randomSeed() {
     return Math.floor(Math.random() * 1e8)
@@ -46,6 +52,8 @@ const Search: Component = () => {
             `/galaxy/${value()}/0${getSearch({
                 count: store.settings.view.starCount,
                 multipler: store.settings.view.resourceMultipler,
+                hiveInitialColonize: store.settings.view.hiveInitialColonize,
+                hiveMaxDensity: store.settings.view.hiveMaxDensity,
             })}`,
         )
     }
@@ -89,6 +97,22 @@ const Search: Component = () => {
                     setStore("settings", "view", "resourceMultipler", v)
                 }
             />
+            <div class={styles.searchTitle}>Dark Fog Initial Occupation:</div>
+            <HiveInitialColonizeSelector
+                class={styles.searchInput}
+                value={store.settings.view.hiveInitialColonize}
+                onChange={(v) =>
+                    setStore("settings", "view", "hiveInitialColonize", v)
+                }
+            />
+            <div class={styles.searchTitle}>Dark Fog Max Density:</div>
+            <HiveMaxDensitySelector
+                class={styles.searchInput}
+                value={store.settings.view.hiveMaxDensity}
+                onChange={(v) =>
+                    setStore("settings", "view", "hiveMaxDensity", v)
+                }
+            />
         </form>
     )
 }
@@ -99,7 +123,7 @@ const View: Component<{ seed: number; index: number }> = (props) => {
     const starCount = createMemo(() => {
         const { count } = searchParams
         if (count) {
-            const m = parseFloat(count)
+            const m = parseFloat(count as string)
             if (Number.isInteger(m) && m >= minStarCount && m <= maxStarCount) {
                 return m
             }
@@ -110,7 +134,7 @@ const View: Component<{ seed: number; index: number }> = (props) => {
     const resourcMultipler = createMemo(() => {
         const { multipler } = searchParams
         if (multipler) {
-            const m = parseFloat(multipler)
+            const m = parseFloat(multipler as string)
             if (resourceMultiplers.includes(m)) {
                 return m
             }
@@ -118,11 +142,35 @@ const View: Component<{ seed: number; index: number }> = (props) => {
         return defaultResourceMultipler
     })
 
+    const hiveInitialColonize = createMemo(() => {
+        const { hiveInitialColonize } = searchParams
+        if (hiveInitialColonize) {
+            const m = parseFloat(hiveInitialColonize as string)
+            if (hiveInitialColonizeValues.includes(m)) {
+                return m
+            }
+        }
+        return defaultHiveInitialColonize
+    })
+
+    const hiveMaxDensity = createMemo(() => {
+        const { hiveMaxDensity } = searchParams
+        if (hiveMaxDensity) {
+            const m = parseFloat(hiveMaxDensity as string)
+            if (hiveMaxDensityValues.includes(m)) {
+                return m
+            }
+        }
+        return defaultHiveMaxDensity
+    })
+
     const [galaxy] = createResource<Galaxy>(async () => {
         const config = {
             seed: props.seed,
             starCount: starCount(),
             resourceMultiplier: resourcMultipler(),
+            hiveInitialColonize: hiveInitialColonize(),
+            hiveMaxDensity: hiveMaxDensity(),
         }
         return getWorldGen(false).generate(config)
     })
@@ -131,6 +179,8 @@ const View: Component<{ seed: number; index: number }> = (props) => {
         getSearch({
             count: starCount(),
             multipler: resourcMultipler(),
+            hiveInitialColonize: hiveInitialColonize(),
+            hiveMaxDensity: hiveMaxDensity(),
         }),
     )
 

@@ -51,11 +51,12 @@ export enum RuleType {
     Birth = "Birth", // 10
     StarType = "StarType", // 11
     BirthDistance = "BirthDistance", // 12
-    XDistance = "XDistance", // 13
-    SpectrDistance = "SpectrDistance", // 14
+    XDistance = "XDistance", // 14
+    SpectrDistance = "SpectrDistance", // 15
     Luminosity = "Luminosity", // 20
     Spectr = "Spectr", // 21
     DysonRadius = "DysonRadius", // 22
+    HiveCount = "HiveCount", // 23 / 13
     PlanetCount = "PlanetCount", // 30
     SatelliteCount = "SatelliteCount", // 31
     TidalLockCount = "TidalLockCount", // 33

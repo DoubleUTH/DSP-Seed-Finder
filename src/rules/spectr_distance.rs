@@ -15,7 +15,7 @@ pub struct RuleSpectrDistance {
 
 impl Rule for RuleSpectrDistance {
     fn get_priority(&self) -> i32 {
-        14
+        15
     }
     fn evaluate(
         &self,

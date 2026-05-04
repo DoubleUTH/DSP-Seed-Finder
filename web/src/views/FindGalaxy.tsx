@@ -14,6 +14,10 @@ import {
 import { createStore, unwrap } from "solid-js/store"
 import {
     constructMultiRule,
+    defaultHiveInitialColonize,
+    defaultHiveMaxDensity,
+    defaultResourceMultipler,
+    defaultStarCount,
     getSearch,
     maxStarCount,
     minStarCount,
@@ -47,8 +51,10 @@ const PAGE_SIZE = 100
 
 const defaultProgress: () => MultiProfileProgress = () => ({
     id: "",
-    starCount: 64,
-    resourceMultiplier: 1,
+    starCount: defaultStarCount,
+    resourceMultiplier: defaultResourceMultipler,
+    hiveInitialColonize: defaultHiveInitialColonize,
+    hiveMaxDensity: defaultHiveMaxDensity,
     concurrency: navigator.hardwareConcurrency,
     autosave: 5,
     start: 0,
@@ -72,6 +78,8 @@ const SearchResult: Component<{
     updateKey: number
     starCount: integer
     resourceMultiplier: float
+    hiveInitialColonize: float
+    hiveMaxDensity: float
 }> = (props) => {
     const [results, setResults] = createSignal<MultiProgressResult[]>([])
     let isLoading = -1
@@ -80,6 +88,8 @@ const SearchResult: Component<{
         getSearch({
             count: props.starCount,
             multipler: props.resourceMultiplier,
+            hiveInitialColonize: props.hiveInitialColonize,
+            hiveMaxDensity: props.hiveMaxDensity,
         }),
     )
 
@@ -170,6 +180,8 @@ const FindGalaxy: Component = () => {
     async function onSelectProfile(profile: ProfileInfo) {
         const progress = await getMultiProfileProgress(profile.id)
         if (progress) {
+            progress.hiveInitialColonize ??= defaultHiveInitialColonize
+            progress.hiveMaxDensity ??= defaultHiveMaxDensity
             batch(() => {
                 changeProfile(profile)
                 setProgress(progress)
@@ -276,6 +288,8 @@ const FindGalaxy: Component = () => {
             gameDesc: {
                 resourceMultiplier: progress.resourceMultiplier,
                 starCount: progress.starCount,
+                hiveInitialColonize: progress.hiveInitialColonize,
+                hiveMaxDensity: progress.hiveMaxDensity,
             },
             range: [Math.max(progress.start, progress.current), progress.end],
             concurrency: progress.concurrency,
@@ -422,6 +436,8 @@ const FindGalaxy: Component = () => {
                     updateKey={tick()}
                     starCount={progress.starCount}
                     resourceMultiplier={progress.resourceMultiplier}
+                    hiveInitialColonize={progress.hiveInitialColonize}
+                    hiveMaxDensity={progress.hiveMaxDensity}
                 />
             </Show>
             <ProfilesModal
@@ -438,6 +454,8 @@ const FindGalaxy: Component = () => {
                 name={profile()?.name || ""}
                 starCount={progress.starCount}
                 resourceMultiplier={progress.resourceMultiplier}
+                hiveInitialColonize={progress.hiveInitialColonize}
+                hiveMaxDensity={progress.hiveMaxDensity}
             />
         </div>
     )

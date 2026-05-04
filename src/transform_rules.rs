@@ -38,6 +38,7 @@ pub enum Rules {
     SpectrDistance(rules::spectr_distance::RuleSpectrDistance),
     GasRate(rules::gas_rate::RuleGasRate),
     PlanetInDysonCount(rules::planet_in_dyson_count::RulePlanetInDysonCount),
+    HiveCount(rules::hive_count::RuleHiveCount),
 }
 
 pub fn sort_rules(rules: Vec<Rules>) -> Vec<Box<dyn Rule + Send>> {
@@ -81,5 +82,6 @@ pub fn transform_rules(r: Rules) -> Box<dyn Rule + Send> {
         Rules::SpectrDistance(rule) => Box::new(rule),
         Rules::GasRate(rule) => Box::new(rule),
         Rules::PlanetInDysonCount(rule) => Box::new(rule),
+        Rules::HiveCount(rule) => Box::new(rule),
     }
 }

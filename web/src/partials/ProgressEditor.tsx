@@ -8,6 +8,8 @@ import ExeUrl from "../../../target/release/dsp_seed.exe?url"
 import Button from "../components/Button"
 import ResourceMultiplierSelector from "./ResourceMultiplerSelector"
 import NumberInput from "../components/NumberInput"
+import HiveInitialColonizeSelector from "./HiveInitialColonizeSelector"
+import HiveMaxDensitySelector from "./HiveMaxDensitySelector"
 
 function ProgressEditor<E extends ProfileProgressInfo>(props: {
     progress: E
@@ -54,6 +56,53 @@ function ProgressEditor<E extends ProfileProgressInfo>(props: {
                 </div>
             </div>
             <div class={styles.field}>
+                <div class={styles.label}>Seed Range</div>
+                <div class={styles.input}>
+                    <NumberInput
+                        class={styles.inputSeed}
+                        value={props.progress.start}
+                        onChange={(value) =>
+                            props.onProgressChange("start", value)
+                        }
+                        emptyValue={-1}
+                        maxLength={8}
+                        error={
+                            props.progress.start < 0 ||
+                            props.progress.start >= props.progress.end
+                        }
+                        disabled={isDisabled()}
+                    />{" "}
+                    to{" "}
+                    <NumberInput
+                        class={styles.inputSeed}
+                        value={props.progress.end - 1}
+                        onChange={(value) =>
+                            props.onProgressChange("end", value + 1)
+                        }
+                        emptyValue={-1}
+                        maxLength={8}
+                        error={
+                            props.progress.end > 1e8 ||
+                            props.progress.start >= props.progress.end
+                        }
+                        disabled={isDisabled()}
+                    />
+                </div>
+            </div>
+            <div class={styles.field}>
+                <div class={styles.label}>Resource Multipler</div>
+                <div class={styles.input}>
+                    <ResourceMultiplierSelector
+                        class={styles.inputStandard}
+                        value={props.progress.resourceMultiplier}
+                        onChange={(value) =>
+                            props.onProgressChange("resourceMultiplier", value)
+                        }
+                        disabled={isDisabled()}
+                    />
+                </div>
+            </div>
+            <div class={styles.field}>
                 <div class={styles.label}>
                     <Tooltip text="To run the search in (faster) native mode, click the download button and run the program on your PC, then enable this option.">
                         Native Mode
@@ -65,19 +114,19 @@ function ProgressEditor<E extends ProfileProgressInfo>(props: {
                         onChange={props.onNativeModeChange}
                         disabled={props.searching}
                     />
-                    <a href={ExeUrl} download>
+                    <a href={ExeUrl} download="download">
                         <Button kind="outline">Download</Button>
                     </a>
                 </div>
             </div>
             <div class={styles.field}>
-                <div class={styles.label}>Resource Multipler</div>
+                <div class={styles.label}>Dark Fog Initial Occupation</div>
                 <div class={styles.input}>
-                    <ResourceMultiplierSelector
+                    <HiveInitialColonizeSelector
                         class={styles.inputStandard}
-                        value={props.progress.resourceMultiplier}
+                        value={props.progress.hiveInitialColonize}
                         onChange={(value) =>
-                            props.onProgressChange("resourceMultiplier", value)
+                            props.onProgressChange("hiveInitialColonize", value)
                         }
                         disabled={isDisabled()}
                     />
@@ -107,34 +156,13 @@ function ProgressEditor<E extends ProfileProgressInfo>(props: {
                 </div>
             </div>
             <div class={styles.field}>
-                <div class={styles.label}>Seed Range</div>
+                <div class={styles.label}>Dark Fog Max Density</div>
                 <div class={styles.input}>
-                    <NumberInput
-                        class={styles.inputSeed}
-                        value={props.progress.start}
+                    <HiveMaxDensitySelector
+                        class={styles.inputStandard}
+                        value={props.progress.hiveMaxDensity}
                         onChange={(value) =>
-                            props.onProgressChange("start", value)
-                        }
-                        emptyValue={-1}
-                        maxLength={8}
-                        error={
-                            props.progress.start < 0 ||
-                            props.progress.start >= props.progress.end
-                        }
-                        disabled={isDisabled()}
-                    />{" "}
-                    to{" "}
-                    <NumberInput
-                        class={styles.inputSeed}
-                        value={props.progress.end - 1}
-                        onChange={(value) =>
-                            props.onProgressChange("end", value + 1)
-                        }
-                        emptyValue={-1}
-                        maxLength={8}
-                        error={
-                            props.progress.end > 1e8 ||
-                            props.progress.start >= props.progress.end
+                            props.onProgressChange("hiveMaxDensity", value)
                         }
                         disabled={isDisabled()}
                     />

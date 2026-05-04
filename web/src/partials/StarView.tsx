@@ -199,11 +199,11 @@ const StarDetail: Component<{
             </div>
         </div>
         <div class={styles.row}>
-            <div class={styles.field}>Initial Hive Count</div>
+            <div class={styles.field}>Initial Number off Hives</div>
             <div class={styles.value}>{props.star.initialHiveCount}</div>
         </div>
         <div class={styles.row}>
-            <div class={styles.field}>Max Hive Count</div>
+            <div class={styles.field}>Maximum Number off Hives</div>
             <div class={styles.value}>{props.star.maxHiveCount}</div>
         </div>
         <Show when={props.expand}>

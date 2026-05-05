@@ -15,12 +15,13 @@ use std::sync::Arc;
 use std::time::SystemTime;
 use tokio::net::{TcpListener, TcpStream};
 use tokio::runtime::Handle;
+use tokio::sync::mpsc;
 use tokio_tungstenite::accept_async;
 use tokio_tungstenite::tungstenite::Message;
 use transform_rules::Rules;
 use worldgen::galaxy_gen::{create_galaxy, find_stars};
 
-#[tokio::main]
+#[tokio::main(flavor = "multi_thread", worker_threads = 4)]
 async fn main() -> Result<(), std::io::Error> {
     println!("Starting...");
     let listener = TcpListener::bind("127.0.0.1:62879").await?;
@@ -60,34 +61,40 @@ struct FindState {
     pub progress_start: i32,
     pub progress_end: i32,
     pub pending_seeds: HashSet<i32>,
-    pub running: i32,
     pub autosave: u64,
     pub last_notify: SystemTime,
 }
 
+const SEED_BATCH_SIZE: i32 = 100;
+
 impl FindState {
-    pub fn add(&mut self, seed: i32) -> Option<(i32, i32)> {
-        if self.progress_end == seed {
-            self.progress_end += 1;
+    pub fn add_all(&mut self, start: i32) -> Option<(i32, i32)> {
+        if self.progress_end == start {
+            self.progress_end = start + SEED_BATCH_SIZE;
             let mut e = self.progress_end;
             while self.pending_seeds.remove(&e) {
-                e += 1;
+                e += SEED_BATCH_SIZE;
             }
             self.progress_end = e;
             let now = SystemTime::now();
             if now.duration_since(self.last_notify).unwrap().as_secs() >= self.autosave {
                 self.last_notify = now;
                 let start = self.progress_start;
-                self.progress_start = self.progress_end;
-                Some((start, self.progress_end))
+                self.progress_start = e;
+                Some((start, e))
             } else {
                 None
             }
         } else {
-            self.pending_seeds.insert(seed);
+            self.pending_seeds.insert(start);
             None
         }
     }
+}
+
+enum WorkerMessage {
+    Message { text: String },
+    Done,
 }
 
 async fn accept_connection(stream: TcpStream) {
@@ -137,93 +144,108 @@ async fn accept_connection(stream: TcpStream) {
                         let state = Arc::new(std::sync::Mutex::new(FindState {
                             progress_end: start,
                             progress_start: start,
-                            running: threads,
                             pending_seeds: HashSet::new(),
                             autosave,
                             last_notify: SystemTime::now(),
                         }));
                         stopped.store(false, Ordering::SeqCst);
+                        let (tx, mut rx) = mpsc::channel::<WorkerMessage>(1000);
+
                         for _ in 0..threads {
-                            let w = boxed_write.clone();
+                            let tx = tx.clone();
                             let transformed = transform_rules::transform_rules(rule.clone());
                             let mut g = game.clone();
                             let s = state.clone();
                             let cs = current_seed.clone();
                             let stop = stopped.clone();
                             tokio::task::spawn_blocking(move || {
-                                let runtime = Handle::current();
                                 loop {
-                                    let seed = cs
+                                    let batch_start = cs
                                         .fetch_update(Ordering::SeqCst, Ordering::SeqCst, |x| {
-                                            Some(x + 1)
+                                            Some(x + SEED_BATCH_SIZE)
                                         })
                                         .unwrap();
-                                    if seed >= end {
+                                    if batch_start >= end {
                                         break;
                                     }
-                                    g.seed = seed;
-                                    let star_indexes = find_stars(&g, &transformed);
+                                    let batch_end = (batch_start + SEED_BATCH_SIZE).min(end);
+
+                                    for seed in batch_start..batch_end {
+                                        g.seed = seed;
+                                        let star_indexes = find_stars(&g, &transformed);
+                                        if !star_indexes.is_empty() {
+                                            let output =
+                                                serde_json::to_string(&OutgoingMessage::Result {
+                                                    seed,
+                                                    indexes: star_indexes,
+                                                })
+                                                .unwrap();
+                                            let _ = tx.blocking_send(WorkerMessage::Message {
+                                                text: output,
+                                            });
+                                        }
+                                    }
+
                                     let notify_progress = {
                                         let mut x = s.lock().unwrap();
-                                        x.add(seed)
+                                        x.add_all(batch_start)
                                     };
-                                    if notify_progress.is_some() || !star_indexes.is_empty() {
-                                        let w2 = w.clone();
-                                        runtime.block_on(async move {
-                                            let mut stream = w2.lock().await;
-                                            if !star_indexes.is_empty() {
-                                                let output = serde_json::to_string(
-                                                    &OutgoingMessage::Result {
-                                                        seed,
-                                                        indexes: star_indexes,
-                                                    },
-                                                )
-                                                .unwrap();
-                                                stream
-                                                    .send(Message::Text(output.into()))
-                                                    .await
-                                                    .unwrap();
-                                            }
-                                            if let Some((start, end)) = notify_progress {
-                                                println!("Processing: {}.", end);
-                                                let output = serde_json::to_string(
-                                                    &OutgoingMessage::Progress { start, end },
-                                                )
-                                                .unwrap();
-                                                stream
-                                                    .send(Message::Text(output.into()))
-                                                    .await
-                                                    .unwrap();
-                                            }
-                                        });
+                                    if let Some((start, end)) = notify_progress {
+                                        println!("Processing: {}.", end);
+                                        let output =
+                                            serde_json::to_string(&OutgoingMessage::Progress {
+                                                start,
+                                                end,
+                                            })
+                                            .unwrap();
+                                        let _ = tx
+                                            .blocking_send(WorkerMessage::Message { text: output });
                                     }
                                     if stop.load(Ordering::SeqCst) {
                                         break;
                                     }
                                 }
-                                let mut x = s.lock().unwrap();
-                                x.running -= 1;
-                                if x.running == 0 {
-                                    let progress_start = x.progress_start;
-                                    let progress_end = x.progress_end;
-                                    println!("Completed: {}.", progress_end);
-                                    runtime.block_on(async move {
-                                        w.lock()
-                                            .await
-                                            .send(Message::Text(
+                                let _ = tx.blocking_send(WorkerMessage::Done);
+                            });
+                        }
+                        drop(tx);
+
+                        let w = boxed_write.clone();
+                        let state_for_completion = state.clone();
+                        tokio::spawn(async move {
+                            let mut finished_threads = 0;
+
+                            while let Some(msg) = rx.recv().await {
+                                match msg {
+                                    WorkerMessage::Message { text } => {
+                                        let _ =
+                                            w.lock().await.send(Message::Text(text.into())).await;
+                                    }
+                                    WorkerMessage::Done => {
+                                        finished_threads += 1;
+                                        if finished_threads == threads {
+                                            let (progress_start, progress_end) = {
+                                                let x = state_for_completion.lock().unwrap();
+                                                (x.progress_start, x.progress_end)
+                                            };
+                                            println!("Completed: {}.", progress_end);
+                                            let output =
                                                 serde_json::to_string(&OutgoingMessage::Done {
                                                     start: progress_start,
                                                     end: progress_end,
                                                 })
-                                                .unwrap()
-                                                .into(),
-                                            ))
-                                            .await
-                                            .unwrap();
-                                    })
+                                                .unwrap();
+                                            let _ = w
+                                                .lock()
+                                                .await
+                                                .send(Message::Text(output.into()))
+                                                .await;
+                                            break;
+                                        }
+                                    }
                                 }
-                            });
-                        }
+                            }
+                        });
                     }
                 }
             }

@@ -4,6 +4,7 @@ import styles from "./App.module.css"
 import { StoreContext, defaultStore } from "./store"
 import Header from "./partials/Header"
 import { ParentComponent, createEffect, onCleanup } from "solid-js"
+import { I18nProvider } from "./lingui"
 
 const App: ParentComponent = (props) => {
     const [store, setStore] = createStore<Store>(defaultStore)
@@ -20,15 +21,17 @@ const App: ParentComponent = (props) => {
 
     return (
         <StoreContext.Provider value={[store, setStore]}>
-            <div
-                class={clsx(
-                    styles.app,
-                    store.settings.darkMode ? styles.dark : styles.light,
-                )}
-            >
-                <Header />
-                <div class={styles.content}>{props.children}</div>
-            </div>
+            <I18nProvider>
+                <div
+                    class={clsx(
+                        styles.app,
+                        store.settings.darkMode ? styles.dark : styles.light,
+                    )}
+                >
+                    <Header />
+                    <div class={styles.content}>{props.children}</div>
+                </div>
+            </I18nProvider>
         </StoreContext.Provider>
     )
 }

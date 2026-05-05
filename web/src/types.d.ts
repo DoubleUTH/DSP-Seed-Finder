@@ -9,8 +9,10 @@ import type {
     OceanType as EOceanType,
     CompositeRuleType,
 } from "./enums"
+import type { ALL_LANGS } from "./constants"
 
 declare global {
+    declare type Lang = (typeof ALL_LANGS)[number]
     declare type integer = number
     declare type float = number
 
@@ -273,6 +275,7 @@ declare global {
 
     declare interface Settings {
         darkMode: boolean
+        language: Lang
         view: {
             starCount: integer
             resourceMultipler: float

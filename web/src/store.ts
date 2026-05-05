@@ -6,24 +6,37 @@ import {
     defaultResourceMultipler,
     defaultStarCount,
 } from "./util"
+import { ALL_LANGS, DEFAULT_LANG } from "./constants"
 
-const localStorageKey = "dsp-seed-finder-theme"
+const localStorageThemeKey = "dsp-seed-finder-theme"
+const localStorageLanguageKey = "dsp-seed-finder-language"
 
 function isInitialDarkMode() {
-    const value = localStorage.getItem(localStorageKey)
+    const value = localStorage.getItem(localStorageThemeKey)
     if (value != null) return value === "dark"
     return window.matchMedia("(prefers-color-scheme: dark)").matches
 }
 
+function getInitialLanguage(): Lang {
+    const value = localStorage.getItem(localStorageLanguageKey)
+    if (value != null && ALL_LANGS.includes(value as Lang)) return value as Lang
+    return DEFAULT_LANG
+}
+
 export function toggleDarkMode(wasDarkMode: boolean) {
     const isDarkMode = !wasDarkMode
-    localStorage.setItem(localStorageKey, isDarkMode ? "dark" : "light")
+    localStorage.setItem(localStorageThemeKey, isDarkMode ? "dark" : "light")
     return isDarkMode
+}
+
+export function setLanguage(language: Lang) {
+    localStorage.setItem(localStorageLanguageKey, language)
 }
 
 export const defaultStore: Store = {
     settings: {
         darkMode: isInitialDarkMode(),
+        language: getInitialLanguage(),
         view: {
             starCount: defaultStarCount,
             resourceMultipler: defaultResourceMultipler,

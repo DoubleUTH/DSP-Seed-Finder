@@ -5,6 +5,7 @@
     "type": "module",
     "license": "Apache-2.0",
     "scripts": {
+        "extract": "lingui extract --clean",
         "dev": "vite",
         "preview:web": "vite preview --port 5173",
         "preview:native": ".\\target\\release\\dsp_seed.exe",
@@ -16,6 +17,9 @@
     },
     "dependencies": {
         "@floating-ui/dom": "^1.7.6",
+        "@lingui/babel-plugin-lingui-macro": "^6.0.1",
+        "@lingui/core": "^6.0.1",
+        "@lingui/vite-plugin": "^6.0.1",
         "@solidjs/router": "^0.16.1",
         "clsx": "^2.1.1",
         "exceljs": "^4.4.0",
@@ -25,7 +29,7 @@
         "solid-js": "^1.9.12",
         "tiny-emitter": "^2.1.0",
         "typescript": "^5.9.3",
-        "vite": "^5.4.21",
+        "vite": "^6.4.2",
         "vite-plugin-solid": "^2.11.12"
     },
     "devDependencies": {

@@ -4,13 +4,15 @@ import { A } from "@solidjs/router"
 import { IoContrast, IoLogoGithub } from "solid-icons/io"
 import { Component } from "solid-js"
 import clsx from "clsx"
+import { useLingui } from "#lingui"
 
 const Header: Component = () => {
     const [store, setStore] = useStore()
+    const { t } = useLingui()
 
     return (
         <div class={styles.header}>
-            <div class={styles.title}>DSP Seed Finder</div>
+            <div class={styles.title}>{t`DSP Seed Finder`}</div>
             <div
                 class={clsx(
                     styles.buttons,

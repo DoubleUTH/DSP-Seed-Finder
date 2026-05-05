@@ -3,6 +3,9 @@
     "compilerOptions": {
         "composite": true,
         "lib": ["ESNext", "DOM"],
+        "paths": {
+            "#lingui": ["../web/src/lingui.tsx"]
+        },
 
         /* Bundler mode */
         "jsx": "preserve",

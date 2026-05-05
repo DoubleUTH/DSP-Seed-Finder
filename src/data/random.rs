@@ -2,7 +2,6 @@
 pub struct DspRandom {
     inext: usize,
     inextp: usize,
-    pub seed: i32,
     seed_array: [i32; 56],
 }
 
@@ -12,8 +11,12 @@ impl DspRandom {
         let mut num1 = 161803398 - seed.abs();
         seed_array[55] = num1;
         let mut num2 = 1;
-        for index1 in 1..55 {
-            let index2 = (21 * index1) % 55;
+        let mut index2 = 0;
+        for _ in 1..55 {
+            index2 += 21;
+            if index2 >= 55 {
+                index2 -= 55;
+            }
             seed_array[index2] = num2;
             num2 = num1 - num2;
             if num2 < 0 {
@@ -21,20 +24,33 @@ impl DspRandom {
             }
             num1 = seed_array[index2]
         }
-        for _index3 in 1..5 {
-            for index4 in 1..56 {
-                let mut val = seed_array[index4].wrapping_sub(seed_array[1 + (index4 + 30) % 55]);
-                if val < 0 {
-                    val += i32::MAX;
-                }
-                seed_array[index4] = val;
+
+        let ptr = seed_array.as_mut_ptr();
+
+        let (chunk1_lhs, chunk1_rhs, chunk2_lhs, chunk2_rhs) = unsafe {
+            (
+                &mut *ptr.add(1).cast::<[i32; 24]>(),
+                &*ptr.add(32).cast::<[i32; 24]>(),
+                &mut *ptr.add(25).cast::<[i32; 31]>(),
+                &*ptr.add(1).cast::<[i32; 31]>(),
+            )
+        };
+
+        let update = |(lhs, rhs): (&mut i32, &i32)| {
+            *lhs = lhs.wrapping_sub(*rhs);
+            if lhs.is_negative() {
+                *lhs += i32::MAX;
             }
+        };
+
+        for _ in 1..5 {
+            chunk1_lhs.iter_mut().zip(chunk1_rhs).for_each(update);
+            chunk2_lhs.iter_mut().zip(chunk2_rhs).for_each(update);
         }
 
         Self {
             inext: 0,
             inextp: 31,
-            seed,
             seed_array,
         }
     }

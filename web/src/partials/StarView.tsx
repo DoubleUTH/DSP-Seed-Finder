@@ -4,16 +4,12 @@ import {
     distanceFromBirth,
     formatNumber,
     furthestDistanceFrom,
-    gasNames,
     gasOrder,
-    getStarType,
     metersPerAU,
     nearestDistanceFrom,
-    planetTypes,
     romans,
     statVein,
     toPrecision,
-    veinNames,
     veinOrder,
 } from "../util"
 import styles from "./StarView.module.css"
@@ -23,6 +19,12 @@ import clsx from "clsx"
 import { A } from "@solidjs/router"
 import Tooltip from "../components/Tooltip"
 import { Trans, useLingui } from "#lingui"
+import {
+    useGasTypeNames,
+    usePlanetTypeNames,
+    useStarTypeFullName,
+    useVeinNames,
+} from "../names"
 
 function combineVeins(star: Star): VeinStat[] {
     const veins: Record<VeinType, VeinStat> = {} as any
@@ -142,6 +144,7 @@ const StarDetail: Component<{
     positions?: Position[]
 }> = (props) => {
     const { t } = useLingui()
+    const getStarType = useStarTypeFullName()
     return (
         <>
             <div class={styles.row}>
@@ -265,13 +268,15 @@ const Vein: Component<{
 
 const StarVeins: Component<{ star: Star }> = (props) => {
     const { t } = useLingui()
+    const veinNames = useVeinNames()
+    const gasTypeNames = useGasTypeNames()
     return (
         <>
             <For each={combineVeins(props.star)}>
                 {(vein) => (
                     <div class={styles.row}>
                         <div class={styles.field}>
-                            {veinNames[vein.veinType]}
+                            {veinNames[vein.veinType]()}
                         </div>
                         <Vein class={styles.value} stat={vein} />
                     </div>
@@ -292,7 +297,7 @@ const StarVeins: Component<{ star: Star }> = (props) => {
             <For each={combineGases(props.star)}>
                 {([type, amount]) => (
                     <div class={styles.row}>
-                        <div class={styles.field}>{gasNames[type]}</div>
+                        <div class={styles.field}>{gasTypeNames[type]()}</div>
                         <div class={styles.value}>
                             {formatNumber(amount, 4)} /s
                         </div>
@@ -309,24 +314,27 @@ const NearbyStar: Component<{
     distance: float
     url: string
     newPage?: boolean
-}> = (props) => (
-    <A
-        href={props.url}
-        target={props.newPage ? "_blank" : undefined}
-        class={clsx(styles.row, styles.nearbyRow)}
-    >
-        <div>
-            <span>{props.star.name}</span>
-            <span class={styles.index}>#{props.star.index + 1}</span>
-        </div>
-        <div>
-            <span class={styles.nearbyType}>{getStarType(props.star)}</span>
-            <span class={styles.nearbyDistance}>
-                {formatNumber(props.distance, 1)} ly
-            </span>
-        </div>
-    </A>
-)
+}> = (props) => {
+    const getStarType = useStarTypeFullName()
+    return (
+        <A
+            href={props.url}
+            target={props.newPage ? "_blank" : undefined}
+            class={clsx(styles.row, styles.nearbyRow)}
+        >
+            <div>
+                <span>{props.star.name}</span>
+                <span class={styles.index}>#{props.star.index + 1}</span>
+            </div>
+            <div>
+                <span class={styles.nearbyType}>{getStarType(props.star)}</span>
+                <span class={styles.nearbyDistance}>
+                    {formatNumber(props.distance, 1)} ly
+                </span>
+            </div>
+        </A>
+    )
+}
 
 const PlanetView: Component<{ star: Star; planet: Planet }> = (props) => {
     function isGas() {
@@ -334,6 +342,9 @@ const PlanetView: Component<{ star: Star; planet: Planet }> = (props) => {
     }
 
     const { t } = useLingui()
+    const veinNames = useVeinNames()
+    const gasTypeNames = useGasTypeNames()
+    const planetTypes = usePlanetTypeNames()
 
     return (
         <div class={styles.planet}>
@@ -410,7 +421,7 @@ const PlanetView: Component<{ star: Star; planet: Planet }> = (props) => {
                 <div class={styles.row}>
                     <div class={styles.field}>{t`Type`}</div>
                     <div class={styles.value}>
-                        {planetTypes[props.planet.theme.id] ||
+                        {planetTypes[props.planet.theme.id]?.() ||
                             props.planet.theme.id}
                     </div>
                 </div>
@@ -419,7 +430,7 @@ const PlanetView: Component<{ star: Star; planet: Planet }> = (props) => {
                 {(vein) => (
                     <div class={styles.row}>
                         <div class={styles.field}>
-                            {veinNames[vein.veinType]}
+                            {veinNames[vein.veinType]()}
                         </div>
                         <Vein class={styles.value} stat={vein} />
                     </div>
@@ -440,7 +451,7 @@ const PlanetView: Component<{ star: Star; planet: Planet }> = (props) => {
             <For each={planetGases(props.planet)}>
                 {([type, amount]) => (
                     <div class={styles.row}>
-                        <div class={styles.field}>{gasNames[type]}</div>
+                        <div class={styles.field}>{gasTypeNames[type]()}</div>
                         <div class={styles.value}>
                             {formatNumber(amount, 4)} /s
                         </div>

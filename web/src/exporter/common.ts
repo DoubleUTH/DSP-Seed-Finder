@@ -1,4 +1,30 @@
-import { gasNames, gasOrder, veinNames, veinOrder } from "../util"
+import { VeinType, GasType } from "../enums"
+import { gasOrder, veinOrder } from "../util"
+
+export const veinNames: Record<VeinType, string> = {
+    [VeinType.None]: "",
+    [VeinType.Iron]: "Iron Ore",
+    [VeinType.Copper]: "Copper Ore",
+    [VeinType.Silicium]: "Silicon Ore",
+    [VeinType.Titanium]: "Titanium Ore",
+    [VeinType.Stone]: "Stone",
+    [VeinType.Coal]: "Coal",
+    [VeinType.Oil]: "Crude Oil",
+    [VeinType.Fireice]: "Fire Ice",
+    [VeinType.Diamond]: "Kimberlite Ore",
+    [VeinType.Fractal]: "Fractal Silicon",
+    [VeinType.Crysrub]: "Organic Crystal",
+    [VeinType.Grat]: "Grating Crystal",
+    [VeinType.Bamboo]: "Stalagmite Crystal",
+    [VeinType.Mag]: "Unipolar Magnet",
+}
+
+export const gasNames: Record<GasType, string> = {
+    [GasType.None]: "",
+    [GasType.Fireice]: "Fire Ice",
+    [GasType.Hydrogen]: "Hydrogen",
+    [GasType.Deuterium]: "Deuterium",
+}
 
 export enum StarField {
     Seed = "Seed",

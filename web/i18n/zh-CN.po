@@ -18,7 +18,12 @@ msgstr ""
 msgid " - Copy"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:629
+#. placeholder {0}: star.spectr
+#: web/src/names.ts:146
+msgid "{0} type Star"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:641
 msgid "<0/> number of hives is <1/> <2/>."
 msgstr ""
 
@@ -26,22 +31,26 @@ msgstr ""
 msgid "<0/> to <1/>"
 msgstr ""
 
-#: web/src/partials/MultiRuleEditor.tsx:212
-#: web/src/partials/RuleEditor.tsx:899
+#: web/src/partials/MultiRuleEditor.tsx:214
+#: web/src/partials/RuleEditor.tsx:911
 msgid "Add AND rule"
 msgstr ""
 
-#: web/src/partials/MultiRuleEditor.tsx:145
-#: web/src/partials/RuleEditor.tsx:826
+#: web/src/partials/MultiRuleEditor.tsx:147
+#: web/src/partials/RuleEditor.tsx:838
 msgid "Add OR rule"
 msgstr ""
 
-#: web/src/partials/StarView.tsx:239
+#: web/src/partials/StarView.tsx:242
 msgid "Age"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:873
+#: web/src/partials/RuleEditor.tsx:885
 msgid "AND"
+msgstr ""
+
+#: web/src/names.ts:98
+msgid "Aquatica"
 msgstr ""
 
 #: web/src/partials/ProfileManager.tsx:66
@@ -50,16 +59,29 @@ msgstr ""
 msgid "Are you sure?"
 msgstr ""
 
+#: web/src/names.ts:117
+msgid "at least"
+msgstr ""
+
+#: web/src/names.ts:119
+msgid "at most"
+msgstr ""
+
 #: web/src/partials/ProgressEditor.tsx:185
 msgid "Autosave interval"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:1105
+#: web/src/names.ts:27
+#: web/src/names.ts:144
 msgid "Black Hole"
 msgstr ""
 
-#: web/src/partials/StarView.tsx:136
+#: web/src/partials/StarView.tsx:138
 msgid "Black Hole / Neutron Star"
+msgstr ""
+
+#: web/src/names.ts:137
+msgid "Blue Giant"
 msgstr ""
 
 #: web/src/partials/ProfileManager.tsx:81
@@ -81,6 +103,10 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
+#: web/src/names.ts:68
+msgid "Coal"
+msgstr ""
+
 #: web/src/views/FindGalaxy.tsx:422
 #: web/src/views/FindStar.tsx:491
 msgid "Completed!"
@@ -93,6 +119,22 @@ msgstr ""
 
 #: web/src/partials/ProfileManager.tsx:128
 msgid "Confirm"
+msgstr ""
+
+#: web/src/names.ts:64
+msgid "Copper Ore"
+msgstr ""
+
+#: web/src/names.ts:96
+msgid "Crimsonis"
+msgstr ""
+
+#: web/src/names.ts:69
+msgid "Crude Oil"
+msgstr ""
+
+#: web/src/names.ts:101
+msgid "Cyclonius"
 msgstr ""
 
 #: web/src/partials/ExportModal.tsx:317
@@ -112,28 +154,32 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:1121
+#: web/src/names.ts:93
+msgid "Desolus"
+msgstr ""
+
+#: web/src/names.ts:16
 msgid "Deuterium"
 msgstr ""
 
-#: web/src/partials/StarView.tsx:189
+#: web/src/partials/StarView.tsx:192
 msgid "Distance from furthest <0/>"
 msgstr ""
 
-#: web/src/partials/StarView.tsx:170
+#: web/src/partials/StarView.tsx:173
 msgid "Distance from nearest <0/>"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:919
+#: web/src/names.ts:42
 msgid "Distance from Other Stars"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:917
-#: web/src/partials/StarView.tsx:162
+#: web/src/names.ts:40
+#: web/src/partials/StarView.tsx:165
 msgid "Distance from Start"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:918
+#: web/src/names.ts:41
 msgid "Distance from X Star"
 msgstr ""
 
@@ -166,6 +212,10 @@ msgstr ""
 msgid "Every <0/> seconds"
 msgstr ""
 
+#: web/src/names.ts:114
+msgid "exactly"
+msgstr ""
+
 #: web/src/partials/ExportModal.tsx:284
 #: web/src/partials/ExportModal.tsx:397
 #: web/src/views/FindGalaxy.tsx:406
@@ -186,12 +236,17 @@ msgstr ""
 msgid "Exporting {0} / {1}"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:1122
+#: web/src/names.ts:17
+#: web/src/names.ts:70
 msgid "Fire Ice"
 msgstr ""
 
 #: web/src/partials/ExportModal.tsx:289
 msgid "Format"
+msgstr ""
+
+#: web/src/names.ts:72
+msgid "Fractal Silicon"
 msgstr ""
 
 #: web/src/partials/Header.tsx:26
@@ -202,121 +257,170 @@ msgstr ""
 msgid "Galaxy Viewer"
 msgstr ""
 
-#: web/src/partials/StarView.tsx:350
+#: web/src/names.ts:84
+#: web/src/names.ts:85
+#: web/src/names.ts:103
+#: web/src/partials/StarView.tsx:361
 msgid "Gas Giant"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:929
+#: web/src/names.ts:52
 msgid "Gas Rate"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:927
+#: web/src/names.ts:50
 msgid "Gas/Ice Giant Count"
+msgstr ""
+
+#: web/src/names.ts:89
+msgid "Geloterra"
 msgstr ""
 
 #: web/src/partials/ExportModal.tsx:157
 msgid "Generating file"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:1103
+#: web/src/names.ts:25
 msgid "Giant Star"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:285
+#: web/src/names.ts:92
+msgid "Glacieon"
+msgstr ""
+
+#: web/src/names.ts:94
+msgid "Gobi"
+msgstr ""
+
+#: web/src/names.ts:74
+msgid "Grating Crystal"
+msgstr ""
+
+#: web/src/names.ts:116
+msgid "greater than"
+msgstr ""
+
+#: web/src/names.ts:99
+msgid "Halitum"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:296
 msgid "Has <0/> <1/> <2/> giant(s)"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:465
+#: web/src/partials/RuleEditor.tsx:476
 msgid "Has <0/> <1/> <2/> type stars that are <3/> <4/> ly away."
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:559
+#: web/src/partials/RuleEditor.tsx:570
 msgid "Has <0/> <1/> planet(s) within max dyson sphere radius, <2/> gas/ice giants."
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:353
+#: web/src/partials/RuleEditor.tsx:364
 msgid "Has <0/> <1/> planets, <2/> gas/ice giants."
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:324
+#: web/src/partials/RuleEditor.tsx:335
 msgid "Has <0/> <1/> satellite(s)"
 msgstr ""
 
-#: web/src/partials/MultiRuleEditor.tsx:74
+#: web/src/partials/MultiRuleEditor.tsx:76
 msgid "Has <0/> <1/> star(s) that satisfy <2/>. Description: "
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:208
+#: web/src/partials/RuleEditor.tsx:219
 msgid "Has <0/> <1/> tidally locked planets"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:519
+#: web/src/partials/RuleEditor.tsx:530
 msgid "Has <0/> and <1/> <2/>/s of it"
 msgstr ""
 
 #. placeholder {0}: props.value.vein === VeinType.Oil ? " /s" : " "
-#: web/src/partials/RuleEditor.tsx:147
+#: web/src/partials/RuleEditor.tsx:158
 msgid "Has <0/> and the estimated amount is <1/> <2/>{0}"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:602
+#: web/src/partials/RuleEditor.tsx:614
 msgid "Has a <0/> planet."
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:234
+#: web/src/partials/RuleEditor.tsx:245
 msgid "Has planets with <0/> Ocean"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:932
+#: web/src/names.ts:55
 msgid "Hive Count"
 msgstr ""
 
-#: web/src/partials/StarView.tsx:384
+#: web/src/partials/StarView.tsx:395
 msgid "Horizontal Rotation"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:1120
+#: web/src/names.ts:15
 msgid "Hydrogen"
 msgstr ""
 
-#: web/src/partials/StarView.tsx:351
+#: web/src/names.ts:86
+#: web/src/names.ts:87
+#: web/src/partials/StarView.tsx:362
 msgid "Ice Giant"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:637
+#: web/src/names.ts:106
+msgid "Icefrostia"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:649
 msgid "Initial"
 msgstr ""
 
-#: web/src/partials/StarView.tsx:212
+#: web/src/partials/StarView.tsx:215
 msgid "Initial Number off Hives"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:424
+#: web/src/names.ts:63
+msgid "Iron Ore"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:435
 msgid "Is <0/> <1/> ly away from <2/> black hole / neutron star."
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:88
+#: web/src/partials/RuleEditor.tsx:98
 msgid "Is <0/> <1/>L"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:395
+#: web/src/partials/RuleEditor.tsx:406
 msgid "Is <0/> <1/>ly away from the starting system"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:117
+#: web/src/partials/RuleEditor.tsx:127
 msgid "Is <0/> <1/>m"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:260
+#: web/src/partials/RuleEditor.tsx:271
 msgid "Is a <0/>"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:182
+#: web/src/partials/RuleEditor.tsx:193
 msgid "Is a <0/> type star"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:742
+#: web/src/partials/RuleEditor.tsx:754
 msgid "Is the starting system"
+msgstr ""
+
+#: web/src/names.ts:71
+msgid "Kimberlite Ore"
+msgstr ""
+
+#: web/src/names.ts:91
+msgid "Lava"
+msgstr ""
+
+#: web/src/names.ts:118
+msgid "less than"
 msgstr ""
 
 #: web/src/partials/ProfileManager.tsx:28
@@ -327,25 +431,33 @@ msgstr ""
 msgid "Loading..."
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:920
-#: web/src/partials/StarView.tsx:156
+#: web/src/names.ts:43
+#: web/src/partials/StarView.tsx:159
 msgid "Luminosity"
 msgstr ""
 
-#: web/src/partials/StarView.tsx:227
+#: web/src/names.ts:83
+msgid "Mariterra"
+msgstr ""
+
+#: web/src/names.ts:102
+msgid "Maroonfrost"
+msgstr ""
+
+#: web/src/partials/StarView.tsx:230
 msgid "Mass"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:637
+#: web/src/partials/RuleEditor.tsx:649
 msgid "Max"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:922
-#: web/src/partials/StarView.tsx:206
+#: web/src/names.ts:45
+#: web/src/partials/StarView.tsx:209
 msgid "Max Dyson Sphere Radius"
 msgstr ""
 
-#: web/src/partials/StarView.tsx:216
+#: web/src/partials/StarView.tsx:219
 msgid "Maximum Number off Hives"
 msgstr ""
 
@@ -353,11 +465,12 @@ msgstr ""
 msgid "Native Mode"
 msgstr ""
 
-#: web/src/partials/StarView.tsx:509
+#: web/src/partials/StarView.tsx:520
 msgid "Nearby Stars"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:1106
+#: web/src/names.ts:28
+#: web/src/names.ts:142
 msgid "Neutron Star"
 msgstr ""
 
@@ -373,33 +486,49 @@ msgstr ""
 msgid "No saved profiles."
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:1102
+#: web/src/names.ts:24
 msgid "Normal Star"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:928
-#: web/src/partials/StarView.tsx:283
-#: web/src/partials/StarView.tsx:289
-#: web/src/partials/StarView.tsx:431
-#: web/src/partials/StarView.tsx:437
+#: web/src/names.ts:115
+msgid "not equal to"
+msgstr ""
+
+#: web/src/names.ts:51
+#: web/src/partials/StarView.tsx:288
+#: web/src/partials/StarView.tsx:294
+#: web/src/partials/StarView.tsx:442
+#: web/src/partials/StarView.tsx:448
 msgid "Ocean"
 msgstr ""
 
-#: web/src/partials/MultiRuleEditor.tsx:70
-#: web/src/partials/RuleEditor.tsx:801
+#: web/src/names.ts:105
+msgid "Onyxtopia"
+msgstr ""
+
+#: web/src/partials/MultiRuleEditor.tsx:72
+#: web/src/partials/RuleEditor.tsx:813
 msgid "OR"
 msgstr ""
 
-#: web/src/partials/StarView.tsx:388
+#: web/src/partials/StarView.tsx:399
 msgid "Orbit Radius"
 msgstr ""
 
-#: web/src/partials/StarView.tsx:373
+#: web/src/partials/StarView.tsx:384
 msgid "Orbital Resonance 1 : 2"
 msgstr ""
 
-#: web/src/partials/StarView.tsx:381
+#: web/src/partials/StarView.tsx:392
 msgid "Orbital Resonance 1 : 4"
+msgstr ""
+
+#: web/src/names.ts:73
+msgid "Organic Crystal"
+msgstr ""
+
+#: web/src/names.ts:107
+msgid "Pandora Swamp"
 msgstr ""
 
 #: web/src/views/FindGalaxy.tsx:419
@@ -407,20 +536,24 @@ msgstr ""
 msgid "Pause"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:923
+#: web/src/names.ts:46
 msgid "Planet Count"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:926
+#: web/src/names.ts:49
 msgid "Planet Themes"
 msgstr ""
 
-#: web/src/partials/StarView.tsx:534
+#: web/src/partials/StarView.tsx:545
 msgid "Planets"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:931
+#: web/src/names.ts:54
 msgid "Planets in Dyson Sphere"
+msgstr ""
+
+#: web/src/names.ts:97
+msgid "Prairiea"
 msgstr ""
 
 #: web/src/partials/ProgressEditor.tsx:36
@@ -440,12 +573,16 @@ msgstr ""
 msgid "Progress:"
 msgstr ""
 
-#: web/src/partials/StarView.tsx:221
+#: web/src/partials/StarView.tsx:224
 msgid "Radius"
 msgstr ""
 
 #: web/src/views/Galaxy.tsx:79
 msgid "Random"
+msgstr ""
+
+#: web/src/names.ts:130
+msgid "Red Giant"
 msgstr ""
 
 #: web/src/partials/ExportModal.tsx:307
@@ -454,7 +591,7 @@ msgstr ""
 msgid "Resource Multiplier"
 msgstr ""
 
-#: web/src/partials/StarView.tsx:500
+#: web/src/partials/StarView.tsx:511
 msgid "Resources"
 msgstr ""
 
@@ -472,7 +609,7 @@ msgstr ""
 msgid "Rules"
 msgstr ""
 
-#: web/src/partials/MultiRuleEditor.tsx:222
+#: web/src/partials/MultiRuleEditor.tsx:224
 msgid "Ruleset"
 msgstr ""
 
@@ -480,16 +617,28 @@ msgstr ""
 msgid "Running autosave too frequently may decrease search performance."
 msgstr ""
 
-#: web/src/partials/StarView.tsx:357
+#: web/src/names.ts:100
+msgid "Sakura Ocean"
+msgstr ""
+
+#: web/src/partials/StarView.tsx:368
 msgid "Satellite"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:924
+#: web/src/names.ts:47
 msgid "Satellite Count"
+msgstr ""
+
+#: web/src/names.ts:104
+msgid "Savanna"
 msgstr ""
 
 #: web/src/partials/ProfileManager.tsx:34
 msgid "Save"
+msgstr ""
+
+#: web/src/names.ts:88
+msgid "Scorchedia"
 msgstr ""
 
 #: web/src/partials/ExportModal.tsx:337
@@ -501,18 +650,26 @@ msgstr ""
 msgid "Seed: "
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:36
-#: web/src/partials/RuleEditor.tsx:912
+#: web/src/names.ts:35
+#: web/src/partials/RuleEditor.tsx:43
 msgid "Select..."
 msgstr ""
 
-#: web/src/partials/StarView.tsx:405
+#: web/src/names.ts:65
+msgid "Silicon Ore"
+msgstr ""
+
+#: web/src/partials/StarView.tsx:416
 msgid "Solar Power"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:921
-#: web/src/partials/StarView.tsx:152
+#: web/src/names.ts:44
+#: web/src/partials/StarView.tsx:155
 msgid "Spectral Class"
+msgstr ""
+
+#: web/src/names.ts:75
+msgid "Stalagmite Crystal"
 msgstr ""
 
 #: web/src/partials/ExportModal.tsx:299
@@ -530,20 +687,28 @@ msgstr ""
 msgid "Start"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:915
+#: web/src/names.ts:38
 msgid "Starting System"
+msgstr ""
+
+#: web/src/names.ts:67
+msgid "Stone"
 msgstr ""
 
 #: web/src/partials/ExportModal.tsx:235
 msgid "Stop"
 msgstr ""
 
-#: web/src/partials/StarView.tsx:288
-#: web/src/partials/StarView.tsx:436
+#: web/src/names.ts:95
+msgid "Sulfuria"
+msgstr ""
+
+#: web/src/partials/StarView.tsx:293
+#: web/src/partials/StarView.tsx:447
 msgid "Sulfuric Acid"
 msgstr ""
 
-#: web/src/partials/StarView.tsx:233
+#: web/src/partials/StarView.tsx:236
 msgid "Temperature"
 msgstr ""
 
@@ -551,30 +716,42 @@ msgstr ""
 msgid "The number of parallel processes to run the search."
 msgstr ""
 
-#: web/src/partials/MultiRuleEditor.tsx:40
+#: web/src/partials/MultiRuleEditor.tsx:41
 msgid "this ruleset"
 msgstr ""
 
-#: web/src/partials/StarView.tsx:365
+#: web/src/partials/StarView.tsx:376
 msgid "Tidal locking"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:925
+#: web/src/names.ts:48
 msgid "Tidally Locked Planet Count"
+msgstr ""
+
+#: web/src/names.ts:66
+msgid "Titanium Ore"
 msgstr ""
 
 #: web/src/partials/ProgressEditor.tsx:113
 msgid "To run the search in (faster) native mode, click the download button and run the program on your PC, then enable this option."
 msgstr ""
 
-#: web/src/partials/StarView.tsx:148
-#: web/src/partials/StarView.tsx:345
-#: web/src/partials/StarView.tsx:411
+#: web/src/names.ts:90
+msgid "Tropicana"
+msgstr ""
+
+#: web/src/partials/StarView.tsx:151
+#: web/src/partials/StarView.tsx:356
+#: web/src/partials/StarView.tsx:422
 msgid "Type"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:916
+#: web/src/names.ts:39
 msgid "Type of star"
+msgstr ""
+
+#: web/src/names.ts:76
+msgid "Unipolar Magnet"
 msgstr ""
 
 #: web/src/views/FindGalaxy.tsx:151
@@ -582,7 +759,7 @@ msgstr ""
 msgid "Untitled"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:930
+#: web/src/names.ts:53
 msgid "Vein Amount"
 msgstr ""
 
@@ -598,19 +775,28 @@ msgstr ""
 msgid "Warning: Exporting too many seeds may cause out of memory error."
 msgstr ""
 
-#: web/src/partials/StarView.tsx:282
-#: web/src/partials/StarView.tsx:430
+#: web/src/partials/StarView.tsx:287
+#: web/src/partials/StarView.tsx:441
 msgid "Water"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:1104
+#: web/src/names.ts:26
+#: web/src/names.ts:140
 msgid "White Dwarf"
 msgstr ""
 
-#: web/src/partials/StarView.tsx:399
+#: web/src/names.ts:135
+msgid "White Giant"
+msgstr ""
+
+#: web/src/partials/StarView.tsx:410
 msgid "Wind Power"
 msgstr ""
 
-#: web/src/partials/StarView.tsx:136
+#: web/src/partials/StarView.tsx:138
 msgid "X star"
+msgstr ""
+
+#: web/src/names.ts:133
+msgid "Yellow Giant"
 msgstr ""

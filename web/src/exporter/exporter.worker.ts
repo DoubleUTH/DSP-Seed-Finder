@@ -2,14 +2,13 @@ import {
     distanceFromBirth,
     furthestDistanceFrom,
     gasOrder,
-    getStarType,
     nearestDistanceFrom,
     planetTypes,
     romans,
     statVein,
     veinOrder,
 } from "../util"
-import { GasType, OceanType, StarType, VeinType } from "../enums"
+import { GasType, OceanType, SpectrType, StarType, VeinType } from "../enums"
 import {
     PlanetField,
     StarField,
@@ -21,6 +20,31 @@ import init, { generate } from "worldgen-wasm"
 function trim(number: number, precision: number) {
     const multiplier = Math.pow(10, precision)
     return Math.round(number * multiplier) / multiplier
+}
+
+export function getStarType(star: Star): string {
+    if (star.type === StarType.GiantStar) {
+        switch (star.spectr) {
+            case SpectrType.M:
+            case SpectrType.K:
+                return `Red Giant`
+            case SpectrType.G:
+            case SpectrType.F:
+                return `Yellow Giant`
+            case SpectrType.A:
+                return `White Giant`
+            default:
+                return `Blue Giant`
+        }
+    } else if (star.type === StarType.WhiteDwarf) {
+        return `White Dwarf`
+    } else if (star.type === StarType.NeutronStar) {
+        return `Neutron Star`
+    } else if (star.type === StarType.BlackHole) {
+        return `Black Hole`
+    } else {
+        return `${star.spectr} type Star`
+    }
 }
 
 const initPromise = init()

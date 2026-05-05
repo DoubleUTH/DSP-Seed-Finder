@@ -41,7 +41,10 @@ export const I18nProvider: ParentComponent = (props) => {
 
 export function useLingui() {
     const t = useContext(Context)
-    return { i18n, _: t } as unknown as I18nContext
+    return {
+        i18n,
+        _: t || (i18n._.bind(i18n) as any),
+    } as unknown as I18nContext
 }
 
 export const Trans: ParentComponent = (props) => {

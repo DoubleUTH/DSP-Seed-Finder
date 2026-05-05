@@ -1,12 +1,4 @@
-import {
-    CompositeRuleType,
-    ConditionType,
-    GasType,
-    RuleType,
-    SpectrType,
-    StarType,
-    VeinType,
-} from "./enums"
+import { CompositeRuleType, GasType, RuleType, VeinType } from "./enums"
 
 export function toPrecision(number: number, precision: number) {
     return number.toLocaleString([], {
@@ -93,31 +85,6 @@ export const hiveMaxDensityValues: ReadonlyArray<float> = [1, 1.5, 2, 2.5, 3]
 export const defaultResourceMultiplier = 1
 export const defaultHiveInitialColonize = 1
 export const defaultHiveMaxDensity = 1
-
-export const veinNames: Record<VeinType, string> = {
-    [VeinType.None]: "",
-    [VeinType.Iron]: "Iron Ore",
-    [VeinType.Copper]: "Copper Ore",
-    [VeinType.Silicium]: "Silicon Ore",
-    [VeinType.Titanium]: "Titanium Ore",
-    [VeinType.Stone]: "Stone",
-    [VeinType.Coal]: "Coal",
-    [VeinType.Oil]: "Crude Oil",
-    [VeinType.Fireice]: "Fire Ice",
-    [VeinType.Diamond]: "Kimberlite Ore",
-    [VeinType.Fractal]: "Fractal Silicon",
-    [VeinType.Crysrub]: "Organic Crystal",
-    [VeinType.Grat]: "Grating Crystal",
-    [VeinType.Bamboo]: "Stalagmite Crystal",
-    [VeinType.Mag]: "Unipolar Magnet",
-}
-
-export const gasNames: Record<GasType, string> = {
-    [GasType.None]: "",
-    [GasType.Fireice]: "Fire Ice",
-    [GasType.Hydrogen]: "Hydrogen",
-    [GasType.Deuterium]: "Deuterium",
-}
 
 export const veinOrder: VeinType[] = [
     VeinType.Iron,
@@ -211,15 +178,6 @@ export const planetTypes: Record<number, string> = {
     25: "Pandora Swamp",
 }
 
-export const conditionTypeNames: Record<ConditionType, string> = {
-    [ConditionType.Eq]: "exactly",
-    [ConditionType.Neq]: "not equal to",
-    [ConditionType.Gt]: "greater than",
-    [ConditionType.Gte]: "at least",
-    [ConditionType.Lt]: "less than",
-    [ConditionType.Lte]: "at most",
-}
-
 export function validateRules(rules: SimpleRule[][]): boolean {
     if (rules.length === 0) return false
     for (const group of rules) {
@@ -239,31 +197,6 @@ export function validateMultiRule(rules: MultiRule[][]): boolean {
             (rs) => rs.length > 0 && rs.every((r) => validateRules(r.rules)),
         )
     )
-}
-
-export function getStarType(star: Star) {
-    if (star.type === StarType.GiantStar) {
-        switch (star.spectr) {
-            case SpectrType.M:
-            case SpectrType.K:
-                return "Red Giant"
-            case SpectrType.G:
-            case SpectrType.F:
-                return "Yellow Giant"
-            case SpectrType.A:
-                return "White Giant"
-            default:
-                return "Blue Giant"
-        }
-    } else if (star.type === StarType.WhiteDwarf) {
-        return "White Dwarf"
-    } else if (star.type === StarType.NeutronStar) {
-        return "Neutron Star"
-    } else if (star.type === StarType.BlackHole) {
-        return "Black Hole"
-    } else {
-        return star.spectr + " type Star"
-    }
 }
 
 export function distanceFromBirth([x, y, z]: Position): float {

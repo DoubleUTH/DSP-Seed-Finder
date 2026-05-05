@@ -13,9 +13,16 @@ import Select from "../components/Select"
 import { IoTrash } from "solid-icons/io"
 import Button from "../components/Button"
 import NumberInput from "../components/NumberInput"
-import { conditionTypeNames, planetTypes, veinNames } from "../util"
 import clsx from "clsx"
 import { Trans, useLingui } from "#lingui"
+import {
+    useRuleNames,
+    useStarTypeNames,
+    useGasTypeNames,
+    useVeinNames,
+    usePlanetTypeNames,
+    useConditionTypeNames,
+} from "../names"
 
 const SelectSimpleRule: Component<{
     value?: SimpleRule
@@ -23,7 +30,7 @@ const SelectSimpleRule: Component<{
     disabled?: boolean
 }> = (props) => {
     const { t } = useLingui()
-    const ruleNames = getRuleNames()
+    const ruleNames = useRuleNames()
     return (
         <Select
             class={styles.selectRule}
@@ -45,16 +52,19 @@ const ConditionTypeSelector: Component<{
     value: Condition
     onChange: (value: Condition) => void
     disabled?: boolean
-}> = (props) => (
-    <Select
-        class={styles.selectConditionType}
-        value={props.value.type}
-        onChange={(type) => props.onChange({ ...props.value, type })}
-        options={[ConditionType.Gte, ConditionType.Lte, ConditionType.Eq]}
-        getLabel={(type) => conditionTypeNames[type]}
-        disabled={props.disabled}
-    />
-)
+}> = (props) => {
+    const conditionTypeNames = useConditionTypeNames()
+    return (
+        <Select
+            class={styles.selectConditionType}
+            value={props.value.type}
+            onChange={(type) => props.onChange({ ...props.value, type })}
+            options={[ConditionType.Gte, ConditionType.Lte, ConditionType.Eq]}
+            getLabel={(type) => conditionTypeNames[type]()}
+            disabled={props.disabled}
+        />
+    )
+}
 
 const ConditionValueInput: Component<{
     value: Condition
@@ -143,6 +153,7 @@ const EditAverageVeinAmount: Component<{
     const condition = () => props.value.condition
     const setCondition = (condition: Condition) =>
         props.onChange({ ...props.value, condition })
+    const veinNames = useVeinNames()
     return (
         <Trans>
             Has{" "}
@@ -151,7 +162,7 @@ const EditAverageVeinAmount: Component<{
                 value={props.value.vein}
                 onChange={(vein) => props.onChange({ ...props.value, vein })}
                 options={veins}
-                getLabel={(vein) => veinNames[vein]}
+                getLabel={(vein) => veinNames[vein]()}
                 disabled={props.disabled}
             />{" "}
             and the estimated amount is{" "}
@@ -255,7 +266,7 @@ const EditStarType: Component<{
     onChange: (value: Rule.StarType) => void
     disabled?: boolean
 }> = (props) => {
-    const starTypeNames = getStarTypeNames()
+    const starTypeNames = useStarTypeNames()
     return (
         <Trans>
             Is a{" "}
@@ -514,7 +525,7 @@ const EditGasRate: Component<{
     const condition = () => props.value.condition
     const setCondition = (condition: Condition) =>
         props.onChange({ ...props.value, condition })
-    const gasTypeNames = getGasTypeNames()
+    const gasTypeNames = useGasTypeNames()
     return (
         <Trans>
             Has{" "}
@@ -598,6 +609,7 @@ const EditThemeId: Component<{
     onChange: (value: Rule.ThemeId) => void
     disabled?: boolean
 }> = (props) => {
+    const planetTypes = usePlanetTypeNames()
     return (
         <Trans>
             Has a{" "}
@@ -608,7 +620,7 @@ const EditThemeId: Component<{
                     props.onChange({ ...props.value, themeIds: [themeId] })
                 }
                 options={themeIds}
-                getLabel={(themeId) => planetTypes[themeId]!}
+                getLabel={(themeId) => planetTypes[themeId]!()}
                 disabled={props.disabled}
             />{" "}
             planet.
@@ -906,33 +918,6 @@ const RuleEditor: Component<{
 
 export default RuleEditor
 
-const getRuleNames: () => Record<RuleType, () => string> = () => {
-    const { t } = useLingui()
-    return {
-        [RuleType.None]: () => t`Select...`,
-        [RuleType.And]: () => "",
-        [RuleType.Or]: () => "",
-        [RuleType.Birth]: () => t`Starting System`,
-        [RuleType.StarType]: () => t`Type of star`,
-        [RuleType.BirthDistance]: () => t`Distance from Start`,
-        [RuleType.XDistance]: () => t`Distance from X Star`,
-        [RuleType.SpectrDistance]: () => t`Distance from Other Stars`,
-        [RuleType.Luminosity]: () => t`Luminosity`,
-        [RuleType.Spectr]: () => t`Spectral Class`,
-        [RuleType.DysonRadius]: () => t`Max Dyson Sphere Radius`,
-        [RuleType.PlanetCount]: () => t`Planet Count`,
-        [RuleType.SatelliteCount]: () => t`Satellite Count`,
-        [RuleType.TidalLockCount]: () => t`Tidally Locked Planet Count`,
-        [RuleType.ThemeId]: () => t`Planet Themes`,
-        [RuleType.GasCount]: () => t`Gas/Ice Giant Count`,
-        [RuleType.OceanType]: () => t`Ocean`,
-        [RuleType.GasRate]: () => t`Gas Rate`,
-        [RuleType.AverageVeinAmount]: () => t`Vein Amount`,
-        [RuleType.PlanetInDysonCount]: () => t`Planets in Dyson Sphere`,
-        [RuleType.HiveCount]: () => t`Hive Count`,
-    }
-}
-
 const rules: SimpleRule[] = [
     {
         type: RuleType.BirthDistance,
@@ -1096,29 +1081,8 @@ const starTypes: StarType[] = [
     StarType.NeutronStar,
 ]
 
-const getStarTypeNames: () => Record<StarType, () => string> = () => {
-    const { t } = useLingui()
-    return {
-        [StarType.MainSeqStar]: () => t`Normal Star`,
-        [StarType.GiantStar]: () => t`Giant Star`,
-        [StarType.WhiteDwarf]: () => t`White Dwarf`,
-        [StarType.BlackHole]: () => t`Black Hole`,
-        [StarType.NeutronStar]: () => t`Neutron Star`,
-    }
-}
-
 const gasTypes: GasType[] = [
     GasType.Hydrogen,
     GasType.Deuterium,
     GasType.Fireice,
 ]
-
-const getGasTypeNames: () => Record<GasType, () => string> = () => {
-    const { t } = useLingui()
-    return {
-        [GasType.None]: () => "",
-        [GasType.Hydrogen]: () => t`Hydrogen`,
-        [GasType.Deuterium]: () => t`Deuterium`,
-        [GasType.Fireice]: () => t`Fire Ice`,
-    }
-}

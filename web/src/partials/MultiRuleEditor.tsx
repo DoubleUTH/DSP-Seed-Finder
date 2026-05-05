@@ -5,11 +5,12 @@ import Button from "../components/Button"
 import Input from "../components/Input"
 import Select from "../components/Select"
 import { ConditionType } from "../enums"
-import { conditionTypeNames, validateRules } from "../util"
+import { validateRules } from "../util"
 import NumberInput from "../components/NumberInput"
 import { IoTrash } from "solid-icons/io"
 import styles from "./MultiRuleEditor.module.css"
 import { Trans, useLingui } from "#lingui"
+import { useConditionTypeNames } from "../names"
 
 const DeleteButton: Component<{ onDelete: () => void }> = (props) => {
     return (
@@ -60,6 +61,7 @@ const RuleBlockContent: Component<{
     }
 
     const { t } = useLingui()
+    const conditionTypeNames = useConditionTypeNames()
 
     return (
         <>
@@ -91,7 +93,7 @@ const RuleBlockContent: Component<{
                                             ConditionType.Eq,
                                         ]}
                                         getLabel={(type) =>
-                                            conditionTypeNames[type]
+                                            conditionTypeNames[type]()
                                         }
                                         disabled={props.disabled}
                                     />{" "}

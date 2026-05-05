@@ -606,7 +606,7 @@ impl<'a> Planet<'a> {
                         let map_amount = |amount: i32| -> i32 {
                             let x1 = ((amount as f32) * 1.1).round();
                             let x2 = (if vein.vein_type == VeinType::Oil {
-                                x1 * self.star.game_desc.oil_amount_multipler()
+                                x1 * self.star.game_desc.oil_amount_multiplier()
                             } else {
                                 x1 * self.star.game_desc.resource_multiplier
                             })

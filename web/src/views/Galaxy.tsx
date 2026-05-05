@@ -17,17 +17,17 @@ import StarView from "../partials/StarView"
 import {
     defaultHiveInitialColonize,
     defaultHiveMaxDensity,
-    defaultResourceMultipler,
+    defaultResourceMultiplier,
     defaultStarCount,
     getSearch,
     hiveInitialColonizeValues,
     hiveMaxDensityValues,
     maxStarCount,
     minStarCount,
-    resourceMultiplers,
+    resourceMultipliers,
 } from "../util"
 import StarCountSelector from "../partials/StarCountSelector"
-import ResourceMultiplierSelector from "../partials/ResourceMultiplerSelector"
+import ResourceMultiplierSelector from "../partials/ResourceMultiplierSelector"
 import HiveInitialColonizeSelector from "../partials/HiveInitialColonizeSelector"
 import HiveMaxDensitySelector from "../partials/HiveMaxDensitySelector"
 import { useLingui } from "#lingui"
@@ -52,7 +52,7 @@ const Search: Component = () => {
         navigate(
             `/galaxy/${value()}/0${getSearch({
                 count: store.settings.view.starCount,
-                multipler: store.settings.view.resourceMultipler,
+                multiplier: store.settings.view.resourceMultiplier,
                 hiveInitialColonize: store.settings.view.hiveInitialColonize,
                 hiveMaxDensity: store.settings.view.hiveMaxDensity,
             })}`,
@@ -92,12 +92,12 @@ const Search: Component = () => {
                 value={store.settings.view.starCount}
                 onChange={(v) => setStore("settings", "view", "starCount", v)}
             />
-            <div class={styles.searchTitle}>{t`Resource Multipler`}:</div>
+            <div class={styles.searchTitle}>{t`Resource Multiplier`}:</div>
             <ResourceMultiplierSelector
                 class={styles.searchInput}
-                value={store.settings.view.resourceMultipler}
+                value={store.settings.view.resourceMultiplier}
                 onChange={(v) =>
-                    setStore("settings", "view", "resourceMultipler", v)
+                    setStore("settings", "view", "resourceMultiplier", v)
                 }
             />
             <div class={styles.searchTitle}>
@@ -136,15 +136,15 @@ const View: Component<{ seed: number; index: number }> = (props) => {
         return defaultStarCount
     })
 
-    const resourcMultipler = createMemo(() => {
-        const { multipler } = searchParams
-        if (multipler) {
-            const m = parseFloat(multipler as string)
-            if (resourceMultiplers.includes(m)) {
+    const resourcMultiplier = createMemo(() => {
+        const { multiplier } = searchParams
+        if (multiplier) {
+            const m = parseFloat(multiplier as string)
+            if (resourceMultipliers.includes(m)) {
                 return m
             }
         }
-        return defaultResourceMultipler
+        return defaultResourceMultiplier
     })
 
     const hiveInitialColonize = createMemo(() => {
@@ -173,7 +173,7 @@ const View: Component<{ seed: number; index: number }> = (props) => {
         const config = {
             seed: props.seed,
             starCount: starCount(),
-            resourceMultiplier: resourcMultipler(),
+            resourceMultiplier: resourcMultiplier(),
             hiveInitialColonize: hiveInitialColonize(),
             hiveMaxDensity: hiveMaxDensity(),
         }
@@ -183,7 +183,7 @@ const View: Component<{ seed: number; index: number }> = (props) => {
     const search = createMemo(() =>
         getSearch({
             count: starCount(),
-            multipler: resourcMultipler(),
+            multiplier: resourcMultiplier(),
             hiveInitialColonize: hiveInitialColonize(),
             hiveMaxDensity: hiveMaxDensity(),
         }),

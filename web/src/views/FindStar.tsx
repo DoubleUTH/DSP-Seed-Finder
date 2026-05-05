@@ -27,7 +27,7 @@ import {
     constructRule,
     defaultHiveInitialColonize,
     defaultHiveMaxDensity,
-    defaultResourceMultipler,
+    defaultResourceMultiplier,
     defaultStarCount,
     getSearch,
     maxStarCount,
@@ -53,7 +53,7 @@ import { useLingui } from "#lingui"
 const defaultProgress: () => ProfileProgress = () => ({
     id: "",
     starCount: defaultStarCount,
-    resourceMultiplier: defaultResourceMultipler,
+    resourceMultiplier: defaultResourceMultiplier,
     hiveInitialColonize: defaultHiveInitialColonize,
     hiveMaxDensity: defaultHiveMaxDensity,
     concurrency: navigator.hardwareConcurrency,
@@ -140,7 +140,7 @@ const SearchResult: Component<{
     const searchString = createMemo(() =>
         getSearch({
             count: props.starCount,
-            multipler: props.resourceMultiplier,
+            multiplier: props.resourceMultiplier,
             hiveInitialColonize: props.hiveInitialColonize,
             hiveMaxDensity: props.hiveMaxDensity,
         }),

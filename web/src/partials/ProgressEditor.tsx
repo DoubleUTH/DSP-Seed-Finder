@@ -6,7 +6,7 @@ import Tooltip from "../components/Tooltip"
 import Toggle from "../components/Toggle"
 import ExeUrl from "../../../target/release/dsp_seed.exe?url"
 import Button from "../components/Button"
-import ResourceMultiplierSelector from "./ResourceMultiplerSelector"
+import ResourceMultiplierSelector from "./ResourceMultiplierSelector"
 import NumberInput from "../components/NumberInput"
 import HiveInitialColonizeSelector from "./HiveInitialColonizeSelector"
 import HiveMaxDensitySelector from "./HiveMaxDensitySelector"
@@ -95,7 +95,7 @@ function ProgressEditor<E extends ProfileProgressInfo>(props: {
                 </div>
             </div>
             <div class={styles.field}>
-                <div class={styles.label}>{t`Resource Multipler`}</div>
+                <div class={styles.label}>{t`Resource Multiplier`}</div>
                 <div class={styles.input}>
                     <ResourceMultiplierSelector
                         class={styles.inputStandard}

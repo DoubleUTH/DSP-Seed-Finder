@@ -16,7 +16,7 @@ import {
     constructMultiRule,
     defaultHiveInitialColonize,
     defaultHiveMaxDensity,
-    defaultResourceMultipler,
+    defaultResourceMultiplier,
     defaultStarCount,
     getSearch,
     maxStarCount,
@@ -53,7 +53,7 @@ const PAGE_SIZE = 100
 const defaultProgress: () => MultiProfileProgress = () => ({
     id: "",
     starCount: defaultStarCount,
-    resourceMultiplier: defaultResourceMultipler,
+    resourceMultiplier: defaultResourceMultiplier,
     hiveInitialColonize: defaultHiveInitialColonize,
     hiveMaxDensity: defaultHiveMaxDensity,
     concurrency: navigator.hardwareConcurrency,
@@ -88,7 +88,7 @@ const SearchResult: Component<{
     const searchString = createMemo(() =>
         getSearch({
             count: props.starCount,
-            multipler: props.resourceMultiplier,
+            multiplier: props.resourceMultiplier,
             hiveInitialColonize: props.hiveInitialColonize,
             hiveMaxDensity: props.hiveMaxDensity,
         }),

@@ -3,7 +3,7 @@ import { SetStoreFunction } from "solid-js/store"
 import {
     defaultHiveInitialColonize,
     defaultHiveMaxDensity,
-    defaultResourceMultipler,
+    defaultResourceMultiplier,
     defaultStarCount,
 } from "./util"
 import { ALL_LANGS, DEFAULT_LANG } from "./constants"
@@ -39,7 +39,7 @@ export const defaultStore: Store = {
         language: getInitialLanguage(),
         view: {
             starCount: defaultStarCount,
-            resourceMultipler: defaultResourceMultipler,
+            resourceMultiplier: defaultResourceMultiplier,
             hiveInitialColonize: defaultHiveInitialColonize,
             hiveMaxDensity: defaultHiveMaxDensity,
         },

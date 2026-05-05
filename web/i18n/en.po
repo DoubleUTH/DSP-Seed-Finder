@@ -448,12 +448,9 @@ msgstr ""
 msgid "Random"
 msgstr ""
 
+#: web/src/partials/ExportModal.tsx:307
 #: web/src/partials/ProgressEditor.tsx:98
 #: web/src/views/Galaxy.tsx:95
-msgid "Resource Multipler"
-msgstr ""
-
-#: web/src/partials/ExportModal.tsx:307
 msgid "Resource Multiplier"
 msgstr ""
 

@@ -83,14 +83,14 @@ export const maxStarCount = 64
 export const defaultStarCount = 64
 export const metersPerAU = 40000
 
-export const resourceMultiplers: ReadonlyArray<float> = [
+export const resourceMultipliers: ReadonlyArray<float> = [
     0.1, 0.5, 0.8, 1, 1.5, 2, 3, 5, 8, 100,
 ]
 export const hiveInitialColonizeValues: ReadonlyArray<integer> = [
     0.01, 0.25, 0.5, 0.75, 1, 1.5, 2,
 ]
 export const hiveMaxDensityValues: ReadonlyArray<float> = [1, 1.5, 2, 2.5, 3]
-export const defaultResourceMultipler = 1
+export const defaultResourceMultiplier = 1
 export const defaultHiveInitialColonize = 1
 export const defaultHiveMaxDensity = 1
 
@@ -155,12 +155,12 @@ export function statVein(vein: Vein): VeinStat {
 
 export function getSearch({
     count,
-    multipler,
+    multiplier,
     hiveInitialColonize,
     hiveMaxDensity,
 }: {
     count: integer
-    multipler: float
+    multiplier: float
     hiveInitialColonize: integer
     hiveMaxDensity: float
 }) {
@@ -168,8 +168,8 @@ export function getSearch({
     if (count !== defaultStarCount) {
         params.set("count", String(count))
     }
-    if (multipler !== defaultResourceMultipler) {
-        params.set("multipler", String(multipler))
+    if (multiplier !== defaultResourceMultiplier) {
+        params.set("multiplier", String(multiplier))
     }
     if (hiveInitialColonize !== defaultHiveInitialColonize) {
         params.set("hiveInitialColonize", String(hiveInitialColonize))

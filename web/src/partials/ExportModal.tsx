@@ -15,7 +15,7 @@ import { createStore, unwrap } from "solid-js/store"
 import { TinyEmitter } from "tiny-emitter"
 import styles from "./ExportModal.module.css"
 import StarCountSelector from "./StarCountSelector"
-import ResourceMultiplierSelector from "./ResourceMultiplerSelector"
+import ResourceMultiplierSelector from "./ResourceMultiplierSelector"
 import NumberInput from "../components/NumberInput"
 import Tooltip from "../components/Tooltip"
 import Toggle from "../components/Toggle"
@@ -23,7 +23,7 @@ import Select from "../components/Select"
 import {
     defaultHiveInitialColonize,
     defaultHiveMaxDensity,
-    defaultResourceMultipler,
+    defaultResourceMultiplier,
     defaultStarCount,
 } from "../util"
 import HiveInitialColonizeSelector from "./HiveInitialColonizeSelector"
@@ -253,7 +253,7 @@ const ExportModal: Component<{
         start: 0,
         end: 99999999,
         starCount: defaultStarCount,
-        resourceMultiplier: defaultResourceMultipler,
+        resourceMultiplier: defaultResourceMultiplier,
         hiveInitialColonize: defaultHiveInitialColonize,
         hiveMaxDensity: defaultHiveMaxDensity,
         format: "csv",

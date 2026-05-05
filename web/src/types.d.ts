@@ -278,7 +278,7 @@ declare global {
         language: Lang
         view: {
             starCount: integer
-            resourceMultipler: float
+            resourceMultiplier: float
             hiveInitialColonize: float
             hiveMaxDensity: float
         }

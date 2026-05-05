@@ -114,7 +114,7 @@ function ProgressEditor<E extends ProfileProgressInfo>(props: {
                         onChange={props.onNativeModeChange}
                         disabled={props.searching}
                     />
-                    <a href={ExeUrl} download="download">
+                    <a href={ExeUrl} download="DSP-Seed-Finder.exe">
                         <Button kind="outline">Download</Button>
                     </a>
                 </div>

@@ -2,6 +2,7 @@ import { Component, Show, createSignal } from "solid-js"
 import styles from "./ProfileManager.module.css"
 import Button from "../components/Button"
 import Modal from "../components/Modal"
+import { useLingui } from "#lingui"
 
 const ProfileManager: Component<{
     onLoad: () => void
@@ -18,41 +19,43 @@ const ProfileManager: Component<{
     const [deleteModal, setDeleteModal] = createSignal(false)
     const [newModal, setNewModal] = createSignal(false)
 
+    const { t } = useLingui()
+
     return (
         <div class={styles.top}>
-            Profile:
+            {t`Profile:`}
             <Button onClick={props.onLoad} disabled={props.disabled}>
-                Load
+                {t`Load`}
             </Button>
             <Button
                 onClick={props.onSave}
                 disabled={props.disabled || !props.isValid}
             >
-                Save
+                {t`Save`}
             </Button>
             <Show when={props.isLoaded}>
                 <Button
                     onClick={() => setNewModal(true)}
                     disabled={props.disabled}
                 >
-                    New
+                    {t`New`}
                 </Button>
                 <Button onClick={props.onClone} disabled={props.disabled}>
-                    Clone
+                    {t`Clone`}
                 </Button>
                 <Button
                     theme="error"
                     onClick={() => setClearModal(true)}
                     disabled={props.disabled}
                 >
-                    Clear
+                    {t`Clear`}
                 </Button>
                 <Button
                     theme="error"
                     onClick={() => setDeleteModal(true)}
                     disabled={props.disabled}
                 >
-                    Delete
+                    {t`Delete`}
                 </Button>
             </Show>
             <Modal
@@ -60,10 +63,9 @@ const ProfileManager: Component<{
                 onClose={() => setClearModal(false)}
                 backdropDismiss
             >
-                <div class={styles.modalTitle}>Are you sure?</div>
+                <div class={styles.modalTitle}>{t`Are you sure?`}</div>
                 <div class={styles.warnText}>
-                    Do you really want to clear all progress? This cannot be
-                    undone.
+                    {t`Do you really want to clear all progress? This cannot be undone.`}
                 </div>
                 <div class={styles.warnButtons}>
                     <Button
@@ -73,10 +75,10 @@ const ProfileManager: Component<{
                             props.onClear()
                         }}
                     >
-                        Clear
+                        {t`Clear`}
                     </Button>
                     <Button kind="outline" onClick={() => setClearModal(false)}>
-                        Cancel
+                        {t`Cancel`}
                     </Button>
                 </div>
             </Modal>
@@ -85,10 +87,9 @@ const ProfileManager: Component<{
                 onClose={() => setDeleteModal(false)}
                 backdropDismiss
             >
-                <div class={styles.modalTitle}>Are you sure?</div>
+                <div class={styles.modalTitle}>{t`Are you sure?`}</div>
                 <div class={styles.warnText}>
-                    Do you really want to delete all settings and progress? This
-                    cannot be undone.
+                    {t`Do you really want to delete all settings and progress? This cannot be undone.`}
                 </div>
                 <div class={styles.warnButtons}>
                     <Button
@@ -98,13 +99,13 @@ const ProfileManager: Component<{
                             props.onDelete()
                         }}
                     >
-                        Delete
+                        {t`Delete`}
                     </Button>
                     <Button
                         kind="outline"
                         onClick={() => setDeleteModal(false)}
                     >
-                        Cancel
+                        {t`Cancel`}
                     </Button>
                 </div>
             </Modal>
@@ -113,10 +114,9 @@ const ProfileManager: Component<{
                 onClose={() => setNewModal(false)}
                 backdropDismiss
             >
-                <div class={styles.modalTitle}>Are you sure?</div>
+                <div class={styles.modalTitle}>{t`Are you sure?`}</div>
                 <div class={styles.warnText}>
-                    Do you really want to create a new profile? All unsaved
-                    changes will be lost.
+                    {t`Do you really want to create a new profile? All unsaved changes will be lost.`}
                 </div>
                 <div class={styles.warnButtons}>
                     <Button
@@ -125,10 +125,10 @@ const ProfileManager: Component<{
                             props.onNew()
                         }}
                     >
-                        Confirm
+                        {t`Confirm`}
                     </Button>
                     <Button kind="outline" onClick={() => setNewModal(false)}>
-                        Cancel
+                        {t`Cancel`}
                     </Button>
                 </div>
             </Modal>

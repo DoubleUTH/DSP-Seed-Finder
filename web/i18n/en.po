@@ -13,10 +13,607 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#: web/src/views/FindGalaxy.tsx:206
+#: web/src/views/FindStar.tsx:282
+msgid " - Copy"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:629
+msgid "<0/> number of hives is <1/> <2/>."
+msgstr ""
+
+#: web/src/partials/ProgressEditor.tsx:64
+msgid "<0/> to <1/>"
+msgstr ""
+
+#: web/src/partials/MultiRuleEditor.tsx:212
+#: web/src/partials/RuleEditor.tsx:899
+msgid "Add AND rule"
+msgstr ""
+
+#: web/src/partials/MultiRuleEditor.tsx:145
+#: web/src/partials/RuleEditor.tsx:826
+msgid "Add OR rule"
+msgstr ""
+
+#: web/src/partials/StarView.tsx:239
+msgid "Age"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:873
+msgid "AND"
+msgstr ""
+
+#: web/src/partials/ProfileManager.tsx:66
+#: web/src/partials/ProfileManager.tsx:90
+#: web/src/partials/ProfileManager.tsx:117
+msgid "Are you sure?"
+msgstr ""
+
+#: web/src/partials/ProgressEditor.tsx:185
+msgid "Autosave interval"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:1105
+msgid "Black Hole"
+msgstr ""
+
+#: web/src/partials/StarView.tsx:136
+msgid "Black Hole / Neutron Star"
+msgstr ""
+
+#: web/src/partials/ProfileManager.tsx:81
+#: web/src/partials/ProfileManager.tsx:108
+#: web/src/partials/ProfileManager.tsx:131
+msgid "Cancel"
+msgstr ""
+
+#: web/src/partials/ProfileManager.tsx:51
+#: web/src/partials/ProfileManager.tsx:78
+msgid "Clear"
+msgstr ""
+
+#: web/src/partials/ProfileManager.tsx:44
+msgid "Clone"
+msgstr ""
+
+#: web/src/partials/ExportModal.tsx:235
+msgid "Close"
+msgstr ""
+
+#: web/src/views/FindGalaxy.tsx:422
+#: web/src/views/FindStar.tsx:491
+msgid "Completed!"
+msgstr ""
+
+#: web/src/partials/ExportModal.tsx:378
+#: web/src/partials/ProgressEditor.tsx:147
+msgid "Concurrency"
+msgstr ""
+
+#: web/src/partials/ProfileManager.tsx:128
+msgid "Confirm"
+msgstr ""
+
+#: web/src/partials/ExportModal.tsx:317
+#: web/src/partials/ProgressEditor.tsx:130
+#: web/src/views/Galaxy.tsx:104
+msgid "Dark Fog Initial Occupation"
+msgstr ""
+
+#: web/src/partials/ExportModal.tsx:327
+#: web/src/partials/ProgressEditor.tsx:168
+#: web/src/views/Galaxy.tsx:113
+msgid "Dark Fog Max Density"
+msgstr ""
+
+#: web/src/partials/ProfileManager.tsx:58
+#: web/src/partials/ProfileManager.tsx:102
+msgid "Delete"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:1121
+msgid "Deuterium"
+msgstr ""
+
+#: web/src/partials/StarView.tsx:189
+msgid "Distance from furthest <0/>"
+msgstr ""
+
+#: web/src/partials/StarView.tsx:170
+msgid "Distance from nearest <0/>"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:919
+msgid "Distance from Other Stars"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:917
+#: web/src/partials/StarView.tsx:162
+msgid "Distance from Start"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:918
+msgid "Distance from X Star"
+msgstr ""
+
+#: web/src/partials/ProfileManager.tsx:68
+msgid "Do you really want to clear all progress? This cannot be undone."
+msgstr ""
+
+#: web/src/partials/ProfileManager.tsx:119
+msgid "Do you really want to create a new profile? All unsaved changes will be lost."
+msgstr ""
+
+#: web/src/partials/ProfileManager.tsx:92
+msgid "Do you really want to delete all settings and progress? This cannot be undone."
+msgstr ""
+
+#: web/src/partials/ExportModal.tsx:159
+msgid "Done"
+msgstr ""
+
+#: web/src/partials/ExportModal.tsx:227
+#: web/src/partials/ProgressEditor.tsx:125
+msgid "Download"
+msgstr ""
+
 #: web/src/partials/Header.tsx:15
 msgid "DSP Seed Finder"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:598
+#: web/src/partials/ProgressEditor.tsx:189
+msgid "Every <0/> seconds"
+msgstr ""
+
+#: web/src/partials/ExportModal.tsx:284
+#: web/src/partials/ExportModal.tsx:397
+#: web/src/views/FindGalaxy.tsx:406
+msgid "Export"
+msgstr ""
+
+#: web/src/partials/ExportModal.tsx:366
+msgid "Export all"
+msgstr ""
+
+#: web/src/partials/ExportModal.tsx:364
+msgid "Export all stars instead of only the matching ones"
+msgstr ""
+
+#. placeholder {0}: progress()
+#. placeholder {1}: total()
+#: web/src/partials/ExportModal.tsx:155
+msgid "Exporting {0} / {1}"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:1122
+msgid "Fire Ice"
+msgstr ""
+
+#: web/src/partials/ExportModal.tsx:289
+msgid "Format"
+msgstr ""
+
+#: web/src/partials/Header.tsx:26
+msgid "Galaxy Finder"
+msgstr ""
+
+#: web/src/partials/Header.tsx:29
+msgid "Galaxy Viewer"
+msgstr ""
+
+#: web/src/partials/StarView.tsx:350
+msgid "Gas Giant"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:929
+msgid "Gas Rate"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:927
+msgid "Gas/Ice Giant Count"
+msgstr ""
+
+#: web/src/partials/ExportModal.tsx:157
+msgid "Generating file"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:1103
+msgid "Giant Star"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:285
+msgid "Has <0/> <1/> <2/> giant(s)"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:465
+msgid "Has <0/> <1/> <2/> type stars that are <3/> <4/> ly away."
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:559
+msgid "Has <0/> <1/> planet(s) within max dyson sphere radius, <2/> gas/ice giants."
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:353
+msgid "Has <0/> <1/> planets, <2/> gas/ice giants."
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:324
+msgid "Has <0/> <1/> satellite(s)"
+msgstr ""
+
+#: web/src/partials/MultiRuleEditor.tsx:74
+msgid "Has <0/> <1/> star(s) that satisfy <2/>. Description: "
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:208
+msgid "Has <0/> <1/> tidally locked planets"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:519
+msgid "Has <0/> and <1/> <2/>/s of it"
+msgstr ""
+
+#. placeholder {0}: props.value.vein === VeinType.Oil ? " /s" : " "
+#: web/src/partials/RuleEditor.tsx:147
+msgid "Has <0/> and the estimated amount is <1/> <2/>{0}"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:602
 msgid "Has a <0/> planet."
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:234
+msgid "Has planets with <0/> Ocean"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:932
+msgid "Hive Count"
+msgstr ""
+
+#: web/src/partials/StarView.tsx:384
+msgid "Horizontal Rotation"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:1120
+msgid "Hydrogen"
+msgstr ""
+
+#: web/src/partials/StarView.tsx:351
+msgid "Ice Giant"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:637
+msgid "Initial"
+msgstr ""
+
+#: web/src/partials/StarView.tsx:212
+msgid "Initial Number off Hives"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:424
+msgid "Is <0/> <1/> ly away from <2/> black hole / neutron star."
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:88
+msgid "Is <0/> <1/>L"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:395
+msgid "Is <0/> <1/>ly away from the starting system"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:117
+msgid "Is <0/> <1/>m"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:260
+msgid "Is a <0/>"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:182
+msgid "Is a <0/> type star"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:742
+msgid "Is the starting system"
+msgstr ""
+
+#: web/src/partials/ProfileManager.tsx:28
+msgid "Load"
+msgstr ""
+
+#: web/src/views/Galaxy.tsx:201
+msgid "Loading..."
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:920
+#: web/src/partials/StarView.tsx:156
+msgid "Luminosity"
+msgstr ""
+
+#: web/src/partials/StarView.tsx:227
+msgid "Mass"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:637
+msgid "Max"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:922
+#: web/src/partials/StarView.tsx:206
+msgid "Max Dyson Sphere Radius"
+msgstr ""
+
+#: web/src/partials/StarView.tsx:216
+msgid "Maximum Number off Hives"
+msgstr ""
+
+#: web/src/partials/ProgressEditor.tsx:115
+msgid "Native Mode"
+msgstr ""
+
+#: web/src/partials/StarView.tsx:509
+msgid "Nearby Stars"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:1106
+msgid "Neutron Star"
+msgstr ""
+
+#: web/src/partials/ProfileManager.tsx:41
+msgid "New"
+msgstr ""
+
+#: web/src/partials/ProgressEditor.tsx:36
+msgid "New Profile Name"
+msgstr ""
+
+#: web/src/partials/ProfilesModal.tsx:30
+msgid "No saved profiles."
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:1102
+msgid "Normal Star"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:928
+#: web/src/partials/StarView.tsx:283
+#: web/src/partials/StarView.tsx:289
+#: web/src/partials/StarView.tsx:431
+#: web/src/partials/StarView.tsx:437
+msgid "Ocean"
+msgstr ""
+
+#: web/src/partials/MultiRuleEditor.tsx:70
+#: web/src/partials/RuleEditor.tsx:801
+msgid "OR"
+msgstr ""
+
+#: web/src/partials/StarView.tsx:388
+msgid "Orbit Radius"
+msgstr ""
+
+#: web/src/partials/StarView.tsx:373
+msgid "Orbital Resonance 1 : 2"
+msgstr ""
+
+#: web/src/partials/StarView.tsx:381
+msgid "Orbital Resonance 1 : 4"
+msgstr ""
+
+#: web/src/views/FindGalaxy.tsx:419
+#: web/src/views/FindStar.tsx:488
+msgid "Pause"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:923
+msgid "Planet Count"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:926
+msgid "Planet Themes"
+msgstr ""
+
+#: web/src/partials/StarView.tsx:534
+msgid "Planets"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:931
+msgid "Planets in Dyson Sphere"
+msgstr ""
+
+#: web/src/partials/ProgressEditor.tsx:36
+msgid "Profile Name"
+msgstr ""
+
+#: web/src/partials/ProfileManager.tsx:26
+msgid "Profile:"
+msgstr ""
+
+#: web/src/partials/ProfilesModal.tsx:23
+msgid "Profiles"
+msgstr ""
+
+#: web/src/views/FindGalaxy.tsx:395
+#: web/src/views/FindStar.tsx:466
+msgid "Progress:"
+msgstr ""
+
+#: web/src/partials/StarView.tsx:221
+msgid "Radius"
+msgstr ""
+
+#: web/src/views/Galaxy.tsx:79
+msgid "Random"
+msgstr ""
+
+#: web/src/partials/ProgressEditor.tsx:98
+#: web/src/views/Galaxy.tsx:95
+msgid "Resource Multipler"
+msgstr ""
+
+#: web/src/partials/ExportModal.tsx:307
+msgid "Resource Multiplier"
+msgstr ""
+
+#: web/src/partials/StarView.tsx:500
+msgid "Resources"
+msgstr ""
+
+#: web/src/views/FindGalaxy.tsx:414
+#: web/src/views/FindStar.tsx:483
+msgid "Resume"
+msgstr ""
+
+#: web/src/partials/ExportModal.tsx:153
+msgid "Retriving Data"
+msgstr ""
+
+#: web/src/views/FindGalaxy.tsx:381
+#: web/src/views/FindStar.tsx:452
+msgid "Rules"
+msgstr ""
+
+#: web/src/partials/MultiRuleEditor.tsx:222
+msgid "Ruleset"
+msgstr ""
+
+#: web/src/partials/ProgressEditor.tsx:183
+msgid "Running autosave too frequently may decrease search performance."
+msgstr ""
+
+#: web/src/partials/StarView.tsx:357
+msgid "Satellite"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:924
+msgid "Satellite Count"
+msgstr ""
+
+#: web/src/partials/ProfileManager.tsx:34
+msgid "Save"
+msgstr ""
+
+#: web/src/partials/ExportModal.tsx:337
+#: web/src/partials/ProgressEditor.tsx:62
+msgid "Seed Range"
+msgstr ""
+
+#: web/src/views/FindStar.tsx:105
+msgid "Seed: "
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:36
+#: web/src/partials/RuleEditor.tsx:912
+msgid "Select..."
+msgstr ""
+
+#: web/src/partials/StarView.tsx:405
+msgid "Solar Power"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:921
+#: web/src/partials/StarView.tsx:152
+msgid "Spectral Class"
+msgstr ""
+
+#: web/src/partials/ExportModal.tsx:299
+#: web/src/partials/ProgressEditor.tsx:49
+#: web/src/views/Galaxy.tsx:89
+msgid "Star Count"
+msgstr ""
+
+#: web/src/partials/Header.tsx:23
+msgid "Star Finder"
+msgstr ""
+
+#: web/src/views/FindGalaxy.tsx:414
+#: web/src/views/FindStar.tsx:483
+msgid "Start"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:915
+msgid "Starting System"
+msgstr ""
+
+#: web/src/partials/ExportModal.tsx:235
+msgid "Stop"
+msgstr ""
+
+#: web/src/partials/StarView.tsx:288
+#: web/src/partials/StarView.tsx:436
+msgid "Sulfuric Acid"
+msgstr ""
+
+#: web/src/partials/StarView.tsx:233
+msgid "Temperature"
+msgstr ""
+
+#: web/src/partials/ProgressEditor.tsx:145
+msgid "The number of parallel processes to run the search."
+msgstr ""
+
+#: web/src/partials/MultiRuleEditor.tsx:40
+msgid "this ruleset"
+msgstr ""
+
+#: web/src/partials/StarView.tsx:365
+msgid "Tidal locking"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:925
+msgid "Tidally Locked Planet Count"
+msgstr ""
+
+#: web/src/partials/ProgressEditor.tsx:113
+msgid "To run the search in (faster) native mode, click the download button and run the program on your PC, then enable this option."
+msgstr ""
+
+#: web/src/partials/StarView.tsx:148
+#: web/src/partials/StarView.tsx:345
+#: web/src/partials/StarView.tsx:411
+msgid "Type"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:916
+msgid "Type of star"
+msgstr ""
+
+#: web/src/views/FindGalaxy.tsx:151
+#: web/src/views/FindStar.tsx:227
+msgid "Untitled"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:930
+msgid "Vein Amount"
+msgstr ""
+
+#: web/src/views/Galaxy.tsx:86
+msgid "View"
+msgstr ""
+
+#: web/src/views/FindStar.tsx:113
+msgid "View in new tab"
+msgstr ""
+
+#: web/src/partials/ExportModal.tsx:286
+msgid "Warning: Exporting too many seeds may cause out of memory error."
+msgstr ""
+
+#: web/src/partials/StarView.tsx:282
+#: web/src/partials/StarView.tsx:430
+msgid "Water"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:1104
+msgid "White Dwarf"
+msgstr ""
+
+#: web/src/partials/StarView.tsx:399
+msgid "Wind Power"
+msgstr ""
+
+#: web/src/partials/StarView.tsx:136
+msgid "X star"
 msgstr ""

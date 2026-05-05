@@ -46,6 +46,7 @@ import MultiRuleEditor from "../partials/MultiRuleEditor"
 import { ConditionType } from "../enums"
 import { useStore } from "../store"
 import ExportModal from "../partials/ExportModal"
+import { useLingui } from "#lingui"
 
 const PAGE_SIZE = 100
 
@@ -146,7 +147,8 @@ const SearchResult: Component<{
 const FindGalaxy: Component = () => {
     const params = useParams()
     const navigate = useNavigate()
-    const [name, setName] = createSignal("Untitled")
+    const { t } = useLingui()
+    const [name, setName] = createSignal(t`Untitled`)
     const [profile, setProfile] = createSignal<ProfileInfo | null>()
     const [progress, setProgress] =
         createStore<MultiProfileProgress>(defaultProgress())
@@ -201,7 +203,7 @@ const FindGalaxy: Component = () => {
         batch(() => {
             const origName = name()
             changeProfile(null)
-            setName(origName + " - Copy")
+            setName(origName + t` - Copy`)
             setProgress({ id: "", current: 0 })
         })
     }
@@ -376,7 +378,7 @@ const FindGalaxy: Component = () => {
                 isLoaded={isLoaded()}
                 searching={store.searching}
             />
-            <div class={styles.rules}>Rules</div>
+            <div class={styles.rules}>{t`Rules`}</div>
             <MultiRuleEditor
                 value={progress.multiRules}
                 onChange={(multiRules) => setProgress("multiRules", multiRules)}
@@ -390,7 +392,7 @@ const FindGalaxy: Component = () => {
                             (hasProgress() && !hasCompleted())
                         }
                     >
-                        <div class={styles.progressText}>Progress:</div>
+                        <div class={styles.progressText}>{t`Progress:`}</div>
                         <ProgressBar
                             class={styles.progressBar}
                             current={progress.current - progress.start}
@@ -399,7 +401,9 @@ const FindGalaxy: Component = () => {
                     </Show>
                 </div>
                 <Show when={hasProgress()}>
-                    <Button onClick={() => setExportModal(true)}>Export</Button>
+                    <Button
+                        onClick={() => setExportModal(true)}
+                    >{t`Export`}</Button>
                 </Show>
                 <Switch
                     fallback={
@@ -407,15 +411,15 @@ const FindGalaxy: Component = () => {
                             disabled={!isValid()}
                             onClick={onStartSearching}
                         >
-                            {hasProgress() ? "Resume" : "Start"}
+                            {hasProgress() ? t`Resume` : t`Start`}
                         </Button>
                     }
                 >
                     <Match when={store.searching}>
-                        <Button onClick={onStopSearching}>Pause</Button>
+                        <Button onClick={onStopSearching}>{t`Pause`}</Button>
                     </Match>
                     <Match when={hasCompleted()}>
-                        <span class={styles.completed}>Completed!</span>
+                        <span class={styles.completed}>{t`Completed!`}</span>
                     </Match>
                 </Switch>
             </div>

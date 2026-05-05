@@ -4,18 +4,18 @@ import { setLanguage, useStore } from "./store"
 import type { msg, plural, select, selectOrdinal, t } from "@lingui/core/macro"
 import type { JSX, ParentComponent } from "solid-js"
 
-type T = typeof t
+export type TFunc = typeof t
 
 interface I18nContext {
     i18n: typeof i18n
-    t: T
+    t: TFunc
     plural: typeof plural
     select: typeof select
     selectOrdinal: typeof selectOrdinal
     msg: typeof msg
 }
 
-const Context = createContext<T>(undefined as unknown as T)
+const Context = createContext<TFunc>(undefined as unknown as TFunc)
 
 export const I18nProvider: ParentComponent = (props) => {
     const [store] = useStore()

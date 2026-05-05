@@ -9,6 +9,7 @@ import { conditionTypeNames, validateRules } from "../util"
 import NumberInput from "../components/NumberInput"
 import { IoTrash } from "solid-icons/io"
 import styles from "./MultiRuleEditor.module.css"
+import { Trans, useLingui } from "#lingui"
 
 const DeleteButton: Component<{ onDelete: () => void }> = (props) => {
     return (
@@ -22,6 +23,23 @@ const defaultMultiRule: MultiRule = {
     name: "",
     rules: [],
     condition: { type: ConditionType.Gte, value: 1 },
+}
+
+const RulesetButton: Component<{
+    rules: SimpleRule[][]
+    onEdit: () => void
+}> = (props) => {
+    const { t } = useLingui()
+    return (
+        <Button
+            kind="outline"
+            class={styles.buttonRuleset}
+            onClick={() => props.onEdit()}
+            theme={validateRules(props.rules) ? "default" : "error"}
+        >
+            {t`this ruleset`}
+        </Button>
+    )
 }
 
 const RuleBlockContent: Component<{
@@ -41,71 +59,66 @@ const RuleBlockContent: Component<{
         props.onChange(props.value.map((x, i) => (index === i ? fn(x) : x)))
     }
 
+    const { t } = useLingui()
+
     return (
         <>
             <Index each={props.value}>
                 {(item, index) => (
                     <>
                         <Show when={index > 0}>
-                            <div class={styles.or}>OR</div>
+                            <div class={styles.or}>{t`OR`}</div>
                         </Show>
                         <div class={styles.row}>
                             <div class={styles.editRow}>
-                                <span>Has </span>
-                                <Select
-                                    class={styles.selectConditionType}
-                                    value={item().condition.type}
-                                    onChange={(type) =>
-                                        editItem(index, (r) => ({
-                                            ...r,
-                                            condition: {
-                                                ...r.condition,
-                                                type,
-                                            },
-                                        }))
-                                    }
-                                    options={[
-                                        ConditionType.Gte,
-                                        ConditionType.Lte,
-                                        ConditionType.Eq,
-                                    ]}
-                                    getLabel={(type) =>
-                                        conditionTypeNames[type]
-                                    }
-                                    disabled={props.disabled}
-                                />
-                                <span> </span>
-                                <NumberInput
-                                    class={styles.inputCount}
-                                    value={item().condition.value}
-                                    onChange={(value) =>
-                                        editItem(index, (r) => ({
-                                            ...r,
-                                            condition: {
-                                                ...r.condition,
-                                                value,
-                                            },
-                                        }))
-                                    }
-                                    emptyValue={-1}
-                                    disabled={props.disabled}
-                                    maxLength={2}
-                                    error={item().condition.value <= 0}
-                                />
-                                <span> star(s) that satisfy </span>
-                                <Button
-                                    kind="outline"
-                                    class={styles.buttonRuleset}
-                                    onClick={() => props.onEdit(index)}
-                                    theme={
-                                        validateRules(item().rules)
-                                            ? "default"
-                                            : "error"
-                                    }
-                                >
-                                    this ruleset
-                                </Button>
-                                <span>. Description: </span>
+                                <Trans>
+                                    Has{" "}
+                                    <Select
+                                        class={styles.selectConditionType}
+                                        value={item().condition.type}
+                                        onChange={(type) =>
+                                            editItem(index, (r) => ({
+                                                ...r,
+                                                condition: {
+                                                    ...r.condition,
+                                                    type,
+                                                },
+                                            }))
+                                        }
+                                        options={[
+                                            ConditionType.Gte,
+                                            ConditionType.Lte,
+                                            ConditionType.Eq,
+                                        ]}
+                                        getLabel={(type) =>
+                                            conditionTypeNames[type]
+                                        }
+                                        disabled={props.disabled}
+                                    />{" "}
+                                    <NumberInput
+                                        class={styles.inputCount}
+                                        value={item().condition.value}
+                                        onChange={(value) =>
+                                            editItem(index, (r) => ({
+                                                ...r,
+                                                condition: {
+                                                    ...r.condition,
+                                                    value,
+                                                },
+                                            }))
+                                        }
+                                        emptyValue={-1}
+                                        disabled={props.disabled}
+                                        maxLength={2}
+                                        error={item().condition.value <= 0}
+                                    />{" "}
+                                    star(s) that satisfy{" "}
+                                    <RulesetButton
+                                        rules={item().rules}
+                                        onEdit={() => props.onEdit(index)}
+                                    />
+                                    . Description:{" "}
+                                </Trans>
                             </div>
                             <Input
                                 class={styles.description}
@@ -129,7 +142,7 @@ const RuleBlockContent: Component<{
 
             <Show when={!props.disabled}>
                 <Button class={styles.addOr} kind="outline" onClick={onAdd}>
-                    Add OR rule
+                    {t`Add OR rule`}
                 </Button>
             </Show>
         </>
@@ -171,6 +184,8 @@ const MultiRuleEditor: Component<{
         props.onChange([...props.value, [defaultMultiRule]])
     }
 
+    const { t } = useLingui()
+
     return (
         <div class={styles.multiRuleEditor}>
             <Index each={props.value}>
@@ -194,7 +209,7 @@ const MultiRuleEditor: Component<{
             </Index>
             <Show when={!props.disabled}>
                 <Button class={styles.addAnd} kind="outline" onClick={onAdd}>
-                    Add AND rule
+                    {t`Add AND rule`}
                 </Button>
             </Show>
             <Show when={editing()}>
@@ -204,7 +219,7 @@ const MultiRuleEditor: Component<{
                         onClose={() => setEditing(null)}
                         backdropDismiss
                     >
-                        <div class={styles.ruleBuilderTitle}>Ruleset</div>
+                        <div class={styles.ruleBuilderTitle}>{t`Ruleset`}</div>
                         <RuleEditor
                             class={styles.ruleEditor}
                             value={

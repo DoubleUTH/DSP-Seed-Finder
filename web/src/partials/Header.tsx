@@ -20,13 +20,13 @@ const Header: Component = () => {
                 )}
             >
                 <A href="/find-star" class={styles.button}>
-                    Star Finder
+                    {t`Star Finder`}
                 </A>
                 <A href="/find-galaxy" class={styles.button}>
-                    Galaxy Finder
+                    {t`Galaxy Finder`}
                 </A>
                 <A href="/galaxy" class={styles.button}>
-                    Galaxy Viewer
+                    {t`Galaxy Viewer`}
                 </A>
             </div>
             <div class={styles.icons}>

@@ -1,6 +1,7 @@
 import { For, JSX, Show, createEffect, createSignal } from "solid-js"
 import Modal from "../components/Modal"
 import styles from "./ProfilesModal.module.css"
+import { useLingui } from "#lingui"
 
 function ProfilesModal(props: {
     visible: boolean
@@ -15,14 +16,18 @@ function ProfilesModal(props: {
         }
     })
 
+    const { t } = useLingui()
+
     return (
         <Modal visible={props.visible} onClose={props.onClose} backdropDismiss>
-            <div class={styles.title}>Profiles</div>
+            <div class={styles.title}>{t`Profiles`}</div>
             <div class={styles.profiles}>
                 <Show
                     when={!!profiles()?.length}
                     fallback={
-                        <div class={styles.noResult}>No saved profiles.</div>
+                        <div
+                            class={styles.noResult}
+                        >{t`No saved profiles.`}</div>
                     }
                 >
                     <For each={profiles()}>

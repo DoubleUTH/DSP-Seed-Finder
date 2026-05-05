@@ -30,6 +30,7 @@ import StarCountSelector from "../partials/StarCountSelector"
 import ResourceMultiplierSelector from "../partials/ResourceMultiplerSelector"
 import HiveInitialColonizeSelector from "../partials/HiveInitialColonizeSelector"
 import HiveMaxDensitySelector from "../partials/HiveMaxDensitySelector"
+import { useLingui } from "#lingui"
 
 function randomSeed() {
     return Math.floor(Math.random() * 1e8)
@@ -58,6 +59,8 @@ const Search: Component = () => {
         )
     }
 
+    const { t } = useLingui()
+
     return (
         <form class={styles.search} onSubmit={handleSubmit}>
             <div class={styles.searchTitle}>Seed:</div>
@@ -73,23 +76,23 @@ const Search: Component = () => {
                     kind="outline"
                     onClick={() => setValue(randomSeed())}
                 >
-                    Random
+                    {t`Random`}
                 </Button>
                 <Button
                     class={styles.searchSubmit}
                     type="submit"
                     disabled={!isValueValid()}
                 >
-                    View
+                    {t`View`}
                 </Button>
             </div>
-            <div class={styles.searchTitle}>Star count:</div>
+            <div class={styles.searchTitle}>{t`Star Count`}:</div>
             <StarCountSelector
                 class={styles.searchInput}
                 value={store.settings.view.starCount}
                 onChange={(v) => setStore("settings", "view", "starCount", v)}
             />
-            <div class={styles.searchTitle}>Resource Multipler:</div>
+            <div class={styles.searchTitle}>{t`Resource Multipler`}:</div>
             <ResourceMultiplierSelector
                 class={styles.searchInput}
                 value={store.settings.view.resourceMultipler}
@@ -97,7 +100,9 @@ const Search: Component = () => {
                     setStore("settings", "view", "resourceMultipler", v)
                 }
             />
-            <div class={styles.searchTitle}>Dark Fog Initial Occupation:</div>
+            <div class={styles.searchTitle}>
+                {t`Dark Fog Initial Occupation`}:
+            </div>
             <HiveInitialColonizeSelector
                 class={styles.searchInput}
                 value={store.settings.view.hiveInitialColonize}
@@ -105,7 +110,7 @@ const Search: Component = () => {
                     setStore("settings", "view", "hiveInitialColonize", v)
                 }
             />
-            <div class={styles.searchTitle}>Dark Fog Max Density:</div>
+            <div class={styles.searchTitle}>{t`Dark Fog Max Density`}:</div>
             <HiveMaxDensitySelector
                 class={styles.searchInput}
                 value={store.settings.view.hiveMaxDensity}
@@ -188,10 +193,12 @@ const View: Component<{ seed: number; index: number }> = (props) => {
         return `/galaxy/${props.seed}/${starIndex}${search()}`
     }
 
+    const { t } = useLingui()
+
     return (
         <Show
             when={!!galaxy()}
-            fallback={<div class={styles.loading}>Loading...</div>}
+            fallback={<div class={styles.loading}>{t`Loading...`}</div>}
         >
             <div class={styles.view}>
                 <div class={styles.left}>

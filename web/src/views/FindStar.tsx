@@ -48,6 +48,7 @@ import ProfileManager from "../partials/ProfileManager"
 import Pagination from "../components/Pagination"
 import { useStore } from "../store"
 import ExportModal from "../partials/ExportModal"
+import { useLingui } from "#lingui"
 
 const defaultProgress: () => ProfileProgress = () => ({
     id: "",
@@ -95,18 +96,21 @@ const StarViewModal: Component<{
         return `/galaxy/${props.seed}/${starIndex}${props.search}`
     }
 
+    const { t } = useLingui()
+
     return (
         <Show when={!!galaxy()}>
             <div class={styles.viewTop}>
                 <div class={styles.viewTitle}>
-                    Seed: {String(props.seed).padStart(8, "0")}
+                    {t`Seed: `}
+                    {String(props.seed).padStart(8, "0")}
                 </div>
                 <A
                     class={styles.viewNewTab}
                     href={buildUrl(props.index)}
                     target="_blank"
                 >
-                    View in new tab
+                    {t`View in new tab`}
                     <IoOpenOutline />
                 </A>
             </div>
@@ -219,7 +223,8 @@ const SearchResult: Component<{
 const FindStar: Component = () => {
     const params = useParams()
     const navigate = useNavigate()
-    const [name, setName] = createSignal("Untitled")
+    const { t } = useLingui()
+    const [name, setName] = createSignal(t`Untitled`)
     const [profile, setProfile] = createSignal<ProfileInfo | null>()
     const [progress, setProgress] =
         createStore<ProfileProgress>(defaultProgress())
@@ -274,7 +279,7 @@ const FindStar: Component = () => {
         batch(() => {
             const origName = name()
             changeProfile(null)
-            setName(origName + " - Copy")
+            setName(origName + t` - Copy`)
             setProgress({ id: "", current: 0 })
         })
     }
@@ -444,7 +449,7 @@ const FindStar: Component = () => {
                 isLoaded={isLoaded()}
                 searching={store.searching}
             />
-            <div class={styles.rules}>Rules</div>
+            <div class={styles.rules}>{t`Rules`}</div>
             <RuleEditor
                 value={progress.rules}
                 onChange={(rules) => setProgress("rules", rules)}
@@ -458,7 +463,7 @@ const FindStar: Component = () => {
                             (hasProgress() && !hasCompleted())
                         }
                     >
-                        <div class={styles.progressText}>Progress:</div>
+                        <div class={styles.progressText}>{t`Progress:`}</div>
                         <ProgressBar
                             class={styles.progressBar}
                             current={progress.current - progress.start}
@@ -475,15 +480,15 @@ const FindStar: Component = () => {
                             disabled={!isValid()}
                             onClick={onStartSearching}
                         >
-                            {hasProgress() ? "Resume" : "Start"}
+                            {hasProgress() ? t`Resume` : t`Start`}
                         </Button>
                     }
                 >
                     <Match when={store.searching}>
-                        <Button onClick={onStopSearching}>Pause</Button>
+                        <Button onClick={onStopSearching}>{t`Pause`}</Button>
                     </Match>
                     <Match when={hasCompleted()}>
-                        <span class={styles.completed}>Completed!</span>
+                        <span class={styles.completed}>{t`Completed!`}</span>
                     </Match>
                 </Switch>
             </div>

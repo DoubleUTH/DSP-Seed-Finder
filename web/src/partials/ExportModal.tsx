@@ -28,6 +28,7 @@ import {
 } from "../util"
 import HiveInitialColonizeSelector from "./HiveInitialColonizeSelector"
 import HiveMaxDensitySelector from "./HiveMaxDensitySelector"
+import { useLingui } from "#lingui"
 
 type Mode = "star" | "galaxy"
 
@@ -144,17 +145,18 @@ const ProgressModal: Component<{
     const [total, setTotal] = createSignal(0)
     const [status, setStatus] = createSignal<Status>(Status.Done)
     const [url, setUrl] = createSignal("")
+    const { t } = useLingui()
 
     const progressText = () => {
         switch (status()) {
             case Status.Starting:
-                return "Retriving Data"
+                return t`Retriving Data`
             case Status.Progressing:
-                return `Exporting ${progress()} / ${total()}`
+                return t`Exporting ${progress()} / ${total()}`
             case Status.Generating:
-                return "Generating file"
+                return t`Generating file`
             case Status.Done:
-                return "Done"
+                return t`Done`
         }
     }
 
@@ -222,7 +224,7 @@ const ProgressModal: Component<{
             <div class={styles.progressText}>{progressText()}</div>
             <Show when={url()}>
                 <a class={styles.download} download={props.name} href={url()}>
-                    <Button class={styles.button}>Download</Button>
+                    <Button class={styles.button}>{t`Download`}</Button>
                 </a>
             </Show>
             <Button
@@ -230,7 +232,7 @@ const ProgressModal: Component<{
                 kind="outline"
                 onClick={props.onClose}
             >
-                {status() === Status.Done ? "Close" : "Stop"}
+                {status() === Status.Done ? t`Close` : t`Stop`}
             </Button>
         </Modal>
     )
@@ -258,6 +260,7 @@ const ExportModal: Component<{
         concurrency: navigator.hardwareConcurrency,
         exportAllStars: false,
     })
+    const { t } = useLingui()
 
     const [progressModal, setProgressModal] = createSignal(false)
 
@@ -278,12 +281,12 @@ const ExportModal: Component<{
 
     return (
         <Modal visible={props.visible} onClose={props.onClose} backdropDismiss>
-            <div class={styles.title}>Export</div>
+            <div class={styles.title}>{t`Export`}</div>
             <div class={styles.warn}>
-                Warning: Exporting too many seeds may cause out of memory error.
+                {t`Warning: Exporting too many seeds may cause out of memory error.`}
             </div>
             <div class={styles.fields}>
-                <div class={styles.label}>Format</div>
+                <div class={styles.label}>{t`Format`}</div>
                 <div class={styles.input}>
                     <Select
                         class={styles.inputStandard}
@@ -293,7 +296,7 @@ const ExportModal: Component<{
                         getLabel={(value) => value}
                     />
                 </div>
-                <div class={styles.label}>Star Count</div>
+                <div class={styles.label}>{t`Star Count`}</div>
                 <div class={styles.input}>
                     <StarCountSelector
                         class={styles.inputStandard}
@@ -301,7 +304,7 @@ const ExportModal: Component<{
                         onChange={(value) => setOptions("starCount", value)}
                     />
                 </div>
-                <div class={styles.label}>Resource Multiplier</div>
+                <div class={styles.label}>{t`Resource Multiplier`}</div>
                 <div class={styles.input}>
                     <ResourceMultiplierSelector
                         class={styles.inputStandard}
@@ -311,7 +314,7 @@ const ExportModal: Component<{
                         }
                     />
                 </div>
-                <div class={styles.label}>Dark Fog Initial Occupation</div>
+                <div class={styles.label}>{t`Dark Fog Initial Occupation`}</div>
                 <div class={styles.input}>
                     <HiveInitialColonizeSelector
                         class={styles.inputStandard}
@@ -321,7 +324,7 @@ const ExportModal: Component<{
                         }
                     />
                 </div>
-                <div class={styles.label}>Dark Fog Max Density</div>
+                <div class={styles.label}>{t`Dark Fog Max Density`}</div>
                 <div class={styles.input}>
                     <HiveMaxDensitySelector
                         class={styles.inputStandard}
@@ -331,7 +334,7 @@ const ExportModal: Component<{
                         }
                     />
                 </div>
-                <div class={styles.label}>Seed Range</div>
+                <div class={styles.label}>{t`Seed Range`}</div>
                 <div class={styles.input}>
                     <NumberInput
                         class={styles.inputSeed}
@@ -357,8 +360,10 @@ const ExportModal: Component<{
                 </div>
                 <Show when={props.mode === "star"}>
                     <div class={styles.label}>
-                        <Tooltip text="Export all stars instead of only the matching ones">
-                            Export all
+                        <Tooltip
+                            text={t`Export all stars instead of only the matching ones`}
+                        >
+                            {t`Export all`}
                         </Tooltip>
                     </div>
                     <div class={styles.input}>
@@ -370,7 +375,7 @@ const ExportModal: Component<{
                         />
                     </div>
                 </Show>
-                <div class={styles.label}>Concurrency</div>
+                <div class={styles.label}>{t`Concurrency`}</div>
                 <div class={styles.input}>
                     <NumberInput
                         class={styles.inputStandard}
@@ -389,7 +394,7 @@ const ExportModal: Component<{
                 class={styles.button}
                 onClick={() => setProgressModal(true)}
             >
-                Export
+                {t`Export`}
             </Button>
             <ProgressModal
                 visible={progressModal()}

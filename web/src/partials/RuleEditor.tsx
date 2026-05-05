@@ -15,12 +15,15 @@ import Button from "../components/Button"
 import NumberInput from "../components/NumberInput"
 import { conditionTypeNames, planetTypes, veinNames } from "../util"
 import clsx from "clsx"
+import { Trans, useLingui } from "#lingui"
 
 const SelectSimpleRule: Component<{
     value?: SimpleRule
     onChange: (rule: SimpleRule) => void
     disabled?: boolean
 }> = (props) => {
+    const { t } = useLingui()
+    const ruleNames = getRuleNames()
     return (
         <Select
             class={styles.selectRule}
@@ -30,8 +33,8 @@ const SelectSimpleRule: Component<{
             onChange={props.onChange}
             isSelected={(rule) => rule.type === props.value?.type}
             options={rules}
-            placeholder="Select..."
-            getLabel={(rule) => ruleNames[rule.type]}
+            placeholder={t`Select...`}
+            getLabel={(rule) => ruleNames[rule.type]()}
             error={!props.value || props.value?.type === RuleType.None}
             disabled={props.disabled}
         />
@@ -82,7 +85,7 @@ const EditLuminosity: Component<{
     const setCondition = (condition: Condition) =>
         props.onChange({ ...props.value, condition })
     return (
-        <>
+        <Trans>
             Is{" "}
             <ConditionTypeSelector
                 value={condition()}
@@ -98,7 +101,7 @@ const EditLuminosity: Component<{
                 disabled={props.disabled}
             />
             L
-        </>
+        </Trans>
     )
 }
 
@@ -111,7 +114,7 @@ const EditDysonRadius: Component<{
     const setCondition = (condition: Condition) =>
         props.onChange({ ...props.value, condition })
     return (
-        <>
+        <Trans>
             Is{" "}
             <ConditionTypeSelector
                 value={condition()}
@@ -128,7 +131,7 @@ const EditDysonRadius: Component<{
                 disabled={props.disabled}
             />
             m
-        </>
+        </Trans>
     )
 }
 
@@ -141,7 +144,7 @@ const EditAverageVeinAmount: Component<{
     const setCondition = (condition: Condition) =>
         props.onChange({ ...props.value, condition })
     return (
-        <>
+        <Trans>
             Has{" "}
             <Select
                 class={styles.selectVein}
@@ -166,7 +169,7 @@ const EditAverageVeinAmount: Component<{
                 disabled={props.disabled}
             />
             {props.value.vein === VeinType.Oil ? " /s" : " "}
-        </>
+        </Trans>
     )
 }
 
@@ -176,7 +179,7 @@ const EditSpectr: Component<{
     disabled?: boolean
 }> = (props) => {
     return (
-        <>
+        <Trans>
             Is a{" "}
             <Select
                 class={styles.selectSpectr}
@@ -189,7 +192,7 @@ const EditSpectr: Component<{
                 disabled={props.disabled}
             />{" "}
             type star
-        </>
+        </Trans>
     )
 }
 
@@ -202,7 +205,7 @@ const EditTidalLockCount: Component<{
     const setCondition = (condition: Condition) =>
         props.onChange({ ...props.value, condition })
     return (
-        <>
+        <Trans>
             Has{" "}
             <ConditionTypeSelector
                 value={condition()}
@@ -218,7 +221,7 @@ const EditTidalLockCount: Component<{
                 disabled={props.disabled}
             />{" "}
             tidally locked planets
-        </>
+        </Trans>
     )
 }
 
@@ -228,7 +231,7 @@ const EditOceanType: Component<{
     disabled?: boolean
 }> = (props) => {
     return (
-        <>
+        <Trans>
             Has planets with{" "}
             <Select
                 class={styles.selectOcean}
@@ -243,7 +246,7 @@ const EditOceanType: Component<{
                 disabled={props.disabled}
             />{" "}
             Ocean
-        </>
+        </Trans>
     )
 }
 
@@ -252,8 +255,9 @@ const EditStarType: Component<{
     onChange: (value: Rule.StarType) => void
     disabled?: boolean
 }> = (props) => {
+    const starTypeNames = getStarTypeNames()
     return (
-        <>
+        <Trans>
             Is a{" "}
             <Select
                 class={styles.selectStarType}
@@ -262,10 +266,10 @@ const EditStarType: Component<{
                     props.onChange({ ...props.value, starType: [starType] })
                 }
                 options={starTypes}
-                getLabel={(starType) => starTypeNames[starType]}
+                getLabel={(starType) => starTypeNames[starType]()}
                 disabled={props.disabled}
             />
-        </>
+        </Trans>
     )
 }
 
@@ -278,7 +282,7 @@ const EditGasCount: Component<{
     const setCondition = (condition: Condition) =>
         props.onChange({ ...props.value, condition })
     return (
-        <>
+        <Trans>
             Has{" "}
             <ConditionTypeSelector
                 value={condition()}
@@ -304,7 +308,7 @@ const EditGasCount: Component<{
                 disabled={props.disabled}
             />{" "}
             giant(s)
-        </>
+        </Trans>
     )
 }
 
@@ -317,7 +321,7 @@ const EditSatelliteCount: Component<{
     const setCondition = (condition: Condition) =>
         props.onChange({ ...props.value, condition })
     return (
-        <>
+        <Trans>
             Has{" "}
             <ConditionTypeSelector
                 value={condition()}
@@ -333,7 +337,7 @@ const EditSatelliteCount: Component<{
                 disabled={props.disabled}
             />{" "}
             satellite(s)
-        </>
+        </Trans>
     )
 }
 
@@ -346,7 +350,7 @@ const EditPlanetCount: Component<{
     const setCondition = (condition: Condition) =>
         props.onChange({ ...props.value, condition })
     return (
-        <>
+        <Trans>
             Has{" "}
             <ConditionTypeSelector
                 value={condition()}
@@ -375,7 +379,7 @@ const EditPlanetCount: Component<{
                 disabled={props.disabled}
             />{" "}
             gas/ice giants.
-        </>
+        </Trans>
     )
 }
 
@@ -388,7 +392,7 @@ const EditBirthDistance: Component<{
     const setCondition = (condition: Condition) =>
         props.onChange({ ...props.value, condition })
     return (
-        <>
+        <Trans>
             Is{" "}
             <ConditionTypeSelector
                 value={condition()}
@@ -404,7 +408,7 @@ const EditBirthDistance: Component<{
                 disabled={props.disabled}
             />
             ly away from the starting system
-        </>
+        </Trans>
     )
 }
 
@@ -417,7 +421,7 @@ const EditXDistance: Component<{
     const setCondition = (condition: Condition) =>
         props.onChange({ ...props.value, condition })
     return (
-        <>
+        <Trans>
             Is{" "}
             <ConditionTypeSelector
                 value={condition()}
@@ -441,8 +445,8 @@ const EditXDistance: Component<{
                 getLabel={(all) => (all ? "all" : "any")}
                 disabled={props.disabled}
             />{" "}
-            black hole / neutron star{props.value.all ? "s" : ""}.
-        </>
+            black hole / neutron star.
+        </Trans>
     )
 }
 
@@ -458,7 +462,7 @@ const EditSpectrDistance: Component<{
     const setDistanceCondition = (distanceCondition: Condition) =>
         props.onChange({ ...props.value, distanceCondition })
     return (
-        <>
+        <Trans>
             Has{" "}
             <ConditionTypeSelector
                 value={countCondition()}
@@ -498,7 +502,7 @@ const EditSpectrDistance: Component<{
                 disabled={props.disabled}
             />{" "}
             ly away.
-        </>
+        </Trans>
     )
 }
 
@@ -510,8 +514,9 @@ const EditGasRate: Component<{
     const condition = () => props.value.condition
     const setCondition = (condition: Condition) =>
         props.onChange({ ...props.value, condition })
+    const gasTypeNames = getGasTypeNames()
     return (
-        <>
+        <Trans>
             Has{" "}
             <Select
                 class={styles.selectGasType}
@@ -520,7 +525,7 @@ const EditGasRate: Component<{
                     props.onChange({ ...props.value, gasType })
                 }
                 options={gasTypes}
-                getLabel={(vein) => gasTypeNames[vein]}
+                getLabel={(vein) => gasTypeNames[vein]()}
                 disabled={props.disabled}
             />{" "}
             and{" "}
@@ -538,7 +543,7 @@ const EditGasRate: Component<{
                 disabled={props.disabled}
             />
             /s of it
-        </>
+        </Trans>
     )
 }
 
@@ -551,7 +556,7 @@ const EditPlanetInDysonCount: Component<{
     const setCondition = (condition: Condition) =>
         props.onChange({ ...props.value, condition })
     return (
-        <>
+        <Trans>
             Has{" "}
             <ConditionTypeSelector
                 value={condition()}
@@ -580,7 +585,7 @@ const EditPlanetInDysonCount: Component<{
                 disabled={props.disabled}
             />{" "}
             gas/ice giants.
-        </>
+        </Trans>
     )
 }
 
@@ -594,7 +599,7 @@ const EditThemeId: Component<{
     disabled?: boolean
 }> = (props) => {
     return (
-        <>
+        <Trans>
             Has a{" "}
             <Select
                 class={styles.selectPlanetType}
@@ -607,7 +612,7 @@ const EditThemeId: Component<{
                 disabled={props.disabled}
             />{" "}
             planet.
-        </>
+        </Trans>
     )
 }
 
@@ -619,8 +624,9 @@ const EditHiveCount: Component<{
     const condition = () => props.value.condition
     const setCondition = (condition: Condition) =>
         props.onChange({ ...props.value, condition })
+    const { t } = useLingui()
     return (
-        <>
+        <Trans>
             <Select
                 class={styles.selectInitialOrMax}
                 value={!!props.value.initial}
@@ -628,7 +634,7 @@ const EditHiveCount: Component<{
                     props.onChange({ ...props.value, initial })
                 }
                 options={[true, false]}
-                getLabel={(initial) => (initial ? "Initial" : "Max")}
+                getLabel={(initial) => (initial ? t`Initial` : t`Max`)}
                 disabled={props.disabled}
             />{" "}
             number of hives is{" "}
@@ -646,7 +652,7 @@ const EditHiveCount: Component<{
                 disabled={props.disabled}
             />
             .
-        </>
+        </Trans>
     )
 }
 
@@ -661,73 +667,84 @@ const EditSimpleRule: Component<{
     value: SimpleRule
     onChange: (value: SimpleRule) => void
     disabled?: boolean
-}> = (props) => (
-    <div class={styles.editRow}>
-        <Switch>
-            <Match when={isType(props.value, RuleType.Luminosity)}>
-                {(value) => <EditLuminosity {...props} value={value()} />}
-            </Match>
-            <Match when={isType(props.value, RuleType.DysonRadius)}>
-                {(value) => <EditDysonRadius {...props} value={value()} />}
-            </Match>
-            <Match when={isType(props.value, RuleType.AverageVeinAmount)}>
-                {(value) => (
-                    <EditAverageVeinAmount {...props} value={value()} />
-                )}
-            </Match>
-            <Match when={isType(props.value, RuleType.Spectr)}>
-                {(value) => <EditSpectr {...props} value={value()} />}
-            </Match>
-            <Match when={isType(props.value, RuleType.TidalLockCount)}>
-                {(value) => <EditTidalLockCount {...props} value={value()} />}
-            </Match>
-            <Match when={isType(props.value, RuleType.OceanType)}>
-                {(value) => <EditOceanType {...props} value={value()} />}
-            </Match>
-            <Match when={isType(props.value, RuleType.StarType)}>
-                {(value) => <EditStarType {...props} value={value()} />}
-            </Match>
-            <Match when={isType(props.value, RuleType.GasCount)}>
-                {(value) => <EditGasCount {...props} value={value()} />}
-            </Match>
-            <Match when={isType(props.value, RuleType.SatelliteCount)}>
-                {(value) => <EditSatelliteCount {...props} value={value()} />}
-            </Match>
-            <Match when={isType(props.value, RuleType.DysonRadius)}>
-                {(value) => <EditDysonRadius {...props} value={value()} />}
-            </Match>
-            <Match when={isType(props.value, RuleType.PlanetCount)}>
-                {(value) => <EditPlanetCount {...props} value={value()} />}
-            </Match>
-            <Match when={isType(props.value, RuleType.BirthDistance)}>
-                {(value) => <EditBirthDistance {...props} value={value()} />}
-            </Match>
-            <Match when={isType(props.value, RuleType.XDistance)}>
-                {(value) => <EditXDistance {...props} value={value()} />}
-            </Match>
-            <Match when={isType(props.value, RuleType.SpectrDistance)}>
-                {(value) => <EditSpectrDistance {...props} value={value()} />}
-            </Match>
-            <Match when={isType(props.value, RuleType.GasRate)}>
-                {(value) => <EditGasRate {...props} value={value()} />}
-            </Match>
-            <Match when={isType(props.value, RuleType.PlanetInDysonCount)}>
-                {(value) => (
-                    <EditPlanetInDysonCount {...props} value={value()} />
-                )}
-            </Match>
-            <Match when={isType(props.value, RuleType.ThemeId)}>
-                {(value) => <EditThemeId {...props} value={value()} />}
-            </Match>
-            <Match when={isType(props.value, RuleType.HiveCount)}>
-                {(value) => <EditHiveCount {...props} value={value()} />}
-            </Match>
-            <Match when={isType(props.value, RuleType.Birth)}>
-                <div class={styles.birth}>Is the starting system</div>
-            </Match>
-        </Switch>
-    </div>
-)
+}> = (props) => {
+    const { t } = useLingui()
+    return (
+        <div class={styles.editRow}>
+            <Switch>
+                <Match when={isType(props.value, RuleType.Luminosity)}>
+                    {(value) => <EditLuminosity {...props} value={value()} />}
+                </Match>
+                <Match when={isType(props.value, RuleType.DysonRadius)}>
+                    {(value) => <EditDysonRadius {...props} value={value()} />}
+                </Match>
+                <Match when={isType(props.value, RuleType.AverageVeinAmount)}>
+                    {(value) => (
+                        <EditAverageVeinAmount {...props} value={value()} />
+                    )}
+                </Match>
+                <Match when={isType(props.value, RuleType.Spectr)}>
+                    {(value) => <EditSpectr {...props} value={value()} />}
+                </Match>
+                <Match when={isType(props.value, RuleType.TidalLockCount)}>
+                    {(value) => (
+                        <EditTidalLockCount {...props} value={value()} />
+                    )}
+                </Match>
+                <Match when={isType(props.value, RuleType.OceanType)}>
+                    {(value) => <EditOceanType {...props} value={value()} />}
+                </Match>
+                <Match when={isType(props.value, RuleType.StarType)}>
+                    {(value) => <EditStarType {...props} value={value()} />}
+                </Match>
+                <Match when={isType(props.value, RuleType.GasCount)}>
+                    {(value) => <EditGasCount {...props} value={value()} />}
+                </Match>
+                <Match when={isType(props.value, RuleType.SatelliteCount)}>
+                    {(value) => (
+                        <EditSatelliteCount {...props} value={value()} />
+                    )}
+                </Match>
+                <Match when={isType(props.value, RuleType.DysonRadius)}>
+                    {(value) => <EditDysonRadius {...props} value={value()} />}
+                </Match>
+                <Match when={isType(props.value, RuleType.PlanetCount)}>
+                    {(value) => <EditPlanetCount {...props} value={value()} />}
+                </Match>
+                <Match when={isType(props.value, RuleType.BirthDistance)}>
+                    {(value) => (
+                        <EditBirthDistance {...props} value={value()} />
+                    )}
+                </Match>
+                <Match when={isType(props.value, RuleType.XDistance)}>
+                    {(value) => <EditXDistance {...props} value={value()} />}
+                </Match>
+                <Match when={isType(props.value, RuleType.SpectrDistance)}>
+                    {(value) => (
+                        <EditSpectrDistance {...props} value={value()} />
+                    )}
+                </Match>
+                <Match when={isType(props.value, RuleType.GasRate)}>
+                    {(value) => <EditGasRate {...props} value={value()} />}
+                </Match>
+                <Match when={isType(props.value, RuleType.PlanetInDysonCount)}>
+                    {(value) => (
+                        <EditPlanetInDysonCount {...props} value={value()} />
+                    )}
+                </Match>
+                <Match when={isType(props.value, RuleType.ThemeId)}>
+                    {(value) => <EditThemeId {...props} value={value()} />}
+                </Match>
+                <Match when={isType(props.value, RuleType.HiveCount)}>
+                    {(value) => <EditHiveCount {...props} value={value()} />}
+                </Match>
+                <Match when={isType(props.value, RuleType.Birth)}>
+                    <div class={styles.birth}>{t`Is the starting system`}</div>
+                </Match>
+            </Switch>
+        </div>
+    )
+}
 
 const DeleteButton: Component<{ onDelete: () => void }> = (props) => {
     return (
@@ -766,6 +783,7 @@ const RuleBlockContent: Component<{
     function onAdd() {
         props.onChange([...props.value, { type: RuleType.None }])
     }
+    const { t } = useLingui()
     return (
         <Show
             when={props.value.length > 0}
@@ -780,7 +798,7 @@ const RuleBlockContent: Component<{
                 {(item, index) => (
                     <>
                         <Show when={index > 0}>
-                            <div class={styles.or}>OR</div>
+                            <div class={styles.or}>{t`OR`}</div>
                         </Show>
                         <div class={styles.row}>
                             <SelectSimpleRule
@@ -805,7 +823,7 @@ const RuleBlockContent: Component<{
 
             <Show when={!props.disabled}>
                 <Button class={styles.addOr} kind="outline" onClick={onAdd}>
-                    Add OR rule
+                    {t`Add OR rule`}
                 </Button>
             </Show>
         </Show>
@@ -834,6 +852,8 @@ const RuleEditor: Component<{
         props.onChange([...props.value, []])
     }
 
+    const { t } = useLingui()
+
     return (
         <div class={clsx(styles.ruleBuilder, props.class)}>
             <Show
@@ -850,7 +870,7 @@ const RuleEditor: Component<{
                     {(group, index) => (
                         <>
                             <Show when={index > 0}>
-                                <div class={styles.and}>AND</div>
+                                <div class={styles.and}>{t`AND`}</div>
                             </Show>
                             <div class={styles.block}>
                                 <RuleBlockContent
@@ -876,7 +896,7 @@ const RuleEditor: Component<{
                         kind="outline"
                         onClick={onAdd}
                     >
-                        Add AND rule
+                        {t`Add AND rule`}
                     </Button>
                 </Show>
             </Show>
@@ -886,28 +906,31 @@ const RuleEditor: Component<{
 
 export default RuleEditor
 
-const ruleNames: Record<RuleType, string> = {
-    [RuleType.None]: "Select...",
-    [RuleType.And]: "",
-    [RuleType.Or]: "",
-    [RuleType.Birth]: "Starting System",
-    [RuleType.StarType]: "Type of star",
-    [RuleType.BirthDistance]: "Distance from Start",
-    [RuleType.XDistance]: "Distance from X Star",
-    [RuleType.SpectrDistance]: "Distance from Other Stars",
-    [RuleType.Luminosity]: "Luminosity",
-    [RuleType.Spectr]: "Spectral Class",
-    [RuleType.DysonRadius]: "Max Dyson Sphere Radius",
-    [RuleType.PlanetCount]: "Planet Count",
-    [RuleType.SatelliteCount]: "Satellite Count",
-    [RuleType.TidalLockCount]: "Tidally Locked Planet Count",
-    [RuleType.ThemeId]: "Planet Themes",
-    [RuleType.GasCount]: "Gas/Ice Giant Count",
-    [RuleType.OceanType]: "Ocean",
-    [RuleType.GasRate]: "Gas Rate",
-    [RuleType.AverageVeinAmount]: "Vein Amount",
-    [RuleType.PlanetInDysonCount]: "Planets in Dyson Sphere",
-    [RuleType.HiveCount]: "Hive Count",
+const getRuleNames: () => Record<RuleType, () => string> = () => {
+    const { t } = useLingui()
+    return {
+        [RuleType.None]: () => t`Select...`,
+        [RuleType.And]: () => "",
+        [RuleType.Or]: () => "",
+        [RuleType.Birth]: () => t`Starting System`,
+        [RuleType.StarType]: () => t`Type of star`,
+        [RuleType.BirthDistance]: () => t`Distance from Start`,
+        [RuleType.XDistance]: () => t`Distance from X Star`,
+        [RuleType.SpectrDistance]: () => t`Distance from Other Stars`,
+        [RuleType.Luminosity]: () => t`Luminosity`,
+        [RuleType.Spectr]: () => t`Spectral Class`,
+        [RuleType.DysonRadius]: () => t`Max Dyson Sphere Radius`,
+        [RuleType.PlanetCount]: () => t`Planet Count`,
+        [RuleType.SatelliteCount]: () => t`Satellite Count`,
+        [RuleType.TidalLockCount]: () => t`Tidally Locked Planet Count`,
+        [RuleType.ThemeId]: () => t`Planet Themes`,
+        [RuleType.GasCount]: () => t`Gas/Ice Giant Count`,
+        [RuleType.OceanType]: () => t`Ocean`,
+        [RuleType.GasRate]: () => t`Gas Rate`,
+        [RuleType.AverageVeinAmount]: () => t`Vein Amount`,
+        [RuleType.PlanetInDysonCount]: () => t`Planets in Dyson Sphere`,
+        [RuleType.HiveCount]: () => t`Hive Count`,
+    }
 }
 
 const rules: SimpleRule[] = [
@@ -1073,12 +1096,15 @@ const starTypes: StarType[] = [
     StarType.NeutronStar,
 ]
 
-const starTypeNames: Record<StarType, string> = {
-    [StarType.MainSeqStar]: "Normal Star",
-    [StarType.GiantStar]: "Giant Star",
-    [StarType.WhiteDwarf]: "White Dwarf",
-    [StarType.BlackHole]: "Black Hole",
-    [StarType.NeutronStar]: "Neutron Star",
+const getStarTypeNames: () => Record<StarType, () => string> = () => {
+    const { t } = useLingui()
+    return {
+        [StarType.MainSeqStar]: () => t`Normal Star`,
+        [StarType.GiantStar]: () => t`Giant Star`,
+        [StarType.WhiteDwarf]: () => t`White Dwarf`,
+        [StarType.BlackHole]: () => t`Black Hole`,
+        [StarType.NeutronStar]: () => t`Neutron Star`,
+    }
 }
 
 const gasTypes: GasType[] = [
@@ -1087,9 +1113,12 @@ const gasTypes: GasType[] = [
     GasType.Fireice,
 ]
 
-const gasTypeNames: Record<GasType, string> = {
-    [GasType.None]: "",
-    [GasType.Hydrogen]: "Hydrogen",
-    [GasType.Deuterium]: "Deuterium",
-    [GasType.Fireice]: "Fire Ice",
+const getGasTypeNames: () => Record<GasType, () => string> = () => {
+    const { t } = useLingui()
+    return {
+        [GasType.None]: () => "",
+        [GasType.Hydrogen]: () => t`Hydrogen`,
+        [GasType.Deuterium]: () => t`Deuterium`,
+        [GasType.Fireice]: () => t`Fire Ice`,
+    }
 }

@@ -10,6 +10,7 @@ import ResourceMultiplierSelector from "./ResourceMultiplerSelector"
 import NumberInput from "../components/NumberInput"
 import HiveInitialColonizeSelector from "./HiveInitialColonizeSelector"
 import HiveMaxDensitySelector from "./HiveMaxDensitySelector"
+import { Trans, useLingui } from "#lingui"
 
 function ProgressEditor<E extends ProfileProgressInfo>(props: {
     progress: E
@@ -26,11 +27,13 @@ function ProgressEditor<E extends ProfileProgressInfo>(props: {
         props.progress.current > props.progress.start
     const isDisabled = () => props.searching || hasProgress()
 
+    const { t } = useLingui()
+
     return (
         <div class={styles.fields}>
             <div class={styles.field}>
                 <div class={styles.label}>
-                    {props.isLoaded ? "" : "New "}Profile Name
+                    {props.isLoaded ? t`Profile Name` : t`New Profile Name`}
                 </div>
                 <div class={styles.input}>
                     <Input
@@ -43,7 +46,7 @@ function ProgressEditor<E extends ProfileProgressInfo>(props: {
             </div>
             <div />
             <div class={styles.field}>
-                <div class={styles.label}>Star count</div>
+                <div class={styles.label}>{t`Star Count`}</div>
                 <div class={styles.input}>
                     <StarCountSelector
                         class={styles.inputStandard}
@@ -56,41 +59,43 @@ function ProgressEditor<E extends ProfileProgressInfo>(props: {
                 </div>
             </div>
             <div class={styles.field}>
-                <div class={styles.label}>Seed Range</div>
+                <div class={styles.label}>{t`Seed Range`}</div>
                 <div class={styles.input}>
-                    <NumberInput
-                        class={styles.inputSeed}
-                        value={props.progress.start}
-                        onChange={(value) =>
-                            props.onProgressChange("start", value)
-                        }
-                        emptyValue={-1}
-                        maxLength={8}
-                        error={
-                            props.progress.start < 0 ||
-                            props.progress.start >= props.progress.end
-                        }
-                        disabled={isDisabled()}
-                    />{" "}
-                    to{" "}
-                    <NumberInput
-                        class={styles.inputSeed}
-                        value={props.progress.end - 1}
-                        onChange={(value) =>
-                            props.onProgressChange("end", value + 1)
-                        }
-                        emptyValue={-1}
-                        maxLength={8}
-                        error={
-                            props.progress.end > 1e8 ||
-                            props.progress.start >= props.progress.end
-                        }
-                        disabled={isDisabled()}
-                    />
+                    <Trans>
+                        <NumberInput
+                            class={styles.inputSeed}
+                            value={props.progress.start}
+                            onChange={(value) =>
+                                props.onProgressChange("start", value)
+                            }
+                            emptyValue={-1}
+                            maxLength={8}
+                            error={
+                                props.progress.start < 0 ||
+                                props.progress.start >= props.progress.end
+                            }
+                            disabled={isDisabled()}
+                        />{" "}
+                        to{" "}
+                        <NumberInput
+                            class={styles.inputSeed}
+                            value={props.progress.end - 1}
+                            onChange={(value) =>
+                                props.onProgressChange("end", value + 1)
+                            }
+                            emptyValue={-1}
+                            maxLength={8}
+                            error={
+                                props.progress.end > 1e8 ||
+                                props.progress.start >= props.progress.end
+                            }
+                            disabled={isDisabled()}
+                        />
+                    </Trans>
                 </div>
             </div>
             <div class={styles.field}>
-                <div class={styles.label}>Resource Multipler</div>
+                <div class={styles.label}>{t`Resource Multipler`}</div>
                 <div class={styles.input}>
                     <ResourceMultiplierSelector
                         class={styles.inputStandard}
@@ -104,8 +109,10 @@ function ProgressEditor<E extends ProfileProgressInfo>(props: {
             </div>
             <div class={styles.field}>
                 <div class={styles.label}>
-                    <Tooltip text="To run the search in (faster) native mode, click the download button and run the program on your PC, then enable this option.">
-                        Native Mode
+                    <Tooltip
+                        text={t`To run the search in (faster) native mode, click the download button and run the program on your PC, then enable this option.`}
+                    >
+                        {t`Native Mode`}
                     </Tooltip>
                 </div>
                 <div class={styles.input}>
@@ -115,12 +122,12 @@ function ProgressEditor<E extends ProfileProgressInfo>(props: {
                         disabled={props.searching}
                     />
                     <a href={ExeUrl} download="DSP-Seed-Finder.exe">
-                        <Button kind="outline">Download</Button>
+                        <Button kind="outline">{t`Download`}</Button>
                     </a>
                 </div>
             </div>
             <div class={styles.field}>
-                <div class={styles.label}>Dark Fog Initial Occupation</div>
+                <div class={styles.label}>{t`Dark Fog Initial Occupation`}</div>
                 <div class={styles.input}>
                     <HiveInitialColonizeSelector
                         class={styles.inputStandard}
@@ -134,8 +141,10 @@ function ProgressEditor<E extends ProfileProgressInfo>(props: {
             </div>
             <div class={styles.field}>
                 <div class={styles.label}>
-                    <Tooltip text="The number of parallel processes to run the search.">
-                        Concurrency
+                    <Tooltip
+                        text={t`The number of parallel processes to run the search.`}
+                    >
+                        {t`Concurrency`}
                     </Tooltip>
                 </div>
                 <div class={styles.input}>
@@ -156,7 +165,7 @@ function ProgressEditor<E extends ProfileProgressInfo>(props: {
                 </div>
             </div>
             <div class={styles.field}>
-                <div class={styles.label}>Dark Fog Max Density</div>
+                <div class={styles.label}>{t`Dark Fog Max Density`}</div>
                 <div class={styles.input}>
                     <HiveMaxDensitySelector
                         class={styles.inputStandard}
@@ -170,23 +179,27 @@ function ProgressEditor<E extends ProfileProgressInfo>(props: {
             </div>
             <div class={styles.field}>
                 <div class={styles.label}>
-                    <Tooltip text="Running autosave too frequently may decrease search performance.">
-                        Autosave interval
+                    <Tooltip
+                        text={t`Running autosave too frequently may decrease search performance.`}
+                    >
+                        {t`Autosave interval`}
                     </Tooltip>
                 </div>
                 <div class={styles.input}>
-                    Every{" "}
-                    <NumberInput
-                        class={styles.inputSmall}
-                        value={props.progress.autosave}
-                        onChange={(value) =>
-                            props.onProgressChange("autosave", value)
-                        }
-                        emptyValue={-1}
-                        error={props.progress.autosave <= 0}
-                        disabled={props.searching}
-                    />{" "}
-                    seconds
+                    <Trans>
+                        Every{" "}
+                        <NumberInput
+                            class={styles.inputSmall}
+                            value={props.progress.autosave}
+                            onChange={(value) =>
+                                props.onProgressChange("autosave", value)
+                            }
+                            emptyValue={-1}
+                            error={props.progress.autosave <= 0}
+                            disabled={props.searching}
+                        />{" "}
+                        seconds
+                    </Trans>
                 </div>
             </div>
         </div>

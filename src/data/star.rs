@@ -11,7 +11,6 @@ pub struct Star<'a> {
     pub game_desc: &'a GameDesc,
     pub used_theme_ids: RefCell<Vec<i32>>,
     pub index: usize,
-    pub seed: i32,
     pub name_seed: i32,
     pub position: Vector3,
     pub level: f32,
@@ -35,7 +34,6 @@ pub struct Star<'a> {
     temperature: OnceCell<f32>,
     class_factor: OnceCell<f64>,
     spectr: OnceCell<SpectrType>,
-    color: OnceCell<f32>,
     luminosity: OnceCell<f32>,
     radius: OnceCell<f32>,
     light_balance_radius: OnceCell<f32>,
@@ -44,7 +42,6 @@ pub struct Star<'a> {
     orbit_scaler: OnceCell<f32>,
     dyson_radius: OnceCell<i32>,
     hive_rand: RefCell<DspRandom>,
-    safety_factor: OnceCell<f32>,
     max_hive_count: OnceCell<i32>,
     initial_hive_count: OnceCell<i32>,
 }
@@ -95,7 +92,6 @@ impl<'a> Star<'a> {
             game_desc,
             used_theme_ids: RefCell::new(vec![]),
             index,
-            seed,
             name_seed,
             position,
             level: (index as f32) / ((game_desc.star_count - 1) as f32),
@@ -119,7 +115,6 @@ impl<'a> Star<'a> {
             temperature: OnceCell::new(),
             class_factor: OnceCell::new(),
             spectr: OnceCell::new(),
-            color: OnceCell::new(),
             luminosity: OnceCell::new(),
             radius: OnceCell::new(),
             light_balance_radius: OnceCell::new(),
@@ -128,7 +123,6 @@ impl<'a> Star<'a> {
             orbit_scaler: OnceCell::new(),
             dyson_radius: OnceCell::new(),
             hive_rand: RefCell::new(hive_rand),
-            safety_factor: OnceCell::new(),
             max_hive_count: OnceCell::new(),
             initial_hive_count: OnceCell::new(),
         }
@@ -317,7 +311,7 @@ impl<'a> Star<'a> {
         })
     }
 
-    pub fn get_color(&self) -> f32 {
+    fn get_color(&self) -> f32 {
         match self.star_type {
             StarType::BlackHole | StarType::NeutronStar => 1.0,
             StarType::WhiteDwarf => 0.7,
@@ -434,36 +428,34 @@ impl<'a> Star<'a> {
         })
     }
 
-    pub fn get_safety_factor(&self) -> f32 {
-        *self.safety_factor.get_or_init(|| {
-            if self.is_birth() {
-                return (0.847 + self.safety_factor_modifier * 0.026) as f32;
-            }
-            let mut f1 = (((self.position.magnitude() - 2.0) / 20.0) as f32).clamp(0.0, 2.5);
-            if f1 > 1.0 {
-                f1 = (f1.ln() + 1.0).ln() + 1.0
-            }
-            let f2 = f1 / 1.4;
-            let b: f32 = match self.star_type {
-                StarType::BlackHole => 5.0,
-                StarType::NeutronStar => 1.7,
-                StarType::WhiteDwarf => 1.2,
-                _ => {
-                    let b2 = self.get_color().powf(1.3);
-                    if self.star_type == StarType::GiantStar {
-                        b2.max(0.6)
-                    } else if self.get_spectr() == SpectrType::O {
-                        b2 + 0.05
-                    } else {
-                        b2
-                    }
+    fn get_safety_factor(&self) -> f32 {
+        if self.is_birth() {
+            return (0.847 + self.safety_factor_modifier * 0.026) as f32;
+        }
+        let mut f1 = (((self.position.magnitude() - 2.0) / 20.0) as f32).clamp(0.0, 2.5);
+        if f1 > 1.0 {
+            f1 = (f1.ln() + 1.0).ln() + 1.0
+        }
+        let f2 = f1 / 1.4;
+        let b: f32 = match self.star_type {
+            StarType::BlackHole => 5.0,
+            StarType::NeutronStar => 1.7,
+            StarType::WhiteDwarf => 1.2,
+            _ => {
+                let b2 = self.get_color().powf(1.3);
+                if self.star_type == StarType::GiantStar {
+                    b2.max(0.6)
+                } else if self.get_spectr() == SpectrType::O {
+                    b2 + 0.05
+                } else {
+                    b2
                 }
-            };
-            ((1.0 - ((b * 0.9 + 0.07).powf(0.73) as f64) * (f2.powf(0.27) as f64)
-                + self.safety_factor_modifier * 0.08
-                - 0.04) as f32)
-                .clamp(0.0, 1.0)
-        })
+            }
+        };
+        ((1.0 - ((b * 0.9 + 0.07).powf(0.73) as f64) * (f2.powf(0.27) as f64)
+            + self.safety_factor_modifier * 0.08
+            - 0.04) as f32)
+            .clamp(0.0, 1.0)
     }
 
     pub fn get_max_hive_count(&self) -> i32 {

@@ -137,10 +137,11 @@ fn generate_stars<'a>(game_desc: &'a GameDesc) -> Vec<StarWithPlanets<'a>> {
     let r2 = rand.next_f32();
     let r3 = rand.next_f32();
     let r4 = rand.next_f32();
-    let black_hole_num = (0.01 * (star_count as f64) + (r1 as f64) * 0.3).ceil() as usize;
-    let neutro_star_num = (0.01 * (star_count as f64) + (r2 as f64) * 0.3).ceil() as usize;
-    let white_dwarf_num = (0.016 * (star_count as f64) + (r3 as f64) * 0.4).ceil() as usize;
-    let giant_star_num = (0.013 * (star_count as f64) + (r4 as f64) * 1.4).ceil() as usize;
+    let black_hole_num = ((0.01 * (star_count as f64) + (r1 as f64) * 0.3) as f32).ceil() as usize;
+    let neutro_star_num = ((0.01 * (star_count as f64) + (r2 as f64) * 0.3) as f32).ceil() as usize;
+    let white_dwarf_num =
+        ((0.016 * (star_count as f64) + (r3 as f64) * 0.4) as f32).ceil() as usize;
+    let giant_star_num = ((0.013 * (star_count as f64) + (r4 as f64) * 1.4) as f32).ceil() as usize;
     let black_hole_start = star_count - black_hole_num;
     let neutron_star_start = black_hole_start - neutro_star_num;
     let white_dwarf_start = neutron_star_start - white_dwarf_num;
@@ -168,14 +169,14 @@ fn generate_stars<'a>(game_desc: &'a GameDesc) -> Vec<StarWithPlanets<'a>> {
             } else {
                 SpectrType::X
             };
-            let need_type = if index % giant_group_num == giant_offset {
-                StarType::GiantStar
-            } else if index >= black_hole_start {
+            let need_type = if index >= black_hole_start {
                 StarType::BlackHole
             } else if index >= neutron_star_start {
                 StarType::NeutronStar
             } else if index >= white_dwarf_start {
                 StarType::WhiteDwarf
+            } else if index % giant_group_num == giant_offset {
+                StarType::GiantStar
             } else {
                 StarType::MainSeqStar
             };

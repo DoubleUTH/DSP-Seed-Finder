@@ -140,7 +140,7 @@ fn generate_stars<'a>(game_desc: &'a GameDesc) -> Vec<StarWithPlanets<'a>> {
     let black_hole_num = (0.01 * (star_count as f64) + (r1 as f64) * 0.3).ceil() as usize;
     let neutro_star_num = (0.01 * (star_count as f64) + (r2 as f64) * 0.3).ceil() as usize;
     let white_dwarf_num = (0.016 * (star_count as f64) + (r3 as f64) * 0.4).ceil() as usize;
-    let giant_star_num = (0.013 * (star_count as f64) + (r4 as f64) * 1.3).ceil() as usize;
+    let giant_star_num = (0.013 * (star_count as f64) + (r4 as f64) * 1.4).ceil() as usize;
     let black_hole_start = star_count - black_hole_num;
     let neutron_star_start = black_hole_start - neutro_star_num;
     let white_dwarf_start = neutron_star_start - white_dwarf_num;

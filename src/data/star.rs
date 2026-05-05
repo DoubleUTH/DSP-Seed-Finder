@@ -568,7 +568,7 @@ impl Serialize for Star<'_> {
     where
         S: Serializer,
     {
-        let mut state = serializer.serialize_struct("Star", 11)?;
+        let mut state = serializer.serialize_struct("Star", 13)?;
         state.serialize_field("index", &self.index)?;
         state.serialize_field("position", &self.position)?;
         state.serialize_field("mass", &self.get_mass())?;

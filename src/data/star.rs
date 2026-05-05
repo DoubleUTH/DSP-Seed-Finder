@@ -27,7 +27,6 @@ pub struct Star<'a> {
     mass_params: (f64, f64, f64, f64, f32),
     unmodified_mass: OnceCell<f32>,
     resource_coef: OnceCell<f32>,
-    lifetime: OnceCell<f32>,
     age: OnceCell<f32>,
     temperature_factor: OnceCell<f32>,
     unmodified_temperature: OnceCell<f32>,
@@ -108,7 +107,6 @@ impl<'a> Star<'a> {
             max_hive_count_modifier,
             unmodified_mass: OnceCell::new(),
             resource_coef: OnceCell::new(),
-            lifetime: OnceCell::new(),
             age: OnceCell::new(),
             temperature_factor: OnceCell::new(),
             unmodified_temperature: OnceCell::new(),
@@ -188,45 +186,42 @@ impl<'a> Star<'a> {
         })
     }
 
-    pub fn get_lifetime(&self) -> f32 {
-        *self.lifetime.get_or_init(|| {
-            let unmodified_mass = self.get_unmodified_mass();
-            let d = if unmodified_mass < 2.0 {
-                2.0 + 0.4 * (1.0 - (unmodified_mass as f64))
-            } else {
-                5.0
-            };
-            let mass_multiplier = if self.star_type == StarType::GiantStar {
-                0.58
-            } else {
-                0.5
-            };
-            let lifetime_delta = match self.star_type {
-                StarType::WhiteDwarf => 10000.0,
-                StarType::NeutronStar => 1000.0,
-                _ => 0.0,
-            };
-            let lifetime = (10000.0
-                * 0.1_f64
-                    .powf(((self.get_unmodified_mass() as f64) * mass_multiplier).log(d) + 1.0)
-                * (self.lifetime_factor * 0.2 + 0.9))
-                + lifetime_delta;
+    fn get_lifetime(&self) -> f32 {
+        let unmodified_mass = self.get_unmodified_mass();
+        let d = if unmodified_mass < 2.0 {
+            2.0 + 0.4 * (1.0 - (unmodified_mass as f64))
+        } else {
+            5.0
+        };
+        let mass_multiplier = if self.star_type == StarType::GiantStar {
+            0.58
+        } else {
+            0.5
+        };
+        let lifetime_delta = match self.star_type {
+            StarType::WhiteDwarf => 10000.0,
+            StarType::NeutronStar => 1000.0,
+            _ => 0.0,
+        };
+        let lifetime = (10000.0
+            * 0.1_f64.powf(((self.get_unmodified_mass() as f64) * mass_multiplier).log(d) + 1.0)
+            * (self.lifetime_factor * 0.2 + 0.9))
+            + lifetime_delta;
 
-            if self.is_birth() {
-                lifetime as f32
-            } else {
-                let age = self.get_age();
-                let mut num9 = (lifetime as f32) * age;
-                if num9 > 5000.0 {
-                    num9 = (((num9 / 5000.0).ln() as f64 + 1.0) * 5000.0) as f32;
-                }
-                if num9 > 8000.0 {
-                    num9 = (((((num9 / 8000.0).ln() + 1.0).ln() + 1.0).ln() as f64 + 1.0) * 8000.0)
-                        as f32;
-                }
-                num9 / age
+        if self.is_birth() {
+            lifetime as f32
+        } else {
+            let age = self.get_age();
+            let mut num9 = (lifetime as f32) * age;
+            if num9 > 5000.0 {
+                num9 = (((num9 / 5000.0).ln() as f64 + 1.0) * 5000.0) as f32;
             }
-        })
+            if num9 > 8000.0 {
+                num9 =
+                    (((((num9 / 8000.0).ln() + 1.0).ln() + 1.0).ln() as f64 + 1.0) * 8000.0) as f32;
+            }
+            num9 / age
+        }
     }
 
     pub fn get_age(&self) -> f32 {

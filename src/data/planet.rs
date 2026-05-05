@@ -33,12 +33,6 @@ pub struct Planet<'a> {
     orbital_radius: OnceCell<f32>,
     sun_distance: OnceCell<f32>,
     temperature_factor: OnceCell<f32>,
-    habitable_bias: OnceCell<f32>,
-    temperature_bias: OnceCell<f32>,
-    luminosity: OnceCell<f32>,
-    unmodified_planet_type: OnceCell<PlanetType>,
-    orbit_inclination: OnceCell<f32>,
-    sun_orbital_period: OnceCell<f64>,
     orbital_period: OnceCell<f64>,
     obliquity: OnceCell<f32>,
     eligible_for_resonance: OnceCell<bool>,
@@ -115,12 +109,6 @@ impl<'a> Planet<'a> {
             orbital_radius: OnceCell::new(),
             sun_distance: OnceCell::new(),
             temperature_factor: OnceCell::new(),
-            habitable_bias: OnceCell::new(),
-            temperature_bias: OnceCell::new(),
-            luminosity: OnceCell::new(),
-            unmodified_planet_type: OnceCell::new(),
-            orbit_inclination: OnceCell::new(),
-            sun_orbital_period: OnceCell::new(),
             orbital_period: OnceCell::new(),
             obliquity: OnceCell::new(),
             eligible_for_resonance: OnceCell::new(),
@@ -189,45 +177,39 @@ impl<'a> Planet<'a> {
         })
     }
 
-    pub fn get_habitable_bias(&self) -> f32 {
-        *self.habitable_bias.get_or_init(|| {
-            if self.is_gas_giant() {
+    fn get_habitable_bias(&self) -> f32 {
+        if self.is_gas_giant() {
+            1000.0
+        } else {
+            let habitable_radius = self.star.get_habitable_radius();
+            let num21 = if habitable_radius > 0.0 {
+                (self.get_sun_distance() / habitable_radius).ln().abs()
+            } else {
                 1000.0
-            } else {
-                let habitable_radius = self.star.get_habitable_radius();
-                let num21 = if habitable_radius > 0.0 {
-                    (self.get_sun_distance() / habitable_radius).ln().abs()
-                } else {
-                    1000.0
-                };
-                let num22 = habitable_radius.sqrt().clamp(1.0, 2.0) - 0.04;
-                num21 * num22
-            }
-        })
+            };
+            let num22 = habitable_radius.sqrt().clamp(1.0, 2.0) - 0.04;
+            num21 * num22
+        }
     }
 
-    pub fn get_temperature_bias(&self) -> f32 {
-        *self.temperature_bias.get_or_init(|| {
-            if self.is_gas_giant() {
-                0.0
-            } else {
-                let f2 = self.get_temperature_factor();
-                (1.2 / ((f2 as f64) + 0.2) - 1.0) as f32
-            }
-        })
+    fn get_temperature_bias(&self) -> f32 {
+        if self.is_gas_giant() {
+            0.0
+        } else {
+            let f2 = self.get_temperature_factor();
+            (1.2 / ((f2 as f64) + 0.2) - 1.0) as f32
+        }
     }
 
-    pub fn get_luminosity(&self) -> f32 {
-        *self.luminosity.get_or_init(|| {
-            let mut luminosity =
-                (self.star.get_light_balance_radius() / (self.get_sun_distance() + 0.01)).powf(0.6);
-            if luminosity > 1.0 {
-                luminosity = luminosity.ln() + 1.0;
-                luminosity = luminosity.ln() + 1.0;
-                luminosity = luminosity.ln() + 1.0;
-            }
-            (luminosity * 100.0).round() / 100.0
-        })
+    fn get_luminosity(&self) -> f32 {
+        let mut luminosity =
+            (self.star.get_light_balance_radius() / (self.get_sun_distance() + 0.01)).powf(0.6);
+        if luminosity > 1.0 {
+            luminosity = luminosity.ln() + 1.0;
+            luminosity = luminosity.ln() + 1.0;
+            luminosity = luminosity.ln() + 1.0;
+        }
+        (luminosity * 100.0).round() / 100.0
     }
 
     fn increment_habitable_count(&self) {
@@ -237,81 +219,75 @@ impl<'a> Planet<'a> {
             .set(self.star.game_desc.habitable_count.get() + 1);
     }
 
-    pub fn get_unmodified_planet_type(&self) -> &PlanetType {
-        self.unmodified_planet_type.get_or_init(|| {
-            if self.is_gas_giant() {
-                PlanetType::Gas
-            } else if self.is_birth() {
-                self.increment_habitable_count();
-                PlanetType::Ocean
-            } else {
-                let f2 = self.get_temperature_factor();
-                if !self.star.is_birth() {
-                    let star_count = self.star.game_desc.star_count;
-                    let num18 = ((star_count as f32) * 0.29).ceil().max(11.0);
-                    let num19 = (num18 as f64) - (self.star.game_desc.habitable_count.get() as f64);
-                    let num20 = (star_count - self.star.index) as f32;
-                    let num23 = num20 as f64;
-                    let a = (num19 / num23) as f32;
-                    let num24 = (a + (0.35 - a) * 0.5).clamp(0.08, 0.8);
-                    let num25 = (self.get_habitable_bias() / num24)
-                        .clamp(0.0, 1.1)
-                        .powf(num24 * 10.0);
-                    if self.habitable_factor > (num25 as f64) {
-                        self.increment_habitable_count();
-                        return PlanetType::Ocean;
-                    }
-                }
-                if f2 < 5.0 / 6.0 {
-                    let num26 = ((f2 as f64) * 2.5 - 0.85).max(0.15);
-                    if self.type_factor >= num26 {
-                        PlanetType::Volcano
-                    } else {
-                        PlanetType::Desert
-                    }
-                } else if f2 < 1.2 {
-                    PlanetType::Desert
-                } else {
-                    let num27 = 0.9 / (f2 as f64) - 0.1;
-                    if self.type_factor >= num27 {
-                        PlanetType::Ice
-                    } else {
-                        PlanetType::Desert
-                    }
+    fn get_unmodified_planet_type(&self) -> PlanetType {
+        if self.is_gas_giant() {
+            PlanetType::Gas
+        } else if self.is_birth() {
+            self.increment_habitable_count();
+            PlanetType::Ocean
+        } else {
+            let f2 = self.get_temperature_factor();
+            if !self.star.is_birth() {
+                let star_count = self.star.game_desc.star_count;
+                let num18 = ((star_count as f32) * 0.29).ceil().max(11.0);
+                let num19 = (num18 as f64) - (self.star.game_desc.habitable_count.get() as f64);
+                let num20 = (star_count - self.star.index) as f32;
+                let num23 = num20 as f64;
+                let a = (num19 / num23) as f32;
+                let num24 = (a + (0.35 - a) * 0.5).clamp(0.08, 0.8);
+                let num25 = (self.get_habitable_bias() / num24)
+                    .clamp(0.0, 1.1)
+                    .powf(num24 * 10.0);
+                if self.habitable_factor > (num25 as f64) {
+                    self.increment_habitable_count();
+                    return PlanetType::Ocean;
                 }
             }
-        })
+            if f2 < 5.0 / 6.0 {
+                let num26 = ((f2 as f64) * 2.5 - 0.85).max(0.15);
+                if self.type_factor >= num26 {
+                    PlanetType::Volcano
+                } else {
+                    PlanetType::Desert
+                }
+            } else if f2 < 1.2 {
+                PlanetType::Desert
+            } else {
+                let num27 = 0.9 / (f2 as f64) - 0.1;
+                if self.type_factor >= num27 {
+                    PlanetType::Ice
+                } else {
+                    PlanetType::Desert
+                }
+            }
+        }
     }
 
     pub fn is_tidal_locked(&self) -> bool {
         self.get_rotation_period() == self.get_orbital_period()
     }
 
-    pub fn get_orbit_inclination(&self) -> f32 {
-        *self.orbit_inclination.get_or_init(|| {
-            let mut orbit_inclination = (self.orbit_inclination_factor * 16.0 - 8.0) as f32;
-            if self.has_orbit_around() {
-                orbit_inclination *= 2.2;
+    fn get_orbit_inclination(&self) -> f32 {
+        let mut orbit_inclination = (self.orbit_inclination_factor * 16.0 - 8.0) as f32;
+        if self.has_orbit_around() {
+            orbit_inclination *= 2.2;
+        }
+        if self.star.star_type == StarType::NeutronStar {
+            if orbit_inclination > 0.0 {
+                orbit_inclination += 3.0;
+            } else {
+                orbit_inclination -= 3.0;
             }
-            if self.star.star_type == StarType::NeutronStar {
-                if orbit_inclination > 0.0 {
-                    orbit_inclination += 3.0;
-                } else {
-                    orbit_inclination -= 3.0;
-                }
-            }
-            orbit_inclination
-        })
+        }
+        orbit_inclination
     }
 
-    pub fn get_sun_orbital_period(&self) -> f64 {
-        *self.sun_orbital_period.get_or_init(|| {
-            if let Some(orbit_planet) = self.orbit_around.borrow().as_deref() {
-                orbit_planet.get_orbital_period()
-            } else {
-                self.get_orbital_period()
-            }
-        })
+    fn get_sun_orbital_period(&self) -> f64 {
+        if let Some(orbit_planet) = self.orbit_around.borrow().as_deref() {
+            orbit_planet.get_orbital_period()
+        } else {
+            self.get_orbital_period()
+        }
     }
 
     pub fn get_orbital_period(&self) -> f64 {
@@ -415,7 +391,7 @@ impl<'a> Planet<'a> {
             let planet_type = self.get_unmodified_planet_type();
             let temperature_bias = self.get_temperature_bias();
             for theme in &unused_themes {
-                if self.star.is_birth() && planet_type == &PlanetType::Ocean {
+                if self.star.is_birth() && planet_type == PlanetType::Ocean {
                     if theme.distribute == ThemeDistribute::Birth {
                         potential_themes.push(theme);
                     }
@@ -427,7 +403,7 @@ impl<'a> Planet<'a> {
                     } else {
                         (theme.temperature as f64) * (temperature_bias as f64) >= -0.1
                     };
-                    if (theme.planet_type == *planet_type) && flag2 {
+                    if (theme.planet_type == planet_type) && flag2 {
                         if self.star.is_birth() {
                             if theme.distribute == ThemeDistribute::Default {
                                 potential_themes.push(theme);

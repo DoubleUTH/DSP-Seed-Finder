@@ -145,7 +145,7 @@ async fn accept_connection(stream: TcpStream) {
                         stopped.store(false, Ordering::SeqCst);
                         for _ in 0..threads {
                             let w = boxed_write.clone();
-                            let mut transformed = transform_rules::transform_rules(rule.clone());
+                            let transformed = transform_rules::transform_rules(rule.clone());
                             let mut g = game.clone();
                             let s = state.clone();
                             let cs = current_seed.clone();
@@ -162,7 +162,7 @@ async fn accept_connection(stream: TcpStream) {
                                         break;
                                     }
                                     g.seed = seed;
-                                    let star_indexes = find_stars(&g, &mut transformed);
+                                    let star_indexes = find_stars(&g, &transformed);
                                     let notify_progress = {
                                         let mut x = s.lock().unwrap();
                                         x.add(seed)

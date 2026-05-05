@@ -38,9 +38,9 @@ pub fn findStars(gameDesc: JsValue, rule: JsValue) {
         let serializer = serde_wasm_bindgen::Serializer::json_compatible();
         let mut game_desc: GameDesc = serde_wasm_bindgen::from_value(gameDesc).unwrap();
         let rule = serde_wasm_bindgen::from_value(rule).unwrap();
-        let mut transformed = transform_rules::transform_rules(rule);
+        let transformed = transform_rules::transform_rules(rule);
         loop {
-            let star_indexes = find_stars(&game_desc, &mut transformed);
+            let star_indexes = find_stars(&game_desc, &transformed);
             let result = FindResult {
                 seed: game_desc.seed,
                 indexes: star_indexes,

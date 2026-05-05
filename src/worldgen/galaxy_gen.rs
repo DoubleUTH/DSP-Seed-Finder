@@ -209,7 +209,7 @@ pub fn create_galaxy<'a>(game_desc: &'a GameDesc) -> Galaxy<'a> {
     }
 }
 
-pub fn find_stars(game_desc: &GameDesc, rule: &mut Box<dyn Rule + Send>) -> Vec<usize> {
+pub fn find_stars(game_desc: &GameDesc, rule: &Box<dyn Rule + Send>) -> Vec<usize> {
     let galaxy = Galaxy {
         seed: game_desc.seed,
         stars: generate_stars(game_desc),

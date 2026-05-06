@@ -5,7 +5,7 @@ import { IoContrast, IoLogoGithub } from "solid-icons/io"
 import { Component } from "solid-js"
 import clsx from "clsx"
 import { useLingui } from "#lingui"
-import { toggleDarkMode } from "../localStorage"
+import { toggleDarkMode, toggleLanguage } from "../localStorage"
 
 const Header: Component = () => {
     const [store, setStore] = useStore()
@@ -31,6 +31,14 @@ const Header: Component = () => {
                 </A>
             </div>
             <div class={styles.icons}>
+                <div
+                    class={styles.language}
+                    onClick={() => {
+                        setStore("settings", "language", toggleLanguage)
+                    }}
+                >
+                    {store.settings.language === "en" ? "中" : "En"}
+                </div>
                 <a
                     href="https://github.com/DoubleUTH/DSP-Seed-Finder"
                     target="_blank"

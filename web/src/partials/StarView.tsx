@@ -258,10 +258,11 @@ const Vein: Component<{
     const avg = () => formatVein(props.stat.avg, isOil())
     const min = () => formatVein(props.stat.min, isOil())
     const max = () => formatVein(props.stat.max, isOil())
+    const { t } = useLingui()
     return (
         <div class={props.class}>
             ~{" "}
-            <Tooltip text={`Estimated:\n${min()} - ${max()}`}>{avg()}</Tooltip>
+            <Tooltip text={t`Estimated:\n${min()} - ${max()}`}>{avg()}</Tooltip>
         </div>
     )
 }

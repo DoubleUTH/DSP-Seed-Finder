@@ -975,7 +975,7 @@ const rules: SimpleRule[] = [
         type: RuleType.HiveCount,
         initial: true,
         condition: {
-            type: ConditionType.Gte,
+            type: ConditionType.Lte,
             value: 1,
         },
     },

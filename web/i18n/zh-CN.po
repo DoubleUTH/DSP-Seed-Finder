@@ -192,7 +192,7 @@ msgstr "重氢"
 
 #: web/src/partials/StarView.tsx:192
 msgid "Distance from furthest <0/>"
-msgstr "距离最远的 <0/>"
+msgstr "距离最远的<0/>"
 
 #: web/src/exporter/exporterManager.worker.tsx:70
 msgid "Distance from furthest X star"
@@ -200,7 +200,7 @@ msgstr "距离最远的X型恒星"
 
 #: web/src/partials/StarView.tsx:173
 msgid "Distance from nearest <0/>"
-msgstr "距离最近的 <0/>"
+msgstr "距离最近的<0/>"
 
 #: web/src/exporter/exporterManager.worker.tsx:69
 msgid "Distance from nearest X star"
@@ -244,6 +244,14 @@ msgstr "下载"
 #: web/src/partials/Header.tsx:16
 msgid "DSP Seed Finder"
 msgstr "戴森球计划种子查找器"
+
+#. placeholder {0}: min()
+#. placeholder {1}: max()
+#: web/src/partials/StarView.tsx:265
+msgid ""
+"Estimated:\n"
+"{0} - {1}"
+msgstr "大約有 {0} - {1}"
 
 #: web/src/partials/ProgressEditor.tsx:189
 msgid "Every <0/> seconds"
@@ -310,7 +318,7 @@ msgstr "气态"
 #: web/src/names.tsx:84
 #: web/src/names.tsx:85
 #: web/src/names.tsx:103
-#: web/src/partials/StarView.tsx:361
+#: web/src/partials/StarView.tsx:362
 msgid "Gas Giant"
 msgstr "气态巨行星"
 
@@ -407,7 +415,7 @@ msgstr "有至少一颗行星拥有 <0/> 海洋"
 msgid "Hive count"
 msgstr "巢穴数目"
 
-#: web/src/partials/StarView.tsx:395
+#: web/src/partials/StarView.tsx:396
 msgid "Horizontal rotation"
 msgstr "侧向自转"
 
@@ -422,7 +430,7 @@ msgstr "冰"
 
 #: web/src/names.tsx:86
 #: web/src/names.tsx:87
-#: web/src/partials/StarView.tsx:362
+#: web/src/partials/StarView.tsx:363
 msgid "Ice Giant"
 msgstr "冰巨行星"
 
@@ -456,7 +464,7 @@ msgstr "铁矿"
 
 #: web/src/partials/RuleEditor.tsx:443
 msgid "Is <0/> <1/> ly away from <2/> black hole / neutron star."
-msgstr "距离 <2/> 黑洞/中子星 <0/> <1/>光年"
+msgstr "距离 <2/> 黑洞/中子星 <0/> <1/> 光年"
 
 #: web/src/partials/RuleEditor.tsx:98
 msgid "Is <0/> <1/>L"
@@ -464,7 +472,7 @@ msgstr "<0/> <1/>L"
 
 #: web/src/partials/RuleEditor.tsx:413
 msgid "Is <0/> <1/>ly away from the Starting system"
-msgstr "距离初始星系 <0/> <1/>光年"
+msgstr "距离初始星系 <0/> <1/> 光年"
 
 #: web/src/partials/RuleEditor.tsx:127
 msgid "Is <0/> <1/>m"
@@ -546,7 +554,7 @@ msgstr "名称"
 msgid "Native Mode"
 msgstr "本机模式"
 
-#: web/src/partials/StarView.tsx:520
+#: web/src/partials/StarView.tsx:521
 msgid "Nearby Stars"
 msgstr "附近恒星"
 
@@ -566,7 +574,7 @@ msgstr "新配置名称"
 
 #: web/src/partials/ProfilesModal.tsx:30
 msgid "No saved profiles."
-msgstr "没有保存的配置文件"
+msgstr "没有已保存的配置"
 
 #: web/src/names.tsx:24
 msgid "Normal Star"
@@ -587,10 +595,10 @@ msgid "Obliquity"
 msgstr "地轴倾角"
 
 #: web/src/names.tsx:51
-#: web/src/partials/StarView.tsx:288
-#: web/src/partials/StarView.tsx:294
-#: web/src/partials/StarView.tsx:442
-#: web/src/partials/StarView.tsx:448
+#: web/src/partials/StarView.tsx:289
+#: web/src/partials/StarView.tsx:295
+#: web/src/partials/StarView.tsx:443
+#: web/src/partials/StarView.tsx:449
 msgid "Ocean"
 msgstr "海洋"
 
@@ -612,7 +620,7 @@ msgid "Orbit longitude"
 msgstr "升交点经度"
 
 #: web/src/exporter/exporterManager.worker.tsx:84
-#: web/src/partials/StarView.tsx:399
+#: web/src/partials/StarView.tsx:400
 msgid "Orbit radius"
 msgstr "轨道半径"
 
@@ -620,11 +628,11 @@ msgstr "轨道半径"
 msgid "Orbital period"
 msgstr "公转周期"
 
-#: web/src/partials/StarView.tsx:384
+#: web/src/partials/StarView.tsx:385
 msgid "Orbital resonance 1 : 2"
 msgstr "轨道共振 1:2"
 
-#: web/src/partials/StarView.tsx:392
+#: web/src/partials/StarView.tsx:393
 msgid "Orbital resonance 1 : 4"
 msgstr "轨道共振 1:4"
 
@@ -654,7 +662,7 @@ msgstr "行星数量"
 msgid "Planet themes"
 msgstr "行星主题"
 
-#: web/src/partials/StarView.tsx:545
+#: web/src/partials/StarView.tsx:546
 msgid "Planets"
 msgstr "行星"
 
@@ -703,7 +711,7 @@ msgstr "红巨星"
 msgid "Resource multiplier"
 msgstr "资源倍率"
 
-#: web/src/partials/StarView.tsx:511
+#: web/src/partials/StarView.tsx:512
 msgid "Resources"
 msgstr "资源"
 
@@ -737,7 +745,7 @@ msgstr "频繁运行自动保存可能会降低搜索性能"
 msgid "Sakura Ocean"
 msgstr "樱林海"
 
-#: web/src/partials/StarView.tsx:368
+#: web/src/partials/StarView.tsx:369
 msgid "Satellite"
 msgstr "卫星"
 
@@ -783,7 +791,7 @@ msgid "Silicon Ore"
 msgstr "硅石"
 
 #: web/src/exporter/exporterManager.worker.tsx:91
-#: web/src/partials/StarView.tsx:416
+#: web/src/partials/StarView.tsx:417
 msgid "Solar power"
 msgstr "光能利用率"
 
@@ -826,8 +834,8 @@ msgstr "火山灰"
 
 #: web/src/exporter/exporterManager.worker.tsx:46
 #: web/src/partials/RuleEditor.tsx:260
-#: web/src/partials/StarView.tsx:293
-#: web/src/partials/StarView.tsx:447
+#: web/src/partials/StarView.tsx:294
+#: web/src/partials/StarView.tsx:448
 msgid "Sulfuric Acid"
 msgstr "硫酸"
 
@@ -849,7 +857,7 @@ msgid "this ruleset"
 msgstr "此条件集"
 
 #: web/src/exporter/exporterManager.worker.tsx:83
-#: web/src/partials/StarView.tsx:376
+#: web/src/partials/StarView.tsx:377
 msgid "Tidally locked"
 msgstr "潮汐锁定"
 
@@ -872,8 +880,8 @@ msgstr "海洋丛林"
 
 #: web/src/exporter/exporterManager.worker.tsx:63
 #: web/src/partials/StarView.tsx:151
-#: web/src/partials/StarView.tsx:356
-#: web/src/partials/StarView.tsx:422
+#: web/src/partials/StarView.tsx:357
+#: web/src/partials/StarView.tsx:423
 msgid "Type"
 msgstr "类型"
 
@@ -909,8 +917,8 @@ msgstr "警告：导出过多种子可能会导致内存不足错误"
 
 #: web/src/exporter/exporterManager.worker.tsx:45
 #: web/src/partials/RuleEditor.tsx:260
-#: web/src/partials/StarView.tsx:287
-#: web/src/partials/StarView.tsx:441
+#: web/src/partials/StarView.tsx:288
+#: web/src/partials/StarView.tsx:442
 msgid "Water"
 msgstr "水"
 
@@ -926,7 +934,7 @@ msgid "White Giant"
 msgstr "白巨星"
 
 #: web/src/exporter/exporterManager.worker.tsx:90
-#: web/src/partials/StarView.tsx:410
+#: web/src/partials/StarView.tsx:411
 msgid "Wind power"
 msgstr "风能利用率"
 

@@ -3,8 +3,7 @@ import { Show, createContext, createResource, useContext } from "solid-js"
 import { useStore } from "./store"
 import type { msg, plural, select, selectOrdinal } from "@lingui/core/macro"
 import type { JSX, ParentComponent } from "solid-js"
-import { setLanguage } from "./localStorage"
-import { loadLanguage, TFunc, t } from "./linguiCore"
+import { loadLanguage, TFunc } from "./linguiCore"
 
 interface I18nContext {
     i18n: typeof i18n
@@ -22,9 +21,8 @@ export const I18nProvider: ParentComponent = (props) => {
     const [_t] = createResource(
         () => store.settings.language,
         async (lang) => {
-            setLanguage(lang)
             await loadLanguage(lang)
-            return t as any
+            return i18n._.bind(i18n) as any
         },
     )
 

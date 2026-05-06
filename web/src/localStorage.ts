@@ -21,6 +21,8 @@ export function toggleDarkMode(wasDarkMode: boolean) {
     return isDarkMode
 }
 
-export function setLanguage(language: Lang) {
+export function toggleLanguage(previousLanguage: Lang) {
+    const language = previousLanguage === "en" ? "zh-CN" : "en"
     localStorage.setItem(localStorageLanguageKey, language)
+    return language
 }

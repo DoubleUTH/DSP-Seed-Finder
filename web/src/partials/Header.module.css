@@ -48,3 +48,12 @@
     font-size: 24px;
     cursor: pointer;
 }
+
+.language {
+    display: block;
+    padding: 8px;
+    line-height: 1;
+    font-size: 16px;
+    cursor: pointer;
+    user-select: none;
+}

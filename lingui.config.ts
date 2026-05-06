@@ -11,6 +11,7 @@ export default defineConfig({
         },
     ],
     macro: {
+        corePackage: ["#linguiCore"],
         jsxPackage: ["#lingui"],
     },
 })

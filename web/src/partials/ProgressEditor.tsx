@@ -46,7 +46,7 @@ function ProgressEditor<E extends ProfileProgressInfo>(props: {
             </div>
             <div />
             <div class={styles.field}>
-                <div class={styles.label}>{t`Star Count`}</div>
+                <div class={styles.label}>{t`Number of stars`}</div>
                 <div class={styles.input}>
                     <StarCountSelector
                         class={styles.inputStandard}
@@ -59,7 +59,7 @@ function ProgressEditor<E extends ProfileProgressInfo>(props: {
                 </div>
             </div>
             <div class={styles.field}>
-                <div class={styles.label}>{t`Seed Range`}</div>
+                <div class={styles.label}>{t`Seed range`}</div>
                 <div class={styles.input}>
                     <Trans>
                         <NumberInput
@@ -95,7 +95,7 @@ function ProgressEditor<E extends ProfileProgressInfo>(props: {
                 </div>
             </div>
             <div class={styles.field}>
-                <div class={styles.label}>{t`Resource Multiplier`}</div>
+                <div class={styles.label}>{t`Resource multiplier`}</div>
                 <div class={styles.input}>
                     <ResourceMultiplierSelector
                         class={styles.inputStandard}
@@ -127,7 +127,7 @@ function ProgressEditor<E extends ProfileProgressInfo>(props: {
                 </div>
             </div>
             <div class={styles.field}>
-                <div class={styles.label}>{t`Dark Fog Initial Occupation`}</div>
+                <div class={styles.label}>{t`Dark Fog initial occupation`}</div>
                 <div class={styles.input}>
                     <HiveInitialColonizeSelector
                         class={styles.inputStandard}
@@ -165,7 +165,7 @@ function ProgressEditor<E extends ProfileProgressInfo>(props: {
                 </div>
             </div>
             <div class={styles.field}>
-                <div class={styles.label}>{t`Dark Fog Max Density`}</div>
+                <div class={styles.label}>{t`Dark Fog max density`}</div>
                 <div class={styles.input}>
                     <HiveMaxDensitySelector
                         class={styles.inputStandard}

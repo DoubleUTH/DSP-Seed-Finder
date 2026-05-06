@@ -152,7 +152,7 @@ const StarDetail: Component<{
                 <div class={styles.value}>{getStarType(props.star)}</div>
             </div>
             <div class={styles.row}>
-                <div class={styles.field}>{t`Spectral Class`}</div>
+                <div class={styles.field}>{t`Spectral class`}</div>
                 <div class={styles.value}>{props.star.spectr}</div>
             </div>
             <div class={styles.row}>
@@ -162,7 +162,7 @@ const StarDetail: Component<{
                 </div>
             </div>
             <div class={styles.row}>
-                <div class={styles.field}>{t`Distance from Start`}</div>
+                <div class={styles.field}>{t`Distance from start`}</div>
                 <div class={styles.value}>
                     {formatNumber(distanceFromBirth(props.star.position), 1)} ly
                 </div>
@@ -206,17 +206,17 @@ const StarDetail: Component<{
                 </div>
             </Show>
             <div class={styles.row}>
-                <div class={styles.field}>{t`Max Dyson Sphere Radius`}</div>
+                <div class={styles.field}>{t`Max dyson sphere radius`}</div>
                 <div class={styles.value}>
                     {toPrecision(props.star.dysonRadius, 0)} m
                 </div>
             </div>
             <div class={styles.row}>
-                <div class={styles.field}>{t`Initial Number off Hives`}</div>
+                <div class={styles.field}>{t`Initial number of hives`}</div>
                 <div class={styles.value}>{props.star.initialHiveCount}</div>
             </div>
             <div class={styles.row}>
-                <div class={styles.field}>{t`Maximum Number off Hives`}</div>
+                <div class={styles.field}>{t`Maximum number of hives`}</div>
                 <div class={styles.value}>{props.star.maxHiveCount}</div>
             </div>
             <Show when={props.expand}>
@@ -290,7 +290,7 @@ const StarVeins: Component<{ star: Star }> = (props) => {
             </Show>
             <Show when={hasSulfur(props.star)}>
                 <div class={styles.row}>
-                    <div class={styles.field}>{t`Sulfuric Acid`}</div>
+                    <div class={styles.field}>{t`Sulfuric acid`}</div>
                     <div class={styles.value}>{t`Ocean`}</div>
                 </div>
             </Show>
@@ -373,7 +373,7 @@ const PlanetView: Component<{ star: Star; planet: Planet }> = (props) => {
                         props.planet.rotationPeriod
                     }
                 >
-                    <div class={styles.row}>{t`Tidal locking`}</div>
+                    <div class={styles.row}>{t`Tidally locked`}</div>
                 </Show>
                 <Show
                     when={
@@ -381,7 +381,7 @@ const PlanetView: Component<{ star: Star; planet: Planet }> = (props) => {
                         props.planet.rotationPeriod
                     }
                 >
-                    <div class={styles.row}>{t`Orbital Resonance 1 : 2`}</div>
+                    <div class={styles.row}>{t`Orbital resonance 1 : 2`}</div>
                 </Show>
                 <Show
                     when={
@@ -389,14 +389,14 @@ const PlanetView: Component<{ star: Star; planet: Planet }> = (props) => {
                         props.planet.rotationPeriod
                     }
                 >
-                    <div class={styles.row}>{t`Orbital Resonance 1 : 4`}</div>
+                    <div class={styles.row}>{t`Orbital resonance 1 : 4`}</div>
                 </Show>
                 <Show when={Math.abs(props.planet.obliquity) > 70}>
                     <div class={styles.row}>{t`Horizontal Rotation`}</div>
                 </Show>
                 <Show when={props.planet.orbitAround == null}>
                     <div class={styles.row}>
-                        <div class={styles.field}>{t`Orbit Radius`}</div>
+                        <div class={styles.field}>{t`Orbit radius`}</div>
                         <div class={styles.value}>
                             {toPrecision(
                                 props.planet.orbitRadius * metersPerAU,
@@ -407,13 +407,13 @@ const PlanetView: Component<{ star: Star; planet: Planet }> = (props) => {
                     </div>
                 </Show>
                 <div class={styles.row}>
-                    <div class={styles.field}>{t`Wind Power`}</div>
+                    <div class={styles.field}>{t`Wind power`}</div>
                     <div class={styles.value}>
                         {toPrecision(props.planet.theme.wind * 100, 0)}%
                     </div>
                 </div>
                 <div class={styles.row}>
-                    <div class={styles.field}>{t`Solar Power`}</div>
+                    <div class={styles.field}>{t`Solar power`}</div>
                     <div class={styles.value}>
                         {toPrecision(props.planet.luminosity * 100, 0)}%
                     </div>
@@ -444,7 +444,7 @@ const PlanetView: Component<{ star: Star; planet: Planet }> = (props) => {
             </Show>
             <Show when={props.planet.theme.waterItemId === OceanType.Sulfur}>
                 <div class={styles.row}>
-                    <div class={styles.field}>{t`Sulfuric Acid`}</div>
+                    <div class={styles.field}>{t`Sulfuric acid`}</div>
                     <div class={styles.value}>{t`Ocean`}</div>
                 </div>
             </Show>

@@ -333,6 +333,7 @@ declare global {
     }
 
     declare interface ExportOptions {
+        language: Lang
         format: "csv" | "xlsx"
         concurrency: integer
         starCount: integer

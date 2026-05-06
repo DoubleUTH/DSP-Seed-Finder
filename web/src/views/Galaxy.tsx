@@ -86,13 +86,13 @@ const Search: Component = () => {
                     {t`View`}
                 </Button>
             </div>
-            <div class={styles.searchTitle}>{t`Star Count`}:</div>
+            <div class={styles.searchTitle}>{t`Number of stars`}:</div>
             <StarCountSelector
                 class={styles.searchInput}
                 value={store.settings.view.starCount}
                 onChange={(v) => setStore("settings", "view", "starCount", v)}
             />
-            <div class={styles.searchTitle}>{t`Resource Multiplier`}:</div>
+            <div class={styles.searchTitle}>{t`Resource multiplier`}:</div>
             <ResourceMultiplierSelector
                 class={styles.searchInput}
                 value={store.settings.view.resourceMultiplier}
@@ -101,7 +101,7 @@ const Search: Component = () => {
                 }
             />
             <div class={styles.searchTitle}>
-                {t`Dark Fog Initial Occupation`}:
+                {t`Dark Fog initial occupation`}:
             </div>
             <HiveInitialColonizeSelector
                 class={styles.searchInput}
@@ -110,7 +110,7 @@ const Search: Component = () => {
                     setStore("settings", "view", "hiveInitialColonize", v)
                 }
             />
-            <div class={styles.searchTitle}>{t`Dark Fog Max Density`}:</div>
+            <div class={styles.searchTitle}>{t`Dark Fog max density`}:</div>
             <HiveMaxDensitySelector
                 class={styles.searchInput}
                 value={store.settings.view.hiveMaxDensity}

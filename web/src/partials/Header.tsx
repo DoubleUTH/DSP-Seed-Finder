@@ -1,10 +1,11 @@
 import styles from "./Header.module.css"
-import { toggleDarkMode, useStore } from "../store"
+import { useStore } from "../store"
 import { A } from "@solidjs/router"
 import { IoContrast, IoLogoGithub } from "solid-icons/io"
 import { Component } from "solid-js"
 import clsx from "clsx"
 import { useLingui } from "#lingui"
+import { toggleDarkMode } from "../localStorage"
 
 const Header: Component = () => {
     const [store, setStore] = useStore()

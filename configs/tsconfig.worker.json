@@ -3,6 +3,10 @@
     "compilerOptions": {
         "composite": true,
         "lib": ["ESNext", "WebWorker"],
+        "paths": {
+            "worldgen-wasm": ["../pkg"],
+            "#linguiCore": ["../web/src/linguiCore.ts"]
+        },
         "types": ["vite/client"]
     },
     "include": [
@@ -10,6 +14,7 @@
         "../**/util.ts",
         "../**/enums.ts",
         "../**/types.d.ts",
-        "../**/exporter/common.ts"
+        "../**/exporter/common.ts",
+        "../web/src/linguiCore.ts"
     ]
 }

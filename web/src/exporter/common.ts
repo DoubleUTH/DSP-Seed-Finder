@@ -1,51 +1,23 @@
-import { VeinType, GasType } from "../enums"
-import { gasOrder, veinOrder } from "../util"
-
-export const veinNames: Record<VeinType, string> = {
-    [VeinType.None]: "",
-    [VeinType.Iron]: "Iron Ore",
-    [VeinType.Copper]: "Copper Ore",
-    [VeinType.Silicium]: "Silicon Ore",
-    [VeinType.Titanium]: "Titanium Ore",
-    [VeinType.Stone]: "Stone",
-    [VeinType.Coal]: "Coal",
-    [VeinType.Oil]: "Crude Oil",
-    [VeinType.Fireice]: "Fire Ice",
-    [VeinType.Diamond]: "Kimberlite Ore",
-    [VeinType.Fractal]: "Fractal Silicon",
-    [VeinType.Crysrub]: "Organic Crystal",
-    [VeinType.Grat]: "Grating Crystal",
-    [VeinType.Bamboo]: "Stalagmite Crystal",
-    [VeinType.Mag]: "Unipolar Magnet",
-}
-
-export const gasNames: Record<GasType, string> = {
-    [GasType.None]: "",
-    [GasType.Fireice]: "Fire Ice",
-    [GasType.Hydrogen]: "Hydrogen",
-    [GasType.Deuterium]: "Deuterium",
-}
-
 export enum StarField {
-    Seed = "Seed",
-    Index = "Index",
-    Name = "Name",
-    PositionX = "X",
-    PositionY = "Y",
-    PositionZ = "Z",
-    Mass = "Mass",
-    Age = "Age",
-    Temperature = "Temperature",
-    Type = "Type",
-    Spectr = "Spectral Class",
-    Luminosity = "Luminosity",
-    Radius = "Radius",
-    DysonRadius = "Max Dyson Sphere Radius",
-    DistanceFromBirth = "Distance From Start",
-    DistanceFromNearestX = "Distance From Nearest X Star",
-    DistanceFromFurthestX = "Distance From Furthest X Star",
-    InitialHiveCount = "Initial Number of Hives",
-    MaxHiveCount = "Maximum Number of Hives",
+    Seed,
+    Index,
+    Name,
+    PositionX,
+    PositionY,
+    PositionZ,
+    Mass,
+    Age,
+    Temperature,
+    Type,
+    Spectr,
+    Luminosity,
+    Radius,
+    DysonRadius,
+    DistanceFromBirth,
+    DistanceFromNearestX,
+    DistanceFromFurthestX,
+    InitialHiveCount,
+    MaxHiveCount,
 }
 
 export const starFieldsOrder = [
@@ -71,22 +43,22 @@ export const starFieldsOrder = [
 ]
 
 export enum PlanetField {
-    Seed = "Seed",
-    Index = "Index",
-    Name = "Name",
-    Theme = "Theme",
-    Orbiting = "Orbiting",
-    TidallyLocked = "Tidally Locked",
-    OrbitRadius = "Orbit Radius",
-    OrbitInclination = "Orbit Inclination",
-    OrbitLongitude = "Orbit Longitude",
-    OrbitalPeriod = "Orbital Period",
-    OrbitPhase = "Orbit Phase",
-    Obliquity = "Obliquity",
-    RotationPeriod = "Rotation Period",
-    RotationPhase = "Rotation Phase",
-    Wind = "Wind Power",
-    Luminosity = "Solar Power",
+    Seed,
+    Index,
+    Name,
+    Theme,
+    Orbiting,
+    TidallyLocked,
+    OrbitRadius,
+    OrbitInclination,
+    OrbitLongitude,
+    OrbitalPeriod,
+    OrbitPhase,
+    Obliquity,
+    RotationPeriod,
+    RotationPhase,
+    Wind,
+    Luminosity,
 }
 
 export const planetFieldsOrder = [
@@ -106,14 +78,4 @@ export const planetFieldsOrder = [
     PlanetField.Obliquity,
     PlanetField.RotationPeriod,
     PlanetField.RotationPhase,
-]
-
-export const veinFieldsOrder = [
-    ...veinOrder.flatMap((type) => {
-        const name = veinNames[type]
-        return [`${name} (Avg)`, `${name} (Min)`, `${name} (Max)`]
-    }),
-    "Water",
-    "Sulfuric Acid",
-    ...gasOrder.map((type) => gasNames[type]),
 ]

@@ -1,3 +1,4 @@
+import { loadLanguage, t } from "#linguiCore"
 import {
     distanceFromBirth,
     furthestDistanceFrom,
@@ -22,28 +23,28 @@ function trim(number: number, precision: number) {
     return Math.round(number * multiplier) / multiplier
 }
 
-export function getStarType(star: Star): string {
+function getStarType(star: Star): string {
     if (star.type === StarType.GiantStar) {
         switch (star.spectr) {
             case SpectrType.M:
             case SpectrType.K:
-                return `Red Giant`
+                return t`Red Giant`
             case SpectrType.G:
             case SpectrType.F:
-                return `Yellow Giant`
+                return t`Yellow Giant`
             case SpectrType.A:
-                return `White Giant`
+                return t`White Giant`
             default:
-                return `Blue Giant`
+                return t`Blue Giant`
         }
     } else if (star.type === StarType.WhiteDwarf) {
-        return `White Dwarf`
+        return t`White Dwarf`
     } else if (star.type === StarType.NeutronStar) {
-        return `Neutron Star`
+        return t`Neutron Star`
     } else if (star.type === StarType.BlackHole) {
-        return `Black Hole`
+        return t`Black Hole`
     } else {
-        return `${star.spectr} type Star`
+        return t`${star.spectr} type Star`
     }
 }
 
@@ -242,15 +243,18 @@ self.onmessage = (ev) => {
         resourceMultiplier = 1,
         starCount = 64,
         exportAllStars,
+        language,
     } = ev.data
 
-    initPromise.then(() => {
-        const result = generate({
-            seed,
-            starCount,
-            resourceMultiplier,
+    initPromise
+        .then(() => loadLanguage(language))
+        .then(() => {
+            const result = generate({
+                seed,
+                starCount,
+                resourceMultiplier,
+            })
+            const data = generateExportData(result, indexes, exportAllStars)
+            self.postMessage(data)
         })
-        const data = generateExportData(result, indexes, exportAllStars)
-        self.postMessage(data)
-    })
 }

@@ -1,10 +1,10 @@
 import { i18n } from "@lingui/core"
 import { Show, createContext, createResource, useContext } from "solid-js"
-import { setLanguage, useStore } from "./store"
-import type { msg, plural, select, selectOrdinal, t } from "@lingui/core/macro"
+import { useStore } from "./store"
+import type { msg, plural, select, selectOrdinal } from "@lingui/core/macro"
 import type { JSX, ParentComponent } from "solid-js"
-
-export type TFunc = typeof t
+import { setLanguage } from "./localStorage"
+import { loadLanguage, TFunc, t } from "./linguiCore"
 
 interface I18nContext {
     i18n: typeof i18n
@@ -19,20 +19,18 @@ const Context = createContext<TFunc>(undefined as unknown as TFunc)
 
 export const I18nProvider: ParentComponent = (props) => {
     const [store] = useStore()
-    const [t] = createResource(
+    const [_t] = createResource(
         () => store.settings.language,
         async (lang) => {
             setLanguage(lang)
-            const { messages } = await import(`../i18n/${lang}.po`)
-            i18n.load(lang, messages)
-            i18n.activate(lang)
-            return i18n._.bind(i18n) as any
+            await loadLanguage(lang)
+            return t as any
         },
     )
 
     return (
-        <Show when={t()}>
-            <Context.Provider value={(...args) => t()(...args)}>
+        <Show when={_t()}>
+            <Context.Provider value={(...args) => _t()(...args)}>
                 {props.children}
             </Context.Provider>
         </Show>

@@ -29,6 +29,7 @@ import {
 import HiveInitialColonizeSelector from "./HiveInitialColonizeSelector"
 import HiveMaxDensitySelector from "./HiveMaxDensitySelector"
 import { useLingui } from "#lingui"
+import { useStore } from "../store"
 
 type Mode = "star" | "galaxy"
 
@@ -41,6 +42,7 @@ interface Options extends Pick<
     | "resourceMultiplier"
     | "hiveInitialColonize"
     | "hiveMaxDensity"
+    | "language"
 > {
     start: number
     end: number
@@ -99,6 +101,7 @@ async function execute(
         resourceMultiplier,
         hiveInitialColonize,
         hiveMaxDensity,
+        language,
     }: Options,
 ) {
     const fn = mode === "star" ? getStarResults : getGalaxyResults
@@ -117,6 +120,7 @@ async function execute(
         hiveMaxDensity,
         exportAllStars: mode === "galaxy" || exportAllStars,
         results: results,
+        language,
         onProgress: (current) => {
             emitter.emit("progress", current)
             return stopped
@@ -150,7 +154,7 @@ const ProgressModal: Component<{
     const progressText = () => {
         switch (status()) {
             case Status.Starting:
-                return t`Retriving Data`
+                return t`Retriving data`
             case Status.Progressing:
                 return t`Exporting ${progress()} / ${total()}`
             case Status.Generating:
@@ -249,6 +253,7 @@ const ExportModal: Component<{
     hiveInitialColonize: float
     hiveMaxDensity: float
 }> = (props) => {
+    const [store] = useStore()
     const [options, setOptions] = createStore<Options>({
         start: 0,
         end: 99999999,
@@ -259,6 +264,7 @@ const ExportModal: Component<{
         format: "csv",
         concurrency: navigator.hardwareConcurrency,
         exportAllStars: false,
+        language: store.settings.language,
     })
     const { t } = useLingui()
 
@@ -271,6 +277,7 @@ const ExportModal: Component<{
                 resourceMultiplier: props.resourceMultiplier,
                 hiveInitialColonize: props.hiveInitialColonize,
                 hiveMaxDensity: props.hiveMaxDensity,
+                language: store.settings.language,
             })
         } else {
             setProgressModal(false)
@@ -296,7 +303,7 @@ const ExportModal: Component<{
                         getLabel={(value) => value}
                     />
                 </div>
-                <div class={styles.label}>{t`Star Count`}</div>
+                <div class={styles.label}>{t`Number of stars`}</div>
                 <div class={styles.input}>
                     <StarCountSelector
                         class={styles.inputStandard}
@@ -304,7 +311,7 @@ const ExportModal: Component<{
                         onChange={(value) => setOptions("starCount", value)}
                     />
                 </div>
-                <div class={styles.label}>{t`Resource Multiplier`}</div>
+                <div class={styles.label}>{t`Resource multiplier`}</div>
                 <div class={styles.input}>
                     <ResourceMultiplierSelector
                         class={styles.inputStandard}
@@ -314,7 +321,7 @@ const ExportModal: Component<{
                         }
                     />
                 </div>
-                <div class={styles.label}>{t`Dark Fog Initial Occupation`}</div>
+                <div class={styles.label}>{t`Dark Fog initial occupation`}</div>
                 <div class={styles.input}>
                     <HiveInitialColonizeSelector
                         class={styles.inputStandard}
@@ -324,7 +331,7 @@ const ExportModal: Component<{
                         }
                     />
                 </div>
-                <div class={styles.label}>{t`Dark Fog Max Density`}</div>
+                <div class={styles.label}>{t`Dark Fog max density`}</div>
                 <div class={styles.input}>
                     <HiveMaxDensitySelector
                         class={styles.inputStandard}
@@ -334,7 +341,7 @@ const ExportModal: Component<{
                         }
                     />
                 </div>
-                <div class={styles.label}>{t`Seed Range`}</div>
+                <div class={styles.label}>{t`Seed range`}</div>
                 <div class={styles.input}>
                     <NumberInput
                         class={styles.inputSeed}

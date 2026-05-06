@@ -19,6 +19,7 @@ msgid " - Copy"
 msgstr ""
 
 #. placeholder {0}: star.spectr
+#: web/src/exporter/exporter.worker.ts:47
 #: web/src/names.ts:146
 msgid "{0} type Star"
 msgstr ""
@@ -41,6 +42,7 @@ msgstr ""
 msgid "Add OR rule"
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:60
 #: web/src/partials/StarView.tsx:242
 msgid "Age"
 msgstr ""
@@ -71,6 +73,7 @@ msgstr ""
 msgid "Autosave interval"
 msgstr ""
 
+#: web/src/exporter/exporter.worker.ts:45
 #: web/src/names.ts:27
 #: web/src/names.ts:144
 msgid "Black Hole"
@@ -80,6 +83,7 @@ msgstr ""
 msgid "Black Hole / Neutron Star"
 msgstr ""
 
+#: web/src/exporter/exporter.worker.ts:38
 #: web/src/names.ts:137
 msgid "Blue Giant"
 msgstr ""
@@ -99,10 +103,11 @@ msgstr ""
 msgid "Clone"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:235
+#: web/src/partials/ExportModal.tsx:239
 msgid "Close"
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:21
 #: web/src/names.ts:68
 msgid "Coal"
 msgstr ""
@@ -112,7 +117,7 @@ msgstr ""
 msgid "Completed!"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:378
+#: web/src/partials/ExportModal.tsx:385
 #: web/src/partials/ProgressEditor.tsx:147
 msgid "Concurrency"
 msgstr ""
@@ -121,6 +126,7 @@ msgstr ""
 msgid "Confirm"
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:17
 #: web/src/names.ts:64
 msgid "Copper Ore"
 msgstr ""
@@ -129,6 +135,7 @@ msgstr ""
 msgid "Crimsonis"
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:22
 #: web/src/names.ts:69
 msgid "Crude Oil"
 msgstr ""
@@ -137,16 +144,16 @@ msgstr ""
 msgid "Cyclonius"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:317
+#: web/src/partials/ExportModal.tsx:324
 #: web/src/partials/ProgressEditor.tsx:130
 #: web/src/views/Galaxy.tsx:104
-msgid "Dark Fog Initial Occupation"
+msgid "Dark Fog initial occupation"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:327
+#: web/src/partials/ExportModal.tsx:334
 #: web/src/partials/ProgressEditor.tsx:168
 #: web/src/views/Galaxy.tsx:113
-msgid "Dark Fog Max Density"
+msgid "Dark Fog max density"
 msgstr ""
 
 #: web/src/partials/ProfileManager.tsx:58
@@ -158,6 +165,7 @@ msgstr ""
 msgid "Desolus"
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:36
 #: web/src/names.ts:16
 msgid "Deuterium"
 msgstr ""
@@ -166,17 +174,26 @@ msgstr ""
 msgid "Distance from furthest <0/>"
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:69
+msgid "Distance from furthest X star"
+msgstr ""
+
 #: web/src/partials/StarView.tsx:173
 msgid "Distance from nearest <0/>"
 msgstr ""
 
-#: web/src/names.ts:42
-msgid "Distance from Other Stars"
+#: web/src/exporter/exporterManager.worker.ts:68
+msgid "Distance from nearest X star"
 msgstr ""
 
+#: web/src/names.ts:42
+msgid "Distance from other stars"
+msgstr ""
+
+#: web/src/exporter/exporterManager.worker.ts:67
 #: web/src/names.ts:40
 #: web/src/partials/StarView.tsx:165
-msgid "Distance from Start"
+msgid "Distance from start"
 msgstr ""
 
 #: web/src/names.ts:41
@@ -195,16 +212,16 @@ msgstr ""
 msgid "Do you really want to delete all settings and progress? This cannot be undone."
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:159
+#: web/src/partials/ExportModal.tsx:163
 msgid "Done"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:227
+#: web/src/partials/ExportModal.tsx:231
 #: web/src/partials/ProgressEditor.tsx:125
 msgid "Download"
 msgstr ""
 
-#: web/src/partials/Header.tsx:15
+#: web/src/partials/Header.tsx:16
 msgid "DSP Seed Finder"
 msgstr ""
 
@@ -216,44 +233,47 @@ msgstr ""
 msgid "exactly"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:284
-#: web/src/partials/ExportModal.tsx:397
+#: web/src/partials/ExportModal.tsx:291
+#: web/src/partials/ExportModal.tsx:404
 #: web/src/views/FindGalaxy.tsx:406
 msgid "Export"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:366
+#: web/src/partials/ExportModal.tsx:373
 msgid "Export all"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:364
+#: web/src/partials/ExportModal.tsx:371
 msgid "Export all stars instead of only the matching ones"
 msgstr ""
 
 #. placeholder {0}: progress()
 #. placeholder {1}: total()
-#: web/src/partials/ExportModal.tsx:155
+#: web/src/partials/ExportModal.tsx:159
 msgid "Exporting {0} / {1}"
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:23
+#: web/src/exporter/exporterManager.worker.ts:34
 #: web/src/names.ts:17
 #: web/src/names.ts:70
 msgid "Fire Ice"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:289
+#: web/src/partials/ExportModal.tsx:296
 msgid "Format"
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:25
 #: web/src/names.ts:72
 msgid "Fractal Silicon"
 msgstr ""
 
-#: web/src/partials/Header.tsx:26
+#: web/src/partials/Header.tsx:27
 msgid "Galaxy Finder"
 msgstr ""
 
-#: web/src/partials/Header.tsx:29
+#: web/src/partials/Header.tsx:30
 msgid "Galaxy Viewer"
 msgstr ""
 
@@ -265,18 +285,18 @@ msgid "Gas Giant"
 msgstr ""
 
 #: web/src/names.ts:52
-msgid "Gas Rate"
+msgid "Gas rate"
 msgstr ""
 
 #: web/src/names.ts:50
-msgid "Gas/Ice Giant Count"
+msgid "Gas/Ice Giant count"
 msgstr ""
 
 #: web/src/names.ts:89
 msgid "Geloterra"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:157
+#: web/src/partials/ExportModal.tsx:161
 msgid "Generating file"
 msgstr ""
 
@@ -292,6 +312,7 @@ msgstr ""
 msgid "Gobi"
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:27
 #: web/src/names.ts:74
 msgid "Grating Crystal"
 msgstr ""
@@ -357,6 +378,7 @@ msgstr ""
 msgid "Horizontal Rotation"
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:35
 #: web/src/names.ts:15
 msgid "Hydrogen"
 msgstr ""
@@ -371,14 +393,21 @@ msgstr ""
 msgid "Icefrostia"
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:54
+#: web/src/exporter/exporterManager.worker.ts:78
+msgid "Index"
+msgstr ""
+
 #: web/src/partials/RuleEditor.tsx:649
 msgid "Initial"
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:70
 #: web/src/partials/StarView.tsx:215
-msgid "Initial Number off Hives"
+msgid "Initial number of hives"
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:16
 #: web/src/names.ts:63
 msgid "Iron Ore"
 msgstr ""
@@ -392,7 +421,7 @@ msgid "Is <0/> <1/>L"
 msgstr ""
 
 #: web/src/partials/RuleEditor.tsx:406
-msgid "Is <0/> <1/>ly away from the starting system"
+msgid "Is <0/> <1/>ly away from the Starting system"
 msgstr ""
 
 #: web/src/partials/RuleEditor.tsx:127
@@ -408,9 +437,10 @@ msgid "Is a <0/> type star"
 msgstr ""
 
 #: web/src/partials/RuleEditor.tsx:754
-msgid "Is the starting system"
+msgid "Is the Starting system"
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:24
 #: web/src/names.ts:71
 msgid "Kimberlite Ore"
 msgstr ""
@@ -431,6 +461,7 @@ msgstr ""
 msgid "Loading..."
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:64
 #: web/src/names.ts:43
 #: web/src/partials/StarView.tsx:159
 msgid "Luminosity"
@@ -444,6 +475,7 @@ msgstr ""
 msgid "Maroonfrost"
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:59
 #: web/src/partials/StarView.tsx:230
 msgid "Mass"
 msgstr ""
@@ -452,13 +484,23 @@ msgstr ""
 msgid "Max"
 msgstr ""
 
-#: web/src/names.ts:45
+#: web/src/exporter/exporterManager.worker.ts:66
 #: web/src/partials/StarView.tsx:209
+msgid "Max dyson sphere radius"
+msgstr ""
+
+#: web/src/names.ts:45
 msgid "Max Dyson Sphere Radius"
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:71
 #: web/src/partials/StarView.tsx:219
-msgid "Maximum Number off Hives"
+msgid "Maximum number of hives"
+msgstr ""
+
+#: web/src/exporter/exporterManager.worker.ts:55
+#: web/src/exporter/exporterManager.worker.ts:79
+msgid "Name"
 msgstr ""
 
 #: web/src/partials/ProgressEditor.tsx:115
@@ -469,6 +511,7 @@ msgstr ""
 msgid "Nearby Stars"
 msgstr ""
 
+#: web/src/exporter/exporter.worker.ts:43
 #: web/src/names.ts:28
 #: web/src/names.ts:142
 msgid "Neutron Star"
@@ -494,6 +537,16 @@ msgstr ""
 msgid "not equal to"
 msgstr ""
 
+#: web/src/partials/ExportModal.tsx:306
+#: web/src/partials/ProgressEditor.tsx:49
+#: web/src/views/Galaxy.tsx:89
+msgid "Number of stars"
+msgstr ""
+
+#: web/src/exporter/exporterManager.worker.ts:88
+msgid "Obliquity"
+msgstr ""
+
 #: web/src/names.ts:51
 #: web/src/partials/StarView.tsx:288
 #: web/src/partials/StarView.tsx:294
@@ -511,18 +564,40 @@ msgstr ""
 msgid "OR"
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:84
+msgid "Orbit inclination"
+msgstr ""
+
+#: web/src/exporter/exporterManager.worker.ts:85
+msgid "Orbit longitude"
+msgstr ""
+
+#: web/src/exporter/exporterManager.worker.ts:87
+msgid "Orbit phase"
+msgstr ""
+
+#: web/src/exporter/exporterManager.worker.ts:83
 #: web/src/partials/StarView.tsx:399
-msgid "Orbit Radius"
+msgid "Orbit radius"
+msgstr ""
+
+#: web/src/exporter/exporterManager.worker.ts:86
+msgid "Orbital period"
 msgstr ""
 
 #: web/src/partials/StarView.tsx:384
-msgid "Orbital Resonance 1 : 2"
+msgid "Orbital resonance 1 : 2"
 msgstr ""
 
 #: web/src/partials/StarView.tsx:392
-msgid "Orbital Resonance 1 : 4"
+msgid "Orbital resonance 1 : 4"
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:81
+msgid "Orbiting"
+msgstr ""
+
+#: web/src/exporter/exporterManager.worker.ts:26
 #: web/src/names.ts:73
 msgid "Organic Crystal"
 msgstr ""
@@ -537,11 +612,11 @@ msgid "Pause"
 msgstr ""
 
 #: web/src/names.ts:46
-msgid "Planet Count"
+msgid "Planet count"
 msgstr ""
 
 #: web/src/names.ts:49
-msgid "Planet Themes"
+msgid "Planet themes"
 msgstr ""
 
 #: web/src/partials/StarView.tsx:545
@@ -549,7 +624,7 @@ msgid "Planets"
 msgstr ""
 
 #: web/src/names.ts:54
-msgid "Planets in Dyson Sphere"
+msgid "Planets in dyson sphere"
 msgstr ""
 
 #: web/src/names.ts:97
@@ -573,6 +648,7 @@ msgstr ""
 msgid "Progress:"
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:65
 #: web/src/partials/StarView.tsx:224
 msgid "Radius"
 msgstr ""
@@ -581,14 +657,15 @@ msgstr ""
 msgid "Random"
 msgstr ""
 
+#: web/src/exporter/exporter.worker.ts:31
 #: web/src/names.ts:130
 msgid "Red Giant"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:307
+#: web/src/partials/ExportModal.tsx:314
 #: web/src/partials/ProgressEditor.tsx:98
 #: web/src/views/Galaxy.tsx:95
-msgid "Resource Multiplier"
+msgid "Resource multiplier"
 msgstr ""
 
 #: web/src/partials/StarView.tsx:511
@@ -600,8 +677,16 @@ msgstr ""
 msgid "Resume"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:153
-msgid "Retriving Data"
+#: web/src/partials/ExportModal.tsx:157
+msgid "Retriving data"
+msgstr ""
+
+#: web/src/exporter/exporterManager.worker.ts:89
+msgid "Rotation period"
+msgstr ""
+
+#: web/src/exporter/exporterManager.worker.ts:90
+msgid "Rotation phase"
 msgstr ""
 
 #: web/src/views/FindGalaxy.tsx:381
@@ -626,7 +711,7 @@ msgid "Satellite"
 msgstr ""
 
 #: web/src/names.ts:47
-msgid "Satellite Count"
+msgid "Satellite count"
 msgstr ""
 
 #: web/src/names.ts:104
@@ -641,9 +726,14 @@ msgstr ""
 msgid "Scorchedia"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:337
+#: web/src/exporter/exporterManager.worker.ts:53
+#: web/src/exporter/exporterManager.worker.ts:77
+msgid "Seed"
+msgstr ""
+
+#: web/src/partials/ExportModal.tsx:344
 #: web/src/partials/ProgressEditor.tsx:62
-msgid "Seed Range"
+msgid "Seed range"
 msgstr ""
 
 #: web/src/views/FindStar.tsx:105
@@ -655,30 +745,28 @@ msgstr ""
 msgid "Select..."
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:18
 #: web/src/names.ts:65
 msgid "Silicon Ore"
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:92
 #: web/src/partials/StarView.tsx:416
-msgid "Solar Power"
+msgid "Solar power"
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:63
 #: web/src/names.ts:44
 #: web/src/partials/StarView.tsx:155
-msgid "Spectral Class"
+msgid "Spectral class"
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:28
 #: web/src/names.ts:75
 msgid "Stalagmite Crystal"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:299
-#: web/src/partials/ProgressEditor.tsx:49
-#: web/src/views/Galaxy.tsx:89
-msgid "Star Count"
-msgstr ""
-
-#: web/src/partials/Header.tsx:23
+#: web/src/partials/Header.tsx:24
 msgid "Star Finder"
 msgstr ""
 
@@ -688,14 +776,15 @@ msgid "Start"
 msgstr ""
 
 #: web/src/names.ts:38
-msgid "Starting System"
+msgid "Starting system"
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:20
 #: web/src/names.ts:67
 msgid "Stone"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:235
+#: web/src/partials/ExportModal.tsx:239
 msgid "Stop"
 msgstr ""
 
@@ -703,11 +792,13 @@ msgstr ""
 msgid "Sulfuria"
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:45
 #: web/src/partials/StarView.tsx:293
 #: web/src/partials/StarView.tsx:447
-msgid "Sulfuric Acid"
+msgid "Sulfuric acid"
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:61
 #: web/src/partials/StarView.tsx:236
 msgid "Temperature"
 msgstr ""
@@ -716,18 +807,24 @@ msgstr ""
 msgid "The number of parallel processes to run the search."
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:80
+msgid "Theme"
+msgstr ""
+
 #: web/src/partials/MultiRuleEditor.tsx:41
 msgid "this ruleset"
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:82
 #: web/src/partials/StarView.tsx:376
-msgid "Tidal locking"
+msgid "Tidally locked"
 msgstr ""
 
 #: web/src/names.ts:48
-msgid "Tidally Locked Planet Count"
+msgid "Tidally locked planet count"
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:19
 #: web/src/names.ts:66
 msgid "Titanium Ore"
 msgstr ""
@@ -740,6 +837,7 @@ msgstr ""
 msgid "Tropicana"
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:62
 #: web/src/partials/StarView.tsx:151
 #: web/src/partials/StarView.tsx:356
 #: web/src/partials/StarView.tsx:422
@@ -750,6 +848,7 @@ msgstr ""
 msgid "Type of star"
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:29
 #: web/src/names.ts:76
 msgid "Unipolar Magnet"
 msgstr ""
@@ -760,7 +859,7 @@ msgid "Untitled"
 msgstr ""
 
 #: web/src/names.ts:53
-msgid "Vein Amount"
+msgid "Vein amount"
 msgstr ""
 
 #: web/src/views/Galaxy.tsx:86
@@ -771,32 +870,49 @@ msgstr ""
 msgid "View in new tab"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:286
+#: web/src/partials/ExportModal.tsx:293
 msgid "Warning: Exporting too many seeds may cause out of memory error."
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:44
 #: web/src/partials/StarView.tsx:287
 #: web/src/partials/StarView.tsx:441
 msgid "Water"
 msgstr ""
 
+#: web/src/exporter/exporter.worker.ts:41
 #: web/src/names.ts:26
 #: web/src/names.ts:140
 msgid "White Dwarf"
 msgstr ""
 
+#: web/src/exporter/exporter.worker.ts:36
 #: web/src/names.ts:135
 msgid "White Giant"
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:91
 #: web/src/partials/StarView.tsx:410
-msgid "Wind Power"
+msgid "Wind power"
+msgstr ""
+
+#: web/src/exporter/exporterManager.worker.ts:56
+msgid "X"
 msgstr ""
 
 #: web/src/partials/StarView.tsx:138
 msgid "X star"
 msgstr ""
 
+#: web/src/exporter/exporterManager.worker.ts:57
+msgid "Y"
+msgstr ""
+
+#: web/src/exporter/exporter.worker.ts:34
 #: web/src/names.ts:133
 msgid "Yellow Giant"
+msgstr ""
+
+#: web/src/exporter/exporterManager.worker.ts:58
+msgid "Z"
 msgstr ""

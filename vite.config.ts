@@ -1,7 +1,36 @@
 import { defineConfig } from "vite"
-import solid from "vite-plugin-solid"
+import solid, { Options } from "vite-plugin-solid"
 import { lingui } from "@lingui/vite-plugin"
 import path from "node:path"
+
+const babelConfig: NonNullable<Options["babel"]> = {
+    plugins: ["@lingui/babel-plugin-lingui-macro"],
+    targets: ">0.5%, not dead",
+    assumptions: {
+        constantReexports: true,
+        constantSuper: true,
+        enumerableModuleMeta: true,
+        ignoreFunctionLength: true,
+        ignoreToPrimitiveHint: true,
+        iterableIsArray: true,
+        mutableTemplateObject: true,
+        noClassCalls: true,
+        noDocumentAll: true,
+        noIncompleteNsImportDetection: true,
+        noNewArrows: true,
+        noUninitializedPrivateFieldAccess: true,
+        objectRestNoSymbols: true,
+        privateFieldsAsProperties: true,
+        privateFieldsAsSymbols: true,
+        pureGetters: true,
+        setClassMethods: true,
+        setComputedProperties: true,
+        setPublicClassFields: true,
+        setSpreadProperties: true,
+        skipForOfIteratorClosing: true,
+        superIsCallableConstructor: true,
+    },
+}
 
 export default defineConfig({
     root: path.resolve(process.cwd(), "web"),
@@ -13,37 +42,11 @@ export default defineConfig({
     },
     worker: {
         format: "es",
+        plugins: () => [lingui()],
     },
     plugins: [
         solid({
-            babel: {
-                plugins: ["@lingui/babel-plugin-lingui-macro"],
-                targets: ">0.5%, not dead",
-                assumptions: {
-                    constantReexports: true,
-                    constantSuper: true,
-                    enumerableModuleMeta: true,
-                    ignoreFunctionLength: true,
-                    ignoreToPrimitiveHint: true,
-                    iterableIsArray: true,
-                    mutableTemplateObject: true,
-                    noClassCalls: true,
-                    noDocumentAll: true,
-                    noIncompleteNsImportDetection: true,
-                    noNewArrows: true,
-                    noUninitializedPrivateFieldAccess: true,
-                    objectRestNoSymbols: true,
-                    privateFieldsAsProperties: true,
-                    privateFieldsAsSymbols: true,
-                    pureGetters: true,
-                    setClassMethods: true,
-                    setComputedProperties: true,
-                    setPublicClassFields: true,
-                    setSpreadProperties: true,
-                    skipForOfIteratorClosing: true,
-                    superIsCallableConstructor: true,
-                },
-            },
+            babel: babelConfig,
         }),
         lingui(),
     ],
@@ -60,6 +63,15 @@ export default defineConfig({
                     "web",
                     "src",
                     "lingui.tsx",
+                ),
+            },
+            {
+                find: "#linguiCore",
+                replacement: path.resolve(
+                    process.cwd(),
+                    "web",
+                    "src",
+                    "linguiCore.ts",
                 ),
             },
             {

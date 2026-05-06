@@ -25,10 +25,6 @@
         "noUncheckedIndexedAccess": true,
         "noImplicitOverride": true,
         "noErrorTruncation": true,
-        "useDefineForClassFields": false,
-
-        "paths": {
-            "worldgen-wasm": ["../pkg"]
-        }
+        "useDefineForClassFields": false
     }
 }

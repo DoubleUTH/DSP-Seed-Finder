@@ -6,7 +6,7 @@ DSP Seed Finder is a tool designed to assist you in finding seeds for Dyson Sphe
 
 This tool offers three functions.
 
-1. **Star Finder**: You can search for star systems that match your preferences and criteria, such as luminosity, the presence of gas giants or tidally locked planets, vein amounts, and more.
+1. **Star Finder**: You can search for star systems that match your preferences and criteria, such as luminosity, the presence of gas giants or tidally locked planets, Vein amounts, and more.
 2. **Galaxy Finder**: Similar to the star finder, the galaxy finder function focuses on searching for galaxies based on the number of stars that meet your specified criteria.
 3. **Galaxy Viewer**: The galaxy viewer provides a overview of galaxy details, allowing you to explore different galaxies in the game.
 
@@ -20,7 +20,7 @@ The search results are automatically stored in your browser, allowing you to pau
 
 This tool offers two searching modes. By default, it operates in browser mode, conducting the search within your browser. Alternatively, it can run in native mode, requiring you to download and run a program locally for the search to take place on your machine. In my experience, native mode runs 2-5 times faster. Browser mode is provided for users who may have concerns about downloading programs.
 
-This tool does not accurately generate the amount of vein a planet has. The reason for this is that the vein generation algorithm in the game is extremely complex and relies on specific functions within the Unity Engine. Implementing this algorithm accurately in this tool is very challenging and time-consuming. Therefore, an estimated value for the vein amount is provided as an alternative.
+This tool does not accurately generate the amount of vein a planet has. The reason for this is that the vein generation algorithm in the game is extremely complex and relies on specific functions within the Unity Engine. Implementing this algorithm accurately in this tool is very challenging and time-consuming. Therefore, an estimated value for the Vein amount is provided as an alternative.
 
 If you find the search process to be slow, you can try narrowing it down by applying more specific rules. The tool is optimized for finding rare, one-in-a-million kind of seeds.
 

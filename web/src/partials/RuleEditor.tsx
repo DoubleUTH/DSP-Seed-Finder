@@ -252,7 +252,7 @@ const EditOceanType: Component<{
                 }
                 options={oceans}
                 getLabel={(oceanType) =>
-                    oceanType === OceanType.Water ? "Water" : "Sulfuric Acid"
+                    oceanType === OceanType.Water ? "Water" : "Sulfuric acid"
                 }
                 disabled={props.disabled}
             />{" "}
@@ -418,7 +418,7 @@ const EditBirthDistance: Component<{
                 error={condition().value <= 0}
                 disabled={props.disabled}
             />
-            ly away from the starting system
+            ly away from the Starting system
         </Trans>
     )
 }
@@ -751,7 +751,7 @@ const EditSimpleRule: Component<{
                     {(value) => <EditHiveCount {...props} value={value()} />}
                 </Match>
                 <Match when={isType(props.value, RuleType.Birth)}>
-                    <div class={styles.birth}>{t`Is the starting system`}</div>
+                    <div class={styles.birth}>{t`Is the Starting system`}</div>
                 </Match>
             </Switch>
         </div>

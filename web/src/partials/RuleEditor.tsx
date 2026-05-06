@@ -241,6 +241,7 @@ const EditOceanType: Component<{
     onChange: (value: Rule.OceanType) => void
     disabled?: boolean
 }> = (props) => {
+    const { t } = useLingui()
     return (
         <Trans>
             Has planets with{" "}
@@ -252,7 +253,7 @@ const EditOceanType: Component<{
                 }
                 options={oceans}
                 getLabel={(oceanType) =>
-                    oceanType === OceanType.Water ? "Water" : "Sulfuric acid"
+                    oceanType === OceanType.Water ? t`Water` : t`Sulfuric Acid`
                 }
                 disabled={props.disabled}
             />{" "}
@@ -292,6 +293,7 @@ const EditGasCount: Component<{
     const condition = () => props.value.condition
     const setCondition = (condition: Condition) =>
         props.onChange({ ...props.value, condition })
+    const { t } = useLingui()
     return (
         <Trans>
             Has{" "}
@@ -314,7 +316,7 @@ const EditGasCount: Component<{
                 onChange={(ice) => props.onChange({ ...props.value, ice })}
                 options={[null, false, true]}
                 getLabel={(ice) =>
-                    ice === null ? "gas/ice" : ice ? "ice" : "gas"
+                    ice === null ? t`gas/ice` : ice ? t`ice` : t`gas`
                 }
                 disabled={props.disabled}
             />{" "}
@@ -360,6 +362,7 @@ const EditPlanetCount: Component<{
     const condition = () => props.value.condition
     const setCondition = (condition: Condition) =>
         props.onChange({ ...props.value, condition })
+    const { t } = useLingui()
     return (
         <Trans>
             Has{" "}
@@ -385,7 +388,7 @@ const EditPlanetCount: Component<{
                 }
                 options={[false, true]}
                 getLabel={(excludeGiant) =>
-                    excludeGiant ? "excluding" : "including"
+                    excludeGiant ? t`excluding` : t`including`
                 }
                 disabled={props.disabled}
             />{" "}
@@ -431,6 +434,7 @@ const EditXDistance: Component<{
     const condition = () => props.value.condition
     const setCondition = (condition: Condition) =>
         props.onChange({ ...props.value, condition })
+    const { t } = useLingui()
     return (
         <Trans>
             Is{" "}
@@ -453,7 +457,7 @@ const EditXDistance: Component<{
                 value={!!props.value.all}
                 onChange={(all) => props.onChange({ ...props.value, all })}
                 options={[false, true]}
-                getLabel={(all) => (all ? "all" : "any")}
+                getLabel={(all) => (all ? t`all` : t`any`)}
                 disabled={props.disabled}
             />{" "}
             black hole / neutron star.
@@ -566,6 +570,7 @@ const EditPlanetInDysonCount: Component<{
     const condition = () => props.value.condition
     const setCondition = (condition: Condition) =>
         props.onChange({ ...props.value, condition })
+    const { t } = useLingui()
     return (
         <Trans>
             Has{" "}
@@ -582,7 +587,7 @@ const EditPlanetInDysonCount: Component<{
                 error={condition().value <= 0}
                 disabled={props.disabled}
             />{" "}
-            planet(s) within max dyson sphere radius,{" "}
+            planet(s) within Max dyson sphere radius,{" "}
             <Select
                 class={styles.selectGasType}
                 value={props.value.includeGiant}
@@ -591,7 +596,7 @@ const EditPlanetInDysonCount: Component<{
                 }
                 options={[false, true]}
                 getLabel={(includeGiant) =>
-                    includeGiant ? "including" : "excluding"
+                    includeGiant ? t`including` : t`excluding`
                 }
                 disabled={props.disabled}
             />{" "}

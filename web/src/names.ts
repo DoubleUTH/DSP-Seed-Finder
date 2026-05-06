@@ -42,7 +42,7 @@ export function useRuleNames(): Record<RuleType, () => string> {
         [RuleType.SpectrDistance]: () => t`Distance from other stars`,
         [RuleType.Luminosity]: () => t`Luminosity`,
         [RuleType.Spectr]: () => t`Spectral class`,
-        [RuleType.DysonRadius]: () => t`Max Dyson Sphere Radius`,
+        [RuleType.DysonRadius]: () => t`Max dyson sphere radius`,
         [RuleType.PlanetCount]: () => t`Planet count`,
         [RuleType.SatelliteCount]: () => t`Satellite count`,
         [RuleType.TidalLockCount]: () => t`Tidally locked planet count`,
@@ -52,7 +52,7 @@ export function useRuleNames(): Record<RuleType, () => string> {
         [RuleType.GasRate]: () => t`Gas rate`,
         [RuleType.AverageVeinAmount]: () => t`Vein amount`,
         [RuleType.PlanetInDysonCount]: () => t`Planets in dyson sphere`,
-        [RuleType.HiveCount]: () => t`Hive Count`,
+        [RuleType.HiveCount]: () => t`Hive count`,
     }
 }
 

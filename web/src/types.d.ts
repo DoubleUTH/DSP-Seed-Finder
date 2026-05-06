@@ -59,10 +59,8 @@ declare global {
         orbitInclination: float
         orbitLongitude: float
         orbitalPeriod: float
-        orbitPhase: float
         obliquity: float
         rotationPeriod: float
-        rotationPhase: float
         sunDistance: float
         type: PlanetType
         luminosity: float

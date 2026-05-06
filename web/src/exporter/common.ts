@@ -53,10 +53,8 @@ export enum PlanetField {
     OrbitInclination,
     OrbitLongitude,
     OrbitalPeriod,
-    OrbitPhase,
     Obliquity,
     RotationPeriod,
-    RotationPhase,
     Wind,
     Luminosity,
 }
@@ -74,8 +72,6 @@ export const planetFieldsOrder = [
     PlanetField.OrbitInclination,
     PlanetField.OrbitLongitude,
     PlanetField.OrbitalPeriod,
-    PlanetField.OrbitPhase,
     PlanetField.Obliquity,
     PlanetField.RotationPeriod,
-    PlanetField.RotationPhase,
 ]

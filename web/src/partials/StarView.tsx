@@ -290,7 +290,7 @@ const StarVeins: Component<{ star: Star }> = (props) => {
             </Show>
             <Show when={hasSulfur(props.star)}>
                 <div class={styles.row}>
-                    <div class={styles.field}>{t`Sulfuric acid`}</div>
+                    <div class={styles.field}>{t`Sulfuric Acid`}</div>
                     <div class={styles.value}>{t`Ocean`}</div>
                 </div>
             </Show>
@@ -392,7 +392,7 @@ const PlanetView: Component<{ star: Star; planet: Planet }> = (props) => {
                     <div class={styles.row}>{t`Orbital resonance 1 : 4`}</div>
                 </Show>
                 <Show when={Math.abs(props.planet.obliquity) > 70}>
-                    <div class={styles.row}>{t`Horizontal Rotation`}</div>
+                    <div class={styles.row}>{t`Horizontal rotation`}</div>
                 </Show>
                 <Show when={props.planet.orbitAround == null}>
                     <div class={styles.row}>
@@ -444,7 +444,7 @@ const PlanetView: Component<{ star: Star; planet: Planet }> = (props) => {
             </Show>
             <Show when={props.planet.theme.waterItemId === OceanType.Sulfur}>
                 <div class={styles.row}>
-                    <div class={styles.field}>{t`Sulfuric acid`}</div>
+                    <div class={styles.field}>{t`Sulfuric Acid`}</div>
                     <div class={styles.value}>{t`Ocean`}</div>
                 </div>
             </Show>

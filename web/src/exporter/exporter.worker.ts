@@ -99,14 +99,10 @@ const planetFieldsGetter: Partial<
         trim(planet.orbitLongitude, 4),
     [PlanetField.OrbitalPeriod]: (galaxy, star, planet) =>
         trim(planet.orbitalPeriod, 4),
-    [PlanetField.OrbitPhase]: (galaxy, star, planet) =>
-        trim(planet.orbitPhase, 4),
     [PlanetField.Obliquity]: (galaxy, star, planet) =>
         trim(planet.obliquity, 4),
     [PlanetField.RotationPeriod]: (galaxy, star, planet) =>
         trim(planet.rotationPeriod, 4),
-    [PlanetField.RotationPhase]: (galaxy, star, planet) =>
-        trim(planet.rotationPhase, 4),
 }
 
 function normalizeVein(vein: VeinStat): VeinStat {

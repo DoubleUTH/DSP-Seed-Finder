@@ -27,8 +27,6 @@ pub struct Planet<'a> {
     type_factor: f64,
     gas_giant: bool,
     pub orbit_longitude: f32,
-    pub orbit_phase: f32,
-    pub rotation_phase: f32,
     theme_rand1: f64,
     orbital_radius: OnceCell<f32>,
     sun_distance: OnceCell<f32>,
@@ -62,14 +60,14 @@ impl<'a> Planet<'a> {
         let orbit_radius_factor = num3 * (num4 - 0.5) * 0.5;
         let orbit_inclination_factor = rand.next_f64();
         let orbit_longitude = (rand.next_f64() * 360.0) as f32;
-        let orbit_phase = (rand.next_f64() * 360.0) as f32;
+        rand.next_f64();
         let num8 = rand.next_f64();
         let num9 = rand.next_f64();
         let obliquity_scale = num8 * (num9 - 0.5);
         let num10 = rand.next_f64();
         let num11 = rand.next_f64();
         let rotation_scale = num10 * num11 * 1000.0 + 400.0;
-        let rotation_phase = (rand.next_f64() * 360.0) as f32;
+        rand.next_f64();
         let habitable_factor = rand.next_f64();
         let type_factor = rand.next_f64();
         let theme_rand1 = rand.next_f64();
@@ -95,8 +93,6 @@ impl<'a> Planet<'a> {
             radius,
             scale,
             orbit_longitude,
-            orbit_phase,
-            rotation_phase,
             theme_rand1,
             obliquity_scale,
             rotation_param,
@@ -629,7 +625,7 @@ impl Serialize for Planet<'_> {
     where
         S: Serializer,
     {
-        let mut state = serializer.serialize_struct("Planet", 16)?;
+        let mut state = serializer.serialize_struct("Planet", 14)?;
         state.serialize_field("index", &self.index)?;
         state.serialize_field("orbitAround", &self.orbit_around.borrow().map(|p| p.index))?;
         state.serialize_field("orbitIndex", &self.orbit_index)?;
@@ -637,10 +633,8 @@ impl Serialize for Planet<'_> {
         state.serialize_field("orbitInclination", &self.get_orbit_inclination())?;
         state.serialize_field("orbitLongitude", &self.orbit_longitude)?;
         state.serialize_field("orbitalPeriod", &self.get_orbital_period())?;
-        state.serialize_field("orbitPhase", &self.orbit_phase)?;
         state.serialize_field("obliquity", &self.get_obliquity())?;
         state.serialize_field("rotationPeriod", &self.get_rotation_period())?;
-        state.serialize_field("rotationPhase", &self.rotation_phase)?;
         state.serialize_field("type", &self.get_type())?;
         state.serialize_field("luminosity", &self.get_luminosity())?;
         state.serialize_field("theme", &self.get_theme())?;

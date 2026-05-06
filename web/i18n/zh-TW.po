@@ -24,7 +24,7 @@ msgstr ""
 msgid "{0} type Star"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:641
+#: web/src/partials/RuleEditor.tsx:646
 msgid "<0/> number of hives is <1/> <2/>."
 msgstr ""
 
@@ -33,12 +33,12 @@ msgid "<0/> to <1/>"
 msgstr ""
 
 #: web/src/partials/MultiRuleEditor.tsx:214
-#: web/src/partials/RuleEditor.tsx:911
+#: web/src/partials/RuleEditor.tsx:916
 msgid "Add AND rule"
 msgstr ""
 
 #: web/src/partials/MultiRuleEditor.tsx:147
-#: web/src/partials/RuleEditor.tsx:838
+#: web/src/partials/RuleEditor.tsx:843
 msgid "Add OR rule"
 msgstr ""
 
@@ -47,8 +47,16 @@ msgstr ""
 msgid "Age"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:885
+#: web/src/partials/RuleEditor.tsx:460
+msgid "all"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:890
 msgid "AND"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:460
+msgid "any"
 msgstr ""
 
 #: web/src/names.ts:98
@@ -233,6 +241,11 @@ msgstr ""
 msgid "exactly"
 msgstr ""
 
+#: web/src/partials/RuleEditor.tsx:391
+#: web/src/partials/RuleEditor.tsx:599
+msgid "excluding"
+msgstr ""
+
 #: web/src/partials/ExportModal.tsx:291
 #: web/src/partials/ExportModal.tsx:404
 #: web/src/views/FindGalaxy.tsx:406
@@ -277,6 +290,10 @@ msgstr ""
 msgid "Galaxy Viewer"
 msgstr ""
 
+#: web/src/partials/RuleEditor.tsx:319
+msgid "gas"
+msgstr ""
+
 #: web/src/names.ts:84
 #: web/src/names.ts:85
 #: web/src/names.ts:103
@@ -286,6 +303,10 @@ msgstr ""
 
 #: web/src/names.ts:52
 msgid "Gas rate"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:319
+msgid "gas/ice"
 msgstr ""
 
 #: web/src/names.ts:50
@@ -325,23 +346,23 @@ msgstr ""
 msgid "Halitum"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:296
+#: web/src/partials/RuleEditor.tsx:298
 msgid "Has <0/> <1/> <2/> giant(s)"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:476
+#: web/src/partials/RuleEditor.tsx:480
 msgid "Has <0/> <1/> <2/> type stars that are <3/> <4/> ly away."
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:570
-msgid "Has <0/> <1/> planet(s) within max dyson sphere radius, <2/> gas/ice giants."
+#: web/src/partials/RuleEditor.tsx:575
+msgid "Has <0/> <1/> planet(s) within Max dyson sphere radius, <2/> gas/ice giants."
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:364
+#: web/src/partials/RuleEditor.tsx:367
 msgid "Has <0/> <1/> planets, <2/> gas/ice giants."
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:335
+#: web/src/partials/RuleEditor.tsx:337
 msgid "Has <0/> <1/> satellite(s)"
 msgstr ""
 
@@ -353,7 +374,7 @@ msgstr ""
 msgid "Has <0/> <1/> tidally locked planets"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:530
+#: web/src/partials/RuleEditor.tsx:534
 msgid "Has <0/> and <1/> <2/>/s of it"
 msgstr ""
 
@@ -362,25 +383,29 @@ msgstr ""
 msgid "Has <0/> and the estimated amount is <1/> <2/>{0}"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:614
+#: web/src/partials/RuleEditor.tsx:619
 msgid "Has a <0/> planet."
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:245
+#: web/src/partials/RuleEditor.tsx:246
 msgid "Has planets with <0/> Ocean"
 msgstr ""
 
 #: web/src/names.ts:55
-msgid "Hive Count"
+msgid "Hive count"
 msgstr ""
 
 #: web/src/partials/StarView.tsx:395
-msgid "Horizontal Rotation"
+msgid "Horizontal rotation"
 msgstr ""
 
 #: web/src/exporter/exporterManager.worker.ts:35
 #: web/src/names.ts:15
 msgid "Hydrogen"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:319
+msgid "ice"
 msgstr ""
 
 #: web/src/names.ts:86
@@ -393,12 +418,17 @@ msgstr ""
 msgid "Icefrostia"
 msgstr ""
 
+#: web/src/partials/RuleEditor.tsx:391
+#: web/src/partials/RuleEditor.tsx:599
+msgid "including"
+msgstr ""
+
 #: web/src/exporter/exporterManager.worker.ts:54
 #: web/src/exporter/exporterManager.worker.ts:78
 msgid "Index"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:649
+#: web/src/partials/RuleEditor.tsx:654
 msgid "Initial"
 msgstr ""
 
@@ -412,7 +442,7 @@ msgstr ""
 msgid "Iron Ore"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:435
+#: web/src/partials/RuleEditor.tsx:439
 msgid "Is <0/> <1/> ly away from <2/> black hole / neutron star."
 msgstr ""
 
@@ -420,7 +450,7 @@ msgstr ""
 msgid "Is <0/> <1/>L"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:406
+#: web/src/partials/RuleEditor.tsx:409
 msgid "Is <0/> <1/>ly away from the Starting system"
 msgstr ""
 
@@ -428,7 +458,7 @@ msgstr ""
 msgid "Is <0/> <1/>m"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:271
+#: web/src/partials/RuleEditor.tsx:272
 msgid "Is a <0/>"
 msgstr ""
 
@@ -436,7 +466,7 @@ msgstr ""
 msgid "Is a <0/> type star"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:754
+#: web/src/partials/RuleEditor.tsx:759
 msgid "Is the Starting system"
 msgstr ""
 
@@ -480,17 +510,14 @@ msgstr ""
 msgid "Mass"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:649
+#: web/src/partials/RuleEditor.tsx:654
 msgid "Max"
 msgstr ""
 
 #: web/src/exporter/exporterManager.worker.ts:66
+#: web/src/names.ts:45
 #: web/src/partials/StarView.tsx:209
 msgid "Max dyson sphere radius"
-msgstr ""
-
-#: web/src/names.ts:45
-msgid "Max Dyson Sphere Radius"
 msgstr ""
 
 #: web/src/exporter/exporterManager.worker.ts:71
@@ -543,7 +570,7 @@ msgstr ""
 msgid "Number of stars"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.ts:88
+#: web/src/exporter/exporterManager.worker.ts:87
 msgid "Obliquity"
 msgstr ""
 
@@ -560,7 +587,7 @@ msgid "Onyxtopia"
 msgstr ""
 
 #: web/src/partials/MultiRuleEditor.tsx:72
-#: web/src/partials/RuleEditor.tsx:813
+#: web/src/partials/RuleEditor.tsx:818
 msgid "OR"
 msgstr ""
 
@@ -570,10 +597,6 @@ msgstr ""
 
 #: web/src/exporter/exporterManager.worker.ts:85
 msgid "Orbit longitude"
-msgstr ""
-
-#: web/src/exporter/exporterManager.worker.ts:87
-msgid "Orbit phase"
 msgstr ""
 
 #: web/src/exporter/exporterManager.worker.ts:83
@@ -681,12 +704,8 @@ msgstr ""
 msgid "Retriving data"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.ts:89
+#: web/src/exporter/exporterManager.worker.ts:88
 msgid "Rotation period"
-msgstr ""
-
-#: web/src/exporter/exporterManager.worker.ts:90
-msgid "Rotation phase"
 msgstr ""
 
 #: web/src/views/FindGalaxy.tsx:381
@@ -750,7 +769,7 @@ msgstr ""
 msgid "Silicon Ore"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.ts:92
+#: web/src/exporter/exporterManager.worker.ts:90
 #: web/src/partials/StarView.tsx:416
 msgid "Solar power"
 msgstr ""
@@ -793,9 +812,10 @@ msgid "Sulfuria"
 msgstr ""
 
 #: web/src/exporter/exporterManager.worker.ts:45
+#: web/src/partials/RuleEditor.tsx:256
 #: web/src/partials/StarView.tsx:293
 #: web/src/partials/StarView.tsx:447
-msgid "Sulfuric acid"
+msgid "Sulfuric Acid"
 msgstr ""
 
 #: web/src/exporter/exporterManager.worker.ts:61
@@ -875,6 +895,7 @@ msgid "Warning: Exporting too many seeds may cause out of memory error."
 msgstr ""
 
 #: web/src/exporter/exporterManager.worker.ts:44
+#: web/src/partials/RuleEditor.tsx:256
 #: web/src/partials/StarView.tsx:287
 #: web/src/partials/StarView.tsx:441
 msgid "Water"
@@ -891,7 +912,7 @@ msgstr ""
 msgid "White Giant"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.ts:91
+#: web/src/exporter/exporterManager.worker.ts:89
 #: web/src/partials/StarView.tsx:410
 msgid "Wind power"
 msgstr ""

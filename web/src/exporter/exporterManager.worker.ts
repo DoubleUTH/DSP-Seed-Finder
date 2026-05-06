@@ -42,7 +42,7 @@ function getVeinFieldsOrder(): string[] {
             return [`${name} (Avg)`, `${name} (Min)`, `${name} (Max)`]
         }),
         t`Water`,
-        t`Sulfuric acid`,
+        t`Sulfuric Acid`,
         ...gasOrder.map((type) => gasNames[type]),
     ]
     return veinFieldsOrder
@@ -84,10 +84,8 @@ function getPlanetFieldNames(): Record<PlanetField, string> {
         [PlanetField.OrbitInclination]: t`Orbit inclination`,
         [PlanetField.OrbitLongitude]: t`Orbit longitude`,
         [PlanetField.OrbitalPeriod]: t`Orbital period`,
-        [PlanetField.OrbitPhase]: t`Orbit phase`,
         [PlanetField.Obliquity]: t`Obliquity`,
         [PlanetField.RotationPeriod]: t`Rotation period`,
-        [PlanetField.RotationPhase]: t`Rotation phase`,
         [PlanetField.Wind]: t`Wind power`,
         [PlanetField.Luminosity]: t`Solar power`,
     }

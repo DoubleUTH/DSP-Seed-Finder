@@ -1,4 +1,5 @@
-import { loadLanguage, t } from "#linguiCore"
+import { t } from "#linguiCore"
+import { loadLanguage } from "../linguiCore"
 import {
     distanceFromBirth,
     furthestDistanceFrom,

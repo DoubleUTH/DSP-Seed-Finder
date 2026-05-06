@@ -42,7 +42,12 @@ export default defineConfig({
     },
     worker: {
         format: "es",
-        plugins: () => [lingui()],
+        plugins: () => [
+            solid({
+                babel: babelConfig,
+            }),
+            lingui(),
+        ],
     },
     plugins: [
         solid({

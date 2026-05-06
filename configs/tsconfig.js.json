@@ -13,5 +13,5 @@
         "types": ["vite/client"]
     },
     "include": ["../web"],
-    "exclude": ["../**/*.worker.ts"]
+    "exclude": ["../**/*.worker.ts", "../**/*.worker.tsx"]
 }

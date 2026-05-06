@@ -6,7 +6,8 @@ import {
     StarField,
     starFieldsOrder,
 } from "./common"
-import { loadLanguage, t } from "#linguiCore"
+import { t } from "#linguiCore"
+import { loadLanguage } from "../linguiCore"
 import { VeinType, GasType } from "../enums"
 import { gasOrder, veinOrder } from "../util"
 
@@ -39,7 +40,7 @@ function getVeinFieldsOrder(): string[] {
     const veinFieldsOrder = [
         ...veinOrder.flatMap((type) => {
             const name = veinNames[type]
-            return [`${name} (Avg)`, `${name} (Min)`, `${name} (Max)`]
+            return [t`${name} (Avg)`, t`${name} (Min)`, t`${name} (Max)`]
         }),
         t`Water`,
         t`Sulfuric Acid`,

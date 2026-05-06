@@ -48,47 +48,17 @@ export function useLingui() {
 export const Trans: ParentComponent = (props) => {
     const { _ } = useLingui() as any
     const translation = () => {
-        const { values, components } = getInterpolationValuesAndComponents(
-            props as any,
-        )
-        const { id } = props as any
-        const _translation = _(id, values!)
-        return formatElements(_translation, components)
+        const { id, values, components } = props as any
+        return formatElements(_(id, values!), components)
     }
 
-    return translation()
+    return <>{translation()}</>
 }
 
 export type TransProps = {
     id: string
     values?: Record<string, any>
     components?: { [key: string]: JSX.Element }
-}
-
-const getInterpolationValuesAndComponents = (data: TransProps) => {
-    if (!data.values) {
-        return {
-            values: undefined,
-            components: data.components,
-        }
-    }
-
-    const values = { ...data.values }
-    const components = { ...data.components }
-    Object.entries(data.values).forEach(([key, valueForKey]) => {
-        // simple scalars should be processed as values to be able to apply formatting
-        if (
-            typeof valueForKey === "string" ||
-            typeof valueForKey === "number"
-        ) {
-            return
-        }
-        const index = Object.keys(components).length
-        // react components, arrays, falsy values, all should be processed as JSX children
-        components[index] = <>{valueForKey}</>
-        values[key] = `<${index}/>`
-    })
-    return { values, components }
 }
 
 const tagRe = /<([a-zA-Z0-9]+)\/>/

@@ -155,32 +155,36 @@ const EditAverageVeinAmount: Component<{
         props.onChange({ ...props.value, condition })
     const veinNames = useVeinNames()
     return (
-        <Trans>
-            Has{" "}
-            <Select
-                class={styles.selectVein}
-                value={props.value.vein}
-                onChange={(vein) => props.onChange({ ...props.value, vein })}
-                options={veins}
-                getLabel={(vein) => veinNames[vein]()}
-                disabled={props.disabled}
-            />{" "}
-            and the estimated amount is{" "}
-            <ConditionTypeSelector
-                value={condition()}
-                onChange={setCondition}
-                disabled={props.disabled}
-            />{" "}
-            <ConditionValueInput
-                class={styles.inputVein}
-                value={condition()}
-                onChange={setCondition}
-                emptyValue={-1}
-                error={condition().value <= 0}
-                disabled={props.disabled}
-            />
+        <>
+            <Trans>
+                Has{" "}
+                <Select
+                    class={styles.selectVein}
+                    value={props.value.vein}
+                    onChange={(vein) =>
+                        props.onChange({ ...props.value, vein })
+                    }
+                    options={veins}
+                    getLabel={(vein) => veinNames[vein]()}
+                    disabled={props.disabled}
+                />{" "}
+                and the estimated amount is{" "}
+                <ConditionTypeSelector
+                    value={condition()}
+                    onChange={setCondition}
+                    disabled={props.disabled}
+                />{" "}
+                <ConditionValueInput
+                    class={styles.inputVein}
+                    value={condition()}
+                    onChange={setCondition}
+                    emptyValue={-1}
+                    error={condition().value <= 0}
+                    disabled={props.disabled}
+                />
+            </Trans>
             {props.value.vein === VeinType.Oil ? " /s" : " "}
-        </Trans>
+        </>
     )
 }
 

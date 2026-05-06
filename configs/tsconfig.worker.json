@@ -11,6 +11,7 @@
     },
     "include": [
         "../**/*.worker.ts",
+        "../**/*.worker.tsx",
         "../**/util.ts",
         "../**/enums.ts",
         "../**/types.d.ts",

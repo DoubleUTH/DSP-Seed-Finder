@@ -63,7 +63,7 @@ const Search: Component = () => {
 
     return (
         <form class={styles.search} onSubmit={handleSubmit}>
-            <div class={styles.searchTitle}>Seed:</div>
+            <div class={styles.searchTitle}>{t`Seed`}:</div>
             <div class={styles.searchRow}>
                 <NumberInput
                     class={styles.searchInput}

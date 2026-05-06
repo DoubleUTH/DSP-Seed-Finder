@@ -472,7 +472,9 @@ const FindStar: Component = () => {
                     </Show>
                 </div>
                 <Show when={hasProgress()}>
-                    <Button onClick={() => setExportModal(true)}>Export</Button>
+                    <Button
+                        onClick={() => setExportModal(true)}
+                    >{t`Export`}</Button>
                 </Show>
                 <Switch
                     fallback={

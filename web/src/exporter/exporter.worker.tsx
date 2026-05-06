@@ -239,6 +239,8 @@ self.onmessage = (ev) => {
         indexes,
         resourceMultiplier = 1,
         starCount = 64,
+        hiveInitialColonize = 1,
+        hiveMaxDensity = 1,
         exportAllStars,
         language,
     } = ev.data
@@ -250,6 +252,8 @@ self.onmessage = (ev) => {
                 seed,
                 starCount,
                 resourceMultiplier,
+                hiveInitialColonize,
+                hiveMaxDensity,
             })
             const data = generateExportData(result, indexes, exportAllStars)
             self.postMessage(data)

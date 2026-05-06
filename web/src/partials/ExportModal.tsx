@@ -31,7 +31,7 @@ import HiveMaxDensitySelector from "./HiveMaxDensitySelector"
 import { useLingui } from "#lingui"
 import { useStore } from "../store"
 
-type Mode = "star" | "galaxy"
+type Mode = "star" | "galaxy" | "single"
 
 interface Options extends Pick<
     ExportOptions,
@@ -104,7 +104,12 @@ async function execute(
         language,
     }: Options,
 ) {
-    const fn = mode === "star" ? getStarResults : getGalaxyResults
+    const fn =
+        mode === "star"
+            ? getStarResults
+            : mode === "galaxy"
+              ? getGalaxyResults
+              : () => [{ seed: start, indexes: [] }]
     const results = await fn(id, start, end)
     emitter.emit("start", results.length)
     let stopped = false
@@ -118,8 +123,8 @@ async function execute(
         resourceMultiplier,
         hiveInitialColonize,
         hiveMaxDensity,
-        exportAllStars: mode === "galaxy" || exportAllStars,
-        results: results,
+        exportAllStars: mode !== "star" || exportAllStars,
+        results,
         language,
         onProgress: (current) => {
             emitter.emit("progress", current)
@@ -247,6 +252,7 @@ const ExportModal: Component<{
     onClose: () => void
     mode: Mode
     id: string
+    singleSeed?: integer
     name: string
     starCount: integer
     resourceMultiplier: float
@@ -278,6 +284,7 @@ const ExportModal: Component<{
                 hiveInitialColonize: props.hiveInitialColonize,
                 hiveMaxDensity: props.hiveMaxDensity,
                 language: store.settings.language,
+                start: props.singleSeed ?? 0,
             })
         } else {
             setProgressModal(false)
@@ -289,9 +296,11 @@ const ExportModal: Component<{
     return (
         <Modal visible={props.visible} onClose={props.onClose} backdropDismiss>
             <div class={styles.title}>{t`Export`}</div>
-            <div class={styles.warn}>
-                {t`Warning: Exporting too many seeds may cause out of memory error.`}
-            </div>
+            <Show when={props.mode !== "single"}>
+                <div class={styles.warn}>
+                    {t`Warning: Exporting too many seeds may cause out of memory error.`}
+                </div>
+            </Show>
             <div class={styles.fields}>
                 <div class={styles.label}>{t`Format`}</div>
                 <div class={styles.input}>
@@ -341,30 +350,34 @@ const ExportModal: Component<{
                         }
                     />
                 </div>
-                <div class={styles.label}>{t`Seed range`}</div>
-                <div class={styles.input}>
-                    <NumberInput
-                        class={styles.inputSeed}
-                        value={options.start}
-                        onChange={(value) => setOptions("start", value)}
-                        emptyValue={-1}
-                        maxLength={8}
-                        error={
-                            options.start < 0 || options.start >= options.end
-                        }
-                    />{" "}
-                    to{" "}
-                    <NumberInput
-                        class={styles.inputSeed}
-                        value={options.end}
-                        onChange={(value) => setOptions("end", value)}
-                        emptyValue={-1}
-                        maxLength={8}
-                        error={
-                            options.end > 1e8 || options.start >= options.end
-                        }
-                    />
-                </div>
+                <Show when={props.mode !== "single"}>
+                    <div class={styles.label}>{t`Seed range`}</div>
+                    <div class={styles.input}>
+                        <NumberInput
+                            class={styles.inputSeed}
+                            value={options.start}
+                            onChange={(value) => setOptions("start", value)}
+                            emptyValue={-1}
+                            maxLength={8}
+                            error={
+                                options.start < 0 ||
+                                options.start >= options.end
+                            }
+                        />{" "}
+                        to{" "}
+                        <NumberInput
+                            class={styles.inputSeed}
+                            value={options.end}
+                            onChange={(value) => setOptions("end", value)}
+                            emptyValue={-1}
+                            maxLength={8}
+                            error={
+                                options.end > 1e8 ||
+                                options.start >= options.end
+                            }
+                        />
+                    </div>
+                </Show>
                 <Show when={props.mode === "star"}>
                     <div class={styles.label}>
                         <Tooltip
@@ -382,20 +395,24 @@ const ExportModal: Component<{
                         />
                     </div>
                 </Show>
-                <div class={styles.label}>{t`Concurrency`}</div>
-                <div class={styles.input}>
-                    <NumberInput
-                        class={styles.inputStandard}
-                        value={options.concurrency}
-                        onChange={(value) => setOptions("concurrency", value)}
-                        emptyValue={-1}
-                        maxLength={2}
-                        error={
-                            !Number.isInteger(options.concurrency) ||
-                            options.concurrency < 1
-                        }
-                    />
-                </div>
+                <Show when={props.mode !== "single"}>
+                    <div class={styles.label}>{t`Concurrency`}</div>
+                    <div class={styles.input}>
+                        <NumberInput
+                            class={styles.inputStandard}
+                            value={options.concurrency}
+                            onChange={(value) =>
+                                setOptions("concurrency", value)
+                            }
+                            emptyValue={-1}
+                            maxLength={2}
+                            error={
+                                !Number.isInteger(options.concurrency) ||
+                                options.concurrency < 1
+                            }
+                        />
+                    </div>
+                </Show>
             </div>
             <Button
                 class={styles.button}

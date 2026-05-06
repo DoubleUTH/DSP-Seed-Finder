@@ -31,6 +31,7 @@ import ResourceMultiplierSelector from "../partials/ResourceMultiplierSelector"
 import HiveInitialColonizeSelector from "../partials/HiveInitialColonizeSelector"
 import HiveMaxDensitySelector from "../partials/HiveMaxDensitySelector"
 import { useLingui } from "#lingui"
+import ExportModal from "../partials/ExportModal"
 
 function randomSeed() {
     return Math.floor(Math.random() * 1e8)
@@ -124,6 +125,7 @@ const Search: Component = () => {
 
 const View: Component<{ seed: number; index: number }> = (props) => {
     const [searchParams] = useSearchParams()
+    const [exportModal, setExportModal] = createSignal(false)
 
     const starCount = createMemo(() => {
         const { count } = searchParams
@@ -136,7 +138,7 @@ const View: Component<{ seed: number; index: number }> = (props) => {
         return defaultStarCount
     })
 
-    const resourcMultiplier = createMemo(() => {
+    const resourceMultiplier = createMemo(() => {
         const { multiplier } = searchParams
         if (multiplier) {
             const m = parseFloat(multiplier as string)
@@ -173,7 +175,7 @@ const View: Component<{ seed: number; index: number }> = (props) => {
         const config = {
             seed: props.seed,
             starCount: starCount(),
-            resourceMultiplier: resourcMultiplier(),
+            resourceMultiplier: resourceMultiplier(),
             hiveInitialColonize: hiveInitialColonize(),
             hiveMaxDensity: hiveMaxDensity(),
         }
@@ -183,7 +185,7 @@ const View: Component<{ seed: number; index: number }> = (props) => {
     const search = createMemo(() =>
         getSearch({
             count: starCount(),
-            multiplier: resourcMultiplier(),
+            multiplier: resourceMultiplier(),
             hiveInitialColonize: hiveInitialColonize(),
             hiveMaxDensity: hiveMaxDensity(),
         }),
@@ -202,6 +204,10 @@ const View: Component<{ seed: number; index: number }> = (props) => {
         >
             <div class={styles.view}>
                 <div class={styles.left}>
+                    <Button
+                        class={styles.export}
+                        onClick={() => setExportModal(true)}
+                    >{t`Export`}</Button>
                     <For each={galaxy()!.stars}>
                         {(star) => (
                             <A
@@ -227,6 +233,18 @@ const View: Component<{ seed: number; index: number }> = (props) => {
                     />
                 </div>
             </div>
+            <ExportModal
+                visible={exportModal()}
+                onClose={() => setExportModal(false)}
+                mode="single"
+                id=""
+                name={String(props.seed)}
+                singleSeed={props.seed}
+                starCount={starCount()}
+                resourceMultiplier={resourceMultiplier()}
+                hiveInitialColonize={hiveInitialColonize()}
+                hiveMaxDensity={hiveMaxDensity()}
+            />
         </Show>
     )
 }

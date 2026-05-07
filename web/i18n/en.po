@@ -36,8 +36,8 @@ msgstr ""
 msgid "{name} (Min)"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:650
-msgid "<0/> number of hives is <1/> <2/>."
+#: web/src/partials/RuleEditor.tsx:584
+msgid "<0/> number of hives is <1/>."
 msgstr ""
 
 #: web/src/partials/ProgressEditor.tsx:64
@@ -45,12 +45,12 @@ msgid "<0/> to <1/>"
 msgstr ""
 
 #: web/src/partials/MultiRuleEditor.tsx:214
-#: web/src/partials/RuleEditor.tsx:920
+#: web/src/partials/RuleEditor.tsx:849
 msgid "Add AND rule"
 msgstr ""
 
 #: web/src/partials/MultiRuleEditor.tsx:147
-#: web/src/partials/RuleEditor.tsx:847
+#: web/src/partials/RuleEditor.tsx:776
 msgid "Add OR rule"
 msgstr ""
 
@@ -59,15 +59,15 @@ msgstr ""
 msgid "Age"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:464
+#: web/src/partials/RuleEditor.tsx:418
 msgid "all"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:894
+#: web/src/partials/RuleEditor.tsx:823
 msgid "AND"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:464
+#: web/src/partials/RuleEditor.tsx:418
 msgid "any"
 msgstr ""
 
@@ -123,7 +123,7 @@ msgstr ""
 msgid "Clone"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:239
+#: web/src/partials/ExportModal.tsx:244
 msgid "Close"
 msgstr ""
 
@@ -137,7 +137,7 @@ msgstr ""
 msgid "Completed!"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:385
+#: web/src/partials/ExportModal.tsx:399
 #: web/src/partials/ProgressEditor.tsx:147
 msgid "Concurrency"
 msgstr ""
@@ -164,15 +164,15 @@ msgstr ""
 msgid "Cyclonius"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:324
+#: web/src/partials/ExportModal.tsx:333
 #: web/src/partials/ProgressEditor.tsx:130
-#: web/src/views/Galaxy.tsx:104
+#: web/src/views/Galaxy.tsx:105
 msgid "Dark Fog initial occupation"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:334
+#: web/src/partials/ExportModal.tsx:343
 #: web/src/partials/ProgressEditor.tsx:168
-#: web/src/views/Galaxy.tsx:113
+#: web/src/views/Galaxy.tsx:114
 msgid "Dark Fog max density"
 msgstr ""
 
@@ -232,11 +232,11 @@ msgstr ""
 msgid "Do you really want to delete all settings and progress? This cannot be undone."
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:163
+#: web/src/partials/ExportModal.tsx:168
 msgid "Done"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:231
+#: web/src/partials/ExportModal.tsx:236
 #: web/src/partials/ProgressEditor.tsx:125
 msgid "Download"
 msgstr ""
@@ -261,29 +261,30 @@ msgstr ""
 msgid "exactly"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:395
-#: web/src/partials/RuleEditor.tsx:603
+#: web/src/partials/RuleEditor.tsx:359
+#: web/src/partials/RuleEditor.tsx:537
 msgid "excluding"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:291
-#: web/src/partials/ExportModal.tsx:404
+#: web/src/partials/ExportModal.tsx:298
+#: web/src/partials/ExportModal.tsx:421
 #: web/src/views/FindGalaxy.tsx:406
 #: web/src/views/FindStar.tsx:477
+#: web/src/views/Galaxy.tsx:210
 msgid "Export"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:373
+#: web/src/partials/ExportModal.tsx:386
 msgid "Export all"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:371
+#: web/src/partials/ExportModal.tsx:384
 msgid "Export all stars instead of only the matching ones"
 msgstr ""
 
 #. placeholder {0}: progress()
 #. placeholder {1}: total()
-#: web/src/partials/ExportModal.tsx:159
+#: web/src/partials/ExportModal.tsx:164
 msgid "Exporting {0} / {1}"
 msgstr ""
 
@@ -294,7 +295,7 @@ msgstr ""
 msgid "Fire Ice"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:296
+#: web/src/partials/ExportModal.tsx:305
 msgid "Format"
 msgstr ""
 
@@ -311,7 +312,7 @@ msgstr ""
 msgid "Galaxy Viewer"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:323
+#: web/src/partials/RuleEditor.tsx:297
 msgid "gas"
 msgstr ""
 
@@ -326,7 +327,7 @@ msgstr ""
 msgid "Gas rate"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:323
+#: web/src/partials/RuleEditor.tsx:297
 msgid "gas/ice"
 msgstr ""
 
@@ -338,7 +339,7 @@ msgstr ""
 msgid "Geloterra"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:161
+#: web/src/partials/ExportModal.tsx:166
 msgid "Generating file"
 msgstr ""
 
@@ -367,47 +368,47 @@ msgstr ""
 msgid "Halitum"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:302
-msgid "Has <0/> <1/> <2/> giant(s)"
-msgstr ""
-
-#: web/src/partials/RuleEditor.tsx:484
-msgid "Has <0/> <1/> <2/> type stars that are <3/> <4/> ly away."
-msgstr ""
-
-#: web/src/partials/RuleEditor.tsx:579
-msgid "Has <0/> <1/> planet(s) within Max dyson sphere radius, <2/> gas/ice giants."
-msgstr ""
-
-#: web/src/partials/RuleEditor.tsx:371
-msgid "Has <0/> <1/> planets, <2/> gas/ice giants."
-msgstr ""
-
-#: web/src/partials/RuleEditor.tsx:341
-msgid "Has <0/> <1/> satellite(s)"
+#: web/src/partials/RuleEditor.tsx:281
+msgid "Has <0/> <1/> giant(s)"
 msgstr ""
 
 #: web/src/partials/MultiRuleEditor.tsx:76
 msgid "Has <0/> <1/> star(s) that satisfy <2/>. Description: "
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:223
-msgid "Has <0/> <1/> tidally locked planets"
+#: web/src/partials/RuleEditor.tsx:438
+msgid "Has <0/> <1/> type stars that are <2/> ly away."
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:538
-msgid "Has <0/> and <1/> <2/>/s of it"
+#: web/src/partials/RuleEditor.tsx:482
+msgid "Has <0/> and <1/>/s of it"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:159
-msgid "Has <0/> and the estimated amount is <1/> <2/>"
+#: web/src/partials/RuleEditor.tsx:148
+msgid "Has <0/> and the estimated amount is <1/>"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:623
+#: web/src/partials/RuleEditor.tsx:518
+msgid "Has <0/> planet(s) within Max dyson sphere radius, <1/> gas/ice giants."
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:340
+msgid "Has <0/> planets, <1/> gas/ice giants."
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:315
+msgid "Has <0/> satellite(s)"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:207
+msgid "Has <0/> tidally locked planets"
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:557
 msgid "Has a <0/> planet."
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:250
+#: web/src/partials/RuleEditor.tsx:229
 msgid "Has planets with <0/> Ocean"
 msgstr ""
 
@@ -424,7 +425,7 @@ msgstr ""
 msgid "Hydrogen"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:323
+#: web/src/partials/RuleEditor.tsx:297
 msgid "ice"
 msgstr ""
 
@@ -438,8 +439,8 @@ msgstr ""
 msgid "Icefrostia"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:395
-#: web/src/partials/RuleEditor.tsx:603
+#: web/src/partials/RuleEditor.tsx:359
+#: web/src/partials/RuleEditor.tsx:537
 msgid "including"
 msgstr ""
 
@@ -448,7 +449,7 @@ msgstr ""
 msgid "Index"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:658
+#: web/src/partials/RuleEditor.tsx:592
 msgid "Initial"
 msgstr ""
 
@@ -462,31 +463,31 @@ msgstr ""
 msgid "Iron Ore"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:443
-msgid "Is <0/> <1/> ly away from <2/> black hole / neutron star."
+#: web/src/partials/RuleEditor.tsx:402
+msgid "Is <0/> ly away from <1/> black hole / neutron star."
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:98
-msgid "Is <0/> <1/>L"
+#: web/src/partials/RuleEditor.tsx:97
+msgid "Is <0/>L"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:413
-msgid "Is <0/> <1/>ly away from the Starting system"
+#: web/src/partials/RuleEditor.tsx:377
+msgid "Is <0/>ly away from the Starting system"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:127
-msgid "Is <0/> <1/>m"
+#: web/src/partials/RuleEditor.tsx:121
+msgid "Is <0/>m"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:276
+#: web/src/partials/RuleEditor.tsx:255
 msgid "Is a <0/>"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:197
+#: web/src/partials/RuleEditor.tsx:181
 msgid "Is a <0/> type star"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:763
+#: web/src/partials/RuleEditor.tsx:692
 msgid "Is the Starting system"
 msgstr ""
 
@@ -507,7 +508,7 @@ msgstr ""
 msgid "Load"
 msgstr ""
 
-#: web/src/views/Galaxy.tsx:201
+#: web/src/views/Galaxy.tsx:203
 msgid "Loading..."
 msgstr ""
 
@@ -530,7 +531,7 @@ msgstr ""
 msgid "Mass"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:658
+#: web/src/partials/RuleEditor.tsx:592
 msgid "Max"
 msgstr ""
 
@@ -584,9 +585,9 @@ msgstr ""
 msgid "not equal to"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:306
+#: web/src/partials/ExportModal.tsx:315
 #: web/src/partials/ProgressEditor.tsx:49
-#: web/src/views/Galaxy.tsx:89
+#: web/src/views/Galaxy.tsx:90
 msgid "Number of stars"
 msgstr ""
 
@@ -607,7 +608,7 @@ msgid "Onyxtopia"
 msgstr ""
 
 #: web/src/partials/MultiRuleEditor.tsx:72
-#: web/src/partials/RuleEditor.tsx:822
+#: web/src/partials/RuleEditor.tsx:751
 msgid "OR"
 msgstr ""
 
@@ -696,7 +697,7 @@ msgstr ""
 msgid "Radius"
 msgstr ""
 
-#: web/src/views/Galaxy.tsx:79
+#: web/src/views/Galaxy.tsx:80
 msgid "Random"
 msgstr ""
 
@@ -705,9 +706,9 @@ msgstr ""
 msgid "Red Giant"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:314
+#: web/src/partials/ExportModal.tsx:323
 #: web/src/partials/ProgressEditor.tsx:98
-#: web/src/views/Galaxy.tsx:95
+#: web/src/views/Galaxy.tsx:96
 msgid "Resource multiplier"
 msgstr ""
 
@@ -720,7 +721,7 @@ msgstr ""
 msgid "Resume"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:157
+#: web/src/partials/ExportModal.tsx:162
 msgid "Retriving data"
 msgstr ""
 
@@ -767,11 +768,11 @@ msgstr ""
 
 #: web/src/exporter/exporterManager.worker.tsx:54
 #: web/src/exporter/exporterManager.worker.tsx:78
-#: web/src/views/Galaxy.tsx:66
+#: web/src/views/Galaxy.tsx:67
 msgid "Seed"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:344
+#: web/src/partials/ExportModal.tsx:354
 #: web/src/partials/ProgressEditor.tsx:62
 msgid "Seed range"
 msgstr ""
@@ -824,7 +825,7 @@ msgstr ""
 msgid "Stone"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:239
+#: web/src/partials/ExportModal.tsx:244
 msgid "Stop"
 msgstr ""
 
@@ -833,7 +834,7 @@ msgid "Sulfuria"
 msgstr ""
 
 #: web/src/exporter/exporterManager.worker.tsx:46
-#: web/src/partials/RuleEditor.tsx:260
+#: web/src/partials/RuleEditor.tsx:239
 #: web/src/partials/StarView.tsx:294
 #: web/src/partials/StarView.tsx:448
 msgid "Sulfuric Acid"
@@ -903,7 +904,7 @@ msgstr ""
 msgid "Vein amount"
 msgstr ""
 
-#: web/src/views/Galaxy.tsx:86
+#: web/src/views/Galaxy.tsx:87
 msgid "View"
 msgstr ""
 
@@ -911,12 +912,12 @@ msgstr ""
 msgid "View in new tab"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:293
+#: web/src/partials/ExportModal.tsx:301
 msgid "Warning: Exporting too many seeds may cause out of memory error."
 msgstr ""
 
 #: web/src/exporter/exporterManager.worker.tsx:45
-#: web/src/partials/RuleEditor.tsx:260
+#: web/src/partials/RuleEditor.tsx:239
 #: web/src/partials/StarView.tsx:288
 #: web/src/partials/StarView.tsx:442
 msgid "Water"

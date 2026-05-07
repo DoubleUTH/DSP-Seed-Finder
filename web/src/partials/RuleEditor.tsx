@@ -48,25 +48,7 @@ const SelectSimpleRule: Component<{
     )
 }
 
-const ConditionTypeSelector: Component<{
-    value: Condition
-    onChange: (value: Condition) => void
-    disabled?: boolean
-}> = (props) => {
-    const conditionTypeNames = useConditionTypeNames()
-    return (
-        <Select
-            class={styles.selectConditionType}
-            value={props.value.type}
-            onChange={(type) => props.onChange({ ...props.value, type })}
-            options={[ConditionType.Gte, ConditionType.Lte, ConditionType.Eq]}
-            getLabel={(type) => conditionTypeNames[type]()}
-            disabled={props.disabled}
-        />
-    )
-}
-
-const ConditionValueInput: Component<{
+const ConditionInput: Component<{
     value: Condition
     onChange: (value: Condition) => void
     disabled?: boolean
@@ -74,17 +56,34 @@ const ConditionValueInput: Component<{
     error?: boolean
     emptyValue: number
     maxLength?: number
-}> = (props) => (
-    <NumberInput
-        class={props.class}
-        value={props.value.value}
-        onChange={(value) => props.onChange({ ...props.value, value })}
-        emptyValue={props.emptyValue}
-        disabled={props.disabled}
-        maxLength={props.maxLength}
-        error={props.error}
-    />
-)
+}> = (props) => {
+    const conditionTypeNames = useConditionTypeNames()
+    return (
+        <>
+            <Select
+                class={styles.selectConditionType}
+                value={props.value.type}
+                onChange={(type) => props.onChange({ ...props.value, type })}
+                options={[
+                    ConditionType.Gte,
+                    ConditionType.Lte,
+                    ConditionType.Eq,
+                ]}
+                getLabel={(type) => conditionTypeNames[type]()}
+                disabled={props.disabled}
+            />{" "}
+            <NumberInput
+                class={props.class}
+                value={props.value.value}
+                onChange={(value) => props.onChange({ ...props.value, value })}
+                emptyValue={props.emptyValue}
+                disabled={props.disabled}
+                maxLength={props.maxLength}
+                error={props.error}
+            />
+        </>
+    )
+}
 
 const EditLuminosity: Component<{
     value: Rule.Luminosity
@@ -97,12 +96,7 @@ const EditLuminosity: Component<{
     return (
         <Trans>
             Is{" "}
-            <ConditionTypeSelector
-                value={condition()}
-                onChange={setCondition}
-                disabled={props.disabled}
-            />{" "}
-            <ConditionValueInput
+            <ConditionInput
                 class={styles.inputLuminosity}
                 value={condition()}
                 onChange={setCondition}
@@ -126,12 +120,7 @@ const EditDysonRadius: Component<{
     return (
         <Trans>
             Is{" "}
-            <ConditionTypeSelector
-                value={condition()}
-                onChange={setCondition}
-                disabled={props.disabled}
-            />{" "}
-            <ConditionValueInput
+            <ConditionInput
                 class={styles.inputDyson}
                 maxLength={6}
                 value={condition()}
@@ -169,12 +158,7 @@ const EditAverageVeinAmount: Component<{
                     disabled={props.disabled}
                 />{" "}
                 and the estimated amount is{" "}
-                <ConditionTypeSelector
-                    value={condition()}
-                    onChange={setCondition}
-                    disabled={props.disabled}
-                />{" "}
-                <ConditionValueInput
+                <ConditionInput
                     class={styles.inputVein}
                     value={condition()}
                     onChange={setCondition}
@@ -222,12 +206,7 @@ const EditTidalLockCount: Component<{
     return (
         <Trans>
             Has{" "}
-            <ConditionTypeSelector
-                value={condition()}
-                onChange={setCondition}
-                disabled={props.disabled}
-            />{" "}
-            <ConditionValueInput
+            <ConditionInput
                 class={styles.inputCount}
                 value={condition()}
                 onChange={setCondition}
@@ -301,12 +280,7 @@ const EditGasCount: Component<{
     return (
         <Trans>
             Has{" "}
-            <ConditionTypeSelector
-                value={condition()}
-                onChange={setCondition}
-                disabled={props.disabled}
-            />{" "}
-            <ConditionValueInput
+            <ConditionInput
                 class={styles.inputCount}
                 value={condition()}
                 onChange={setCondition}
@@ -340,12 +314,7 @@ const EditSatelliteCount: Component<{
     return (
         <Trans>
             Has{" "}
-            <ConditionTypeSelector
-                value={condition()}
-                onChange={setCondition}
-                disabled={props.disabled}
-            />{" "}
-            <ConditionValueInput
+            <ConditionInput
                 class={styles.inputCount}
                 value={condition()}
                 onChange={setCondition}
@@ -370,12 +339,7 @@ const EditPlanetCount: Component<{
     return (
         <Trans>
             Has{" "}
-            <ConditionTypeSelector
-                value={condition()}
-                onChange={setCondition}
-                disabled={props.disabled}
-            />{" "}
-            <ConditionValueInput
+            <ConditionInput
                 class={styles.inputCount}
                 value={condition()}
                 onChange={setCondition}
@@ -412,12 +376,7 @@ const EditBirthDistance: Component<{
     return (
         <Trans>
             Is{" "}
-            <ConditionTypeSelector
-                value={condition()}
-                onChange={setCondition}
-                disabled={props.disabled}
-            />{" "}
-            <ConditionValueInput
+            <ConditionInput
                 class={styles.inputDistance}
                 value={condition()}
                 onChange={setCondition}
@@ -442,12 +401,7 @@ const EditXDistance: Component<{
     return (
         <Trans>
             Is{" "}
-            <ConditionTypeSelector
-                value={condition()}
-                onChange={setCondition}
-                disabled={props.disabled}
-            />{" "}
-            <ConditionValueInput
+            <ConditionInput
                 class={styles.inputDistance}
                 value={condition()}
                 onChange={setCondition}
@@ -483,12 +437,7 @@ const EditSpectrDistance: Component<{
     return (
         <Trans>
             Has{" "}
-            <ConditionTypeSelector
-                value={countCondition()}
-                onChange={setCountCondition}
-                disabled={props.disabled}
-            />{" "}
-            <ConditionValueInput
+            <ConditionInput
                 class={styles.inputCount}
                 value={countCondition()}
                 onChange={setCountCondition}
@@ -507,12 +456,7 @@ const EditSpectrDistance: Component<{
                 disabled={props.disabled}
             />{" "}
             type stars that are{" "}
-            <ConditionTypeSelector
-                value={distanceCondition()}
-                onChange={setDistanceCondition}
-                disabled={props.disabled}
-            />{" "}
-            <ConditionValueInput
+            <ConditionInput
                 class={styles.inputDistance}
                 value={distanceCondition()}
                 onChange={setDistanceCondition}
@@ -548,12 +492,7 @@ const EditGasRate: Component<{
                 disabled={props.disabled}
             />{" "}
             and{" "}
-            <ConditionTypeSelector
-                value={condition()}
-                onChange={setCondition}
-                disabled={props.disabled}
-            />{" "}
-            <ConditionValueInput
+            <ConditionInput
                 class={styles.inputGasRate}
                 value={condition()}
                 onChange={setCondition}
@@ -578,12 +517,7 @@ const EditPlanetInDysonCount: Component<{
     return (
         <Trans>
             Has{" "}
-            <ConditionTypeSelector
-                value={condition()}
-                onChange={setCondition}
-                disabled={props.disabled}
-            />{" "}
-            <ConditionValueInput
+            <ConditionInput
                 class={styles.inputCount}
                 value={condition()}
                 onChange={setCondition}
@@ -659,12 +593,7 @@ const EditHiveCount: Component<{
                 disabled={props.disabled}
             />{" "}
             number of hives is{" "}
-            <ConditionTypeSelector
-                value={condition()}
-                onChange={setCondition}
-                disabled={props.disabled}
-            />{" "}
-            <ConditionValueInput
+            <ConditionInput
                 class={styles.inputCount}
                 value={condition()}
                 onChange={setCondition}

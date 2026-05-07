@@ -669,7 +669,7 @@ const EditHiveCount: Component<{
                 value={condition()}
                 onChange={setCondition}
                 emptyValue={-1}
-                error={condition().value <= 0}
+                error={condition().value < 0 || condition().value > 6}
                 disabled={props.disabled}
             />
             .

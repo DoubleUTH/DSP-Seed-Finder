@@ -25,8 +25,6 @@ import {
 } from "../profile"
 import {
     constructRule,
-    defaultHiveInitialColonize,
-    defaultHiveMaxDensity,
     getDefaultParams,
     getSearch,
     maxStarCount,
@@ -235,8 +233,6 @@ const FindStar: Component = () => {
     async function onSelectProfile(profile: ProfileInfo) {
         const progress = await getProfileProgress(profile.id)
         if (progress) {
-            progress.params.hiveInitialColonize ??= defaultHiveInitialColonize
-            progress.params.hiveMaxDensity ??= defaultHiveMaxDensity
             batch(() => {
                 changeProfile(profile)
                 setProgress(progress)

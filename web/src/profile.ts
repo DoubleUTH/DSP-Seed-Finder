@@ -1,4 +1,10 @@
 import { customAlphabet } from "nanoid"
+import {
+    defaultHiveInitialColonize,
+    defaultHiveMaxDensity,
+    defaultResourceMultiplier,
+    defaultStarCount,
+} from "./util"
 
 const databases = new Map<string, Promise<IDBDatabase>>()
 const nanoid = customAlphabet(
@@ -116,6 +122,23 @@ export async function setProfileInfo(info: ProfileInfo): Promise<void> {
     })
 }
 
+function backCompatGameParams(data: any) {
+    if (data && !data.params) {
+        data.params = {
+            starCount: data.starCount ?? defaultStarCount,
+            resourceMultiplier:
+                data.resourceMultiplier ?? defaultResourceMultiplier,
+            hiveInitialColonize:
+                data.hiveInitialColonize ?? defaultHiveInitialColonize,
+            hiveMaxDensity: data.hiveMaxDensity ?? defaultHiveMaxDensity,
+        }
+        delete data.starCount
+        delete data.resourceMultiplier
+        delete data.hiveInitialColonize
+        delete data.hiveMaxDensity
+    }
+}
+
 export async function getProfileProgress(
     id: string,
 ): Promise<ProfileProgress | null> {
@@ -128,6 +151,7 @@ export async function getProfileProgress(
         txn.onerror = reject
         req.onerror = reject
         req.onsuccess = () => {
+            backCompatGameParams(req.result)
             resolve(req.result || null)
         }
     })
@@ -329,6 +353,7 @@ export async function getMultiProfileProgress(
         txn.onerror = reject
         req.onerror = reject
         req.onsuccess = () => {
+            backCompatGameParams(req.result)
             resolve(req.result || null)
         }
     })

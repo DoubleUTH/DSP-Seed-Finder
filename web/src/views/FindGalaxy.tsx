@@ -14,8 +14,6 @@ import {
 import { createStore, unwrap } from "solid-js/store"
 import {
     constructMultiRule,
-    defaultHiveInitialColonize,
-    defaultHiveMaxDensity,
     getDefaultParams,
     getSearch,
     maxStarCount,
@@ -168,8 +166,6 @@ const FindGalaxy: Component = () => {
     async function onSelectProfile(profile: ProfileInfo) {
         const progress = await getMultiProfileProgress(profile.id)
         if (progress) {
-            progress.params.hiveInitialColonize ??= defaultHiveInitialColonize
-            progress.params.hiveMaxDensity ??= defaultHiveMaxDensity
             batch(() => {
                 changeProfile(profile)
                 setProgress(progress)

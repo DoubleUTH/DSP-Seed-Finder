@@ -270,7 +270,11 @@ const Starmap: Component<{ galaxy: Galaxy; search: string }> = (props) => {
                     />
                 )}
             </For>
-            <For each={props.galaxy.stars}>
+            <For
+                each={props.galaxy.stars.toSorted(
+                    (a, b) => a.position[1] - b.position[1],
+                )}
+            >
                 {(star) => (
                     <StarNode
                         star={star}

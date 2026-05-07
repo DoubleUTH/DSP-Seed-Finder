@@ -166,13 +166,13 @@ msgstr ""
 
 #: web/src/partials/ExportModal.tsx:321
 #: web/src/partials/ProgressEditor.tsx:135
-#: web/src/views/Galaxy.tsx:98
+#: web/src/views/Galaxy.tsx:99
 msgid "Dark Fog initial occupation"
 msgstr ""
 
 #: web/src/partials/ExportModal.tsx:335
 #: web/src/partials/ProgressEditor.tsx:177
-#: web/src/views/Galaxy.tsx:107
+#: web/src/views/Galaxy.tsx:108
 msgid "Dark Fog max density"
 msgstr ""
 
@@ -270,7 +270,7 @@ msgstr ""
 #: web/src/partials/ExportModal.tsx:416
 #: web/src/views/FindGalaxy.tsx:383
 #: web/src/views/FindStar.tsx:445
-#: web/src/views/Galaxy.tsx:203
+#: web/src/views/Galaxy.tsx:208
 msgid "Export"
 msgstr ""
 
@@ -508,7 +508,7 @@ msgstr ""
 msgid "Load"
 msgstr ""
 
-#: web/src/views/Galaxy.tsx:196
+#: web/src/views/Galaxy.tsx:197
 msgid "Loading..."
 msgstr ""
 
@@ -587,7 +587,7 @@ msgstr ""
 
 #: web/src/partials/ExportModal.tsx:295
 #: web/src/partials/ProgressEditor.tsx:50
-#: web/src/views/Galaxy.tsx:83
+#: web/src/views/Galaxy.tsx:84
 msgid "Number of stars"
 msgstr ""
 
@@ -697,7 +697,7 @@ msgstr ""
 msgid "Radius"
 msgstr ""
 
-#: web/src/views/Galaxy.tsx:73
+#: web/src/views/Galaxy.tsx:74
 msgid "Random"
 msgstr ""
 
@@ -708,7 +708,7 @@ msgstr ""
 
 #: web/src/partials/ExportModal.tsx:305
 #: web/src/partials/ProgressEditor.tsx:99
-#: web/src/views/Galaxy.tsx:89
+#: web/src/views/Galaxy.tsx:90
 msgid "Resource multiplier"
 msgstr ""
 
@@ -768,7 +768,7 @@ msgstr ""
 
 #: web/src/exporter/workbookGenerator.worker.tsx:53
 #: web/src/exporter/workbookGenerator.worker.tsx:77
-#: web/src/views/Galaxy.tsx:60
+#: web/src/views/Galaxy.tsx:61
 msgid "Seed"
 msgstr ""
 
@@ -813,6 +813,10 @@ msgstr ""
 
 #: web/src/partials/Header.tsx:24
 msgid "Star Finder"
+msgstr ""
+
+#: web/src/views/Galaxy.tsx:203
+msgid "Starmap"
 msgstr ""
 
 #: web/src/views/FindGalaxy.tsx:391
@@ -908,7 +912,7 @@ msgstr ""
 msgid "Vein amount"
 msgstr ""
 
-#: web/src/views/Galaxy.tsx:80
+#: web/src/views/Galaxy.tsx:81
 msgid "View"
 msgstr ""
 

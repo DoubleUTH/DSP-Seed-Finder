@@ -32,6 +32,7 @@ import HiveInitialColonizeSelector from "../partials/HiveInitialColonizeSelector
 import HiveMaxDensitySelector from "../partials/HiveMaxDensitySelector"
 import { useLingui } from "#lingui"
 import ExportModal from "../partials/ExportModal"
+import Starmap from "../partials/Starmap"
 
 function randomSeed() {
     return Math.floor(Math.random() * 1e8)
@@ -50,7 +51,7 @@ const Search: Component = () => {
     function handleSubmit(ev: Event) {
         ev.preventDefault()
         if (!isValueValid()) return
-        navigate(`/galaxy/${value()}/0${getSearch(store.settings.view)}`)
+        navigate(`/galaxy/${value()}${getSearch(store.settings.view)}`)
     }
 
     const { t } = useLingui()
@@ -116,7 +117,7 @@ const Search: Component = () => {
     )
 }
 
-const View: Component<{ seed: number; index: number }> = (props) => {
+const View: Component<{ seed: number; index?: number }> = (props) => {
     const [searchParams] = useSearchParams()
     const [exportModal, setExportModal] = createSignal(false)
 
@@ -197,33 +198,48 @@ const View: Component<{ seed: number; index: number }> = (props) => {
         >
             <div class={styles.view}>
                 <div class={styles.left}>
-                    <Button
-                        class={styles.export}
-                        onClick={() => setExportModal(true)}
-                    >{t`Export`}</Button>
-                    <For each={galaxy()!.stars}>
-                        {(star) => (
-                            <A
-                                href={buildUrl(star.index)}
-                                class={clsx(
-                                    styles.star,
-                                    star.index === props.index && styles.active,
-                                )}
-                            >
-                                <span>{star.name}</span>
-                                <span class={styles.index}>
-                                    #{star.index + 1}
-                                </span>
-                            </A>
-                        )}
-                    </For>
+                    <div class={styles.leftButtons}>
+                        <A href={`/galaxy/${props.seed}${search()}`}>
+                            <Button class={styles.export}>{t`Starmap`}</Button>
+                        </A>
+                        <Button
+                            class={styles.export}
+                            onClick={() => setExportModal(true)}
+                        >{t`Export`}</Button>
+                    </div>
+                    <div class={styles.starList}>
+                        <For each={galaxy()!.stars}>
+                            {(star) => (
+                                <A
+                                    href={buildUrl(star.index)}
+                                    class={clsx(
+                                        styles.star,
+                                        star.index === props.index &&
+                                            styles.active,
+                                    )}
+                                >
+                                    <span>{star.name}</span>
+                                    <span class={styles.index}>
+                                        #{star.index + 1}
+                                    </span>
+                                </A>
+                            )}
+                        </For>
+                    </div>
                 </div>
                 <div class={styles.right}>
-                    <StarView
-                        star={galaxy()!.stars[props.index]!}
-                        galaxy={galaxy()!}
-                        buildUrl={buildUrl}
-                    />
+                    <Show
+                        when={props.index !== undefined}
+                        fallback={
+                            <Starmap galaxy={galaxy()!} search={search()} />
+                        }
+                    >
+                        <StarView
+                            star={galaxy()!.stars[props.index!]!}
+                            galaxy={galaxy()!}
+                            buildUrl={buildUrl}
+                        />
+                    </Show>
                 </div>
             </div>
             <ExportModal
@@ -251,7 +267,11 @@ const Galaxy: Component = () => {
         <Show when={!!params.seed} fallback={<Search />}>
             <View
                 seed={Number(params.seed)}
-                index={Number(params.index) || 0}
+                index={
+                    params.index !== undefined
+                        ? Number(params.index) || 0
+                        : undefined
+                }
             />
         </Show>
     )

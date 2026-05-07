@@ -108,7 +108,7 @@ const SearchResult: Component<{
     )
 
     function buildUrl(item: MultiProgressResult) {
-        return `/galaxy/${item.seed}/0${searchString()}`
+        return `/galaxy/${item.seed}${searchString()}`
     }
 
     return (

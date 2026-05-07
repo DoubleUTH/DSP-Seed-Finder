@@ -49,6 +49,7 @@ declare global {
         dysonRadius: float
         initialHiveCount: integer
         maxHiveCount: integer
+        color: float
         planets: Planet[]
     }
 

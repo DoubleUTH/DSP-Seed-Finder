@@ -38,8 +38,19 @@
 .left {
     flex: none;
     width: 260px;
+    display: flex;
+    flex-direction: column;
+}
+
+.leftButtons {
+    flex: none;
+}
+
+.starList {
     overflow-y: auto;
     padding-bottom: 20px;
+    flex: 1 1 0;
+    min-height: 0;
 }
 
 .star {

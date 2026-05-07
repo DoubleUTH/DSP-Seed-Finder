@@ -568,7 +568,7 @@ impl Serialize for Star<'_> {
     where
         S: Serializer,
     {
-        let mut state = serializer.serialize_struct("Star", 13)?;
+        let mut state = serializer.serialize_struct("Star", 14)?;
         state.serialize_field("index", &self.index)?;
         state.serialize_field("position", &self.position)?;
         state.serialize_field("mass", &self.get_mass())?;
@@ -582,6 +582,7 @@ impl Serialize for Star<'_> {
         state.serialize_field("dysonRadius", &self.get_dyson_radius())?;
         state.serialize_field("initialHiveCount", &self.get_initial_hive_count())?;
         state.serialize_field("maxHiveCount", &self.get_max_hive_count())?;
+        state.serialize_field("color", &self.get_color())?;
         state.end()
     }
 }

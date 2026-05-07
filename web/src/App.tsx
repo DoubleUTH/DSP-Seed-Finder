@@ -30,6 +30,7 @@ const App: ParentComponent = (props) => {
                 >
                     <Header />
                     <div class={styles.content}>{props.children}</div>
+                    <div id="portal" />
                 </div>
             </I18nProvider>
         </StoreContext.Provider>

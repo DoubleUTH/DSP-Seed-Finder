@@ -96,6 +96,10 @@ async function execute(
               ? getGalaxyResults
               : () => [{ seed: start, indexes: [] }]
     const results = await fn(id, start, end)
+    if (format === "txt") {
+        const content = results.map(({ seed }) => seed).join("\n")
+        return new Blob([content], { type: "text/plain" })
+    }
     emitter.emit("start", results.length)
     let stopped = false
     emitter.once("stop", () => {
@@ -269,7 +273,7 @@ const ExportModal: Component<{
     return (
         <Modal visible={props.visible} onClose={props.onClose} backdropDismiss>
             <div class={styles.title}>{t`Export`}</div>
-            <Show when={props.mode !== "single"}>
+            <Show when={props.mode !== "single" && options.format !== "txt"}>
                 <div class={styles.warn}>
                     {t`Warning: Exporting too many seeds may cause out of memory error.`}
                 </div>
@@ -281,50 +285,64 @@ const ExportModal: Component<{
                         class={styles.inputStandard}
                         value={options.format}
                         onChange={(value) => setOptions("format", value)}
-                        options={["xlsx", "csv"] as const}
-                        getLabel={(value) => value}
-                    />
-                </div>
-                <div class={styles.label}>{t`Number of stars`}</div>
-                <div class={styles.input}>
-                    <StarCountSelector
-                        class={styles.inputStandard}
-                        value={options.params.starCount}
-                        onChange={(value) =>
-                            setOptions("params", "starCount", value)
+                        options={["xlsx", "csv", "txt"] as const}
+                        getLabel={(value) =>
+                            value === "txt" ? t`Seed only` : value
                         }
                     />
                 </div>
-                <div class={styles.label}>{t`Resource multiplier`}</div>
-                <div class={styles.input}>
-                    <ResourceMultiplierSelector
-                        class={styles.inputStandard}
-                        value={options.params.resourceMultiplier}
-                        onChange={(value) =>
-                            setOptions("params", "resourceMultiplier", value)
-                        }
-                    />
-                </div>
-                <div class={styles.label}>{t`Dark Fog initial occupation`}</div>
-                <div class={styles.input}>
-                    <HiveInitialColonizeSelector
-                        class={styles.inputStandard}
-                        value={options.params.hiveInitialColonize}
-                        onChange={(value) =>
-                            setOptions("params", "hiveInitialColonize", value)
-                        }
-                    />
-                </div>
-                <div class={styles.label}>{t`Dark Fog max density`}</div>
-                <div class={styles.input}>
-                    <HiveMaxDensitySelector
-                        class={styles.inputStandard}
-                        value={options.params.hiveMaxDensity}
-                        onChange={(value) =>
-                            setOptions("params", "hiveMaxDensity", value)
-                        }
-                    />
-                </div>
+                <Show when={options.format !== "txt"}>
+                    <div class={styles.label}>{t`Number of stars`}</div>
+                    <div class={styles.input}>
+                        <StarCountSelector
+                            class={styles.inputStandard}
+                            value={options.params.starCount}
+                            onChange={(value) =>
+                                setOptions("params", "starCount", value)
+                            }
+                        />
+                    </div>
+                    <div class={styles.label}>{t`Resource multiplier`}</div>
+                    <div class={styles.input}>
+                        <ResourceMultiplierSelector
+                            class={styles.inputStandard}
+                            value={options.params.resourceMultiplier}
+                            onChange={(value) =>
+                                setOptions(
+                                    "params",
+                                    "resourceMultiplier",
+                                    value,
+                                )
+                            }
+                        />
+                    </div>
+                    <div
+                        class={styles.label}
+                    >{t`Dark Fog initial occupation`}</div>
+                    <div class={styles.input}>
+                        <HiveInitialColonizeSelector
+                            class={styles.inputStandard}
+                            value={options.params.hiveInitialColonize}
+                            onChange={(value) =>
+                                setOptions(
+                                    "params",
+                                    "hiveInitialColonize",
+                                    value,
+                                )
+                            }
+                        />
+                    </div>
+                    <div class={styles.label}>{t`Dark Fog max density`}</div>
+                    <div class={styles.input}>
+                        <HiveMaxDensitySelector
+                            class={styles.inputStandard}
+                            value={options.params.hiveMaxDensity}
+                            onChange={(value) =>
+                                setOptions("params", "hiveMaxDensity", value)
+                            }
+                        />
+                    </div>
+                </Show>
                 <Show when={props.mode !== "single"}>
                     <div class={styles.label}>{t`Seed range`}</div>
                     <div class={styles.input}>
@@ -353,7 +371,7 @@ const ExportModal: Component<{
                         />
                     </div>
                 </Show>
-                <Show when={props.mode === "star"}>
+                <Show when={props.mode === "star" && options.format !== "txt"}>
                     <div class={styles.label}>
                         <Tooltip
                             text={t`Export all stars instead of only the matching ones`}
@@ -370,7 +388,9 @@ const ExportModal: Component<{
                         />
                     </div>
                 </Show>
-                <Show when={props.mode !== "single"}>
+                <Show
+                    when={props.mode !== "single" && options.format !== "txt"}
+                >
                     <div class={styles.label}>{t`Concurrency`}</div>
                     <div class={styles.input}>
                         <NumberInput

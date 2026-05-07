@@ -327,7 +327,7 @@ declare global {
 
     declare interface ExportOptions {
         language: Lang
-        format: "csv" | "xlsx"
+        format: "csv" | "xlsx" | "txt"
         concurrency: integer
         params: GameParameters
         exportAllStars: boolean // always true for galaxy finder

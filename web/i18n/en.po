@@ -13,8 +13,8 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: web/src/views/FindGalaxy.tsx:192
-#: web/src/views/FindStar.tsx:259
+#: web/src/views/FindGalaxy.tsx:188
+#: web/src/views/FindStar.tsx:255
 msgid " - Copy"
 msgstr ""
 
@@ -123,7 +123,7 @@ msgstr ""
 msgid "Clone"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:226
+#: web/src/partials/ExportModal.tsx:230
 msgid "Close"
 msgstr ""
 
@@ -132,12 +132,12 @@ msgstr ""
 msgid "Coal"
 msgstr ""
 
-#: web/src/views/FindGalaxy.tsx:403
-#: web/src/views/FindStar.tsx:465
+#: web/src/views/FindGalaxy.tsx:399
+#: web/src/views/FindStar.tsx:461
 msgid "Completed!"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:374
+#: web/src/partials/ExportModal.tsx:394
 #: web/src/partials/ProgressEditor.tsx:156
 msgid "Concurrency"
 msgstr ""
@@ -164,13 +164,13 @@ msgstr ""
 msgid "Cyclonius"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:308
+#: web/src/partials/ExportModal.tsx:321
 #: web/src/partials/ProgressEditor.tsx:135
 #: web/src/views/Galaxy.tsx:98
 msgid "Dark Fog initial occupation"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:318
+#: web/src/partials/ExportModal.tsx:335
 #: web/src/partials/ProgressEditor.tsx:177
 #: web/src/views/Galaxy.tsx:107
 msgid "Dark Fog max density"
@@ -232,11 +232,11 @@ msgstr ""
 msgid "Do you really want to delete all settings and progress? This cannot be undone."
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:150
+#: web/src/partials/ExportModal.tsx:154
 msgid "Done"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:218
+#: web/src/partials/ExportModal.tsx:222
 #: web/src/partials/ProgressEditor.tsx:130
 msgid "Download"
 msgstr ""
@@ -266,25 +266,25 @@ msgstr ""
 msgid "excluding"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:271
-#: web/src/partials/ExportModal.tsx:396
-#: web/src/views/FindGalaxy.tsx:387
-#: web/src/views/FindStar.tsx:449
+#: web/src/partials/ExportModal.tsx:275
+#: web/src/partials/ExportModal.tsx:416
+#: web/src/views/FindGalaxy.tsx:383
+#: web/src/views/FindStar.tsx:445
 #: web/src/views/Galaxy.tsx:203
 msgid "Export"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:361
+#: web/src/partials/ExportModal.tsx:379
 msgid "Export all"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:359
+#: web/src/partials/ExportModal.tsx:377
 msgid "Export all stars instead of only the matching ones"
 msgstr ""
 
 #. placeholder {0}: progress()
 #. placeholder {1}: total()
-#: web/src/partials/ExportModal.tsx:146
+#: web/src/partials/ExportModal.tsx:150
 msgid "Exporting {0} / {1}"
 msgstr ""
 
@@ -295,7 +295,7 @@ msgstr ""
 msgid "Fire Ice"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:278
+#: web/src/partials/ExportModal.tsx:282
 msgid "Format"
 msgstr ""
 
@@ -339,7 +339,7 @@ msgstr ""
 msgid "Geloterra"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:148
+#: web/src/partials/ExportModal.tsx:152
 msgid "Generating file"
 msgstr ""
 
@@ -585,7 +585,7 @@ msgstr ""
 msgid "not equal to"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:288
+#: web/src/partials/ExportModal.tsx:295
 #: web/src/partials/ProgressEditor.tsx:50
 #: web/src/views/Galaxy.tsx:83
 msgid "Number of stars"
@@ -650,8 +650,8 @@ msgstr ""
 msgid "Pandora Swamp"
 msgstr ""
 
-#: web/src/views/FindGalaxy.tsx:400
-#: web/src/views/FindStar.tsx:462
+#: web/src/views/FindGalaxy.tsx:396
+#: web/src/views/FindStar.tsx:458
 msgid "Pause"
 msgstr ""
 
@@ -687,8 +687,8 @@ msgstr ""
 msgid "Profiles"
 msgstr ""
 
-#: web/src/views/FindGalaxy.tsx:376
-#: web/src/views/FindStar.tsx:438
+#: web/src/views/FindGalaxy.tsx:372
+#: web/src/views/FindStar.tsx:434
 msgid "Progress:"
 msgstr ""
 
@@ -706,7 +706,7 @@ msgstr ""
 msgid "Red Giant"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:298
+#: web/src/partials/ExportModal.tsx:305
 #: web/src/partials/ProgressEditor.tsx:99
 #: web/src/views/Galaxy.tsx:89
 msgid "Resource multiplier"
@@ -716,12 +716,12 @@ msgstr ""
 msgid "Resources"
 msgstr ""
 
-#: web/src/views/FindGalaxy.tsx:395
-#: web/src/views/FindStar.tsx:457
+#: web/src/views/FindGalaxy.tsx:391
+#: web/src/views/FindStar.tsx:453
 msgid "Resume"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:144
+#: web/src/partials/ExportModal.tsx:148
 msgid "Retriving data"
 msgstr ""
 
@@ -729,8 +729,8 @@ msgstr ""
 msgid "Rotation period"
 msgstr ""
 
-#: web/src/views/FindGalaxy.tsx:362
-#: web/src/views/FindStar.tsx:424
+#: web/src/views/FindGalaxy.tsx:358
+#: web/src/views/FindStar.tsx:420
 msgid "Rules"
 msgstr ""
 
@@ -772,12 +772,16 @@ msgstr ""
 msgid "Seed"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:329
+#: web/src/partials/ExportModal.tsx:290
+msgid "Seed only"
+msgstr ""
+
+#: web/src/partials/ExportModal.tsx:347
 #: web/src/partials/ProgressEditor.tsx:63
 msgid "Seed range"
 msgstr ""
 
-#: web/src/views/FindStar.tsx:95
+#: web/src/views/FindStar.tsx:93
 msgid "Seed: "
 msgstr ""
 
@@ -811,8 +815,8 @@ msgstr ""
 msgid "Star Finder"
 msgstr ""
 
-#: web/src/views/FindGalaxy.tsx:395
-#: web/src/views/FindStar.tsx:457
+#: web/src/views/FindGalaxy.tsx:391
+#: web/src/views/FindStar.tsx:453
 msgid "Start"
 msgstr ""
 
@@ -825,7 +829,7 @@ msgstr ""
 msgid "Stone"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:226
+#: web/src/partials/ExportModal.tsx:230
 msgid "Stop"
 msgstr ""
 
@@ -895,8 +899,8 @@ msgstr ""
 msgid "Unipolar Magnet"
 msgstr ""
 
-#: web/src/views/FindGalaxy.tsx:137
-#: web/src/views/FindStar.tsx:204
+#: web/src/views/FindGalaxy.tsx:135
+#: web/src/views/FindStar.tsx:202
 msgid "Untitled"
 msgstr ""
 
@@ -908,11 +912,11 @@ msgstr ""
 msgid "View"
 msgstr ""
 
-#: web/src/views/FindStar.tsx:103
+#: web/src/views/FindStar.tsx:101
 msgid "View in new tab"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:274
+#: web/src/partials/ExportModal.tsx:278
 msgid "Warning: Exporting too many seeds may cause out of memory error."
 msgstr ""
 

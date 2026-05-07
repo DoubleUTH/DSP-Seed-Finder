@@ -13,8 +13,8 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: web/src/views/FindGalaxy.tsx:192
-#: web/src/views/FindStar.tsx:259
+#: web/src/views/FindGalaxy.tsx:188
+#: web/src/views/FindStar.tsx:255
 msgid " - Copy"
 msgstr " - 副本"
 
@@ -123,7 +123,7 @@ msgstr "清空"
 msgid "Clone"
 msgstr "拷贝"
 
-#: web/src/partials/ExportModal.tsx:226
+#: web/src/partials/ExportModal.tsx:230
 msgid "Close"
 msgstr "关闭"
 
@@ -132,12 +132,12 @@ msgstr "关闭"
 msgid "Coal"
 msgstr "煤矿"
 
-#: web/src/views/FindGalaxy.tsx:403
-#: web/src/views/FindStar.tsx:465
+#: web/src/views/FindGalaxy.tsx:399
+#: web/src/views/FindStar.tsx:461
 msgid "Completed!"
 msgstr "完成！"
 
-#: web/src/partials/ExportModal.tsx:374
+#: web/src/partials/ExportModal.tsx:394
 #: web/src/partials/ProgressEditor.tsx:156
 msgid "Concurrency"
 msgstr "线程并发"
@@ -164,13 +164,13 @@ msgstr "原油"
 msgid "Cyclonius"
 msgstr "飓风石林"
 
-#: web/src/partials/ExportModal.tsx:308
+#: web/src/partials/ExportModal.tsx:321
 #: web/src/partials/ProgressEditor.tsx:135
 #: web/src/views/Galaxy.tsx:98
 msgid "Dark Fog initial occupation"
 msgstr "黑雾初始占领情况"
 
-#: web/src/partials/ExportModal.tsx:318
+#: web/src/partials/ExportModal.tsx:335
 #: web/src/partials/ProgressEditor.tsx:177
 #: web/src/views/Galaxy.tsx:107
 msgid "Dark Fog max density"
@@ -232,11 +232,11 @@ msgstr "您确定要创建新配置吗？所有未保存的更改将丢失。"
 msgid "Do you really want to delete all settings and progress? This cannot be undone."
 msgstr "您确定要删除所有设置和进度吗？此操作无法撤销。"
 
-#: web/src/partials/ExportModal.tsx:150
+#: web/src/partials/ExportModal.tsx:154
 msgid "Done"
 msgstr "完成"
 
-#: web/src/partials/ExportModal.tsx:218
+#: web/src/partials/ExportModal.tsx:222
 #: web/src/partials/ProgressEditor.tsx:130
 msgid "Download"
 msgstr "下载"
@@ -266,25 +266,25 @@ msgstr "等于"
 msgid "excluding"
 msgstr "不包括"
 
-#: web/src/partials/ExportModal.tsx:271
-#: web/src/partials/ExportModal.tsx:396
-#: web/src/views/FindGalaxy.tsx:387
-#: web/src/views/FindStar.tsx:449
+#: web/src/partials/ExportModal.tsx:275
+#: web/src/partials/ExportModal.tsx:416
+#: web/src/views/FindGalaxy.tsx:383
+#: web/src/views/FindStar.tsx:445
 #: web/src/views/Galaxy.tsx:203
 msgid "Export"
 msgstr "汇出"
 
-#: web/src/partials/ExportModal.tsx:361
+#: web/src/partials/ExportModal.tsx:379
 msgid "Export all"
 msgstr "汇出所有"
 
-#: web/src/partials/ExportModal.tsx:359
+#: web/src/partials/ExportModal.tsx:377
 msgid "Export all stars instead of only the matching ones"
 msgstr "导出所有恒星而不仅仅是匹配的恒星"
 
 #. placeholder {0}: progress()
 #. placeholder {1}: total()
-#: web/src/partials/ExportModal.tsx:146
+#: web/src/partials/ExportModal.tsx:150
 msgid "Exporting {0} / {1}"
 msgstr "导出中 {0} / {1}"
 
@@ -295,7 +295,7 @@ msgstr "导出中 {0} / {1}"
 msgid "Fire Ice"
 msgstr "可燃冰"
 
-#: web/src/partials/ExportModal.tsx:278
+#: web/src/partials/ExportModal.tsx:282
 msgid "Format"
 msgstr "格式"
 
@@ -339,7 +339,7 @@ msgstr "气态/冰巨行星数量"
 msgid "Geloterra"
 msgstr "冰原冻土"
 
-#: web/src/partials/ExportModal.tsx:148
+#: web/src/partials/ExportModal.tsx:152
 msgid "Generating file"
 msgstr "生成档案中"
 
@@ -585,7 +585,7 @@ msgstr "恒星"
 msgid "not equal to"
 msgstr "不等于"
 
-#: web/src/partials/ExportModal.tsx:288
+#: web/src/partials/ExportModal.tsx:295
 #: web/src/partials/ProgressEditor.tsx:50
 #: web/src/views/Galaxy.tsx:83
 msgid "Number of stars"
@@ -650,8 +650,8 @@ msgstr "有机晶体"
 msgid "Pandora Swamp"
 msgstr "潘多拉沼泽"
 
-#: web/src/views/FindGalaxy.tsx:400
-#: web/src/views/FindStar.tsx:462
+#: web/src/views/FindGalaxy.tsx:396
+#: web/src/views/FindStar.tsx:458
 msgid "Pause"
 msgstr "暂停"
 
@@ -687,8 +687,8 @@ msgstr "配置:"
 msgid "Profiles"
 msgstr "配置"
 
-#: web/src/views/FindGalaxy.tsx:376
-#: web/src/views/FindStar.tsx:438
+#: web/src/views/FindGalaxy.tsx:372
+#: web/src/views/FindStar.tsx:434
 msgid "Progress:"
 msgstr "进度:"
 
@@ -706,7 +706,7 @@ msgstr "随机"
 msgid "Red Giant"
 msgstr "红巨星"
 
-#: web/src/partials/ExportModal.tsx:298
+#: web/src/partials/ExportModal.tsx:305
 #: web/src/partials/ProgressEditor.tsx:99
 #: web/src/views/Galaxy.tsx:89
 msgid "Resource multiplier"
@@ -716,12 +716,12 @@ msgstr "资源倍率"
 msgid "Resources"
 msgstr "资源"
 
-#: web/src/views/FindGalaxy.tsx:395
-#: web/src/views/FindStar.tsx:457
+#: web/src/views/FindGalaxy.tsx:391
+#: web/src/views/FindStar.tsx:453
 msgid "Resume"
 msgstr "继续"
 
-#: web/src/partials/ExportModal.tsx:144
+#: web/src/partials/ExportModal.tsx:148
 msgid "Retriving data"
 msgstr "检索数据中"
 
@@ -729,8 +729,8 @@ msgstr "检索数据中"
 msgid "Rotation period"
 msgstr "自转周期"
 
-#: web/src/views/FindGalaxy.tsx:362
-#: web/src/views/FindStar.tsx:424
+#: web/src/views/FindGalaxy.tsx:358
+#: web/src/views/FindStar.tsx:420
 msgid "Rules"
 msgstr "条件"
 
@@ -772,12 +772,16 @@ msgstr "焦土"
 msgid "Seed"
 msgstr "种子"
 
-#: web/src/partials/ExportModal.tsx:329
+#: web/src/partials/ExportModal.tsx:290
+msgid "Seed only"
+msgstr "只汇出种子"
+
+#: web/src/partials/ExportModal.tsx:347
 #: web/src/partials/ProgressEditor.tsx:63
 msgid "Seed range"
 msgstr "种子范围"
 
-#: web/src/views/FindStar.tsx:95
+#: web/src/views/FindStar.tsx:93
 msgid "Seed: "
 msgstr "种子: "
 
@@ -811,8 +815,8 @@ msgstr "刺笋结晶"
 msgid "Star Finder"
 msgstr "恒星查找器"
 
-#: web/src/views/FindGalaxy.tsx:395
-#: web/src/views/FindStar.tsx:457
+#: web/src/views/FindGalaxy.tsx:391
+#: web/src/views/FindStar.tsx:453
 msgid "Start"
 msgstr "开始搜索"
 
@@ -825,7 +829,7 @@ msgstr "初始星系"
 msgid "Stone"
 msgstr "石矿"
 
-#: web/src/partials/ExportModal.tsx:226
+#: web/src/partials/ExportModal.tsx:230
 msgid "Stop"
 msgstr "停止"
 
@@ -895,8 +899,8 @@ msgstr "恒星类型"
 msgid "Unipolar Magnet"
 msgstr "单极磁石"
 
-#: web/src/views/FindGalaxy.tsx:137
-#: web/src/views/FindStar.tsx:204
+#: web/src/views/FindGalaxy.tsx:135
+#: web/src/views/FindStar.tsx:202
 msgid "Untitled"
 msgstr "未命名"
 
@@ -908,11 +912,11 @@ msgstr "资源储量"
 msgid "View"
 msgstr "查看"
 
-#: web/src/views/FindStar.tsx:103
+#: web/src/views/FindStar.tsx:101
 msgid "View in new tab"
 msgstr "在新标签页中查看"
 
-#: web/src/partials/ExportModal.tsx:274
+#: web/src/partials/ExportModal.tsx:278
 msgid "Warning: Exporting too many seeds may cause out of memory error."
 msgstr "警告：导出过多种子可能会导致内存不足错误"
 

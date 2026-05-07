@@ -16,8 +16,7 @@ import {
     constructMultiRule,
     defaultHiveInitialColonize,
     defaultHiveMaxDensity,
-    defaultResourceMultiplier,
-    defaultStarCount,
+    getDefaultParams,
     getSearch,
     maxStarCount,
     minStarCount,
@@ -52,10 +51,7 @@ const PAGE_SIZE = 100
 
 const defaultProgress: () => MultiProfileProgress = () => ({
     id: "",
-    starCount: defaultStarCount,
-    resourceMultiplier: defaultResourceMultiplier,
-    hiveInitialColonize: defaultHiveInitialColonize,
-    hiveMaxDensity: defaultHiveMaxDensity,
+    params: getDefaultParams(),
     concurrency: navigator.hardwareConcurrency,
     autosave: 5,
     start: 0,
@@ -77,22 +73,12 @@ const SearchResult: Component<{
     id: string
     page: integer
     updateKey: number
-    starCount: integer
-    resourceMultiplier: float
-    hiveInitialColonize: float
-    hiveMaxDensity: float
+    params: GameParameters
 }> = (props) => {
     const [results, setResults] = createSignal<MultiProgressResult[]>([])
     let isLoading = -1
 
-    const searchString = createMemo(() =>
-        getSearch({
-            count: props.starCount,
-            multiplier: props.resourceMultiplier,
-            hiveInitialColonize: props.hiveInitialColonize,
-            hiveMaxDensity: props.hiveMaxDensity,
-        }),
-    )
+    const searchString = createMemo(() => getSearch(props.params))
 
     function update() {
         if (isLoading === props.page) return
@@ -182,8 +168,8 @@ const FindGalaxy: Component = () => {
     async function onSelectProfile(profile: ProfileInfo) {
         const progress = await getMultiProfileProgress(profile.id)
         if (progress) {
-            progress.hiveInitialColonize ??= defaultHiveInitialColonize
-            progress.hiveMaxDensity ??= defaultHiveMaxDensity
+            progress.params.hiveInitialColonize ??= defaultHiveInitialColonize
+            progress.params.hiveMaxDensity ??= defaultHiveMaxDensity
             batch(() => {
                 changeProfile(profile)
                 setProgress(progress)
@@ -216,8 +202,8 @@ const FindGalaxy: Component = () => {
             progress.start < 0 ||
             progress.end > 1e8 ||
             progress.start >= progress.end ||
-            progress.starCount < minStarCount ||
-            progress.starCount > maxStarCount ||
+            progress.params.starCount < minStarCount ||
+            progress.params.starCount > maxStarCount ||
             !Number.isInteger(progress.concurrency) ||
             progress.concurrency < 1 ||
             progress.autosave <= 0
@@ -287,12 +273,7 @@ const FindGalaxy: Component = () => {
         setStore("searching", true)
         let results: FindResult[] = []
         getWorldGen(nativeMode()).find({
-            gameDesc: {
-                resourceMultiplier: progress.resourceMultiplier,
-                starCount: progress.starCount,
-                hiveInitialColonize: progress.hiveInitialColonize,
-                hiveMaxDensity: progress.hiveMaxDensity,
-            },
+            gameDesc: progress.params,
             range: [Math.max(progress.start, progress.current), progress.end],
             concurrency: progress.concurrency,
             autosave: progress.autosave,
@@ -438,10 +419,7 @@ const FindGalaxy: Component = () => {
                     id={profile()!.id}
                     page={currentPage()}
                     updateKey={tick()}
-                    starCount={progress.starCount}
-                    resourceMultiplier={progress.resourceMultiplier}
-                    hiveInitialColonize={progress.hiveInitialColonize}
-                    hiveMaxDensity={progress.hiveMaxDensity}
+                    params={progress.params}
                 />
             </Show>
             <ProfilesModal
@@ -456,10 +434,7 @@ const FindGalaxy: Component = () => {
                 mode="galaxy"
                 id={profile()?.id || ""}
                 name={profile()?.name || ""}
-                starCount={progress.starCount}
-                resourceMultiplier={progress.resourceMultiplier}
-                hiveInitialColonize={progress.hiveInitialColonize}
-                hiveMaxDensity={progress.hiveMaxDensity}
+                params={progress.params}
             />
         </div>
     )

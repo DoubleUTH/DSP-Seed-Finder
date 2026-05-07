@@ -1,11 +1,6 @@
 import { createContext, useContext } from "solid-js"
 import { SetStoreFunction } from "solid-js/store"
-import {
-    defaultHiveInitialColonize,
-    defaultHiveMaxDensity,
-    defaultResourceMultiplier,
-    defaultStarCount,
-} from "./util"
+import { getDefaultParams } from "./util"
 import { isInitialDarkMode, getInitialLanguage } from "./localStorage"
 
 export const defaultStore: Store = {
@@ -14,12 +9,7 @@ export const defaultStore: Store = {
             window.matchMedia("(prefers-color-scheme: dark)").matches,
         ),
         language: getInitialLanguage(),
-        view: {
-            starCount: defaultStarCount,
-            resourceMultiplier: defaultResourceMultiplier,
-            hiveInitialColonize: defaultHiveInitialColonize,
-            hiveMaxDensity: defaultHiveMaxDensity,
-        },
+        view: getDefaultParams(),
     },
     searching: false,
 }

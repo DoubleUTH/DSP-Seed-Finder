@@ -50,14 +50,7 @@ const Search: Component = () => {
     function handleSubmit(ev: Event) {
         ev.preventDefault()
         if (!isValueValid()) return
-        navigate(
-            `/galaxy/${value()}/0${getSearch({
-                count: store.settings.view.starCount,
-                multiplier: store.settings.view.resourceMultiplier,
-                hiveInitialColonize: store.settings.view.hiveInitialColonize,
-                hiveMaxDensity: store.settings.view.hiveMaxDensity,
-            })}`,
-        )
+        navigate(`/galaxy/${value()}/0${getSearch(store.settings.view)}`)
     }
 
     const { t } = useLingui()
@@ -184,8 +177,8 @@ const View: Component<{ seed: number; index: number }> = (props) => {
 
     const search = createMemo(() =>
         getSearch({
-            count: starCount(),
-            multiplier: resourceMultiplier(),
+            starCount: starCount(),
+            resourceMultiplier: resourceMultiplier(),
             hiveInitialColonize: hiveInitialColonize(),
             hiveMaxDensity: hiveMaxDensity(),
         }),
@@ -240,10 +233,12 @@ const View: Component<{ seed: number; index: number }> = (props) => {
                 id=""
                 name={String(props.seed)}
                 singleSeed={props.seed}
-                starCount={starCount()}
-                resourceMultiplier={resourceMultiplier()}
-                hiveInitialColonize={hiveInitialColonize()}
-                hiveMaxDensity={hiveMaxDensity()}
+                params={{
+                    starCount: starCount(),
+                    resourceMultiplier: resourceMultiplier(),
+                    hiveInitialColonize: hiveInitialColonize(),
+                    hiveMaxDensity: hiveMaxDensity(),
+                }}
             />
         </Show>
     )

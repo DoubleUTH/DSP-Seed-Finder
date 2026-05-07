@@ -85,6 +85,14 @@ export const hiveMaxDensityValues: ReadonlyArray<float> = [1, 1.5, 2, 2.5, 3]
 export const defaultResourceMultiplier = 1
 export const defaultHiveInitialColonize = 1
 export const defaultHiveMaxDensity = 1
+export function getDefaultParams(): GameParameters {
+    return {
+        starCount: defaultStarCount,
+        resourceMultiplier: defaultResourceMultiplier,
+        hiveInitialColonize: defaultHiveInitialColonize,
+        hiveMaxDensity: defaultHiveMaxDensity,
+    }
+}
 
 export const veinOrder: VeinType[] = [
     VeinType.Iron,
@@ -121,22 +129,17 @@ export function statVein(vein: Vein): VeinStat {
 }
 
 export function getSearch({
-    count,
-    multiplier,
+    starCount,
+    resourceMultiplier,
     hiveInitialColonize,
     hiveMaxDensity,
-}: {
-    count: integer
-    multiplier: float
-    hiveInitialColonize: integer
-    hiveMaxDensity: float
-}) {
+}: GameParameters) {
     const params = new URLSearchParams()
-    if (count !== defaultStarCount) {
-        params.set("count", String(count))
+    if (starCount !== defaultStarCount) {
+        params.set("count", String(starCount))
     }
-    if (multiplier !== defaultResourceMultiplier) {
-        params.set("multiplier", String(multiplier))
+    if (resourceMultiplier !== defaultResourceMultiplier) {
+        params.set("multiplier", String(resourceMultiplier))
     }
     if (hiveInitialColonize !== defaultHiveInitialColonize) {
         params.set("hiveInitialColonize", String(hiveInitialColonize))

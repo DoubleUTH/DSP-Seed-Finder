@@ -16,12 +16,15 @@ declare global {
     declare type integer = number
     declare type float = number
 
-    declare interface GameDesc {
+    declare interface GameParameters {
+        starCount: integer
+        resourceMultiplier: float
+        hiveInitialColonize: float
+        hiveMaxDensity: float
+    }
+
+    declare interface GameDesc extends GameParameters {
         seed: integer
-        starCount?: integer
-        resourceMultiplier?: float
-        hiveInitialColonize?: float
-        hiveMaxDensity?: float
     }
 
     declare interface Galaxy {
@@ -274,12 +277,7 @@ declare global {
     declare interface Settings {
         darkMode: boolean
         language: Lang
-        view: {
-            starCount: integer
-            resourceMultiplier: float
-            hiveInitialColonize: float
-            hiveMaxDensity: float
-        }
+        view: GameParameters
     }
 
     declare interface ProfileInfo {
@@ -290,10 +288,7 @@ declare global {
 
     declare interface ProfileProgressInfo {
         id: string
-        starCount: integer
-        resourceMultiplier: float
-        hiveInitialColonize: float
-        hiveMaxDensity: float
+        params: GameParameters
         autosave: float
         concurrency: integer
         start: integer
@@ -334,10 +329,7 @@ declare global {
         language: Lang
         format: "csv" | "xlsx"
         concurrency: integer
-        starCount: integer
-        resourceMultiplier: float
-        hiveInitialColonize: float
-        hiveMaxDensity: float
+        params: GameParameters
         exportAllStars: boolean // always true for galaxy finder
         results: FindResult[]
         onProgress: (current: integer) => boolean

@@ -11,10 +11,11 @@ import NumberInput from "../components/NumberInput"
 import HiveInitialColonizeSelector from "./HiveInitialColonizeSelector"
 import HiveMaxDensitySelector from "./HiveMaxDensitySelector"
 import { Trans, useLingui } from "#lingui"
+import type { SetStoreFunction } from "solid-js/store"
 
-function ProgressEditor<E extends ProfileProgressInfo>(props: {
-    progress: E
-    onProgressChange: <K extends keyof E>(key: K, v: E[K]) => void
+function ProgressEditor(props: {
+    progress: ProfileProgressInfo
+    onProgressChange: SetStoreFunction<ProfileProgressInfo>
     name: string
     onNameChange: (v: string) => void
     nativeMode: boolean
@@ -50,9 +51,9 @@ function ProgressEditor<E extends ProfileProgressInfo>(props: {
                 <div class={styles.input}>
                     <StarCountSelector
                         class={styles.inputStandard}
-                        value={props.progress.starCount}
+                        value={props.progress.params.starCount}
                         onChange={(value) =>
-                            props.onProgressChange("starCount", value)
+                            props.onProgressChange("params", "starCount", value)
                         }
                         disabled={isDisabled()}
                     />
@@ -99,9 +100,13 @@ function ProgressEditor<E extends ProfileProgressInfo>(props: {
                 <div class={styles.input}>
                     <ResourceMultiplierSelector
                         class={styles.inputStandard}
-                        value={props.progress.resourceMultiplier}
+                        value={props.progress.params.resourceMultiplier}
                         onChange={(value) =>
-                            props.onProgressChange("resourceMultiplier", value)
+                            props.onProgressChange(
+                                "params",
+                                "resourceMultiplier",
+                                value,
+                            )
                         }
                         disabled={isDisabled()}
                     />
@@ -131,9 +136,13 @@ function ProgressEditor<E extends ProfileProgressInfo>(props: {
                 <div class={styles.input}>
                     <HiveInitialColonizeSelector
                         class={styles.inputStandard}
-                        value={props.progress.hiveInitialColonize}
+                        value={props.progress.params.hiveInitialColonize}
                         onChange={(value) =>
-                            props.onProgressChange("hiveInitialColonize", value)
+                            props.onProgressChange(
+                                "params",
+                                "hiveInitialColonize",
+                                value,
+                            )
                         }
                         disabled={isDisabled()}
                     />
@@ -169,9 +178,13 @@ function ProgressEditor<E extends ProfileProgressInfo>(props: {
                 <div class={styles.input}>
                     <HiveMaxDensitySelector
                         class={styles.inputStandard}
-                        value={props.progress.hiveMaxDensity}
+                        value={props.progress.params.hiveMaxDensity}
                         onChange={(value) =>
-                            props.onProgressChange("hiveMaxDensity", value)
+                            props.onProgressChange(
+                                "params",
+                                "hiveMaxDensity",
+                                value,
+                            )
                         }
                         disabled={isDisabled()}
                     />

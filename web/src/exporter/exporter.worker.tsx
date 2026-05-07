@@ -235,43 +235,24 @@ function generateExportData(
 }
 
 let loadPromise:
-    | Promise<
-          Pick<
-              ExportOptions,
-              | "exportAllStars"
-              | "starCount"
-              | "resourceMultiplier"
-              | "hiveInitialColonize"
-              | "hiveMaxDensity"
-          >
-      >
+    | Promise<Pick<ExportOptions, "exportAllStars" | "params">>
     | undefined
 
 self.onmessage = (ev) => {
     if (!loadPromise) {
-        const {
-            starCount = 64,
-            resourceMultiplier = 1,
-            hiveInitialColonize = 1,
-            hiveMaxDensity = 1,
-            exportAllStars,
-            language,
-        } = ev.data
+        const { params, exportAllStars, language } = ev.data
         loadPromise = initPromise
             .then(() => loadLanguage(language))
             .then(() => ({
-                starCount,
-                resourceMultiplier,
-                hiveInitialColonize,
-                hiveMaxDensity,
+                params,
                 exportAllStars,
             }))
         return
     }
     const { seed, indexes } = ev.data
 
-    loadPromise.then(({ exportAllStars, ...options }) => {
-        const result = generate({ seed, ...options })
+    loadPromise.then(({ exportAllStars, params }) => {
+        const result = generate({ seed, ...params })
         const data = generateExportData(result, indexes, exportAllStars)
         self.postMessage(data)
     })

@@ -13,8 +13,8 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: web/src/views/FindGalaxy.tsx:206
-#: web/src/views/FindStar.tsx:282
+#: web/src/views/FindGalaxy.tsx:192
+#: web/src/views/FindStar.tsx:259
 msgid " - Copy"
 msgstr ""
 
@@ -24,15 +24,15 @@ msgstr ""
 msgid "{0} type Star"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:43
+#: web/src/exporter/workbookGenerator.worker.tsx:42
 msgid "{name} (Avg)"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:43
+#: web/src/exporter/workbookGenerator.worker.tsx:42
 msgid "{name} (Max)"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:43
+#: web/src/exporter/workbookGenerator.worker.tsx:42
 msgid "{name} (Min)"
 msgstr ""
 
@@ -40,7 +40,7 @@ msgstr ""
 msgid "<0/> number of hives is <1/>."
 msgstr ""
 
-#: web/src/partials/ProgressEditor.tsx:64
+#: web/src/partials/ProgressEditor.tsx:65
 msgid "<0/> to <1/>"
 msgstr ""
 
@@ -54,7 +54,7 @@ msgstr ""
 msgid "Add OR rule"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:61
+#: web/src/exporter/workbookGenerator.worker.tsx:60
 #: web/src/partials/StarView.tsx:242
 msgid "Age"
 msgstr ""
@@ -89,7 +89,7 @@ msgstr ""
 msgid "at most"
 msgstr ""
 
-#: web/src/partials/ProgressEditor.tsx:185
+#: web/src/partials/ProgressEditor.tsx:198
 msgid "Autosave interval"
 msgstr ""
 
@@ -123,22 +123,22 @@ msgstr ""
 msgid "Clone"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:244
+#: web/src/partials/ExportModal.tsx:226
 msgid "Close"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:22
+#: web/src/exporter/workbookGenerator.worker.tsx:21
 #: web/src/names.tsx:68
 msgid "Coal"
 msgstr ""
 
-#: web/src/views/FindGalaxy.tsx:422
-#: web/src/views/FindStar.tsx:493
+#: web/src/views/FindGalaxy.tsx:403
+#: web/src/views/FindStar.tsx:465
 msgid "Completed!"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:399
-#: web/src/partials/ProgressEditor.tsx:147
+#: web/src/partials/ExportModal.tsx:374
+#: web/src/partials/ProgressEditor.tsx:156
 msgid "Concurrency"
 msgstr ""
 
@@ -146,7 +146,7 @@ msgstr ""
 msgid "Confirm"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:18
+#: web/src/exporter/workbookGenerator.worker.tsx:17
 #: web/src/names.tsx:64
 msgid "Copper Ore"
 msgstr ""
@@ -155,7 +155,7 @@ msgstr ""
 msgid "Crimsonis"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:23
+#: web/src/exporter/workbookGenerator.worker.tsx:22
 #: web/src/names.tsx:69
 msgid "Crude Oil"
 msgstr ""
@@ -164,15 +164,15 @@ msgstr ""
 msgid "Cyclonius"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:333
-#: web/src/partials/ProgressEditor.tsx:130
-#: web/src/views/Galaxy.tsx:105
+#: web/src/partials/ExportModal.tsx:308
+#: web/src/partials/ProgressEditor.tsx:135
+#: web/src/views/Galaxy.tsx:98
 msgid "Dark Fog initial occupation"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:343
-#: web/src/partials/ProgressEditor.tsx:168
-#: web/src/views/Galaxy.tsx:114
+#: web/src/partials/ExportModal.tsx:318
+#: web/src/partials/ProgressEditor.tsx:177
+#: web/src/views/Galaxy.tsx:107
 msgid "Dark Fog max density"
 msgstr ""
 
@@ -185,7 +185,7 @@ msgstr ""
 msgid "Desolus"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:37
+#: web/src/exporter/workbookGenerator.worker.tsx:36
 #: web/src/names.tsx:16
 msgid "Deuterium"
 msgstr ""
@@ -194,7 +194,7 @@ msgstr ""
 msgid "Distance from furthest <0/>"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:70
+#: web/src/exporter/workbookGenerator.worker.tsx:69
 msgid "Distance from furthest X star"
 msgstr ""
 
@@ -202,7 +202,7 @@ msgstr ""
 msgid "Distance from nearest <0/>"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:69
+#: web/src/exporter/workbookGenerator.worker.tsx:68
 msgid "Distance from nearest X star"
 msgstr ""
 
@@ -210,7 +210,7 @@ msgstr ""
 msgid "Distance from other stars"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:68
+#: web/src/exporter/workbookGenerator.worker.tsx:67
 #: web/src/names.tsx:40
 #: web/src/partials/StarView.tsx:165
 msgid "Distance from start"
@@ -232,12 +232,12 @@ msgstr ""
 msgid "Do you really want to delete all settings and progress? This cannot be undone."
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:168
+#: web/src/partials/ExportModal.tsx:150
 msgid "Done"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:236
-#: web/src/partials/ProgressEditor.tsx:125
+#: web/src/partials/ExportModal.tsx:218
+#: web/src/partials/ProgressEditor.tsx:130
 msgid "Download"
 msgstr ""
 
@@ -253,7 +253,7 @@ msgid ""
 "{0} - {1}"
 msgstr ""
 
-#: web/src/partials/ProgressEditor.tsx:189
+#: web/src/partials/ProgressEditor.tsx:202
 msgid "Every <0/> seconds"
 msgstr ""
 
@@ -266,40 +266,40 @@ msgstr ""
 msgid "excluding"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:298
-#: web/src/partials/ExportModal.tsx:421
-#: web/src/views/FindGalaxy.tsx:406
-#: web/src/views/FindStar.tsx:477
-#: web/src/views/Galaxy.tsx:210
+#: web/src/partials/ExportModal.tsx:271
+#: web/src/partials/ExportModal.tsx:396
+#: web/src/views/FindGalaxy.tsx:387
+#: web/src/views/FindStar.tsx:449
+#: web/src/views/Galaxy.tsx:203
 msgid "Export"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:386
+#: web/src/partials/ExportModal.tsx:361
 msgid "Export all"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:384
+#: web/src/partials/ExportModal.tsx:359
 msgid "Export all stars instead of only the matching ones"
 msgstr ""
 
 #. placeholder {0}: progress()
 #. placeholder {1}: total()
-#: web/src/partials/ExportModal.tsx:164
+#: web/src/partials/ExportModal.tsx:146
 msgid "Exporting {0} / {1}"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:24
-#: web/src/exporter/exporterManager.worker.tsx:35
+#: web/src/exporter/workbookGenerator.worker.tsx:23
+#: web/src/exporter/workbookGenerator.worker.tsx:34
 #: web/src/names.tsx:17
 #: web/src/names.tsx:70
 msgid "Fire Ice"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:305
+#: web/src/partials/ExportModal.tsx:278
 msgid "Format"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:26
+#: web/src/exporter/workbookGenerator.worker.tsx:25
 #: web/src/names.tsx:72
 msgid "Fractal Silicon"
 msgstr ""
@@ -339,7 +339,7 @@ msgstr ""
 msgid "Geloterra"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:166
+#: web/src/partials/ExportModal.tsx:148
 msgid "Generating file"
 msgstr ""
 
@@ -355,7 +355,7 @@ msgstr ""
 msgid "Gobi"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:28
+#: web/src/exporter/workbookGenerator.worker.tsx:27
 #: web/src/names.tsx:74
 msgid "Grating Crystal"
 msgstr ""
@@ -420,7 +420,7 @@ msgstr ""
 msgid "Horizontal rotation"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:36
+#: web/src/exporter/workbookGenerator.worker.tsx:35
 #: web/src/names.tsx:15
 msgid "Hydrogen"
 msgstr ""
@@ -444,8 +444,8 @@ msgstr ""
 msgid "including"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:55
-#: web/src/exporter/exporterManager.worker.tsx:79
+#: web/src/exporter/workbookGenerator.worker.tsx:54
+#: web/src/exporter/workbookGenerator.worker.tsx:78
 msgid "Index"
 msgstr ""
 
@@ -453,12 +453,12 @@ msgstr ""
 msgid "Initial"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:71
+#: web/src/exporter/workbookGenerator.worker.tsx:70
 #: web/src/partials/StarView.tsx:215
 msgid "Initial number of hives"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:17
+#: web/src/exporter/workbookGenerator.worker.tsx:16
 #: web/src/names.tsx:63
 msgid "Iron Ore"
 msgstr ""
@@ -491,7 +491,7 @@ msgstr ""
 msgid "Is the Starting system"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:25
+#: web/src/exporter/workbookGenerator.worker.tsx:24
 #: web/src/names.tsx:71
 msgid "Kimberlite Ore"
 msgstr ""
@@ -508,11 +508,11 @@ msgstr ""
 msgid "Load"
 msgstr ""
 
-#: web/src/views/Galaxy.tsx:203
+#: web/src/views/Galaxy.tsx:196
 msgid "Loading..."
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:65
+#: web/src/exporter/workbookGenerator.worker.tsx:64
 #: web/src/names.tsx:43
 #: web/src/partials/StarView.tsx:159
 msgid "Luminosity"
@@ -526,7 +526,7 @@ msgstr ""
 msgid "Maroonfrost"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:60
+#: web/src/exporter/workbookGenerator.worker.tsx:59
 #: web/src/partials/StarView.tsx:230
 msgid "Mass"
 msgstr ""
@@ -535,23 +535,23 @@ msgstr ""
 msgid "Max"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:67
+#: web/src/exporter/workbookGenerator.worker.tsx:66
 #: web/src/names.tsx:45
 #: web/src/partials/StarView.tsx:209
 msgid "Max dyson sphere radius"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:72
+#: web/src/exporter/workbookGenerator.worker.tsx:71
 #: web/src/partials/StarView.tsx:219
 msgid "Maximum number of hives"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:56
-#: web/src/exporter/exporterManager.worker.tsx:80
+#: web/src/exporter/workbookGenerator.worker.tsx:55
+#: web/src/exporter/workbookGenerator.worker.tsx:79
 msgid "Name"
 msgstr ""
 
-#: web/src/partials/ProgressEditor.tsx:115
+#: web/src/partials/ProgressEditor.tsx:120
 msgid "Native Mode"
 msgstr ""
 
@@ -569,7 +569,7 @@ msgstr ""
 msgid "New"
 msgstr ""
 
-#: web/src/partials/ProgressEditor.tsx:36
+#: web/src/partials/ProgressEditor.tsx:37
 msgid "New Profile Name"
 msgstr ""
 
@@ -585,13 +585,13 @@ msgstr ""
 msgid "not equal to"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:315
-#: web/src/partials/ProgressEditor.tsx:49
-#: web/src/views/Galaxy.tsx:90
+#: web/src/partials/ExportModal.tsx:288
+#: web/src/partials/ProgressEditor.tsx:50
+#: web/src/views/Galaxy.tsx:83
 msgid "Number of stars"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:88
+#: web/src/exporter/workbookGenerator.worker.tsx:87
 msgid "Obliquity"
 msgstr ""
 
@@ -612,20 +612,20 @@ msgstr ""
 msgid "OR"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:85
+#: web/src/exporter/workbookGenerator.worker.tsx:84
 msgid "Orbit inclination"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:86
+#: web/src/exporter/workbookGenerator.worker.tsx:85
 msgid "Orbit longitude"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:84
+#: web/src/exporter/workbookGenerator.worker.tsx:83
 #: web/src/partials/StarView.tsx:400
 msgid "Orbit radius"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:87
+#: web/src/exporter/workbookGenerator.worker.tsx:86
 msgid "Orbital period"
 msgstr ""
 
@@ -637,11 +637,11 @@ msgstr ""
 msgid "Orbital resonance 1 : 4"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:82
+#: web/src/exporter/workbookGenerator.worker.tsx:81
 msgid "Orbiting"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:27
+#: web/src/exporter/workbookGenerator.worker.tsx:26
 #: web/src/names.tsx:73
 msgid "Organic Crystal"
 msgstr ""
@@ -650,8 +650,8 @@ msgstr ""
 msgid "Pandora Swamp"
 msgstr ""
 
-#: web/src/views/FindGalaxy.tsx:419
-#: web/src/views/FindStar.tsx:490
+#: web/src/views/FindGalaxy.tsx:400
+#: web/src/views/FindStar.tsx:462
 msgid "Pause"
 msgstr ""
 
@@ -675,7 +675,7 @@ msgstr ""
 msgid "Prairiea"
 msgstr ""
 
-#: web/src/partials/ProgressEditor.tsx:36
+#: web/src/partials/ProgressEditor.tsx:37
 msgid "Profile Name"
 msgstr ""
 
@@ -687,17 +687,17 @@ msgstr ""
 msgid "Profiles"
 msgstr ""
 
-#: web/src/views/FindGalaxy.tsx:395
-#: web/src/views/FindStar.tsx:466
+#: web/src/views/FindGalaxy.tsx:376
+#: web/src/views/FindStar.tsx:438
 msgid "Progress:"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:66
+#: web/src/exporter/workbookGenerator.worker.tsx:65
 #: web/src/partials/StarView.tsx:224
 msgid "Radius"
 msgstr ""
 
-#: web/src/views/Galaxy.tsx:80
+#: web/src/views/Galaxy.tsx:73
 msgid "Random"
 msgstr ""
 
@@ -706,9 +706,9 @@ msgstr ""
 msgid "Red Giant"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:323
-#: web/src/partials/ProgressEditor.tsx:98
-#: web/src/views/Galaxy.tsx:96
+#: web/src/partials/ExportModal.tsx:298
+#: web/src/partials/ProgressEditor.tsx:99
+#: web/src/views/Galaxy.tsx:89
 msgid "Resource multiplier"
 msgstr ""
 
@@ -716,21 +716,21 @@ msgstr ""
 msgid "Resources"
 msgstr ""
 
-#: web/src/views/FindGalaxy.tsx:414
-#: web/src/views/FindStar.tsx:485
+#: web/src/views/FindGalaxy.tsx:395
+#: web/src/views/FindStar.tsx:457
 msgid "Resume"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:162
+#: web/src/partials/ExportModal.tsx:144
 msgid "Retriving data"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:89
+#: web/src/exporter/workbookGenerator.worker.tsx:88
 msgid "Rotation period"
 msgstr ""
 
-#: web/src/views/FindGalaxy.tsx:381
-#: web/src/views/FindStar.tsx:452
+#: web/src/views/FindGalaxy.tsx:362
+#: web/src/views/FindStar.tsx:424
 msgid "Rules"
 msgstr ""
 
@@ -738,7 +738,7 @@ msgstr ""
 msgid "Ruleset"
 msgstr ""
 
-#: web/src/partials/ProgressEditor.tsx:183
+#: web/src/partials/ProgressEditor.tsx:196
 msgid "Running autosave too frequently may decrease search performance."
 msgstr ""
 
@@ -766,18 +766,18 @@ msgstr ""
 msgid "Scorchedia"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:54
-#: web/src/exporter/exporterManager.worker.tsx:78
-#: web/src/views/Galaxy.tsx:67
+#: web/src/exporter/workbookGenerator.worker.tsx:53
+#: web/src/exporter/workbookGenerator.worker.tsx:77
+#: web/src/views/Galaxy.tsx:60
 msgid "Seed"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:354
-#: web/src/partials/ProgressEditor.tsx:62
+#: web/src/partials/ExportModal.tsx:329
+#: web/src/partials/ProgressEditor.tsx:63
 msgid "Seed range"
 msgstr ""
 
-#: web/src/views/FindStar.tsx:105
+#: web/src/views/FindStar.tsx:95
 msgid "Seed: "
 msgstr ""
 
@@ -786,23 +786,23 @@ msgstr ""
 msgid "Select..."
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:19
+#: web/src/exporter/workbookGenerator.worker.tsx:18
 #: web/src/names.tsx:65
 msgid "Silicon Ore"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:91
+#: web/src/exporter/workbookGenerator.worker.tsx:90
 #: web/src/partials/StarView.tsx:417
 msgid "Solar power"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:64
+#: web/src/exporter/workbookGenerator.worker.tsx:63
 #: web/src/names.tsx:44
 #: web/src/partials/StarView.tsx:155
 msgid "Spectral class"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:29
+#: web/src/exporter/workbookGenerator.worker.tsx:28
 #: web/src/names.tsx:75
 msgid "Stalagmite Crystal"
 msgstr ""
@@ -811,8 +811,8 @@ msgstr ""
 msgid "Star Finder"
 msgstr ""
 
-#: web/src/views/FindGalaxy.tsx:414
-#: web/src/views/FindStar.tsx:485
+#: web/src/views/FindGalaxy.tsx:395
+#: web/src/views/FindStar.tsx:457
 msgid "Start"
 msgstr ""
 
@@ -820,12 +820,12 @@ msgstr ""
 msgid "Starting system"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:21
+#: web/src/exporter/workbookGenerator.worker.tsx:20
 #: web/src/names.tsx:67
 msgid "Stone"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:244
+#: web/src/partials/ExportModal.tsx:226
 msgid "Stop"
 msgstr ""
 
@@ -833,23 +833,23 @@ msgstr ""
 msgid "Sulfuria"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:46
+#: web/src/exporter/workbookGenerator.worker.tsx:45
 #: web/src/partials/RuleEditor.tsx:239
 #: web/src/partials/StarView.tsx:294
 #: web/src/partials/StarView.tsx:448
 msgid "Sulfuric Acid"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:62
+#: web/src/exporter/workbookGenerator.worker.tsx:61
 #: web/src/partials/StarView.tsx:236
 msgid "Temperature"
 msgstr ""
 
-#: web/src/partials/ProgressEditor.tsx:145
+#: web/src/partials/ProgressEditor.tsx:154
 msgid "The number of parallel processes to run the search."
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:81
+#: web/src/exporter/workbookGenerator.worker.tsx:80
 msgid "Theme"
 msgstr ""
 
@@ -857,7 +857,7 @@ msgstr ""
 msgid "this ruleset"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:83
+#: web/src/exporter/workbookGenerator.worker.tsx:82
 #: web/src/partials/StarView.tsx:377
 msgid "Tidally locked"
 msgstr ""
@@ -866,12 +866,12 @@ msgstr ""
 msgid "Tidally locked planet count"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:20
+#: web/src/exporter/workbookGenerator.worker.tsx:19
 #: web/src/names.tsx:66
 msgid "Titanium Ore"
 msgstr ""
 
-#: web/src/partials/ProgressEditor.tsx:113
+#: web/src/partials/ProgressEditor.tsx:118
 msgid "To run the search in (faster) native mode, click the download button and run the program on your PC, then enable this option."
 msgstr ""
 
@@ -879,7 +879,7 @@ msgstr ""
 msgid "Tropicana"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:63
+#: web/src/exporter/workbookGenerator.worker.tsx:62
 #: web/src/partials/StarView.tsx:151
 #: web/src/partials/StarView.tsx:357
 #: web/src/partials/StarView.tsx:423
@@ -890,13 +890,13 @@ msgstr ""
 msgid "Type of star"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:30
+#: web/src/exporter/workbookGenerator.worker.tsx:29
 #: web/src/names.tsx:76
 msgid "Unipolar Magnet"
 msgstr ""
 
-#: web/src/views/FindGalaxy.tsx:151
-#: web/src/views/FindStar.tsx:227
+#: web/src/views/FindGalaxy.tsx:137
+#: web/src/views/FindStar.tsx:204
 msgid "Untitled"
 msgstr ""
 
@@ -904,19 +904,19 @@ msgstr ""
 msgid "Vein amount"
 msgstr ""
 
-#: web/src/views/Galaxy.tsx:87
+#: web/src/views/Galaxy.tsx:80
 msgid "View"
 msgstr ""
 
-#: web/src/views/FindStar.tsx:113
+#: web/src/views/FindStar.tsx:103
 msgid "View in new tab"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:301
+#: web/src/partials/ExportModal.tsx:274
 msgid "Warning: Exporting too many seeds may cause out of memory error."
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:45
+#: web/src/exporter/workbookGenerator.worker.tsx:44
 #: web/src/partials/RuleEditor.tsx:239
 #: web/src/partials/StarView.tsx:288
 #: web/src/partials/StarView.tsx:442
@@ -934,12 +934,12 @@ msgstr ""
 msgid "White Giant"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:90
+#: web/src/exporter/workbookGenerator.worker.tsx:89
 #: web/src/partials/StarView.tsx:411
 msgid "Wind power"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:57
+#: web/src/exporter/workbookGenerator.worker.tsx:56
 msgid "X"
 msgstr ""
 
@@ -947,7 +947,7 @@ msgstr ""
 msgid "X star"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:58
+#: web/src/exporter/workbookGenerator.worker.tsx:57
 msgid "Y"
 msgstr ""
 
@@ -956,6 +956,6 @@ msgstr ""
 msgid "Yellow Giant"
 msgstr ""
 
-#: web/src/exporter/exporterManager.worker.tsx:59
+#: web/src/exporter/workbookGenerator.worker.tsx:58
 msgid "Z"
 msgstr ""

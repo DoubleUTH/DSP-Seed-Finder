@@ -27,8 +27,7 @@ import {
     constructRule,
     defaultHiveInitialColonize,
     defaultHiveMaxDensity,
-    defaultResourceMultiplier,
-    defaultStarCount,
+    getDefaultParams,
     getSearch,
     maxStarCount,
     minStarCount,
@@ -52,10 +51,7 @@ import { useLingui } from "#lingui"
 
 const defaultProgress: () => ProfileProgress = () => ({
     id: "",
-    starCount: defaultStarCount,
-    resourceMultiplier: defaultResourceMultiplier,
-    hiveInitialColonize: defaultHiveInitialColonize,
-    hiveMaxDensity: defaultHiveMaxDensity,
+    params: getDefaultParams(),
     concurrency: navigator.hardwareConcurrency,
     autosave: 5,
     start: 0,
@@ -70,10 +66,7 @@ const PAGE_SIZE = 100
 const StarViewModal: Component<{
     seed: integer
     index: integer
-    starCount: integer
-    resourceMultiplier: float
-    hiveInitialColonize: integer
-    hiveMaxDensity: float
+    params: GameParameters
     search: string
 }> = (props) => {
     const [galaxy, setGalaxy] = createSignal<Galaxy | null>(null)
@@ -82,10 +75,7 @@ const StarViewModal: Component<{
         getWorldGen(false)
             .generate({
                 seed: props.seed,
-                starCount: props.starCount,
-                resourceMultiplier: props.resourceMultiplier,
-                hiveInitialColonize: props.hiveInitialColonize,
-                hiveMaxDensity: props.hiveMaxDensity,
+                ...props.params,
             })
             .then((g): void => {
                 setGalaxy(g)
@@ -128,23 +118,13 @@ const SearchResult: Component<{
     id: string
     page: integer
     updateKey: number
-    starCount: integer
-    resourceMultiplier: float
-    hiveInitialColonize: integer
-    hiveMaxDensity: float
+    params: GameParameters
 }> = (props) => {
     const [results, setResults] = createSignal<ProgressResult[]>([])
     const [active, setActive] = createSignal<ProgressResult | null>(null)
     let isLoading = -1
 
-    const searchString = createMemo(() =>
-        getSearch({
-            count: props.starCount,
-            multiplier: props.resourceMultiplier,
-            hiveInitialColonize: props.hiveInitialColonize,
-            hiveMaxDensity: props.hiveMaxDensity,
-        }),
-    )
+    const searchString = createMemo(() => getSearch(props.params))
 
     function update() {
         if (isLoading === props.page) return
@@ -208,10 +188,7 @@ const SearchResult: Component<{
                     <StarViewModal
                         seed={active()!.seed}
                         index={active()!.index}
-                        starCount={props.starCount}
-                        resourceMultiplier={props.resourceMultiplier}
-                        hiveInitialColonize={props.hiveInitialColonize}
-                        hiveMaxDensity={props.hiveMaxDensity}
+                        params={props.params}
                         search={searchString()}
                     />
                 </Modal>
@@ -258,8 +235,8 @@ const FindStar: Component = () => {
     async function onSelectProfile(profile: ProfileInfo) {
         const progress = await getProfileProgress(profile.id)
         if (progress) {
-            progress.hiveInitialColonize ??= defaultHiveInitialColonize
-            progress.hiveMaxDensity ??= defaultHiveMaxDensity
+            progress.params.hiveInitialColonize ??= defaultHiveInitialColonize
+            progress.params.hiveMaxDensity ??= defaultHiveMaxDensity
             batch(() => {
                 changeProfile(profile)
                 setProgress(progress)
@@ -292,8 +269,8 @@ const FindStar: Component = () => {
             progress.start < 0 ||
             progress.end > 1e8 ||
             progress.start >= progress.end ||
-            progress.starCount < minStarCount ||
-            progress.starCount > maxStarCount ||
+            progress.params.starCount < minStarCount ||
+            progress.params.starCount > maxStarCount ||
             !Number.isInteger(progress.concurrency) ||
             progress.concurrency < 1 ||
             progress.autosave <= 0
@@ -358,12 +335,7 @@ const FindStar: Component = () => {
         setStore("searching", true)
         let results: FindResult[] = []
         getWorldGen(nativeMode()).find({
-            gameDesc: {
-                resourceMultiplier: progress.resourceMultiplier,
-                starCount: progress.starCount,
-                hiveInitialColonize: progress.hiveInitialColonize,
-                hiveMaxDensity: progress.hiveMaxDensity,
-            },
+            gameDesc: progress.params,
             range: [Math.max(progress.start, progress.current), progress.end],
             concurrency: progress.concurrency,
             autosave: progress.autosave,
@@ -509,10 +481,7 @@ const FindStar: Component = () => {
                     id={profile()!.id}
                     page={currentPage()}
                     updateKey={tick()}
-                    starCount={progress.starCount}
-                    resourceMultiplier={progress.resourceMultiplier}
-                    hiveInitialColonize={progress.hiveInitialColonize}
-                    hiveMaxDensity={progress.hiveMaxDensity}
+                    params={progress.params}
                 />
             </Show>
             <ProfilesModal
@@ -527,10 +496,7 @@ const FindStar: Component = () => {
                 mode="star"
                 id={profile()?.id || ""}
                 name={profile()?.name || ""}
-                starCount={progress.starCount}
-                resourceMultiplier={progress.resourceMultiplier}
-                hiveInitialColonize={progress.hiveInitialColonize}
-                hiveMaxDensity={progress.hiveMaxDensity}
+                params={progress.params}
             />
         </div>
     )

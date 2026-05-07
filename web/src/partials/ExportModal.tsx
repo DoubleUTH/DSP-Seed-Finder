@@ -20,12 +20,7 @@ import NumberInput from "../components/NumberInput"
 import Tooltip from "../components/Tooltip"
 import Toggle from "../components/Toggle"
 import Select from "../components/Select"
-import {
-    defaultHiveInitialColonize,
-    defaultHiveMaxDensity,
-    defaultResourceMultiplier,
-    defaultStarCount,
-} from "../util"
+import { getDefaultParams } from "../util"
 import HiveInitialColonizeSelector from "./HiveInitialColonizeSelector"
 import HiveMaxDensitySelector from "./HiveMaxDensitySelector"
 import { useLingui } from "#lingui"
@@ -35,14 +30,7 @@ type Mode = "star" | "galaxy" | "single"
 
 interface Options extends Pick<
     ExportOptions,
-    | "format"
-    | "concurrency"
-    | "exportAllStars"
-    | "starCount"
-    | "resourceMultiplier"
-    | "hiveInitialColonize"
-    | "hiveMaxDensity"
-    | "language"
+    "format" | "concurrency" | "exportAllStars" | "params" | "language"
 > {
     start: number
     end: number
@@ -97,10 +85,7 @@ async function execute(
         format,
         concurrency,
         exportAllStars,
-        starCount,
-        resourceMultiplier,
-        hiveInitialColonize,
-        hiveMaxDensity,
+        params,
         language,
     }: Options,
 ) {
@@ -119,10 +104,7 @@ async function execute(
     const blob = await getExporter(false)({
         format,
         concurrency,
-        starCount,
-        resourceMultiplier,
-        hiveInitialColonize,
-        hiveMaxDensity,
+        params,
         exportAllStars: mode !== "star" || exportAllStars,
         results,
         language,
@@ -254,19 +236,13 @@ const ExportModal: Component<{
     id: string
     singleSeed?: integer
     name: string
-    starCount: integer
-    resourceMultiplier: float
-    hiveInitialColonize: float
-    hiveMaxDensity: float
+    params: GameParameters
 }> = (props) => {
     const [store] = useStore()
     const [options, setOptions] = createStore<Options>({
         start: 0,
         end: 99999999,
-        starCount: defaultStarCount,
-        resourceMultiplier: defaultResourceMultiplier,
-        hiveInitialColonize: defaultHiveInitialColonize,
-        hiveMaxDensity: defaultHiveMaxDensity,
+        params: getDefaultParams(),
         format: "xlsx",
         concurrency: navigator.hardwareConcurrency,
         exportAllStars: false,
@@ -279,10 +255,7 @@ const ExportModal: Component<{
     createEffect(() => {
         if (props.visible) {
             setOptions({
-                starCount: props.starCount,
-                resourceMultiplier: props.resourceMultiplier,
-                hiveInitialColonize: props.hiveInitialColonize,
-                hiveMaxDensity: props.hiveMaxDensity,
+                params: { ...props.params },
                 language: store.settings.language,
                 start: props.singleSeed ?? 0,
             })
@@ -316,17 +289,19 @@ const ExportModal: Component<{
                 <div class={styles.input}>
                     <StarCountSelector
                         class={styles.inputStandard}
-                        value={options.starCount}
-                        onChange={(value) => setOptions("starCount", value)}
+                        value={options.params.starCount}
+                        onChange={(value) =>
+                            setOptions("params", "starCount", value)
+                        }
                     />
                 </div>
                 <div class={styles.label}>{t`Resource multiplier`}</div>
                 <div class={styles.input}>
                     <ResourceMultiplierSelector
                         class={styles.inputStandard}
-                        value={options.resourceMultiplier}
+                        value={options.params.resourceMultiplier}
                         onChange={(value) =>
-                            setOptions("resourceMultiplier", value)
+                            setOptions("params", "resourceMultiplier", value)
                         }
                     />
                 </div>
@@ -334,9 +309,9 @@ const ExportModal: Component<{
                 <div class={styles.input}>
                     <HiveInitialColonizeSelector
                         class={styles.inputStandard}
-                        value={options.hiveInitialColonize}
+                        value={options.params.hiveInitialColonize}
                         onChange={(value) =>
-                            setOptions("hiveInitialColonize", value)
+                            setOptions("params", "hiveInitialColonize", value)
                         }
                     />
                 </div>
@@ -344,9 +319,9 @@ const ExportModal: Component<{
                 <div class={styles.input}>
                     <HiveMaxDensitySelector
                         class={styles.inputStandard}
-                        value={options.hiveMaxDensity}
+                        value={options.params.hiveMaxDensity}
                         onChange={(value) =>
-                            setOptions("hiveMaxDensity", value)
+                            setOptions("params", "hiveMaxDensity", value)
                         }
                     />
                 </div>

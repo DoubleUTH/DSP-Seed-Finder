@@ -285,7 +285,11 @@ const ExportModal: Component<{
                         class={styles.inputStandard}
                         value={options.format}
                         onChange={(value) => setOptions("format", value)}
-                        options={["xlsx", "csv", "txt"] as const}
+                        options={
+                            props.mode === "single"
+                                ? (["xlsx", "csv"] as const)
+                                : (["xlsx", "csv", "txt"] as const)
+                        }
                         getLabel={(value) =>
                             value === "txt" ? t`Seed only` : value
                         }

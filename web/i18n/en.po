@@ -137,7 +137,7 @@ msgstr ""
 msgid "Completed!"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:394
+#: web/src/partials/ExportModal.tsx:398
 #: web/src/partials/ProgressEditor.tsx:156
 msgid "Concurrency"
 msgstr ""
@@ -164,13 +164,13 @@ msgstr ""
 msgid "Cyclonius"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:321
+#: web/src/partials/ExportModal.tsx:325
 #: web/src/partials/ProgressEditor.tsx:135
 #: web/src/views/Galaxy.tsx:99
 msgid "Dark Fog initial occupation"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:335
+#: web/src/partials/ExportModal.tsx:339
 #: web/src/partials/ProgressEditor.tsx:177
 #: web/src/views/Galaxy.tsx:108
 msgid "Dark Fog max density"
@@ -267,18 +267,18 @@ msgid "excluding"
 msgstr ""
 
 #: web/src/partials/ExportModal.tsx:275
-#: web/src/partials/ExportModal.tsx:416
+#: web/src/partials/ExportModal.tsx:420
 #: web/src/views/FindGalaxy.tsx:383
 #: web/src/views/FindStar.tsx:445
 #: web/src/views/Galaxy.tsx:208
 msgid "Export"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:379
+#: web/src/partials/ExportModal.tsx:383
 msgid "Export all"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:377
+#: web/src/partials/ExportModal.tsx:381
 msgid "Export all stars instead of only the matching ones"
 msgstr ""
 
@@ -585,7 +585,7 @@ msgstr ""
 msgid "not equal to"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:295
+#: web/src/partials/ExportModal.tsx:299
 #: web/src/partials/ProgressEditor.tsx:50
 #: web/src/views/Galaxy.tsx:84
 msgid "Number of stars"
@@ -706,7 +706,7 @@ msgstr ""
 msgid "Red Giant"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:305
+#: web/src/partials/ExportModal.tsx:309
 #: web/src/partials/ProgressEditor.tsx:99
 #: web/src/views/Galaxy.tsx:90
 msgid "Resource multiplier"
@@ -772,11 +772,11 @@ msgstr ""
 msgid "Seed"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:290
+#: web/src/partials/ExportModal.tsx:294
 msgid "Seed only"
 msgstr ""
 
-#: web/src/partials/ExportModal.tsx:347
+#: web/src/partials/ExportModal.tsx:351
 #: web/src/partials/ProgressEditor.tsx:63
 msgid "Seed range"
 msgstr ""

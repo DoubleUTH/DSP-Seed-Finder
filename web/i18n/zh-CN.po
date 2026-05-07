@@ -137,7 +137,7 @@ msgstr "煤矿"
 msgid "Completed!"
 msgstr "完成！"
 
-#: web/src/partials/ExportModal.tsx:394
+#: web/src/partials/ExportModal.tsx:398
 #: web/src/partials/ProgressEditor.tsx:156
 msgid "Concurrency"
 msgstr "线程并发"
@@ -164,13 +164,13 @@ msgstr "原油"
 msgid "Cyclonius"
 msgstr "飓风石林"
 
-#: web/src/partials/ExportModal.tsx:321
+#: web/src/partials/ExportModal.tsx:325
 #: web/src/partials/ProgressEditor.tsx:135
 #: web/src/views/Galaxy.tsx:99
 msgid "Dark Fog initial occupation"
 msgstr "黑雾初始占领情况"
 
-#: web/src/partials/ExportModal.tsx:335
+#: web/src/partials/ExportModal.tsx:339
 #: web/src/partials/ProgressEditor.tsx:177
 #: web/src/views/Galaxy.tsx:108
 msgid "Dark Fog max density"
@@ -267,18 +267,18 @@ msgid "excluding"
 msgstr "不包括"
 
 #: web/src/partials/ExportModal.tsx:275
-#: web/src/partials/ExportModal.tsx:416
+#: web/src/partials/ExportModal.tsx:420
 #: web/src/views/FindGalaxy.tsx:383
 #: web/src/views/FindStar.tsx:445
 #: web/src/views/Galaxy.tsx:208
 msgid "Export"
 msgstr "汇出"
 
-#: web/src/partials/ExportModal.tsx:379
+#: web/src/partials/ExportModal.tsx:383
 msgid "Export all"
 msgstr "汇出所有"
 
-#: web/src/partials/ExportModal.tsx:377
+#: web/src/partials/ExportModal.tsx:381
 msgid "Export all stars instead of only the matching ones"
 msgstr "导出所有恒星而不仅仅是匹配的恒星"
 
@@ -585,7 +585,7 @@ msgstr "恒星"
 msgid "not equal to"
 msgstr "不等于"
 
-#: web/src/partials/ExportModal.tsx:295
+#: web/src/partials/ExportModal.tsx:299
 #: web/src/partials/ProgressEditor.tsx:50
 #: web/src/views/Galaxy.tsx:84
 msgid "Number of stars"
@@ -706,7 +706,7 @@ msgstr "随机"
 msgid "Red Giant"
 msgstr "红巨星"
 
-#: web/src/partials/ExportModal.tsx:305
+#: web/src/partials/ExportModal.tsx:309
 #: web/src/partials/ProgressEditor.tsx:99
 #: web/src/views/Galaxy.tsx:90
 msgid "Resource multiplier"
@@ -772,11 +772,11 @@ msgstr "焦土"
 msgid "Seed"
 msgstr "种子"
 
-#: web/src/partials/ExportModal.tsx:290
+#: web/src/partials/ExportModal.tsx:294
 msgid "Seed only"
 msgstr "只汇出种子"
 
-#: web/src/partials/ExportModal.tsx:347
+#: web/src/partials/ExportModal.tsx:351
 #: web/src/partials/ProgressEditor.tsx:63
 msgid "Seed range"
 msgstr "种子范围"

@@ -1,4 +1,4 @@
-import { Component, createMemo, createSignal, For, JSX } from "solid-js"
+import { Component, createMemo, createSignal, For, JSX, Show } from "solid-js"
 import styles from "./Starmap.module.css"
 import { A, useNavigate } from "@solidjs/router"
 import { StarType } from "../enums"
@@ -205,6 +205,14 @@ const StarNode: Component<{ star: Star; seed: number; search: string }> = (
 
     return (
         <>
+            <Show when={props.star.index === 0}>
+                <circle
+                    r={0.7}
+                    cx={props.star.position[0]}
+                    cy={-props.star.position[2]}
+                    fill="#00881d"
+                />
+            </Show>
             <circle ref={node!} class={styles.star} {...getStarStyle()} />
             <Portal mount={document.getElementById("portal")!}>
                 <A

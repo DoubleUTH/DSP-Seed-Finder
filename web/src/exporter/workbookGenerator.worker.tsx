@@ -1,5 +1,4 @@
 import { Workbook } from "exceljs"
-import ExporterWorker from "./exporter.worker?worker"
 import {
     PlanetField,
     planetFieldsOrder,
@@ -93,51 +92,38 @@ function getPlanetFieldNames(): Record<PlanetField, string> {
 }
 
 function createWorkbook() {
-    let map: Record<number, ExportData> = {}
+    const book = new Workbook()
+    const starFieldNames = getStarFieldNames()
+    const planetFieldNames = getPlanetFieldNames()
+    const veinFieldsOrder = getVeinFieldsOrder()
+    const starsSheet = book.addWorksheet("Stars", {
+        views: [{ state: "frozen", xSplit: 3, ySplit: 1 }],
+    })
+    starsSheet.addRow([
+        ...starFieldsOrder.map((f) => starFieldNames[f]),
+        ...veinFieldsOrder,
+    ])
+    const planetsSheet = book.addWorksheet("Planets", {
+        views: [{ state: "frozen", xSplit: 3, ySplit: 1 }],
+    })
+    planetsSheet.addRow([
+        ...planetFieldsOrder.map((f) => planetFieldNames[f]),
+        ...veinFieldsOrder,
+    ])
 
     return {
         add(data: ExportData) {
-            map[data.seed] = data
-        },
-        async buffer(
-            format: ExportOptions["format"],
-            seeds: FindResult[],
-            exportAllStars: boolean,
-        ): Promise<ArrayBuffer> {
-            const book = new Workbook()
-            const starFieldNames = getStarFieldNames()
-            const planetFieldNames = getPlanetFieldNames()
-            const veinFieldsOrder = getVeinFieldsOrder()
-            const starsSheet = book.addWorksheet("Stars", {
-                views: [{ state: "frozen", ySplit: 1 }],
-            })
-            starsSheet.addRow([
-                ...starFieldsOrder.map((f) => starFieldNames[f]),
-                ...veinFieldsOrder,
-            ])
-            const planetsSheet = book.addWorksheet("Planets", {
-                views: [{ state: "frozen", ySplit: 1 }],
-            })
-            planetsSheet.addRow([
-                ...planetFieldsOrder.map((f) => planetFieldNames[f]),
-                ...veinFieldsOrder,
-            ])
-            for (const { seed, indexes } of seeds) {
-                const { stars } = map[seed]!
-                const rows = starsSheet.addRows(stars)
-                if (exportAllStars && indexes) {
-                    for (const index of indexes) {
-                        rows[index]!.font = {
-                            bold: true,
-                        }
+            const rows = starsSheet.addRows(data.stars)
+            if (data.indexes) {
+                for (const index of data.indexes) {
+                    rows[index]!.font = {
+                        bold: true,
                     }
                 }
-                const { planets } = map[seed]!
-                planetsSheet.addRows(planets)
             }
-            // clear memory after write
-            map = {}
-
+            planetsSheet.addRows(data.planets)
+        },
+        async buffer(format: ExportOptions["format"]): Promise<Uint8Array> {
             if (format === "csv") {
                 const JSZip = (await import("jszip")).default
                 const zip = new JSZip()
@@ -149,72 +135,32 @@ function createWorkbook() {
                     "planets.csv",
                     book.csv.writeBuffer({ sheetId: planetsSheet.id }),
                 )
-                const output = await zip.generateAsync({ type: "arraybuffer" })
+                const output = await zip.generateAsync({ type: "uint8array" })
                 return output
             } else {
-                const buffer = await book.xlsx.writeBuffer()
+                const buffer =
+                    (await book.xlsx.writeBuffer()) as unknown as Uint8Array
                 return buffer
             }
         },
     }
 }
 
-async function go(options: ExportOptions) {
-    const {
-        format,
-        concurrency,
-        exportAllStars,
-        results,
-        starCount,
-        resourceMultiplier,
-        language,
-    } = options
-    await loadLanguage(language)
-    const workbook = createWorkbook()
-    const threads = Math.min(concurrency, results.length)
-    let index = 0
-    let count = 0
-    let running = threads
-    let end = () => {}
-    for (let i = 0; i < threads; ++i) {
-        const worker = new ExporterWorker()
-        const stop = () => {
-            worker.terminate()
-            if (--running === 0) {
-                end()
-            }
-        }
-        const sendNext = () => {
-            const item = results[index++]
-            if (!item) {
-                stop()
-                return
-            }
-            worker.postMessage({
-                ...item,
-                starCount,
-                resourceMultiplier,
-                exportAllStars,
-                language,
-            })
-        }
-        worker.addEventListener("message", (ev) => {
-            workbook.add(ev.data)
-            self.postMessage({ type: "progressing", current: ++count })
-            sendNext()
-        })
-        sendNext()
-    }
-    await new Promise<void>((resolve) => {
-        end = resolve
-    })
-    self.postMessage({ type: "generating" })
-    const result = await workbook.buffer(format, results, exportAllStars)
-    self.postMessage({ type: "done", result }, [
-        format === "xlsx" ? (result as any).buffer : result,
-    ])
-}
+let loadPromise: Promise<ReturnType<typeof createWorkbook>> | undefined
 
 self.onmessage = (ev) => {
-    go(ev.data)
+    if (loadPromise) {
+        loadPromise.then((workbook) => {
+            if (typeof ev.data === "string") {
+                const format = ev.data as any
+                workbook.buffer(format).then((result) => {
+                    self.postMessage(result, [result.buffer])
+                })
+            } else {
+                workbook.add(ev.data)
+            }
+        })
+    } else {
+        loadPromise = loadLanguage(ev.data).then(() => createWorkbook())
+    }
 }

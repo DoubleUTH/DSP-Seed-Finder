@@ -348,5 +348,6 @@ declare global {
         seed: integer
         stars: any[]
         planets: any[]
+        indexes?: integer[]
     }
 }

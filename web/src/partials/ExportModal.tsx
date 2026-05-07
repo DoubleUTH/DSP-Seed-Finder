@@ -267,7 +267,7 @@ const ExportModal: Component<{
         resourceMultiplier: defaultResourceMultiplier,
         hiveInitialColonize: defaultHiveInitialColonize,
         hiveMaxDensity: defaultHiveMaxDensity,
-        format: "csv",
+        format: "xlsx",
         concurrency: navigator.hardwareConcurrency,
         exportAllStars: false,
         language: store.settings.language,
@@ -308,7 +308,7 @@ const ExportModal: Component<{
                         class={styles.inputStandard}
                         value={options.format}
                         onChange={(value) => setOptions("format", value)}
-                        options={["csv", "xlsx"] as const}
+                        options={["xlsx", "csv"] as const}
                         getLabel={(value) => value}
                     />
                 </div>

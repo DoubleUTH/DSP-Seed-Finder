@@ -230,32 +230,49 @@ function generateExportData(
                 constructPlanetData(galaxy, star, planet),
             ),
         ),
+        indexes: exportAllStars ? indexes : undefined,
     }
 }
 
-self.onmessage = (ev) => {
-    const {
-        seed,
-        indexes,
-        resourceMultiplier = 1,
-        starCount = 64,
-        hiveInitialColonize = 1,
-        hiveMaxDensity = 1,
-        exportAllStars,
-        language,
-    } = ev.data
+let loadPromise:
+    | Promise<
+          Pick<
+              ExportOptions,
+              | "exportAllStars"
+              | "starCount"
+              | "resourceMultiplier"
+              | "hiveInitialColonize"
+              | "hiveMaxDensity"
+          >
+      >
+    | undefined
 
-    initPromise
-        .then(() => loadLanguage(language))
-        .then(() => {
-            const result = generate({
-                seed,
+self.onmessage = (ev) => {
+    if (!loadPromise) {
+        const {
+            starCount = 64,
+            resourceMultiplier = 1,
+            hiveInitialColonize = 1,
+            hiveMaxDensity = 1,
+            exportAllStars,
+            language,
+        } = ev.data
+        loadPromise = initPromise
+            .then(() => loadLanguage(language))
+            .then(() => ({
                 starCount,
                 resourceMultiplier,
                 hiveInitialColonize,
                 hiveMaxDensity,
-            })
-            const data = generateExportData(result, indexes, exportAllStars)
-            self.postMessage(data)
-        })
+                exportAllStars,
+            }))
+        return
+    }
+    const { seed, indexes } = ev.data
+
+    loadPromise.then(({ exportAllStars, ...options }) => {
+        const result = generate({ seed, ...options })
+        const data = generateExportData(result, indexes, exportAllStars)
+        self.postMessage(data)
+    })
 }

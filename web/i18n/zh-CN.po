@@ -337,7 +337,7 @@ msgstr "气态/冰巨行星数量"
 
 #: web/src/names.tsx:89
 msgid "Geloterra"
-msgstr "冰原冻土"
+msgstr "灰烬冻土"
 
 #: web/src/partials/ExportModal.tsx:152
 msgid "Generating file"
@@ -349,7 +349,7 @@ msgstr "巨星"
 
 #: web/src/names.tsx:92
 msgid "Glacieon"
-msgstr "冰原"
+msgstr "冰原冻土"
 
 #: web/src/names.tsx:94
 msgid "Gobi"
@@ -366,7 +366,7 @@ msgstr "大于"
 
 #: web/src/names.tsx:99
 msgid "Halitum"
-msgstr "盐碱地"
+msgstr "黑石盐滩"
 
 #: web/src/partials/RuleEditor.tsx:281
 msgid "Has <0/> <1/> giant(s)"
@@ -605,7 +605,7 @@ msgstr "海洋"
 
 #: web/src/names.tsx:105
 msgid "Onyxtopia"
-msgstr "黑石盐滩"
+msgstr "橙晶荒漠"
 
 #: web/src/partials/MultiRuleEditor.tsx:72
 #: web/src/partials/RuleEditor.tsx:751
@@ -764,7 +764,7 @@ msgstr "保存"
 
 #: web/src/names.tsx:88
 msgid "Scorchedia"
-msgstr "焦土"
+msgstr "干旱荒漠"
 
 #: web/src/exporter/workbookGenerator.worker.tsx:53
 #: web/src/exporter/workbookGenerator.worker.tsx:77

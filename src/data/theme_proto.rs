@@ -227,8 +227,15 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
             vein_spot: vec![3, 3, 3, 6, 12, 0, 0],
             vein_count: vec![0.5, 0.5, 0.5, 1.0, 1.2, 0.0, 0.0],
             vein_opacity: vec![0.6, 0.6, 0.9, 0.9, 1.5, 0.0, 0.0],
-            rare_veins: vec![VeinType::Fireice, VeinType::Diamond, VeinType::Grat],
-            rare_settings: vec![0.25, 0.5, 0.6, 0.6, 0.0, 0.2, 0.6, 0.7, 0.0, 0.1, 0.2, 0.5],
+            rare_veins: vec![
+                VeinType::Fireice,
+                VeinType::Diamond,
+                VeinType::Grat,
+                VeinType::Bamboo,
+            ],
+            rare_settings: vec![
+                0.25, 0.5, 0.6, 0.8, 0.0, 0.2, 0.6, 0.7, 0.0, 0.2, 0.3, 0.7, 0.1, 0.2, 0.2, 0.7,
+            ],
             gas_items: vec![],
             gas_speeds: vec![],
         },
@@ -443,7 +450,7 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
         ThemeProto {
             id: 25,
             name: "Desert 11",
-            water_item_id: -2,
+            water_item_id: 0,
             wind: 1.0,
             distribute: ThemeDistribute::Interstellar,
             temperature: 0.0,

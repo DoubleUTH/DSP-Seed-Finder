@@ -58,10 +58,6 @@ impl Evaluaton {
         self.items[index]
     }
 
-    pub fn is_unknown(&self, index: usize) -> bool {
-        self.get_result(index).is_none()
-    }
-
     pub fn is_known(&self, index: usize) -> bool {
         self.get_result(index).is_some()
     }

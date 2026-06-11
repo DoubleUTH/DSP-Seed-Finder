@@ -43,6 +43,7 @@ function run() {
             rare_settings: vec![${x.RareSettings.map(toDouble).join(", ")}],
             gas_items: vec![${x.GasItems.join(", ")}],
             gas_speeds: vec![${x.GasSpeeds.join(", ")}],
+            algos: vec![${x.Algos.join(", ")}],
         },`,
     )
     // eslint-disable-next-line no-undef

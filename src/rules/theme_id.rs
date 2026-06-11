@@ -19,7 +19,7 @@ impl Rule for RuleThemeId {
         let mut result: Vec<usize> = vec![];
         for (index, sp) in galaxy.stars.iter().take(evaluation.get_len()).enumerate() {
             let planets = sp.get_planets();
-            if !evaluation.is_unknown(index) {
+            if evaluation.is_known(index) {
                 if !sp.is_safe() {
                     sp.load_planets()
                 }

@@ -459,6 +459,20 @@ impl<'a> Planet<'a> {
         })
     }
 
+    pub fn can_have_vein(&self, vein_type: &VeinType) -> bool {
+        let theme = self.get_theme();
+        if vein_type.is_rare() {
+            theme.rare_veins.contains(vein_type)
+        } else {
+            let vein_index = *vein_type as i32;
+            if let Some(x) = theme.vein_spot.get((vein_index - 1) as usize) {
+                *x != 0
+            } else {
+                false
+            }
+        }
+    }
+
     pub fn get_veins(&self) -> &Vec<Vein> {
         self.veins.get_or_init(|| {
             let mut output: Vec<Vein> = vec![];

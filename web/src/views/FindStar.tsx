@@ -343,7 +343,12 @@ const FindStar: Component = () => {
             onProgress: (current) => {
                 batch(() => {
                     setProgress("current", (c) => Math.max(c, current))
-                    setProgress("found", (found) => found + results.length)
+                    setProgress("found", (found) =>
+                        results.reduce(
+                            (acc, r) => acc + r.indexes.length,
+                            found,
+                        ),
+                    )
                 })
                 setProfileProgress(unwrap(progress), results).then(() => {
                     setTick((prev) => (prev + 1) % 1024)

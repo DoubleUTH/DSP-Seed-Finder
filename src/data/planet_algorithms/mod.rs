@@ -37,10 +37,6 @@ mod algo9;
 
 /// Trait for planet algorithms. Each algorithm lazily computes height for individual vertices.
 pub trait PlanetAlgorithm {
-    /// Prepare any per-planet state (seeds, noise generators, radius, etc.).
-    /// Called once before any calls to `get_height`.
-    fn prepare_data(&mut self, planet: &Planet);
-
     /// Compute the height for a single vertex index.
     ///
     /// # Arguments
@@ -52,34 +48,26 @@ pub trait PlanetAlgorithm {
     fn get_height(&self, index: usize, planet_raw_data: &PlanetRawData) -> f32;
 }
 
-/// Construct and prepare the algorithm matching the planet's algo ID.
-/// Returns a boxed, prepared algorithm ready for lazy height queries.
+/// Construct the algorithm matching the planet's algo ID.
+/// Returns a boxed, fully-initialized algorithm ready for lazy height queries.
 pub fn create_and_prepare_algo(planet: &Planet) -> Box<dyn PlanetAlgorithm> {
     let algo_id = planet.get_algo_id();
     match algo_id {
-        0 => new_and_prepare(PlanetAlgorithm0::default(), planet),
-        1 => new_and_prepare(PlanetAlgorithm1::default(), planet),
-        2 => new_and_prepare(PlanetAlgorithm2::default(), planet),
-        3 => new_and_prepare(PlanetAlgorithm3::default(), planet),
-        4 => new_and_prepare(PlanetAlgorithm4::default(), planet),
-        5 => new_and_prepare(PlanetAlgorithm5::default(), planet),
-        6 => new_and_prepare(PlanetAlgorithm6::default(), planet),
-        7 => new_and_prepare(PlanetAlgorithm7::default(), planet),
-        8 => new_and_prepare(PlanetAlgorithm8::default(), planet),
-        9 => new_and_prepare(PlanetAlgorithm9::default(), planet),
-        10 => new_and_prepare(PlanetAlgorithm10::default(), planet),
-        11 => new_and_prepare(PlanetAlgorithm11::default(), planet),
-        12 => new_and_prepare(PlanetAlgorithm12::default(), planet),
-        13 => new_and_prepare(PlanetAlgorithm13::default(), planet),
-        14 => new_and_prepare(PlanetAlgorithm14::default(), planet),
+        0 => Box::new(PlanetAlgorithm0::new(planet)),
+        1 => Box::new(PlanetAlgorithm1::new(planet)),
+        2 => Box::new(PlanetAlgorithm2::new(planet)),
+        3 => Box::new(PlanetAlgorithm3::new(planet)),
+        4 => Box::new(PlanetAlgorithm4::new(planet)),
+        5 => Box::new(PlanetAlgorithm5::new(planet)),
+        6 => Box::new(PlanetAlgorithm6::new(planet)),
+        7 => Box::new(PlanetAlgorithm7::new(planet)),
+        8 => Box::new(PlanetAlgorithm8::new(planet)),
+        9 => Box::new(PlanetAlgorithm9::new(planet)),
+        10 => Box::new(PlanetAlgorithm10::new(planet)),
+        11 => Box::new(PlanetAlgorithm11::new(planet)),
+        12 => Box::new(PlanetAlgorithm12::new(planet)),
+        13 => Box::new(PlanetAlgorithm13::new(planet)),
+        14 => Box::new(PlanetAlgorithm14::new(planet)),
         _ => panic!("Unknown planet algorithm ID: {}", algo_id),
     }
-}
-
-fn new_and_prepare<T: PlanetAlgorithm + Default + 'static>(
-    mut algo: T,
-    planet: &Planet,
-) -> Box<dyn PlanetAlgorithm> {
-    algo.prepare_data(planet);
-    Box::new(algo)
 }

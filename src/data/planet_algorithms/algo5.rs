@@ -6,27 +6,27 @@ use super::super::simplex_noise::SimplexNoise;
 use super::PlanetAlgorithm;
 
 /// PlanetAlgorithm5 - Complex noise with levelized coordinates and cell/crack patterns.
-#[derive(Default)]
 pub struct PlanetAlgorithm5 {
     radius: f32,
-    noise1: Option<SimplexNoise>,
-    noise2: Option<SimplexNoise>,
+    noise1: SimplexNoise,
+    noise2: SimplexNoise,
 }
 
-impl PlanetAlgorithm for PlanetAlgorithm5 {
-    fn prepare_data(&mut self, planet: &Planet) {
-        self.radius = planet.radius;
+impl PlanetAlgorithm5 {
+    pub fn new(planet: &Planet) -> Self {
         let mut rand = DspRandom::new(planet.seed);
         let seed1 = rand.next_seed();
         let seed2 = rand.next_seed();
-        self.noise1 = Some(SimplexNoise::with_seed(seed1));
-        self.noise2 = Some(SimplexNoise::with_seed(seed2));
+        Self {
+            radius: planet.radius,
+            noise1: SimplexNoise::with_seed(seed1),
+            noise2: SimplexNoise::with_seed(seed2),
+        }
     }
+}
 
+impl PlanetAlgorithm for PlanetAlgorithm5 {
     fn get_height(&self, index: usize, planet_raw_data: &PlanetRawData) -> f32 {
-        let noise1 = self.noise1.as_ref().unwrap();
-        let noise2 = self.noise2.as_ref().unwrap();
-
         let v = &planet_raw_data.vertices[index];
         let world_x = (v.0 as f64) * self.radius as f64;
         let world_y = (v.1 as f64) * self.radius as f64;
@@ -37,14 +37,23 @@ impl PlanetAlgorithm for PlanetAlgorithm5 {
         let leveled_y = levelize(world_y * 0.007, 1.0, 0.0);
         let leveled_z = levelize(world_z * 0.007, 1.0, 0.0);
 
-        let xin =
-            leveled_x + noise1.noise_3d(world_x * 0.05, world_y * 0.05, world_z * 0.05) * 0.04;
-        let yin =
-            leveled_y + noise1.noise_3d(world_y * 0.05, world_z * 0.05, world_x * 0.05) * 0.04;
-        let zin =
-            leveled_z + noise1.noise_3d(world_z * 0.05, world_x * 0.05, world_y * 0.05) * 0.04;
+        let xin = leveled_x
+            + self
+                .noise1
+                .noise_3d(world_x * 0.05, world_y * 0.05, world_z * 0.05)
+                * 0.04;
+        let yin = leveled_y
+            + self
+                .noise1
+                .noise_3d(world_y * 0.05, world_z * 0.05, world_x * 0.05)
+                * 0.04;
+        let zin = leveled_z
+            + self
+                .noise1
+                .noise_3d(world_z * 0.05, world_x * 0.05, world_y * 0.05)
+                * 0.04;
 
-        let cell_noise = noise2.noise_3d(xin, yin, zin).abs();
+        let cell_noise = self.noise2.noise_3d(xin, yin, zin).abs();
         let crack_depth = (0.16 - cell_noise) * 10.0;
         let crack_clamped = if crack_depth > 0.0 {
             if crack_depth > 1.0 {
@@ -57,7 +66,7 @@ impl PlanetAlgorithm for PlanetAlgorithm5 {
         };
         let crack_intensity = crack_clamped * crack_clamped;
 
-        let fluid_level = (noise1.noise_3d_fbm(
+        let fluid_level = (self.noise1.noise_3d_fbm(
             world_y * 0.005,
             world_z * 0.005,
             world_x * 0.005,
@@ -76,7 +85,8 @@ impl PlanetAlgorithm for PlanetAlgorithm5 {
             0.0
         };
 
-        let detail_noise = noise2
+        let detail_noise = self
+            .noise2
             .noise_3d_fbm(xin * 1.5, yin * 1.5, zin * 1.5, 2, 0.5, 2.0)
             .abs();
 
@@ -89,7 +99,10 @@ impl PlanetAlgorithm for PlanetAlgorithm5 {
 
         let under_ground = -0.3 - final_height;
         if under_ground > 0.0 {
-            let crack_noise = noise2.noise_3d(world_x * 0.16, world_y * 0.16, world_z * 0.16) - 1.0;
+            let crack_noise = self
+                .noise2
+                .noise_3d(world_x * 0.16, world_y * 0.16, world_z * 0.16)
+                - 1.0;
             let depth_clamped = if under_ground > 1.0 {
                 1.0
             } else {

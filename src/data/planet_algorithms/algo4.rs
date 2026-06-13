@@ -6,24 +6,19 @@ use super::super::simplex_noise::SimplexNoise;
 use super::PlanetAlgorithm;
 
 /// PlanetAlgorithm4 - FBM noise with 80 circular crater features.
-#[derive(Default)]
 pub struct PlanetAlgorithm4 {
     radius: f32,
-    noise1: Option<SimplexNoise>,
-    noise2: Option<SimplexNoise>,
-    circles: Option<Vec<([f64; 3], f64)>>,
-    heights: Option<Vec<f64>>,
+    noise1: SimplexNoise,
+    noise2: SimplexNoise,
+    circles: Vec<([f64; 3], f64)>,
+    heights: Vec<f64>,
 }
 
-impl PlanetAlgorithm for PlanetAlgorithm4 {
-    fn prepare_data(&mut self, planet: &Planet) {
-        self.radius = planet.radius;
-
+impl PlanetAlgorithm4 {
+    pub fn new(planet: &Planet) -> Self {
         let mut rand = DspRandom::new(planet.seed);
         let seed1 = rand.next_seed();
         let seed2 = rand.next_seed();
-        self.noise1 = Some(SimplexNoise::with_seed(seed1));
-        self.noise2 = Some(SimplexNoise::with_seed(seed2));
 
         let mut seed3 = rand.next_seed();
         let mut cr = Vec::with_capacity(80);
@@ -40,10 +35,17 @@ impl PlanetAlgorithm for PlanetAlgorithm4 {
             hs.push(h);
         }
 
-        self.circles = Some(cr);
-        self.heights = Some(hs);
+        Self {
+            radius: planet.radius,
+            noise1: SimplexNoise::with_seed(seed1),
+            noise2: SimplexNoise::with_seed(seed2),
+            circles: cr,
+            heights: hs,
+        }
     }
+}
 
+impl PlanetAlgorithm for PlanetAlgorithm4 {
     fn get_height(&self, index: usize, planet_raw_data: &PlanetRawData) -> f32 {
         let freq_scale_x: f64 = 0.007;
         let freq_scale_y: f64 = 0.007;
@@ -54,10 +56,7 @@ impl PlanetAlgorithm for PlanetAlgorithm4 {
         let world_y = (v.1 as f64) * self.radius as f64;
         let world_z = (v.2 as f64) * self.radius as f64;
 
-        let noise1 = self.noise1.as_ref().unwrap();
-        let noise2 = self.noise2.as_ref().unwrap();
-
-        let low_freq_noise = noise1.noise_3d_fbm(
+        let low_freq_noise = self.noise1.noise_3d_fbm(
             world_x * freq_scale_x,
             world_y * freq_scale_y,
             world_z * freq_scale_z,
@@ -65,7 +64,7 @@ impl PlanetAlgorithm for PlanetAlgorithm4 {
             0.45,
             1.8,
         );
-        let high_freq_noise = noise2.noise_3d_fbm(
+        let high_freq_noise = self.noise2.noise_3d_fbm(
             world_x * freq_scale_x * 5.0,
             world_y * freq_scale_y * 5.0,
             world_z * freq_scale_z * 5.0,
@@ -79,10 +78,8 @@ impl PlanetAlgorithm for PlanetAlgorithm4 {
         let base_elevation = scaled_low * 0.08 + scaled_high * 2.0;
 
         let mut max_crater = 0.0;
-        let circles = self.circles.as_ref().unwrap();
-        let heights = self.heights.as_ref().unwrap();
         for j in 0..80 {
-            let c = &circles[j];
+            let c = &self.circles[j];
             let dx = c.0[0] - world_x;
             let dy = c.0[1] - world_y;
             let dz = c.0[2] - world_z;
@@ -101,7 +98,7 @@ impl PlanetAlgorithm for PlanetAlgorithm4 {
                 } else {
                     crater_shape
                 };
-                let crater_val = crater_shape * crater_shape * heights[j];
+                let crater_val = crater_shape * crater_shape * self.heights[j];
                 if crater_val > max_crater {
                     max_crater = crater_val;
                 }

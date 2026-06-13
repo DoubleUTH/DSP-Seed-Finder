@@ -6,28 +6,30 @@ use super::super::simplex_noise::SimplexNoise;
 use super::PlanetAlgorithm;
 
 /// PlanetAlgorithm9 - Complex multi-layer noise with modX/modY blending.
-#[derive(Default)]
 pub struct PlanetAlgorithm9 {
     radius: f32,
     mod_x: f64,
     mod_y: f64,
-    noise1: Option<SimplexNoise>,
-    noise2: Option<SimplexNoise>,
+    noise1: SimplexNoise,
+    noise2: SimplexNoise,
 }
 
-impl PlanetAlgorithm for PlanetAlgorithm9 {
-    fn prepare_data(&mut self, planet: &Planet) {
-        self.radius = planet.radius;
-        self.mod_x = planet.get_mod_x();
-        self.mod_y = planet.get_mod_y();
-
+impl PlanetAlgorithm9 {
+    pub fn new(planet: &Planet) -> Self {
         let mut rand = DspRandom::new(planet.seed);
         let seed1 = rand.next_seed();
         let seed2 = rand.next_seed();
-        self.noise1 = Some(SimplexNoise::with_seed(seed1));
-        self.noise2 = Some(SimplexNoise::with_seed(seed2));
+        Self {
+            radius: planet.radius,
+            mod_x: planet.get_mod_x(),
+            mod_y: planet.get_mod_y(),
+            noise1: SimplexNoise::with_seed(seed1),
+            noise2: SimplexNoise::with_seed(seed2),
+        }
     }
+}
 
+impl PlanetAlgorithm for PlanetAlgorithm9 {
     fn get_height(&self, index: usize, planet_raw_data: &PlanetRawData) -> f32 {
         let freq_scale_x: f64 = 0.01;
         let freq_scale_y: f64 = 0.012;
@@ -42,10 +44,7 @@ impl PlanetAlgorithm for PlanetAlgorithm9 {
         let world_y = (v.1 as f64) * self.radius as f64;
         let world_z = (v.2 as f64) * self.radius as f64;
 
-        let noise1 = self.noise1.as_ref().unwrap();
-        let noise2 = self.noise2.as_ref().unwrap();
-
-        let layer1_noise = noise1.noise_3d_fbm(
+        let layer1_noise = self.noise1.noise_3d_fbm(
             world_x * freq_scale_x * 0.75,
             world_y * freq_scale_y * 0.5,
             world_z * freq_scale_z * 0.75,
@@ -54,7 +53,7 @@ impl PlanetAlgorithm for PlanetAlgorithm9 {
             2.0,
         ) * noise_amplitude
             + noise_offset;
-        let layer2_noise = noise2.noise_3d_fbm(
+        let layer2_noise = self.noise2.noise_3d_fbm(
             world_x * (1.0 / 400.0),
             world_y * (1.0 / 400.0),
             world_z * (1.0 / 400.0),
@@ -89,7 +88,7 @@ impl PlanetAlgorithm for PlanetAlgorithm9 {
             shaped_height * 4.0
         };
 
-        let layer3_noise = noise1.noise_3d_fbm(
+        let layer3_noise = self.noise1.noise_3d_fbm(
             world_x * freq_scale_x * self.mod_x,
             world_y * freq_scale_y * self.mod_x,
             world_z * freq_scale_z * self.mod_x,
@@ -98,7 +97,7 @@ impl PlanetAlgorithm for PlanetAlgorithm9 {
             2.0,
         ) * noise_amplitude
             + noise_offset;
-        let layer4_noise = noise2.noise_3d_fbm(
+        let layer4_noise = self.noise2.noise_3d_fbm(
             world_x * (1.0 / 400.0),
             world_y * (1.0 / 400.0),
             world_z * (1.0 / 400.0),

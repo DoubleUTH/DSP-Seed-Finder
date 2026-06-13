@@ -5,11 +5,10 @@ use super::super::simplex_noise::SimplexNoise;
 use super::PlanetAlgorithm;
 
 /// PlanetAlgorithm13 - Noise-based terrain with modX/modY and piecewise height shaping.
-#[derive(Default)]
 pub struct PlanetAlgorithm13 {
     radius: f32,
     mod_y: f64,
-    noise: Option<SimplexNoise>,
+    noise: SimplexNoise,
     freq_scale_x: f64,
     freq_scale_y: f64,
     freq_scale_z: f64,
@@ -20,30 +19,28 @@ fn remap(src_min: f64, src_max: f64, tgt_min: f64, tgt_max: f64, x: f64) -> f64 
     (x - src_min) / (src_max - src_min) * (tgt_max - tgt_min) + tgt_min
 }
 
-impl PlanetAlgorithm for PlanetAlgorithm13 {
-    fn prepare_data(&mut self, planet: &Planet) {
-        self.radius = planet.radius;
+impl PlanetAlgorithm13 {
+    pub fn new(planet: &Planet) -> Self {
         let mod_x = planet.get_mod_x();
-        self.mod_y = planet.get_mod_y();
-
-        self.freq_scale_x = 0.007 * mod_x;
-        self.freq_scale_y = 0.007 * mod_x;
-        self.freq_scale_z = 0.007 * mod_x;
-
-        self.noise = Some(SimplexNoise::with_seed(
-            DspRandom::new(planet.seed).next_seed(),
-        ));
+        Self {
+            radius: planet.radius,
+            mod_y: planet.get_mod_y(),
+            noise: SimplexNoise::with_seed(DspRandom::new(planet.seed).next_seed()),
+            freq_scale_x: 0.007 * mod_x,
+            freq_scale_y: 0.007 * mod_x,
+            freq_scale_z: 0.007 * mod_x,
+        }
     }
+}
 
+impl PlanetAlgorithm for PlanetAlgorithm13 {
     fn get_height(&self, index: usize, planet_raw_data: &PlanetRawData) -> f32 {
         let v = &planet_raw_data.vertices[index];
         let world_x = (v.0 as f64) * self.radius as f64;
         let world_y = (v.1 as f64) * self.radius as f64;
         let world_z = (v.2 as f64) * self.radius as f64;
 
-        let noise = self.noise.as_ref().unwrap();
-
-        let n = noise.noise_3d_fbm(
+        let n = self.noise.noise_3d_fbm(
             world_x * self.freq_scale_x,
             world_y * self.freq_scale_y,
             world_z * self.freq_scale_z,

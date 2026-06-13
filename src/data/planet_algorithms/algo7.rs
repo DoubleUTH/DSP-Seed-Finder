@@ -6,23 +6,26 @@ use super::super::simplex_noise::SimplexNoise;
 use super::PlanetAlgorithm;
 
 /// PlanetAlgorithm7 - Similar to algo1 but without +0.2 offset in height and different constants.
-#[derive(Default)]
 pub struct PlanetAlgorithm7 {
     radius: f32,
-    noise1: Option<SimplexNoise>,
-    noise2: Option<SimplexNoise>,
+    noise1: SimplexNoise,
+    noise2: SimplexNoise,
 }
 
-impl PlanetAlgorithm for PlanetAlgorithm7 {
-    fn prepare_data(&mut self, planet: &Planet) {
-        self.radius = planet.radius;
+impl PlanetAlgorithm7 {
+    pub fn new(planet: &Planet) -> Self {
         let mut rand = DspRandom::new(planet.seed);
         let seed1 = rand.next_seed();
         let seed2 = rand.next_seed();
-        self.noise1 = Some(SimplexNoise::with_seed(seed1));
-        self.noise2 = Some(SimplexNoise::with_seed(seed2));
+        Self {
+            radius: planet.radius,
+            noise1: SimplexNoise::with_seed(seed1),
+            noise2: SimplexNoise::with_seed(seed2),
+        }
     }
+}
 
+impl PlanetAlgorithm for PlanetAlgorithm7 {
     fn get_height(&self, index: usize, planet_raw_data: &PlanetRawData) -> f32 {
         let freq_scale_x: f64 = 0.008;
         let freq_scale_y: f64 = 0.01;
@@ -37,10 +40,7 @@ impl PlanetAlgorithm for PlanetAlgorithm7 {
         let world_y = (v.1 as f64) * self.radius as f64;
         let world_z = (v.2 as f64) * self.radius as f64;
 
-        let noise1 = self.noise1.as_ref().unwrap();
-        let noise2 = self.noise2.as_ref().unwrap();
-
-        let layer1_noise = noise1.noise_3d_fbm(
+        let layer1_noise = self.noise1.noise_3d_fbm(
             world_x * freq_scale_x,
             world_y * freq_scale_y,
             world_z * freq_scale_z,
@@ -49,7 +49,7 @@ impl PlanetAlgorithm for PlanetAlgorithm7 {
             2.0,
         ) * noise_amplitude
             + noise_offset;
-        let layer2_noise = noise2.noise_3d_fbm(
+        let layer2_noise = self.noise2.noise_3d_fbm(
             world_x * (1.0 / 400.0),
             world_y * (1.0 / 400.0),
             world_z * (1.0 / 400.0),

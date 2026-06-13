@@ -6,11 +6,10 @@ use super::super::simplex_noise::SimplexNoise;
 use super::PlanetAlgorithm;
 
 /// PlanetAlgorithm12 - Latitude-based terrain with ridged noise and modX/modY.
-#[derive(Default)]
 pub struct PlanetAlgorithm12 {
     radius: f32,
-    noise1: Option<SimplexNoise>,
-    noise2: Option<SimplexNoise>,
+    noise1: SimplexNoise,
+    noise2: SimplexNoise,
     freq_scale: f64,
     mod_y: f64,
 }
@@ -30,20 +29,22 @@ fn remap(src_min: f64, src_max: f64, tgt_min: f64, tgt_max: f64, x: f64) -> f64 
     (x - src_min) / (src_max - src_min) * (tgt_max - tgt_min) + tgt_min
 }
 
-impl PlanetAlgorithm for PlanetAlgorithm12 {
-    fn prepare_data(&mut self, planet: &Planet) {
-        self.radius = planet.radius;
-        let mod_x = planet.get_mod_x();
-        self.mod_y = planet.get_mod_y();
-        self.freq_scale = 1.1 * mod_x;
-
+impl PlanetAlgorithm12 {
+    pub fn new(planet: &Planet) -> Self {
         let mut rand = DspRandom::new(planet.seed);
         let seed1 = rand.next_seed();
         let seed2 = rand.next_seed();
-        self.noise1 = Some(SimplexNoise::with_seed(seed1));
-        self.noise2 = Some(SimplexNoise::with_seed(seed2));
+        Self {
+            radius: planet.radius,
+            noise1: SimplexNoise::with_seed(seed1),
+            noise2: SimplexNoise::with_seed(seed2),
+            freq_scale: 1.1 * planet.get_mod_x(),
+            mod_y: planet.get_mod_y(),
+        }
     }
+}
 
+impl PlanetAlgorithm for PlanetAlgorithm12 {
     fn get_height(&self, index: usize, planet_raw_data: &PlanetRawData) -> f32 {
         let ridge_amplitude = 0.2;
         let height_multiplier = 8.0;
@@ -55,10 +56,7 @@ impl PlanetAlgorithm for PlanetAlgorithm12 {
         let y_pos_mod = (v.1 as f64) * 2.5 * self.mod_y;
         let z_pos = v.2 as f64;
 
-        let noise1 = self.noise1.as_ref().unwrap();
-        let noise2 = self.noise2.as_ref().unwrap();
-
-        let warp_offset = noise2.noise_3d_fbm(
+        let warp_offset = self.noise2.noise_3d_fbm(
             x_pos * self.freq_scale,
             y_pos_mod * self.freq_scale,
             z_pos * self.freq_scale,
@@ -66,7 +64,7 @@ impl PlanetAlgorithm for PlanetAlgorithm12 {
             0.4,
             2.0,
         ) * 0.2;
-        let ridged = noise1.ridged_noise(
+        let ridged = self.noise1.ridged_noise(
             x_pos * self.freq_scale,
             y_pos_mod * self.freq_scale - warp_offset,
             z_pos * self.freq_scale,
@@ -75,7 +73,7 @@ impl PlanetAlgorithm for PlanetAlgorithm12 {
             2.0,
             0.8,
         );
-        let fbm_val = noise1.noise_3d_fbm_initial_amp(
+        let fbm_val = self.noise1.noise_3d_fbm_initial_amp(
             x_pos * self.freq_scale,
             y_pos_mod * self.freq_scale - warp_offset,
             z_pos * self.freq_scale,

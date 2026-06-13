@@ -5,33 +5,34 @@ use super::super::random::DspRandom;
 use super::super::simplex_noise::SimplexNoise;
 use super::PlanetAlgorithm;
 
-/// Private helpers matching C# `Mathf.Lerp` double-precision behavior (no clamp).
 #[inline]
 fn lerp_nc(a: f64, b: f64, t: f64) -> f64 {
     a + (b - a) * t
 }
 
 /// PlanetAlgorithm3 - Complex FBM noise with domain warping and multi-level shaping.
-#[derive(Default)]
 pub struct PlanetAlgorithm3 {
     radius: f32,
     mod_x: f64,
-    noise1: Option<SimplexNoise>,
-    noise2: Option<SimplexNoise>,
+    noise1: SimplexNoise,
+    noise2: SimplexNoise,
 }
 
-impl PlanetAlgorithm for PlanetAlgorithm3 {
-    fn prepare_data(&mut self, planet: &Planet) {
-        self.radius = planet.radius;
-        self.mod_x = planet.get_mod_x();
-
+impl PlanetAlgorithm3 {
+    pub fn new(planet: &Planet) -> Self {
         let mut rand = DspRandom::new(planet.seed);
         let seed1 = rand.next_seed();
         let seed2 = rand.next_seed();
-        self.noise1 = Some(SimplexNoise::with_seed(seed1));
-        self.noise2 = Some(SimplexNoise::with_seed(seed2));
+        Self {
+            radius: planet.radius,
+            mod_x: planet.get_mod_x(),
+            noise1: SimplexNoise::with_seed(seed1),
+            noise2: SimplexNoise::with_seed(seed2),
+        }
     }
+}
 
+impl PlanetAlgorithm for PlanetAlgorithm3 {
     fn get_height(&self, index: usize, planet_raw_data: &PlanetRawData) -> f32 {
         let freq_scale_x: f64 = 0.007;
         let freq_scale_y: f64 = 0.007;
@@ -42,15 +43,11 @@ impl PlanetAlgorithm for PlanetAlgorithm3 {
         let world_y = (v.1 as f64) * self.radius as f64;
         let world_z = (v.2 as f64) * self.radius as f64;
 
-        let noise1 = self.noise1.as_ref().unwrap();
-        let noise2 = self.noise2.as_ref().unwrap();
-
-        // Domain warping
         let warped_x = world_x + (world_y * 0.15).sin() * 3.0;
         let warped_y = world_y + (world_z * 0.15).sin() * 3.0;
         let warped_z = world_z + (warped_x * 0.15).sin() * 3.0;
 
-        let primary_noise = noise1.noise_3d_fbm(
+        let primary_noise = self.noise1.noise_3d_fbm(
             warped_x * freq_scale_x * 1.0,
             warped_y * freq_scale_y * 1.1,
             warped_z * freq_scale_z * 1.0,
@@ -59,7 +56,7 @@ impl PlanetAlgorithm for PlanetAlgorithm3 {
             1.8,
         );
 
-        let secondary_noise = noise2.noise_3d_fbm(
+        let secondary_noise = self.noise2.noise_3d_fbm(
             warped_x * freq_scale_x * 1.3 + 0.5,
             warped_y * freq_scale_y * 2.8 + 0.2,
             warped_z * freq_scale_z * 1.3 + 0.7,
@@ -68,7 +65,7 @@ impl PlanetAlgorithm for PlanetAlgorithm3 {
             2.0,
         ) * 2.0;
 
-        let detail_noise = noise2.noise_3d_fbm(
+        let detail_noise = self.noise2.noise_3d_fbm(
             warped_x * freq_scale_x * 6.0,
             warped_y * freq_scale_y * 12.0,
             warped_z * freq_scale_z * 6.0,
@@ -79,7 +76,7 @@ impl PlanetAlgorithm for PlanetAlgorithm3 {
 
         let blended_detail = lerp_nc(detail_noise, detail_noise * 0.1, self.mod_x);
 
-        let reference_noise = noise2.noise_3d_fbm(
+        let reference_noise = self.noise2.noise_3d_fbm(
             warped_x * freq_scale_x * 0.8,
             warped_y * freq_scale_y * 0.8,
             warped_z * freq_scale_z * 0.8,

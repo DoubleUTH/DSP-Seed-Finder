@@ -956,7 +956,7 @@ impl<'a> Planet<'a> {
                 }
                 resource_coef *= 0.7;
             }
-            let mut vein_vectors: Vec<(VeinType, VectorF3, bool)> = vec![];
+            let mut vein_vectors: Vec<(VeinType, VectorF3, bool)> = Vec::with_capacity(512);
 
             let birth_point = if is_birth_planet {
                 let star_direction = self.get_star_direction();
@@ -995,6 +995,12 @@ impl<'a> Planet<'a> {
                     vein_spot_count += rand2.next_i32(3) - 1;
                 }
                 let vein_type: VeinType = unsafe { ::std::mem::transmute(index3) };
+                let min_sq_dist = min_vein_spacing_sq
+                    * (if vein_type == VeinType::Oil {
+                        100_f64
+                    } else {
+                        196_f64
+                    });
 
                 for _ in 0..vein_spot_count {
                     for _ in 0..200 {
@@ -1007,12 +1013,6 @@ impl<'a> Planet<'a> {
                         }
                         zero.normalize();
                         if self.can_place_vein(&vein_type, &zero, algo.as_ref()) {
-                            let min_sq_dist = min_vein_spacing_sq
-                                * (if vein_type == VeinType::Oil {
-                                    100_f64
-                                } else {
-                                    196_f64
-                                });
                             let not_too_close_to_other_vein =
                                 vein_vectors.iter().all(|(_, pos, _)| {
                                     (pos.distance_sq_from(&zero) as f64) >= min_sq_dist
@@ -1035,7 +1035,6 @@ impl<'a> Planet<'a> {
                 let rotation = Quaternion::from_to_rotation(&VectorF3::up(), &normalized);
                 let vector3_1 = &rotation * &VectorF3::right();
                 let vector3_2 = &rotation * &VectorF3::forward();
-                let mut tmp_vecs = vec![VectorF2::zero()];
                 let index7 = *vein_type as i32;
                 let target_node_count = if *is_birth_resource {
                     rand2.next_f64();
@@ -1047,6 +1046,8 @@ impl<'a> Planet<'a> {
                     (num_array_2.get(index7 as usize).unwrap() * (rand2.next_i32(5) + 20) as f32)
                         .round_ties_even() as usize
                 };
+                let mut tmp_vecs = Vec::with_capacity(target_node_count);
+                tmp_vecs.push(VectorF2::zero());
                 let vein_density = if *is_birth_resource {
                     0.2_f32
                 } else {

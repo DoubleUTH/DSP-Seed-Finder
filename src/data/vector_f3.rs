@@ -1,7 +1,5 @@
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
-use super::vector3::Vector3;
-
 /// f32-based 3D vector, used for birth point generation
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct VectorF3(pub f32, pub f32, pub f32);
@@ -83,11 +81,6 @@ impl VectorF3 {
 
     pub fn dot(a: &Self, b: &Self) -> f32 {
         a.0 * b.0 + a.1 * b.1 + a.2 * b.2
-    }
-
-    /// Convert to the f64-based Vector3 (for use with query_height)
-    pub fn to_f64_vec3(&self) -> Vector3 {
-        Vector3(self.0 as f64, self.1 as f64, self.2 as f64)
     }
 
     pub fn slerp(lhs: &VectorF3, rhs: &VectorF3, percent: f32) -> VectorF3 {

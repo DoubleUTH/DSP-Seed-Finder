@@ -1,7 +1,6 @@
 /// Planet algorithm implementations ported from PlanetAlgorithm0 through PlanetAlgorithm14.
 /// Each algorithm lazily computes height data for a planet based on its seed and theme.
 use super::planet::Planet;
-use super::planet_raw_data::PlanetRawData;
 
 use algo0::PlanetAlgorithm0;
 use algo1::PlanetAlgorithm1;
@@ -40,12 +39,11 @@ pub trait PlanetAlgorithm {
     /// Compute the height for a single vertex index.
     ///
     /// # Arguments
-    /// * `index` - The vertex index (0..planet_raw_data.data_length())
-    /// * `planet_raw_data` - Provides the vertex positions
+    /// * `index` - The vertex index (0..planet_raw_data::data_length())
     ///
     /// # Returns
     /// Height in game units (f32).
-    fn get_height(&self, index: usize, planet_raw_data: &PlanetRawData) -> f32;
+    fn get_height(&self, index: usize) -> f32;
 }
 
 /// Construct the algorithm matching the planet's algo ID.

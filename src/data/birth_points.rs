@@ -1,4 +1,4 @@
-use super::planet_raw_data::PlanetRawData;
+use super::planet_raw_data::query_height;
 use super::random::DspRandom;
 use super::vector_f3::VectorF3;
 
@@ -14,7 +14,6 @@ pub struct BirthPoints {
 }
 
 pub fn gen_birth_points(
-    raw_data: &PlanetRawData,
     algo: &dyn super::planet_algorithms::PlanetAlgorithm,
     birth_seed: i32,
     radius: f32,
@@ -93,9 +92,9 @@ pub fn gen_birth_points(
             // C#: if (rawData.QueryHeight(vector3_2) > num7
             //        && rawData.QueryHeight(normalized3) > num7
             //        && rawData.QueryHeight(normalized4) > num7)
-            if raw_data.query_height(&candidate, algo) > height_threshold
-                && raw_data.query_height(&rp0_dir, algo) > height_threshold
-                && raw_data.query_height(&rp1_dir, algo) > height_threshold
+            if query_height(&candidate, algo) > height_threshold
+                && query_height(&rp0_dir, algo) > height_threshold
+                && query_height(&rp1_dir, algo) > height_threshold
             {
                 // C#: check 8 surrounding offsets
                 let vpos1 = rp0_dir + basis1 * 0.03;
@@ -107,14 +106,14 @@ pub fn gen_birth_points(
                 let vpos7 = rp1_dir + basis2 * 0.03;
                 let vpos8 = rp1_dir - basis2 * 0.03;
 
-                if raw_data.query_height(&vpos1, algo) > height_threshold
-                    && raw_data.query_height(&vpos2, algo) > height_threshold
-                    && raw_data.query_height(&vpos3, algo) > height_threshold
-                    && raw_data.query_height(&vpos4, algo) > height_threshold
-                    && raw_data.query_height(&vpos5, algo) > height_threshold
-                    && raw_data.query_height(&vpos6, algo) > height_threshold
-                    && raw_data.query_height(&vpos7, algo) > height_threshold
-                    && raw_data.query_height(&vpos8, algo) > height_threshold
+                if query_height(&vpos1, algo) > height_threshold
+                    && query_height(&vpos2, algo) > height_threshold
+                    && query_height(&vpos3, algo) > height_threshold
+                    && query_height(&vpos4, algo) > height_threshold
+                    && query_height(&vpos5, algo) > height_threshold
+                    && query_height(&vpos6, algo) > height_threshold
+                    && query_height(&vpos7, algo) > height_threshold
+                    && query_height(&vpos8, algo) > height_threshold
                 {
                     // Re‑normalise both resource-point directions
                     let rp0 = rp0_dir.normalized();

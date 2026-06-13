@@ -1,6 +1,6 @@
 use super::super::math::{levelize, levelize4};
 use super::super::planet::Planet;
-use super::super::planet_raw_data::PlanetRawData;
+use super::super::planet_raw_data::get_vertex;
 use super::super::random::DspRandom;
 use super::super::random_table::RandomTable;
 use super::super::simplex_noise::SimplexNoise;
@@ -68,12 +68,12 @@ impl PlanetAlgorithm10 {
 }
 
 impl PlanetAlgorithm for PlanetAlgorithm10 {
-    fn get_height(&self, index: usize, planet_raw_data: &PlanetRawData) -> f32 {
+    fn get_height(&self, index: usize) -> f32 {
         let freq_scale_x: f64 = 0.007;
         let freq_scale_y: f64 = 0.007;
         let freq_scale_z: f64 = 0.007;
 
-        let v = &planet_raw_data.vertices[index];
+        let v = get_vertex(index);
         let world_x = (v.0 as f64) * self.radius as f64;
         let world_y = (v.1 as f64) * self.radius as f64;
         let world_z = (v.2 as f64) * self.radius as f64;

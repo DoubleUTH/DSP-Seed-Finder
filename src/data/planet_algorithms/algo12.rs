@@ -1,6 +1,6 @@
 use super::super::math::clamp01;
 use super::super::planet::Planet;
-use super::super::planet_raw_data::PlanetRawData;
+use super::super::planet_raw_data::get_vertex;
 use super::super::random::DspRandom;
 use super::super::simplex_noise::SimplexNoise;
 use super::PlanetAlgorithm;
@@ -45,12 +45,12 @@ impl PlanetAlgorithm12 {
 }
 
 impl PlanetAlgorithm for PlanetAlgorithm12 {
-    fn get_height(&self, index: usize, planet_raw_data: &PlanetRawData) -> f32 {
+    fn get_height(&self, index: usize) -> f32 {
         let ridge_amplitude = 0.2;
         let height_multiplier = 8.0;
         let pi = std::f64::consts::PI;
 
-        let v = &planet_raw_data.vertices[index];
+        let v = get_vertex(index);
         let latitude_factor = ((v.1 as f64).abs().asin()) * 2.0 / pi;
         let x_pos = v.0 as f64;
         let y_pos_mod = (v.1 as f64) * 2.5 * self.mod_y;

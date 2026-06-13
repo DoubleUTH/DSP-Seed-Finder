@@ -85,7 +85,7 @@ impl VectorF3 {
         a.0 * b.0 + a.1 * b.1 + a.2 * b.2
     }
 
-    /// Convert to the f64-based Vector3 (for use with PlanetRawData::query_height)
+    /// Convert to the f64-based Vector3 (for use with query_height)
     pub fn to_f64_vec3(&self) -> Vector3 {
         Vector3(self.0 as f64, self.1 as f64, self.2 as f64)
     }

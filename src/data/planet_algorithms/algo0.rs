@@ -1,5 +1,4 @@
 use super::super::planet::Planet;
-use super::super::planet_raw_data::PlanetRawData;
 use super::PlanetAlgorithm;
 
 /// PlanetAlgorithm0 - All vertices at planet radius.
@@ -17,7 +16,7 @@ impl PlanetAlgorithm0 {
 }
 
 impl PlanetAlgorithm for PlanetAlgorithm0 {
-    fn get_height(&self, _index: usize, _planet_raw_data: &PlanetRawData) -> f32 {
+    fn get_height(&self, _index: usize) -> f32 {
         self.radius
     }
 }

@@ -247,9 +247,13 @@ impl PlanetRawData {
     // ------------------------------------------------------------------
     /// Inverse-distance-weighted height interpolation.
     ///
-    /// `height_data` is a slice of `u16` raw heights (game format).
-    /// Returns interpolated height in game units (≈0.01 × raw value).
-    pub fn query_height(&self, vpos: &VectorF3, height_data: &Vec<u16>) -> f32 {
+    /// `algo` provides lazy height values via `get_height()`.
+    /// Returns interpolated height in game units.
+    pub fn query_height(
+        &self,
+        vpos: &VectorF3,
+        algo: &dyn super::planet_algorithms::PlanetAlgorithm,
+    ) -> f32 {
         let mut vpos = vpos.clone();
         vpos.normalize();
 
@@ -280,8 +284,7 @@ impl PlanetRawData {
                         // C#: float num5 = (float)(1.0 - (double)Mathf.Sqrt(sqrMagnitude)
                         //                           / (double)num1);
                         let num5 = 1.0f32 - (sqr_mag.sqrt() / num1 as f32);
-                        // C#: float num6 = (float)this.heightData[index4];
-                        let num6 = height_data.get(idx4).copied().unwrap_or(0u16) as f32;
+                        let num6 = algo.get_height(idx4, self);
                         num3 += num5;
                         num4 += num6 * num5;
                     }
@@ -289,13 +292,10 @@ impl PlanetRawData {
             }
         }
 
-        // C#: if ((double)num3 != 0.0)
-        //        return (float)((double)num4 / (double)num3 * 0.0099999997764825821);
         if num3 != 0.0f32 {
-            (num4 as f64 / num3 as f64 * 0.01) as f32
+            num4 / num3
         } else {
-            // C# fallback: return (float)this.heightData[0] * 0.01f;
-            height_data.first().copied().unwrap_or(0u16) as f32 * 0.01f32
+            algo.get_height(0, self)
         }
     }
 }

@@ -5,7 +5,15 @@ use super::super::simplex_noise::SimplexNoise;
 use super::PlanetAlgorithm;
 
 /// PlanetAlgorithm13 - Noise-based terrain with modX/modY and piecewise height shaping.
-pub struct PlanetAlgorithm13;
+#[derive(Default)]
+pub struct PlanetAlgorithm13 {
+    radius: f32,
+    mod_y: f64,
+    noise: Option<SimplexNoise>,
+    freq_scale_x: f64,
+    freq_scale_y: f64,
+    freq_scale_z: f64,
+}
 
 #[inline]
 fn remap(src_min: f64, src_max: f64, tgt_min: f64, tgt_max: f64, x: f64) -> f64 {
@@ -13,63 +21,62 @@ fn remap(src_min: f64, src_max: f64, tgt_min: f64, tgt_max: f64, x: f64) -> f64 
 }
 
 impl PlanetAlgorithm for PlanetAlgorithm13 {
-    fn generate_terrain(&self, planet: &Planet, planet_raw_data: &PlanetRawData) -> Vec<u16> {
+    fn prepare_data(&mut self, planet: &Planet) {
+        self.radius = planet.radius;
         let mod_x = planet.get_mod_x();
-        let mod_y = planet.get_mod_y();
+        self.mod_y = planet.get_mod_y();
 
-        let freq_scale_x = 0.007 * mod_x;
-        let freq_scale_y = 0.007 * mod_x;
-        let freq_scale_z = 0.007 * mod_x;
+        self.freq_scale_x = 0.007 * mod_x;
+        self.freq_scale_y = 0.007 * mod_x;
+        self.freq_scale_z = 0.007 * mod_x;
 
-        let noise = SimplexNoise::with_seed(DspRandom::new(planet.seed).next_seed());
+        self.noise = Some(SimplexNoise::with_seed(
+            DspRandom::new(planet.seed).next_seed(),
+        ));
+    }
 
-        let data_length = planet_raw_data.data_length();
-        let mut height_data = vec![0u16; data_length];
-        let radius = planet.radius as f64;
+    fn get_height(&self, index: usize, planet_raw_data: &PlanetRawData) -> f32 {
+        let v = &planet_raw_data.vertices[index];
+        let world_x = (v.0 as f64) * self.radius as f64;
+        let world_y = (v.1 as f64) * self.radius as f64;
+        let world_z = (v.2 as f64) * self.radius as f64;
 
-        for i in 0..data_length {
-            let v = &planet_raw_data.vertices[i];
-            let world_x = (v.0 as f64) * radius;
-            let world_y = (v.1 as f64) * radius;
-            let world_z = (v.2 as f64) * radius;
+        let noise = self.noise.as_ref().unwrap();
 
-            let n = noise.noise_3d_fbm(
-                world_x * freq_scale_x,
-                world_y * freq_scale_y,
-                world_z * freq_scale_z,
-                6,
-                0.5,
-                2.0,
-            );
-            let mut raw_height = remap(
-                0.0,
-                2.0,
-                0.0,
-                4.0,
-                remap(-1.0, 1.0, 0.0, 1.0, n).powf(mod_y) * (49.0 / 16.0),
-            );
+        let n = noise.noise_3d_fbm(
+            world_x * self.freq_scale_x,
+            world_y * self.freq_scale_y,
+            world_z * self.freq_scale_z,
+            6,
+            0.5,
+            2.0,
+        );
+        let mut raw_height = remap(
+            0.0,
+            2.0,
+            0.0,
+            4.0,
+            remap(-1.0, 1.0, 0.0, 1.0, n).powf(self.mod_y) * (49.0 / 16.0),
+        );
 
-            if raw_height < 1.0 {
-                raw_height = raw_height.powi(2);
-            }
-
-            let clamped_height = (raw_height - 0.2).min(4.0);
-
-            let final_height = if clamped_height > 2.0 {
-                if clamped_height <= 3.0 {
-                    2.0 - 1.0 * (clamped_height - 2.0)
-                } else if clamped_height <= 3.5 {
-                    1.0
-                } else {
-                    1.0 + 2.0 * (clamped_height - 3.5)
-                }
-            } else {
-                clamped_height
-            };
-
-            height_data[i] = ((radius + final_height + 0.1) * 100.0) as u16;
+        if raw_height < 1.0 {
+            raw_height = raw_height.powi(2);
         }
 
-        height_data
+        let clamped_height = (raw_height - 0.2).min(4.0);
+
+        let final_height = if clamped_height > 2.0 {
+            if clamped_height <= 3.0 {
+                2.0 - 1.0 * (clamped_height - 2.0)
+            } else if clamped_height <= 3.5 {
+                1.0
+            } else {
+                1.0 + 2.0 * (clamped_height - 3.5)
+            }
+        } else {
+            clamped_height
+        };
+
+        (self.radius as f64 + final_height + 0.1) as f32
     }
 }

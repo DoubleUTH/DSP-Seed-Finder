@@ -188,50 +188,78 @@ fn position_hash_impl(v: &VectorF3, corner: usize) -> usize {
     n2 + n3 * INDEX_MAP_PRECISION + n1 * INDEX_MAP_FACE_STRIDE + corner * INDEX_MAP_CORNER_STRIDE
 }
 
-// ---------------------------------------------------------------------------
-//  query_height  (C# lines 317–348)
-// ---------------------------------------------------------------------------
-pub fn query_height(vpos: &VectorF3, algo: &dyn super::planet_algorithms::PlanetAlgorithm) -> f32 {
-    // Ensure thread-local data is initialized
+/// Returns a reference to the thread-local `PlanetRawData`, initializing it on first access.
+pub fn get_raw_data() -> &'static PlanetRawData {
     init_raw_data();
-
-    let mut vpos = vpos.clone();
-    vpos.normalize();
-
     PLANET_RAW_DATA_200.with(|cell| {
-        let data = cell.borrow();
-        let data = data.as_ref().unwrap();
+        let opt = cell.borrow();
+        // Safety: the data is never deallocated within the thread after initialization.
+        let ptr: *const PlanetRawData = opt.as_ref().unwrap();
+        unsafe { &*ptr }
+    })
+}
 
-        let index1 = data.index_map[position_hash_impl(&vpos, 0)];
+// ---------------------------------------------------------------------------
+//  Core height interpolation (shared by both query variants)
+// ---------------------------------------------------------------------------
+fn query_height_impl(
+    vpos_normalized: &VectorF3,
+    algo: &dyn super::planet_algorithms::PlanetAlgorithm,
+    raw_data: &PlanetRawData,
+) -> f32 {
+    let index1 = raw_data.index_map[position_hash_impl(vpos_normalized, 0)];
 
-        let num1: f64 = (PI / (PRECISION as f64 * 2.0)) * 1.2_f64;
-        let num2: f64 = num1 * num1;
+    let num1: f64 = (PI / (PRECISION as f64 * 2.0)) * 1.2_f64;
+    let num2: f64 = num1 * num1;
 
-        let mut num3: f32 = 0.0f32;
-        let mut num4: f32 = 0.0f32;
+    let mut num3: f32 = 0.0f32;
+    let mut num4: f32 = 0.0f32;
 
-        for i2 in -1..=3 {
-            for i3 in -1_i32..=3 {
-                let idx4 = index1
-                    .wrapping_add(i2)
-                    .wrapping_add(i3.wrapping_mul(STRIDE as i32))
-                    as usize;
-                if idx4 < DATA_LENGTH {
-                    let sqr_mag = data.vertices[idx4].distance_sq_from(&vpos);
-                    if (sqr_mag as f64) <= num2 {
-                        let num5 = 1.0f32 - (sqr_mag.sqrt() / num1 as f32);
-                        let num6 = algo.get_height(idx4);
-                        num3 += num5;
-                        num4 += num6 * num5;
-                    }
+    for i2 in -1..=3 {
+        for i3 in -1_i32..=3 {
+            let idx4 = index1
+                .wrapping_add(i2)
+                .wrapping_add(i3.wrapping_mul(STRIDE as i32)) as usize;
+            if idx4 < DATA_LENGTH {
+                let sqr_mag = raw_data.vertices[idx4].distance_sq_from(vpos_normalized);
+                if (sqr_mag as f64) <= num2 {
+                    let num5 = 1.0f32 - (sqr_mag.sqrt() / num1 as f32);
+                    let num6 = algo.get_height(idx4);
+                    num3 += num5;
+                    num4 += num6 * num5;
                 }
             }
         }
+    }
 
-        if num3 != 0.0f32 {
-            num4 / num3
-        } else {
-            algo.get_height(0)
-        }
-    })
+    if num3 != 0.0f32 {
+        num4 / num3
+    } else {
+        algo.get_height(0)
+    }
+}
+
+// ---------------------------------------------------------------------------
+//  query_height  (C# lines 317–348)
+// ---------------------------------------------------------------------------
+/// Queries the interpolated height at `vpos`, normalizing the input first.
+/// Prefer `query_height_normalized` when the input is already unit-length.
+pub fn query_height(
+    vpos: &VectorF3,
+    algo: &dyn super::planet_algorithms::PlanetAlgorithm,
+    raw_data: &PlanetRawData,
+) -> f32 {
+    let mut vpos = vpos.clone();
+    vpos.normalize();
+    query_height_impl(&vpos, algo, raw_data)
+}
+
+/// Same as `query_height`, but assumes `vpos_normalized` is already a unit vector.
+/// This avoids the redundant normalisation and clone.
+pub fn query_height_normalized(
+    vpos_normalized: &VectorF3,
+    algo: &dyn super::planet_algorithms::PlanetAlgorithm,
+    raw_data: &PlanetRawData,
+) -> f32 {
+    query_height_impl(vpos_normalized, algo, raw_data)
 }

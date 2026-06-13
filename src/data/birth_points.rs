@@ -1,4 +1,4 @@
-use super::planet_raw_data::query_height;
+use super::planet_raw_data::{self, PlanetRawData};
 use super::random::DspRandom;
 use super::vector_f3::VectorF3;
 
@@ -18,6 +18,7 @@ pub fn gen_birth_points(
     birth_seed: i32,
     radius: f32,
     star_direction: VectorF3,
+    raw_data: &PlanetRawData,
 ) -> BirthPoints {
     // ---- main GenBirthPoints(PlanetRawData, int) body (C# lines 761-821) --
     let mut rand = DspRandom::new(birth_seed);
@@ -89,12 +90,13 @@ pub fn gen_birth_points(
             // height threshold
             let height_threshold = radius + 0.2;
 
-            // C#: if (rawData.QueryHeight(vector3_2) > num7
-            //        && rawData.QueryHeight(normalized3) > num7
-            //        && rawData.QueryHeight(normalized4) > num7)
-            if query_height(&candidate, algo) > height_threshold
-                && query_height(&rp0_dir, algo) > height_threshold
-                && query_height(&rp1_dir, algo) > height_threshold
+            // Use normalized variant since candidate, rp0_dir, rp1_dir are already unit-length
+            if planet_raw_data::query_height_normalized(&candidate, algo, raw_data)
+                > height_threshold
+                && planet_raw_data::query_height_normalized(&rp0_dir, algo, raw_data)
+                    > height_threshold
+                && planet_raw_data::query_height_normalized(&rp1_dir, algo, raw_data)
+                    > height_threshold
             {
                 // C#: check 8 surrounding offsets
                 let vpos1 = rp0_dir + basis1 * 0.03;
@@ -106,14 +108,15 @@ pub fn gen_birth_points(
                 let vpos7 = rp1_dir + basis2 * 0.03;
                 let vpos8 = rp1_dir - basis2 * 0.03;
 
-                if query_height(&vpos1, algo) > height_threshold
-                    && query_height(&vpos2, algo) > height_threshold
-                    && query_height(&vpos3, algo) > height_threshold
-                    && query_height(&vpos4, algo) > height_threshold
-                    && query_height(&vpos5, algo) > height_threshold
-                    && query_height(&vpos6, algo) > height_threshold
-                    && query_height(&vpos7, algo) > height_threshold
-                    && query_height(&vpos8, algo) > height_threshold
+                // Offset vectors are not unit-length; use the normalising variant
+                if planet_raw_data::query_height(&vpos1, algo, raw_data) > height_threshold
+                    && planet_raw_data::query_height(&vpos2, algo, raw_data) > height_threshold
+                    && planet_raw_data::query_height(&vpos3, algo, raw_data) > height_threshold
+                    && planet_raw_data::query_height(&vpos4, algo, raw_data) > height_threshold
+                    && planet_raw_data::query_height(&vpos5, algo, raw_data) > height_threshold
+                    && planet_raw_data::query_height(&vpos6, algo, raw_data) > height_threshold
+                    && planet_raw_data::query_height(&vpos7, algo, raw_data) > height_threshold
+                    && planet_raw_data::query_height(&vpos8, algo, raw_data) > height_threshold
                 {
                     // Re‑normalise both resource-point directions
                     let rp0 = rp0_dir.normalized();

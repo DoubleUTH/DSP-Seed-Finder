@@ -1,7 +1,7 @@
 use crate::data::birth_points::gen_birth_points;
 use crate::data::planet_algorithms::create_and_prepare_algo;
 use crate::data::planet_algorithms::PlanetAlgorithm;
-use crate::data::planet_raw_data::query_height;
+use crate::data::planet_raw_data::{self, get_raw_data, PlanetRawData};
 use crate::data::vector_f2::VectorF2;
 
 use super::enums::{PlanetType, SpectrType, StarType, ThemeDistribute, VeinType};
@@ -14,7 +14,6 @@ use super::vector_f3::VectorF3;
 use super::vein::{ActualVein, EstimatedVein};
 use serde::ser::{Serialize, SerializeStruct, Serializer};
 use std::cell::{OnceCell, RefCell};
-use std::collections::HashMap;
 use std::f64::consts::PI;
 use std::rc::Rc;
 use std::vec;
@@ -802,12 +801,14 @@ impl<'a> Planet<'a> {
         vein_type: &VeinType,
         zero: &VectorF3,
         algo: &dyn PlanetAlgorithm,
+        raw_data: &PlanetRawData,
     ) -> bool {
         let algo_id = self.get_algo_id();
         if algo_id == 7 && vein_type != &VeinType::Bamboo {
             return true;
         }
-        let height = query_height(zero, algo);
+        // `zero` is already normalized by the caller
+        let height = planet_raw_data::query_height_normalized(zero, algo, raw_data);
         match algo_id {
             7 => height <= self.radius - 4.0,
             11 => {
@@ -957,11 +958,18 @@ impl<'a> Planet<'a> {
                 resource_coef *= 0.7;
             }
             let mut vein_vectors: Vec<(VeinType, VectorF3, bool)> = Vec::with_capacity(512);
+            // Fetch PlanetRawData once and thread it through all query_height calls
+            let raw_data: &PlanetRawData = get_raw_data();
 
             let birth_point = if is_birth_planet {
                 let star_direction = self.get_star_direction();
-                let birth_point_data =
-                    gen_birth_points(algo.as_ref(), birth_seed, self.radius, star_direction);
+                let birth_point_data = gen_birth_points(
+                    algo.as_ref(),
+                    birth_seed,
+                    self.radius,
+                    star_direction,
+                    raw_data,
+                );
                 vein_vectors.push((VeinType::Iron, birth_point_data.birth_resource_point0, true));
                 vein_vectors.push((
                     VeinType::Copper,
@@ -981,7 +989,8 @@ impl<'a> Planet<'a> {
             };
 
             let is_infinite_resource = self.star.game_desc.is_infinite_resource();
-            let mut amount_map: HashMap<&VeinType, i32> = HashMap::new();
+            // Fixed array indexed by VeinType discriminant (0..16) — avoids HashMap hashing overhead
+            let mut amount_map: [i32; 16] = [0; 16];
 
             let min_vein_spacing = 2.1 / self.radius;
             let min_vein_spacing_sq = (min_vein_spacing as f64) * (min_vein_spacing as f64);
@@ -1012,7 +1021,7 @@ impl<'a> Planet<'a> {
                             zero += birth_point;
                         }
                         zero.normalize();
-                        if self.can_place_vein(&vein_type, &zero, algo.as_ref()) {
+                        if self.can_place_vein(&vein_type, &zero, algo.as_ref(), raw_data) {
                             let not_too_close_to_other_vein =
                                 vein_vectors.iter().all(|(_, pos, _)| {
                                     (pos.distance_sq_from(&zero) as f64) >= min_sq_dist
@@ -1112,20 +1121,22 @@ impl<'a> Planet<'a> {
                     if is_oil {
                         pos = self.snap_to(&pos);
                     }
-                    let surface_height = query_height(&pos, algo.as_ref());
+                    let surface_height =
+                        planet_raw_data::query_height(&pos, algo.as_ref(), raw_data);
                     if theme.water_item_id == 0 || surface_height >= self.radius {
                         // println!("{:?},{:?},{}", pos * surface_height, vein_type, amount);
-                        amount_map
-                            .insert(vein_type, amount_map.get(vein_type).unwrap_or(&0) + amount);
+                        amount_map[*vein_type as usize] += amount;
                     }
                 }
             }
 
             amount_map
                 .iter()
-                .map(|(vein_type, amount)| ActualVein {
-                    vein_type: **vein_type,
-                    amount: *amount,
+                .enumerate()
+                .filter(|(_, &amount)| amount > 0)
+                .map(|(i, &amount)| ActualVein {
+                    vein_type: unsafe { ::std::mem::transmute(i as i32) },
+                    amount,
                 })
                 .collect()
         })

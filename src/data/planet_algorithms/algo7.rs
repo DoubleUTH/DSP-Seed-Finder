@@ -10,13 +10,13 @@ pub struct PlanetAlgorithm7;
 
 impl PlanetAlgorithm for PlanetAlgorithm7 {
     fn generate_terrain(&self, planet: &Planet, planet_raw_data: &PlanetRawData) -> Vec<u16> {
-        let num1: f64 = 0.008;
-        let num2: f64 = 0.01;
-        let num3: f64 = 0.01;
-        let num4: f64 = 3.0;
-        let num5: f64 = -2.4;
-        let num6: f64 = 0.9;
-        let num7: f64 = 0.5;
+        let freq_scale_x: f64 = 0.008;
+        let freq_scale_y: f64 = 0.01;
+        let freq_scale_z: f64 = 0.01;
+        let noise_amplitude: f64 = 3.0;
+        let noise_offset: f64 = -2.4;
+        let noise2_amplitude: f64 = 0.9;
+        let noise2_offset: f64 = 0.5;
 
         let mut rand = DspRandom::new(planet.seed);
         let seed1 = rand.next_seed();
@@ -30,40 +30,50 @@ impl PlanetAlgorithm for PlanetAlgorithm7 {
 
         for i in 0..data_length {
             let v = &planet_raw_data.vertices[i];
-            let num10 = (v.0 as f64) * radius;
-            let num11 = (v.1 as f64) * radius;
-            let num12 = (v.2 as f64) * radius;
+            let world_x = (v.0 as f64) * radius;
+            let world_y = (v.1 as f64) * radius;
+            let world_z = (v.2 as f64) * radius;
 
-            let num13 = noise1.noise_3d_fbm(num10 * num1, num11 * num2, num12 * num3, 6, 0.5, 2.0)
-                * num4
-                + num5;
-            let num14 = noise2.noise_3d_fbm(
-                num10 * (1.0 / 400.0),
-                num11 * (1.0 / 400.0),
-                num12 * (1.0 / 400.0),
+            let layer1_noise = noise1.noise_3d_fbm(
+                world_x * freq_scale_x,
+                world_y * freq_scale_y,
+                world_z * freq_scale_z,
+                6,
+                0.5,
+                2.0,
+            ) * noise_amplitude
+                + noise_offset;
+            let layer2_noise = noise2.noise_3d_fbm(
+                world_x * (1.0 / 400.0),
+                world_y * (1.0 / 400.0),
+                world_z * (1.0 / 400.0),
                 3,
                 0.5,
                 2.0,
-            ) * num4
-                * num6
-                + num7;
+            ) * noise_amplitude
+                * noise2_amplitude
+                + noise2_offset;
 
-            let num15 = if num14 > 0.0 { num14 * 0.5 } else { num14 };
-            let num16 = num13 + num15;
-            let f = if num16 > 0.0 {
-                num16 * 0.5
+            let clamped_layer2 = if layer2_noise > 0.0 {
+                layer2_noise * 0.5
             } else {
-                num16 * 1.6
+                layer2_noise
+            };
+            let combined_noise = layer1_noise + clamped_layer2;
+            let f = if combined_noise > 0.0 {
+                combined_noise * 0.5
+            } else {
+                combined_noise * 1.6
             };
 
-            let num17 = if f > 0.0 {
+            let shaped_height = if f > 0.0 {
                 levelize3(f, 0.7, 0.0)
             } else {
                 levelize2(f, 0.5, 0.0)
             };
 
-            // height = num17, no +0.2 offset
-            height_data[i] = ((radius + num17) * 100.0) as u16;
+            // height = shaped_height, no +0.2 offset
+            height_data[i] = ((radius + shaped_height) * 100.0) as u16;
         }
 
         height_data

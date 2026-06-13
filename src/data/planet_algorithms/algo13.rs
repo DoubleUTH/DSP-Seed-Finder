@@ -17,9 +17,9 @@ impl PlanetAlgorithm for PlanetAlgorithm13 {
         let mod_x = planet.get_mod_x();
         let mod_y = planet.get_mod_y();
 
-        let num1 = 0.007 * mod_x;
-        let num2 = 0.007 * mod_x;
-        let num3 = 0.007 * mod_x;
+        let freq_scale_x = 0.007 * mod_x;
+        let freq_scale_y = 0.007 * mod_x;
+        let freq_scale_z = 0.007 * mod_x;
 
         let noise = SimplexNoise::with_seed(DspRandom::new(planet.seed).next_seed());
 
@@ -29,12 +29,19 @@ impl PlanetAlgorithm for PlanetAlgorithm13 {
 
         for i in 0..data_length {
             let v = &planet_raw_data.vertices[i];
-            let num4 = (v.0 as f64) * radius;
-            let num5 = (v.1 as f64) * radius;
-            let num6 = (v.2 as f64) * radius;
+            let world_x = (v.0 as f64) * radius;
+            let world_y = (v.1 as f64) * radius;
+            let world_z = (v.2 as f64) * radius;
 
-            let n = noise.noise_3d_fbm(num4 * num1, num5 * num2, num6 * num3, 6, 0.5, 2.0);
-            let mut x_val = remap(
+            let n = noise.noise_3d_fbm(
+                world_x * freq_scale_x,
+                world_y * freq_scale_y,
+                world_z * freq_scale_z,
+                6,
+                0.5,
+                2.0,
+            );
+            let mut raw_height = remap(
                 0.0,
                 2.0,
                 0.0,
@@ -42,25 +49,25 @@ impl PlanetAlgorithm for PlanetAlgorithm13 {
                 remap(-1.0, 1.0, 0.0, 1.0, n).powf(mod_y) * (49.0 / 16.0),
             );
 
-            if x_val < 1.0 {
-                x_val = x_val.powi(2);
+            if raw_height < 1.0 {
+                raw_height = raw_height.powi(2);
             }
 
-            let num7 = (x_val - 0.2).min(4.0);
+            let clamped_height = (raw_height - 0.2).min(4.0);
 
-            let num8 = if num7 > 2.0 {
-                if num7 <= 3.0 {
-                    2.0 - 1.0 * (num7 - 2.0)
-                } else if num7 <= 3.5 {
+            let final_height = if clamped_height > 2.0 {
+                if clamped_height <= 3.0 {
+                    2.0 - 1.0 * (clamped_height - 2.0)
+                } else if clamped_height <= 3.5 {
                     1.0
                 } else {
-                    1.0 + 2.0 * (num7 - 3.5)
+                    1.0 + 2.0 * (clamped_height - 3.5)
                 }
             } else {
-                num7
+                clamped_height
             };
 
-            height_data[i] = ((radius + num8 + 0.1) * 100.0) as u16;
+            height_data[i] = ((radius + final_height + 0.1) * 100.0) as u16;
         }
 
         height_data

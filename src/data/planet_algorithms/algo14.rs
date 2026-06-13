@@ -10,9 +10,9 @@ pub struct PlanetAlgorithm14;
 
 impl PlanetAlgorithm for PlanetAlgorithm14 {
     fn generate_terrain(&self, planet: &Planet, planet_raw_data: &PlanetRawData) -> Vec<u16> {
-        let num1: f64 = 0.007;
-        let num2: f64 = 0.007;
-        let num3: f64 = 0.007;
+        let freq_scale_x: f64 = 0.007;
+        let freq_scale_y: f64 = 0.007;
+        let freq_scale_z: f64 = 0.007;
 
         let mut rand = DspRandom::new(planet.seed);
         let seed1 = rand.next_seed();
@@ -30,105 +30,122 @@ impl PlanetAlgorithm for PlanetAlgorithm14 {
 
         for i in 0..data_length {
             let v = &planet_raw_data.vertices[i];
-            let num4 = (v.0 as f64) * radius;
-            let num5 = (v.1 as f64) * radius;
-            let num6 = (v.2 as f64) * radius;
+            let world_x = (v.0 as f64) * radius;
+            let world_y = (v.1 as f64) * radius;
+            let world_z = (v.2 as f64) * radius;
 
-            let num7 = levelize(num4 * 0.007 / 2.0, 1.0, 0.0);
-            let num8 = levelize(num5 * 0.007 / 2.0, 1.0, 0.0);
-            let num9 = levelize(num6 * 0.007 / 2.0, 1.0, 0.0);
+            let leveled_x = levelize(world_x * 0.007 / 2.0, 1.0, 0.0);
+            let leveled_y = levelize(world_y * 0.007 / 2.0, 1.0, 0.0);
+            let leveled_z = levelize(world_z * 0.007 / 2.0, 1.0, 0.0);
 
-            let xin = num7 + noise3.noise_3d(num4 * 0.05, num5 * 0.05, num6 * 0.05) * 0.04;
-            let yin = num8 + noise3.noise_3d(num5 * 0.05, num6 * 0.05, num4 * 0.05) * 0.04;
-            let zin = num9 + noise3.noise_3d(num6 * 0.05, num4 * 0.05, num5 * 0.05) * 0.04;
+            let xin =
+                leveled_x + noise3.noise_3d(world_x * 0.05, world_y * 0.05, world_z * 0.05) * 0.04;
+            let yin =
+                leveled_y + noise3.noise_3d(world_y * 0.05, world_z * 0.05, world_x * 0.05) * 0.04;
+            let zin =
+                leveled_z + noise3.noise_3d(world_z * 0.05, world_x * 0.05, world_y * 0.05) * 0.04;
 
-            let num10 = (0.12 - noise4.noise_3d(xin, yin, zin).abs()) * 10.0;
-            let num11 = if num10 > 0.0 {
-                if num10 > 1.0 {
+            let crack_blend = (0.12 - noise4.noise_3d(xin, yin, zin).abs()) * 10.0;
+            let crack_clamped = if crack_blend > 0.0 {
+                if crack_blend > 1.0 {
                     1.0
                 } else {
-                    num10
+                    crack_blend
                 }
             } else {
                 0.0
             };
-            let num12 = num11 * num11;
-            let num13 =
-                (noise3.noise_3d_fbm(num5 * 0.005, num6 * 0.005, num4 * 0.005, 4, 0.5, 2.0) + 0.22)
-                    * 5.0;
-            let num14 = if num13 > 0.0 {
-                if num13 > 1.0 {
+            let crack_intensity = crack_clamped * crack_clamped;
+            let fluid_level = (noise3.noise_3d_fbm(
+                world_y * 0.005,
+                world_z * 0.005,
+                world_x * 0.005,
+                4,
+                0.5,
+                2.0,
+            ) + 0.22)
+                * 5.0;
+            let fluid_clamped = if fluid_level > 0.0 {
+                if fluid_level > 1.0 {
                     1.0
                 } else {
-                    num13
+                    fluid_level
                 }
             } else {
                 0.0
             };
 
             // Domain warping
-            let num15 = num4 + (num5 * 0.15).sin() * 3.0;
-            let num16 = num5 + (num6 * 0.15).sin() * 3.0;
-            let num17 = num6 + (num15 * 0.15).sin() * 3.0;
+            let warped_x = world_x + (world_y * 0.15).sin() * 3.0;
+            let warped_y = world_y + (world_z * 0.15).sin() * 3.0;
+            let warped_z = world_z + (warped_x * 0.15).sin() * 3.0;
 
-            let num19 = noise1.noise_3d_fbm(
-                num15 * num1 * 1.0,
-                num16 * num2 * 1.1,
-                num17 * num3 * 1.0,
+            let primary_noise = noise1.noise_3d_fbm(
+                warped_x * freq_scale_x * 1.0,
+                warped_y * freq_scale_y * 1.1,
+                warped_z * freq_scale_z * 1.0,
                 6,
                 0.5,
                 1.8,
             );
-            let num20 = noise2.noise_3d_fbm(
-                num15 * num1 * 1.3 + 0.5,
-                num16 * num2 * 2.8 + 0.2,
-                num17 * num3 * 1.3 + 0.7,
+            let secondary_noise = noise2.noise_3d_fbm(
+                warped_x * freq_scale_x * 1.3 + 0.5,
+                warped_y * freq_scale_y * 2.8 + 0.2,
+                warped_z * freq_scale_z * 1.3 + 0.7,
                 3,
                 0.5,
                 2.0,
             ) * 2.0;
-            let num22 = noise2.noise_3d_fbm(
-                num15 * num1 * 0.8,
-                num16 * num2 * 0.8,
-                num17 * num3 * 0.8,
+            let reference_noise = noise2.noise_3d_fbm(
+                warped_x * freq_scale_x * 0.8,
+                warped_y * freq_scale_y * 0.8,
+                warped_z * freq_scale_z * 0.8,
                 2,
                 0.5,
                 2.0,
             ) * 2.0;
 
-            let mut f =
-                num19 * 2.0 + 0.92 + ((num20 * (num22 + 0.5).abs() - 0.35) * 1.0).clamp(0.0, 1.0);
+            let mut f = primary_noise * 2.0
+                + 0.92
+                + ((secondary_noise * (reference_noise + 0.5).abs() - 0.35) * 1.0).clamp(0.0, 1.0);
             if f < 0.0 {
                 f = 0.0;
             }
 
             let t = levelize2(f, 1.0, 0.0);
-            let num23 = if t > 0.0 {
+            let terrain_base = if t > 0.0 {
                 let t2 = levelize2(f, 1.0, 0.0);
                 levelize4(t2, 1.0, 0.0)
             } else {
                 t
             };
 
-            let _a1 = 0.0;
-            let num24 = num23;
+            let height_floor = 0.0;
+            let shaped_height = terrain_base;
 
-            let mut num25 = _a1 - num12 * 1.2 * num14;
-            if num25 >= 0.0 {
-                num25 = num24;
+            let mut combined_height = height_floor - crack_intensity * 1.2 * fluid_clamped;
+            if combined_height >= 0.0 {
+                combined_height = shaped_height;
             }
 
-            let mut num26 = num25 - 0.1;
+            let mut final_height = combined_height - 0.1;
 
-            let num31 = -0.3 - num26;
-            if num31 > 0.0 {
-                let num32 = noise2.noise_3d(num15 * 0.16, num16 * 0.16, num17 * 0.16) - 1.0;
-                let num33 = if num31 > 1.0 { 1.0 } else { num31 };
-                let num34 = (3.0 - num33 - num33) * num33 * num33;
-                num26 = -0.3 - num34 * 10.0 + num34 * num34 * num34 * num34 * num32 * 0.5;
+            let under_ground = -0.3 - final_height;
+            if under_ground > 0.0 {
+                let crater_noise =
+                    noise2.noise_3d(warped_x * 0.16, warped_y * 0.16, warped_z * 0.16) - 1.0;
+                let depth_clamped = if under_ground > 1.0 {
+                    1.0
+                } else {
+                    under_ground
+                };
+                let depth_power =
+                    (3.0 - depth_clamped - depth_clamped) * depth_clamped * depth_clamped;
+                final_height = -0.3 - depth_power * 10.0
+                    + depth_power * depth_power * depth_power * depth_power * crater_noise * 0.5;
             }
 
-            height_data[i] = ((radius + num26 + 0.2) * 100.0) as u16;
+            height_data[i] = ((radius + final_height + 0.2) * 100.0) as u16;
         }
 
         height_data

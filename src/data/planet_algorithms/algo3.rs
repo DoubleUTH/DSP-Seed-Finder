@@ -24,9 +24,9 @@ impl PlanetAlgorithm for PlanetAlgorithm3 {
         // Default modulation value (mid-range)
         let mod_x = planet.get_mod_x();
 
-        let num1: f64 = 0.007;
-        let num2: f64 = 0.007;
-        let num3: f64 = 0.007;
+        let freq_scale_x: f64 = 0.007;
+        let freq_scale_y: f64 = 0.007;
+        let freq_scale_z: f64 = 0.007;
 
         let mut rand = DspRandom::new(planet.seed);
         let seed1 = rand.next_seed();
@@ -40,60 +40,61 @@ impl PlanetAlgorithm for PlanetAlgorithm3 {
 
         for i in 0..data_length {
             let v = &planet_raw_data.vertices[i];
-            let num4 = (v.0 as f64) * radius;
-            let num5 = (v.1 as f64) * radius;
-            let num6 = (v.2 as f64) * radius;
+            let world_x = (v.0 as f64) * radius;
+            let world_y = (v.1 as f64) * radius;
+            let world_z = (v.2 as f64) * radius;
 
             // Domain warping: each axis is perturbed by sine of another axis
-            let num7 = num4 + (num5 * 0.15).sin() * 3.0;
-            let num8 = num5 + (num6 * 0.15).sin() * 3.0;
-            let num9 = num6 + (num7 * 0.15).sin() * 3.0;
+            let warped_x = world_x + (world_y * 0.15).sin() * 3.0;
+            let warped_y = world_y + (world_z * 0.15).sin() * 3.0;
+            let warped_z = world_z + (warped_x * 0.15).sin() * 3.0;
 
             // First noise layer: 6 octaves, deltaAmp=0.5, deltaWlen=1.8
-            let num10 = noise1.noise_3d_fbm(
-                num7 * num1 * 1.0,
-                num8 * num2 * 1.1,
-                num9 * num3 * 1.0,
+            let primary_noise = noise1.noise_3d_fbm(
+                warped_x * freq_scale_x * 1.0,
+                warped_y * freq_scale_y * 1.1,
+                warped_z * freq_scale_z * 1.0,
                 6,
                 0.5,
                 1.8,
             );
 
             // Second noise layer: 3 octaves with offset coordinates
-            let num11 = noise2.noise_3d_fbm(
-                num7 * num1 * 1.3 + 0.5,
-                num8 * num2 * 2.8 + 0.2,
-                num9 * num3 * 1.3 + 0.7,
+            let secondary_noise = noise2.noise_3d_fbm(
+                warped_x * freq_scale_x * 1.3 + 0.5,
+                warped_y * freq_scale_y * 2.8 + 0.2,
+                warped_z * freq_scale_z * 1.3 + 0.7,
                 3,
                 0.5,
                 2.0,
             ) * 2.0;
 
             // Detail noise (a): 2 octaves at high frequency
-            let a_val = noise2.noise_3d_fbm(
-                num7 * num1 * 6.0,
-                num8 * num2 * 12.0,
-                num9 * num3 * 6.0,
+            let detail_noise = noise2.noise_3d_fbm(
+                warped_x * freq_scale_x * 6.0,
+                warped_y * freq_scale_y * 12.0,
+                warped_z * freq_scale_z * 6.0,
                 2,
                 0.5,
                 2.0,
             ) * 2.0;
 
-            let num12 = lerp_nc(a_val, a_val * 0.1, mod_x);
+            let blended_detail = lerp_nc(detail_noise, detail_noise * 0.1, mod_x);
 
-            // Reference noise (num13): 2 octaves
-            let num13 = noise2.noise_3d_fbm(
-                num7 * num1 * 0.8,
-                num8 * num2 * 0.8,
-                num9 * num3 * 0.8,
+            // Reference noise: 2 octaves
+            let reference_noise = noise2.noise_3d_fbm(
+                warped_x * freq_scale_x * 0.8,
+                warped_y * freq_scale_y * 0.8,
+                warped_z * freq_scale_z * 0.8,
                 2,
                 0.5,
                 2.0,
             ) * 2.0;
 
             // Combine noise values
-            let mut f =
-                num10 * 2.0 + 0.92 + ((num11 * (num13 + 0.5).abs() - 0.35) * 1.0).clamp(0.0, 1.0);
+            let mut f = primary_noise * 2.0
+                + 0.92
+                + ((secondary_noise * (reference_noise + 0.5).abs() - 0.35) * 1.0).clamp(0.0, 1.0);
 
             if f < 0.0 {
                 f *= 2.0;
@@ -102,44 +103,44 @@ impl PlanetAlgorithm for PlanetAlgorithm3 {
             // Levelize2 and blend
             let mut t = levelize2(f, 1.0, 0.0);
             if t > 0.0 {
-                let num14 = levelize2(f, 1.0, 0.0);
-                t = lerp_nc(levelize4(num14, 1.0, 0.0), num14, mod_x);
+                let levelized_val = levelize2(f, 1.0, 0.0);
+                t = lerp_nc(levelize4(levelized_val, 1.0, 0.0), levelized_val, mod_x);
             }
 
             // Piecewise height calculation (b)
-            let b = if t > 0.0 {
+            let height_b = if t > 0.0 {
                 if t > 1.0 {
                     if t > 2.0 {
-                        lerp_nc(1.2, 2.0, t - 2.0) + num12 * 0.12
+                        lerp_nc(1.2, 2.0, t - 2.0) + blended_detail * 0.12
                     } else {
-                        lerp_nc(0.3, 1.2, t - 1.0) + num12 * 0.12
+                        lerp_nc(0.3, 1.2, t - 1.0) + blended_detail * 0.12
                     }
                 } else {
-                    lerp_nc(0.0, 0.3, t) + num12 * 0.1
+                    lerp_nc(0.0, 0.3, t) + blended_detail * 0.1
                 }
             } else {
                 lerp_nc(-1.0, 0.0, t + 1.0)
             };
 
             // Piecewise height calculation (a2), then lerp with b
-            let a2 = if t > 0.0 {
+            let height_a2 = if t > 0.0 {
                 if t > 1.0 {
                     if t > 2.0 {
-                        lerp_nc(1.4, 2.7, t - 2.0) + num12 * 0.12
+                        lerp_nc(1.4, 2.7, t - 2.0) + blended_detail * 0.12
                     } else {
-                        lerp_nc(0.3, 1.4, t - 1.0) + num12 * 0.12
+                        lerp_nc(0.3, 1.4, t - 1.0) + blended_detail * 0.12
                     }
                 } else {
-                    lerp_nc(0.0, 0.3, t) + num12 * 0.1
+                    lerp_nc(0.0, 0.3, t) + blended_detail * 0.1
                 }
             } else {
                 lerp_nc(-4.0, 0.0, t + 1.0)
             };
 
-            let num15 = lerp_nc(a2, b, mod_x);
+            let final_height = lerp_nc(height_a2, height_b, mod_x);
 
-            // height = num15 (biomo calculations skipped)
-            height_data[i] = ((radius + num15 + 0.2) * 100.0) as u16;
+            // height = final_height (biomo calculations skipped)
+            height_data[i] = ((radius + final_height + 0.2) * 100.0) as u16;
         }
 
         height_data

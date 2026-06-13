@@ -22,65 +22,81 @@ impl PlanetAlgorithm for PlanetAlgorithm5 {
 
         for i in 0..data_length {
             let v = &planet_raw_data.vertices[i];
-            let num1 = (v.0 as f64) * radius;
-            let num2 = (v.1 as f64) * radius;
-            let num3 = (v.2 as f64) * radius;
+            let world_x = (v.0 as f64) * radius;
+            let world_y = (v.1 as f64) * radius;
+            let world_z = (v.2 as f64) * radius;
 
-            let num4 = 0.0;
-            let num5 = levelize(num1 * 0.007, 1.0, 0.0);
-            let num6 = levelize(num2 * 0.007, 1.0, 0.0);
-            let num7 = levelize(num3 * 0.007, 1.0, 0.0);
+            let height_base = 0.0;
+            let leveled_x = levelize(world_x * 0.007, 1.0, 0.0);
+            let leveled_y = levelize(world_y * 0.007, 1.0, 0.0);
+            let leveled_z = levelize(world_z * 0.007, 1.0, 0.0);
 
-            let xin = num5 + noise1.noise_3d(num1 * 0.05, num2 * 0.05, num3 * 0.05) * 0.04;
-            let yin = num6 + noise1.noise_3d(num2 * 0.05, num3 * 0.05, num1 * 0.05) * 0.04;
-            let zin = num7 + noise1.noise_3d(num3 * 0.05, num1 * 0.05, num2 * 0.05) * 0.04;
+            let xin =
+                leveled_x + noise1.noise_3d(world_x * 0.05, world_y * 0.05, world_z * 0.05) * 0.04;
+            let yin =
+                leveled_y + noise1.noise_3d(world_y * 0.05, world_z * 0.05, world_x * 0.05) * 0.04;
+            let zin =
+                leveled_z + noise1.noise_3d(world_z * 0.05, world_x * 0.05, world_y * 0.05) * 0.04;
 
-            let num8 = noise2.noise_3d(xin, yin, zin).abs();
-            let num9 = (0.16 - num8) * 10.0;
-            let num10 = if num9 > 0.0 {
-                if num9 > 1.0 {
+            let cell_noise = noise2.noise_3d(xin, yin, zin).abs();
+            let crack_depth = (0.16 - cell_noise) * 10.0;
+            let crack_clamped = if crack_depth > 0.0 {
+                if crack_depth > 1.0 {
                     1.0
                 } else {
-                    num9
+                    crack_depth
                 }
             } else {
                 0.0
             };
-            let num11 = num10 * num10;
+            let crack_intensity = crack_clamped * crack_clamped;
 
-            let num12 =
-                (noise1.noise_3d_fbm(num2 * 0.005, num3 * 0.005, num1 * 0.005, 4, 0.5, 2.0) + 0.22)
-                    * 5.0;
-            let num13 = if num12 > 0.0 {
-                if num12 > 1.0 {
+            let fluid_level = (noise1.noise_3d_fbm(
+                world_y * 0.005,
+                world_z * 0.005,
+                world_x * 0.005,
+                4,
+                0.5,
+                2.0,
+            ) + 0.22)
+                * 5.0;
+            let fluid_clamped = if fluid_level > 0.0 {
+                if fluid_level > 1.0 {
                     1.0
                 } else {
-                    num12
+                    fluid_level
                 }
             } else {
                 0.0
             };
 
-            let num14 = noise2
+            let detail_noise = noise2
                 .noise_3d_fbm(xin * 1.5, yin * 1.5, zin * 1.5, 2, 0.5, 2.0)
                 .abs();
 
-            let mut num16 = num4 - num11 * 1.2 * num13;
-            if num16 >= 0.0 {
-                num16 += num8 * 0.25 + num14 * 0.6;
+            let mut terrain_height = height_base - crack_intensity * 1.2 * fluid_clamped;
+            if terrain_height >= 0.0 {
+                terrain_height += cell_noise * 0.25 + detail_noise * 0.6;
             }
 
-            let mut num17 = num16 - 0.1;
+            let mut final_height = terrain_height - 0.1;
 
-            let num21 = -0.3 - num17;
-            if num21 > 0.0 {
-                let num22 = noise2.noise_3d(num1 * 0.16, num2 * 0.16, num3 * 0.16) - 1.0;
-                let num23 = if num21 > 1.0 { 1.0 } else { num21 };
-                let num24 = (3.0 - num23 - num23) * num23 * num23;
-                num17 = -0.3 - num24 * 3.7 + num24 * num24 * num24 * num24 * num22 * 0.5;
+            let under_ground = -0.3 - final_height;
+            if under_ground > 0.0 {
+                let crack_noise =
+                    noise2.noise_3d(world_x * 0.16, world_y * 0.16, world_z * 0.16) - 1.0;
+                let depth_clamped = if under_ground > 1.0 {
+                    1.0
+                } else {
+                    under_ground
+                };
+                let depth_power =
+                    (3.0 - depth_clamped - depth_clamped) * depth_clamped * depth_clamped;
+                final_height = -0.3 - depth_power * 3.7
+                    + depth_power * depth_power * depth_power * depth_power * crack_noise * 0.5;
             }
 
-            height_data[i] = ((radius + num17 + 0.2) * 100.0) as u16;
+            height_data[i] = ((radius + final_height + 0.2) * 100.0) as u16;
         }
 
         height_data

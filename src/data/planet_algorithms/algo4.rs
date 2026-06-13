@@ -11,9 +11,9 @@ pub struct PlanetAlgorithm4;
 
 impl PlanetAlgorithm for PlanetAlgorithm4 {
     fn generate_terrain(&self, planet: &Planet, planet_raw_data: &PlanetRawData) -> Vec<u16> {
-        let num1: f64 = 0.007;
-        let num2: f64 = 0.007;
-        let num3: f64 = 0.007;
+        let freq_scale_x: f64 = 0.007;
+        let freq_scale_y: f64 = 0.007;
+        let freq_scale_z: f64 = 0.007;
 
         let mut rand = DspRandom::new(planet.seed);
         let seed1 = rand.next_seed();
@@ -43,51 +43,62 @@ impl PlanetAlgorithm for PlanetAlgorithm4 {
 
         for i in 0..data_length {
             let v = &planet_raw_data.vertices[i];
-            let num4 = (v.0 as f64) * radius;
-            let num5 = (v.1 as f64) * radius;
-            let num6 = (v.2 as f64) * radius;
+            let world_x = (v.0 as f64) * radius;
+            let world_y = (v.1 as f64) * radius;
+            let world_z = (v.2 as f64) * radius;
 
-            let num7 = noise1.noise_3d_fbm(num4 * num1, num5 * num2, num6 * num3, 4, 0.45, 1.8);
-            let num8 = noise2.noise_3d_fbm(
-                num4 * num1 * 5.0,
-                num5 * num2 * 5.0,
-                num6 * num3 * 5.0,
+            let low_freq_noise = noise1.noise_3d_fbm(
+                world_x * freq_scale_x,
+                world_y * freq_scale_y,
+                world_z * freq_scale_z,
+                4,
+                0.45,
+                1.8,
+            );
+            let high_freq_noise = noise2.noise_3d_fbm(
+                world_x * freq_scale_x * 5.0,
+                world_y * freq_scale_y * 5.0,
+                world_z * freq_scale_z * 5.0,
                 4,
                 0.5,
                 2.0,
             );
 
-            let num9 = num7 * 1.5;
-            let num10 = num8 * 0.2;
-            let num11 = num9 * 0.08 + num10 * 2.0;
+            let scaled_low = low_freq_noise * 1.5;
+            let scaled_high = high_freq_noise * 0.2;
+            let base_elevation = scaled_low * 0.08 + scaled_high * 2.0;
 
-            let mut num12 = 0.0;
+            let mut max_crater = 0.0;
             for j in 0..80 {
                 let c = &circles[j];
-                let num13 = (c.0).0 - num4;
-                let num14 = (c.0).1 - num5;
-                let num15 = (c.0).2 - num6;
-                let num16 = num13 * num13 + num14 * num14 + num15 * num15;
-                if num16 <= c.1 {
-                    let mut num17 = num16 / c.1 + num10 * 1.2;
-                    if num17 < 0.0 {
-                        num17 = 0.0;
+                let dx = (c.0).0 - world_x;
+                let dy = (c.0).1 - world_y;
+                let dz = (c.0).2 - world_z;
+                let dist_sq = dx * dx + dy * dy + dz * dz;
+                if dist_sq <= c.1 {
+                    let mut t = dist_sq / c.1 + scaled_high * 1.2;
+                    if t < 0.0 {
+                        t = 0.0;
                     }
-                    let num18 = num17 * num17;
-                    let num19 = -15.0 * (num18 * num17) + (131.0 / 6.0) * num18
-                        - (113.0 / 15.0) * num17
+                    let t_sq = t * t;
+                    let crater_shape = -15.0 * (t_sq * t) + (131.0 / 6.0) * t_sq
+                        - (113.0 / 15.0) * t
                         + 0.7
-                        + num10;
-                    let num19 = if num19 < 0.0 { 0.0 } else { num19 };
-                    let num20 = num19 * num19 * heights[j];
-                    if num20 > num12 {
-                        num12 = num20;
+                        + scaled_high;
+                    let crater_shape = if crater_shape < 0.0 {
+                        0.0
+                    } else {
+                        crater_shape
+                    };
+                    let crater_val = crater_shape * crater_shape * heights[j];
+                    if crater_val > max_crater {
+                        max_crater = crater_val;
                     }
                 }
             }
 
-            let num21 = num12 + num11 + 0.2;
-            height_data[i] = ((radius + num21 + 0.1) * 100.0) as u16;
+            let final_height = max_crater + base_elevation + 0.2;
+            height_data[i] = ((radius + final_height + 0.1) * 100.0) as u16;
         }
 
         height_data

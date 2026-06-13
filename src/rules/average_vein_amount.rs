@@ -6,13 +6,18 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RuleAverageVeinAmount {
+    pub use_actual: bool,
     pub vein: VeinType,
     pub condition: Condition,
 }
 
 impl Rule for RuleAverageVeinAmount {
     fn get_priority(&self) -> i32 {
-        51
+        if self.use_actual {
+            101
+        } else {
+            51
+        }
     }
     fn evaluate(
         &self,
@@ -27,7 +32,11 @@ impl Rule for RuleAverageVeinAmount {
                 }
                 continue;
             }
-            let count = sp.get_avg_vein(&self.vein);
+            let count = if self.use_actual {
+                sp.get_actual_vein(&self.vein)
+            } else {
+                sp.get_avg_vein(&self.vein)
+            };
             if self.condition.eval(count) {
                 result.push(index);
             }

@@ -55,6 +55,17 @@ impl DspRandom {
         }
     }
 
+    pub fn new_system_random(seed: i32) -> Self {
+        // Somehow System.Random mistyped inextp
+        // https://github.com/dotnet/runtime/issues/23198
+        let r = Self::new(seed);
+        Self {
+            inext: 0,
+            inextp: 21,
+            seed_array: r.seed_array,
+        }
+    }
+
     fn sample(&mut self) -> f64 {
         self.inext += 1;
         if self.inext >= 56 {
@@ -84,7 +95,11 @@ impl DspRandom {
 
     #[inline]
     pub fn next_i32(&mut self, max_value: i32) -> i32 {
-        (self.sample() * (max_value as f64)) as i32
+        if max_value <= 1 {
+            0
+        } else {
+            (self.sample() * (max_value as f64)) as i32
+        }
     }
 
     #[inline]

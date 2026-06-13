@@ -147,15 +147,37 @@ function constructStarData(galaxy: Galaxy, star: Star) {
     }
     const veins: Partial<Record<VeinType, VeinStat>> = {}
     for (const planet of star.planets) {
-        for (const vein of planet.veins) {
-            const stat = normalizeVein(statVein(vein))
-            const existing = veins[vein.veinType]
-            if (existing) {
-                existing.min += stat.min
-                existing.max += stat.max
-                existing.avg += stat.avg
-            } else {
-                veins[vein.veinType] = stat
+        if ("veins" in planet) {
+            for (const vein of planet.veins) {
+                const stat = normalizeVein(statVein(vein))
+                const existing = veins[vein.veinType]
+                if (existing) {
+                    existing.min += stat.min
+                    existing.max += stat.max
+                    existing.avg += stat.avg
+                } else {
+                    veins[vein.veinType] = stat
+                }
+            }
+        } else {
+            for (const vein of planet.actualVeins) {
+                const amount =
+                    vein.veinType === VeinType.Oil
+                        ? vein.amount * 4e-5
+                        : vein.amount
+                const existing = veins[vein.veinType]
+                if (existing) {
+                    existing.min += amount
+                    existing.max += amount
+                    existing.avg += amount
+                } else {
+                    veins[vein.veinType] = {
+                        veinType: vein.veinType,
+                        min: amount,
+                        max: amount,
+                        avg: amount,
+                    }
+                }
             }
         }
     }
@@ -193,8 +215,23 @@ function constructPlanetData(galaxy: Galaxy, star: Star, planet: Planet) {
         output.push(planetFieldsGetter[field]?.(galaxy, star, planet))
     }
     const veins: Partial<Record<VeinType, VeinStat>> = {}
-    for (const vein of planet.veins) {
-        veins[vein.veinType] = normalizeVein(statVein(vein))
+    if ("veins" in planet) {
+        for (const vein of planet.veins) {
+            veins[vein.veinType] = normalizeVein(statVein(vein))
+        }
+    } else {
+        for (const vein of planet.actualVeins) {
+            const amount =
+                vein.veinType === VeinType.Oil
+                    ? vein.amount * 4e-5
+                    : vein.amount
+            veins[vein.veinType] = {
+                veinType: vein.veinType,
+                min: amount,
+                max: amount,
+                avg: amount,
+            }
+        }
     }
     for (const type of veinOrder) {
         output.push(veins[type]?.avg ?? 0)

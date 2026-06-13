@@ -44,6 +44,8 @@ function run() {
             gas_items: vec![${x.GasItems.join(", ")}],
             gas_speeds: vec![${x.GasSpeeds.join(", ")}],
             algos: vec![${x.Algos.join(", ")}],
+            mod_x: Vector2(${toDouble(x.ModX.x)}, ${toDouble(x.ModX.y)}),
+            mod_y: Vector2(${toDouble(x.ModY.x)}, ${toDouble(x.ModY.y)}),
         },`,
     )
     // eslint-disable-next-line no-undef

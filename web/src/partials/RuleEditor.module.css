@@ -57,6 +57,15 @@
     width: 180px;
 }
 
+.selectVeinUseActual {
+    width: 120px;
+}
+
+.veinWarning {
+    color: rgb(213, 170, 15);
+    white-space: nowrap;
+}
+
 .inputVein {
     width: 180px;
 }

@@ -134,11 +134,23 @@ const EditDysonRadius: Component<{
     )
 }
 
+const EditAverageVeinAmountWarning: Component<{ visible: boolean }> = (
+    props,
+) => {
+    const { t } = useLingui()
+    return (
+        <Show when={props.visible}>
+            <span>{t`Warning: using actual values is much slower.`}</span>
+        </Show>
+    )
+}
+
 const EditAverageVeinAmount: Component<{
     value: Rule.AverageVeinAmount
     onChange: (value: Rule.AverageVeinAmount) => void
     disabled?: boolean
 }> = (props) => {
+    const { t } = useLingui()
     const condition = () => props.value.condition
     const setCondition = (condition: Condition) =>
         props.onChange({ ...props.value, condition })
@@ -157,7 +169,20 @@ const EditAverageVeinAmount: Component<{
                     getLabel={(vein) => veinNames[vein]()}
                     disabled={props.disabled}
                 />{" "}
-                and the estimated amount is{" "}
+                and the{" "}
+                <Select
+                    class={styles.selectVeinUseActual}
+                    value={!!props.value.useActual}
+                    onChange={(useActual) =>
+                        props.onChange({ ...props.value, useActual })
+                    }
+                    options={[false, true]}
+                    getLabel={(useActual) =>
+                        useActual ? t`actual` : t`estimated`
+                    }
+                    disabled={props.disabled}
+                />{" "}
+                amount is{" "}
                 <ConditionInput
                     class={styles.inputVein}
                     value={condition()}
@@ -168,6 +193,13 @@ const EditAverageVeinAmount: Component<{
                 />
             </Trans>
             {props.value.vein === VeinType.Oil ? " /s" : " "}
+            {"  "}
+            <Show when={props.value.useActual}>
+                <br />
+                <span
+                    class={styles.veinWarning}
+                >{t`Warning: using actual values is much slower.`}</span>
+            </Show>
         </>
     )
 }

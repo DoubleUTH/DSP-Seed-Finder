@@ -21,6 +21,7 @@ declare global {
         resourceMultiplier: float
         hiveInitialColonize: float
         hiveMaxDensity: float
+        useActualVeins: boolean
     }
 
     declare interface GameDesc extends GameParameters {
@@ -55,7 +56,15 @@ declare global {
 
     declare type Gas = [itemId: GasType, rate: float]
 
-    declare interface Planet {
+    declare type PlanetVeins =
+        | {
+              veins: EstimatedVein[]
+          }
+        | {
+              actualVeins: ActualVein[]
+          }
+
+    declare type Planet = {
         index: integer
         orbitAround: integer | null
         orbitIndex: integer
@@ -69,9 +78,8 @@ declare global {
         type: PlanetType
         luminosity: float
         theme: ThemeProto
-        veins: Vein[]
         gases: Gas[]
-    }
+    } & PlanetVeins
 
     declare interface ThemeProto {
         id: integer
@@ -80,7 +88,7 @@ declare global {
         wind: float
     }
 
-    declare interface Vein {
+    declare interface EstimatedVein {
         veinType: VeinType
         minGroup: integer
         maxGroup: integer
@@ -88,6 +96,11 @@ declare global {
         maxPatch: integer
         minAmount: integer
         maxAmount: integer
+    }
+
+    declare interface ActualVein {
+        veinType: VeinType
+        amount: integer
     }
 
     declare interface VeinStat {
@@ -127,7 +140,8 @@ declare global {
             condition: Condition
         }
         export type AverageVeinAmount = {
-            type: RuleType.AverageVeinAmount
+            type: RuleType.AverageVeinAmount // legacy name
+            useActual?: boolean
             vein: VeinType
             condition: Condition
         }

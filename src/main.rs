@@ -2,6 +2,7 @@
 
 mod data;
 mod rules;
+mod tests;
 mod transform_rules;
 mod worldgen;
 

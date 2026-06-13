@@ -29,15 +29,31 @@ import {
 function combineVeins(star: Star): VeinStat[] {
     const veins: Record<VeinType, VeinStat> = {} as any
     for (const planet of star.planets) {
-        for (const vein of planet.veins) {
-            const stat = statVein(vein)
-            const existing = veins[vein.veinType]
-            if (existing) {
-                existing.min += stat.min
-                existing.max += stat.max
-                existing.avg += stat.avg
-            } else {
-                veins[vein.veinType] = { ...stat }
+        if ("veins" in planet) {
+            for (const vein of planet.veins) {
+                const stat = statVein(vein)
+                const existing = veins[vein.veinType]
+                if (existing) {
+                    existing.min += stat.min
+                    existing.max += stat.max
+                    existing.avg += stat.avg
+                } else {
+                    veins[vein.veinType] = { ...stat }
+                }
+            }
+        } else {
+            for (const vein of planet.actualVeins) {
+                const existing = veins[vein.veinType]
+                if (existing) {
+                    existing.avg += vein.amount
+                } else {
+                    veins[vein.veinType] = {
+                        veinType: vein.veinType,
+                        min: 0,
+                        max: 0,
+                        avg: vein.amount,
+                    }
+                }
             }
         }
     }
@@ -71,15 +87,18 @@ function hasSulfur(star: Star): boolean {
 
 function planetVeins(planet: Planet): VeinStat[] {
     const veins: Record<VeinType, VeinStat> = {} as any
-    for (const vein of planet.veins) {
-        const stat = statVein(vein)
-        const existing = veins[vein.veinType]
-        if (existing) {
-            existing.min += stat.min
-            existing.max += stat.max
-            existing.avg += stat.avg
-        } else {
-            veins[vein.veinType] = { ...stat }
+    if ("veins" in planet) {
+        for (const vein of planet.veins) {
+            veins[vein.veinType] = statVein(vein)
+        }
+    } else {
+        for (const vein of planet.actualVeins) {
+            veins[vein.veinType] = {
+                veinType: vein.veinType,
+                min: 0,
+                max: 0,
+                avg: vein.amount,
+            }
         }
     }
     return veinOrder.map((type) => veins[type]).filter((x) => x)
@@ -261,8 +280,12 @@ const Vein: Component<{
     const { t } = useLingui()
     return (
         <div class={props.class}>
-            ~{" "}
-            <Tooltip text={t`Estimated:\n${min()} - ${max()}`}>{avg()}</Tooltip>
+            <Show when={props.stat.min !== props.stat.max} fallback={avg()}>
+                ~{" "}
+                <Tooltip text={t`Estimated:\n${min()} - ${max()}`}>
+                    {avg()}
+                </Tooltip>
+            </Show>
         </div>
     )
 }

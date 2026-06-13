@@ -3,7 +3,7 @@ use serde::Serialize;
 
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Vein {
+pub struct EstimatedVein {
     pub vein_type: VeinType,
     pub min_group: i32,
     pub max_group: i32,
@@ -13,7 +13,7 @@ pub struct Vein {
     pub max_amount: i32,
 }
 
-impl Default for Vein {
+impl Default for EstimatedVein {
     fn default() -> Self {
         Self {
             vein_type: VeinType::None,
@@ -27,8 +27,24 @@ impl Default for Vein {
     }
 }
 
-impl Vein {
+impl EstimatedVein {
     pub fn new() -> Self {
         Default::default()
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ActualVein {
+    pub vein_type: VeinType,
+    pub amount: i32, // times 4e-5 for oil
+}
+
+impl Default for ActualVein {
+    fn default() -> Self {
+        Self {
+            vein_type: VeinType::None,
+            amount: 0,
+        }
     }
 }

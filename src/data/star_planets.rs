@@ -28,6 +28,8 @@ pub struct StarWithPlanets<'a> {
     safe: UnsafeCell<bool>,
     #[serde(skip)]
     avg_veins: UnsafeCell<HashMap<VeinType, f32>>,
+    #[serde(skip)]
+    actual_veins: UnsafeCell<HashMap<VeinType, f32>>,
     pub name: String,
 }
 
@@ -38,6 +40,7 @@ impl<'a> StarWithPlanets<'a> {
             planets: UnsafeCell::new(vec![]),
             safe: UnsafeCell::new(false),
             avg_veins: UnsafeCell::new(HashMap::new()),
+            actual_veins: UnsafeCell::new(HashMap::new()),
             name: Default::default(),
         }
     }
@@ -76,19 +79,54 @@ impl<'a> StarWithPlanets<'a> {
             if !planet.can_have_vein(vein_type) {
                 continue;
             }
-            for vein in planet.get_veins() {
-                if &vein.vein_type == vein_type {
-                    let avg_patches = ((vein.min_patch + vein.max_patch) as f32)
-                        * ((vein.min_group + vein.max_group) as f32)
-                        * ((vein.min_amount + vein.max_amount) as f32)
-                        / 8.0;
-                    count += avg_patches;
+            if planet.is_acutal_veins_generated() {
+                for vein in planet.get_actual_veins() {
+                    if &vein.vein_type == vein_type {
+                        count += vein.amount as f32;
+                    }
+                }
+            } else {
+                for vein in planet.get_estimated_veins() {
+                    if &vein.vein_type == vein_type {
+                        let avg_patches = ((vein.min_patch + vein.max_patch) as f32)
+                            * ((vein.min_group + vein.max_group) as f32)
+                            * ((vein.min_amount + vein.max_amount) as f32)
+                            / 8.0;
+                        count += avg_patches;
+                    }
                 }
             }
         }
         map.insert(vein_type.clone(), count);
         self.mark_safe();
         count
+    }
+
+    pub fn get_actual_vein(&self, vein_type: &VeinType) -> f32 {
+        if vein_type == &VeinType::Mag
+            && self.star.star_type != StarType::BlackHole
+            && self.star.star_type != StarType::NeutronStar
+        {
+            return 0.0;
+        }
+        let map = unsafe { &mut *self.actual_veins.get() };
+        if let Some(val) = map.get(vein_type) {
+            return *val;
+        }
+        let mut count = 0;
+        for planet in self.get_planets() {
+            if !planet.can_have_vein(vein_type) {
+                continue;
+            }
+            for vein in planet.get_actual_veins() {
+                if &vein.vein_type == vein_type {
+                    count += vein.amount;
+                }
+            }
+        }
+        map.insert(vein_type.clone(), count as f32);
+        self.mark_safe();
+        count as f32
     }
 
     pub fn get_planets(&self) -> &Vec<Planet<'a>> {

@@ -1,3 +1,5 @@
+use crate::data::vector2::Vector2;
+
 use super::enums::{PlanetType, ThemeDistribute, VeinType};
 use once_cell::sync::Lazy;
 use serde::Serialize;
@@ -31,6 +33,10 @@ pub struct ThemeProto {
     pub gas_speeds: Vec<f32>,
     #[serde(skip)]
     pub algos: Vec<i32>,
+    #[serde(skip)]
+    pub mod_x: Vector2,
+    #[serde(skip)]
+    pub mod_y: Vector2,
 }
 
 pub const DEFAULT_THEME_PROTO: &'static ThemeProto = &ThemeProto {
@@ -49,6 +55,8 @@ pub const DEFAULT_THEME_PROTO: &'static ThemeProto = &ThemeProto {
     gas_items: vec![],
     gas_speeds: vec![],
     algos: vec![],
+    mod_x: Vector2(0.0, 0.0),
+    mod_y: Vector2(0.0, 0.0),
 };
 
 impl Default for ThemeProto {
@@ -75,6 +83,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
             gas_items: vec![],
             gas_speeds: vec![],
             algos: vec![1],
+            mod_x: Vector2(0.0, 0.0),
+            mod_y: Vector2(0.0, 0.0),
         },
         ThemeProto {
             id: 2,
@@ -92,6 +102,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
             gas_items: vec![1120, 1121],
             gas_speeds: vec![0.96, 0.04],
             algos: vec![0],
+            mod_x: Vector2(0.0, 0.0),
+            mod_y: Vector2(0.0, 0.0),
         },
         ThemeProto {
             id: 3,
@@ -109,6 +121,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
             gas_items: vec![1120, 1121],
             gas_speeds: vec![0.96, 0.04],
             algos: vec![0],
+            mod_x: Vector2(0.0, 0.0),
+            mod_y: Vector2(0.0, 0.0),
         },
         ThemeProto {
             id: 4,
@@ -126,6 +140,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
             gas_items: vec![1011, 1120],
             gas_speeds: vec![0.7, 0.3],
             algos: vec![0],
+            mod_x: Vector2(0.0, 0.0),
+            mod_y: Vector2(0.0, 0.0),
         },
         ThemeProto {
             id: 5,
@@ -143,6 +159,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
             gas_items: vec![1011, 1120],
             gas_speeds: vec![0.7, 0.3],
             algos: vec![0],
+            mod_x: Vector2(0.0, 0.0),
+            mod_y: Vector2(0.0, 0.0),
         },
         ThemeProto {
             id: 6,
@@ -160,6 +178,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
             gas_items: vec![],
             gas_speeds: vec![],
             algos: vec![2],
+            mod_x: Vector2(1.0, 1.0),
+            mod_y: Vector2(0.0, 0.0),
         },
         ThemeProto {
             id: 7,
@@ -177,6 +197,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
             gas_items: vec![],
             gas_speeds: vec![],
             algos: vec![2],
+            mod_x: Vector2(0.0, 0.0),
+            mod_y: Vector2(1.0, 1.0),
         },
         ThemeProto {
             id: 8,
@@ -194,6 +216,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
             gas_items: vec![],
             gas_speeds: vec![],
             algos: vec![1],
+            mod_x: Vector2(0.0, 0.0),
+            mod_y: Vector2(0.0, 0.0),
         },
         ThemeProto {
             id: 9,
@@ -211,6 +235,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
             gas_items: vec![],
             gas_speeds: vec![],
             algos: vec![5],
+            mod_x: Vector2(0.0, 0.0),
+            mod_y: Vector2(0.0, 0.0),
         },
         ThemeProto {
             id: 10,
@@ -228,6 +254,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
             gas_items: vec![],
             gas_speeds: vec![],
             algos: vec![3],
+            mod_x: Vector2(0.0, 0.0),
+            mod_y: Vector2(0.34, -0.15),
         },
         ThemeProto {
             id: 11,
@@ -252,6 +280,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
             gas_items: vec![],
             gas_speeds: vec![],
             algos: vec![4],
+            mod_x: Vector2(0.0, 0.0),
+            mod_y: Vector2(1.0, 1.0),
         },
         ThemeProto {
             id: 12,
@@ -269,6 +299,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
             gas_items: vec![],
             gas_speeds: vec![],
             algos: vec![3],
+            mod_x: Vector2(0.0, 0.0),
+            mod_y: Vector2(1.0, 1.0),
         },
         ThemeProto {
             id: 13,
@@ -286,6 +318,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
             gas_items: vec![],
             gas_speeds: vec![],
             algos: vec![3],
+            mod_x: Vector2(0.0, 0.0),
+            mod_y: Vector2(1.0, 1.0),
         },
         ThemeProto {
             id: 14,
@@ -303,6 +337,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
             gas_items: vec![],
             gas_speeds: vec![],
             algos: vec![1],
+            mod_x: Vector2(0.0, 0.0),
+            mod_y: Vector2(0.0, 0.0),
         },
         ThemeProto {
             id: 15,
@@ -320,6 +356,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
             gas_items: vec![],
             gas_speeds: vec![],
             algos: vec![6],
+            mod_x: Vector2(0.0, 0.0),
+            mod_y: Vector2(1.0, 1.0),
         },
         ThemeProto {
             id: 16,
@@ -337,6 +375,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
             gas_items: vec![],
             gas_speeds: vec![],
             algos: vec![7],
+            mod_x: Vector2(0.0, 0.0),
+            mod_y: Vector2(1.0, 1.0),
         },
         ThemeProto {
             id: 17,
@@ -354,6 +394,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
             gas_items: vec![],
             gas_speeds: vec![],
             algos: vec![2],
+            mod_x: Vector2(0.0, 0.0),
+            mod_y: Vector2(1.0, 1.0),
         },
         ThemeProto {
             id: 18,
@@ -371,6 +413,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
             gas_items: vec![],
             gas_speeds: vec![],
             algos: vec![1],
+            mod_x: Vector2(0.0, 0.0),
+            mod_y: Vector2(0.0, 0.0),
         },
         ThemeProto {
             id: 19,
@@ -388,6 +432,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
             gas_items: vec![],
             gas_speeds: vec![],
             algos: vec![8],
+            mod_x: Vector2(1.5, 1.5),
+            mod_y: Vector2(-5.0, -5.0),
         },
         ThemeProto {
             id: 20,
@@ -405,6 +451,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
             gas_items: vec![],
             gas_speeds: vec![],
             algos: vec![9],
+            mod_x: Vector2(6.0, 6.0),
+            mod_y: Vector2(8.0, 8.0),
         },
         ThemeProto {
             id: 21,
@@ -422,6 +470,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
             gas_items: vec![1120, 1121],
             gas_speeds: vec![0.84, 0.16],
             algos: vec![0],
+            mod_x: Vector2(0.0, 0.0),
+            mod_y: Vector2(0.0, 0.0),
         },
         ThemeProto {
             id: 22,
@@ -439,6 +489,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
             gas_items: vec![],
             gas_speeds: vec![],
             algos: vec![10],
+            mod_x: Vector2(1.0, 1.0),
+            mod_y: Vector2(1.0, 1.0),
         },
         ThemeProto {
             id: 23,
@@ -456,6 +508,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
             gas_items: vec![],
             gas_speeds: vec![],
             algos: vec![11],
+            mod_x: Vector2(1.5, 1.5),
+            mod_y: Vector2(1.0, 1.0),
         },
         ThemeProto {
             id: 24,
@@ -473,6 +527,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
             gas_items: vec![],
             gas_speeds: vec![],
             algos: vec![12],
+            mod_x: Vector2(1.0, 1.0),
+            mod_y: Vector2(1.0, 1.0),
         },
         ThemeProto {
             id: 25,
@@ -490,6 +546,8 @@ pub static THEME_PROTOS: Lazy<Vec<ThemeProto>> = Lazy::new(|| {
             gas_items: vec![],
             gas_speeds: vec![],
             algos: vec![13],
+            mod_x: Vector2(1.0, 1.0),
+            mod_y: Vector2(3.0, 3.0),
         },
     ]
 });

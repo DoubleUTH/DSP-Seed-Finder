@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-#[derive(Debug, PartialEq, Clone, Serialize)]
+#[derive(Debug, PartialEq, Clone, Copy, Serialize)]
 pub struct Vector3(pub f64, pub f64, pub f64);
 
 impl Vector3 {
@@ -29,7 +29,7 @@ impl Vector3 {
 
     pub fn normalize(&mut self) -> &mut Self {
         let num = self.magnitude();
-        if num > 9.99999974737875e-6 {
+        if num > 1e-5 {
             *self /= num;
         } else {
             *self = Self::zero();
@@ -79,6 +79,14 @@ impl std::ops::SubAssign<&Vector3> for Vector3 {
         self.0 -= rhs.0;
         self.1 -= rhs.1;
         self.2 -= rhs.2;
+    }
+}
+
+impl std::ops::Mul<f64> for Vector3 {
+    type Output = Vector3;
+
+    fn mul(self, rhs: f64) -> Vector3 {
+        return Vector3(self.0 * rhs, self.1 * rhs, self.2 * rhs);
     }
 }
 

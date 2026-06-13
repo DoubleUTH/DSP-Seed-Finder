@@ -19,6 +19,7 @@ import {
     defaultHiveMaxDensity,
     defaultResourceMultiplier,
     defaultStarCount,
+    defaultUseActualVeins,
     getSearch,
     hiveInitialColonizeValues,
     hiveMaxDensityValues,
@@ -33,6 +34,8 @@ import HiveMaxDensitySelector from "../partials/HiveMaxDensitySelector"
 import { useLingui } from "#lingui"
 import ExportModal from "../partials/ExportModal"
 import Starmap from "../partials/Starmap"
+import Tooltip from "../components/Tooltip"
+import Toggle from "../components/Toggle"
 
 function randomSeed() {
     return Math.floor(Math.random() * 1e8)
@@ -113,6 +116,20 @@ const Search: Component = () => {
                     setStore("settings", "view", "hiveMaxDensity", v)
                 }
             />
+            <div class={styles.searchTitle}>
+                <Tooltip
+                    text={t`It is much faster to estimate the amount of veins over generating the excat numbers.`}
+                >
+                    {t`Use estimated veins`}
+                </Tooltip>
+                :
+            </div>
+            <Toggle
+                value={!store.settings.view.useActualVeins}
+                onChange={(v) =>
+                    setStore("settings", "view", "useActualVeins", !v)
+                }
+            />
         </form>
     )
 }
@@ -165,6 +182,14 @@ const View: Component<{ seed: number; index?: number }> = (props) => {
         return defaultHiveMaxDensity
     })
 
+    const useActualVeins = createMemo(() => {
+        const { useActualVeins } = searchParams
+        if (useActualVeins) {
+            return useActualVeins === "1" || useActualVeins === "true"
+        }
+        return defaultUseActualVeins
+    })
+
     const [galaxy] = createResource<Galaxy>(async () => {
         const config = {
             seed: props.seed,
@@ -172,8 +197,11 @@ const View: Component<{ seed: number; index?: number }> = (props) => {
             resourceMultiplier: resourceMultiplier(),
             hiveInitialColonize: hiveInitialColonize(),
             hiveMaxDensity: hiveMaxDensity(),
+            useActualVeins: useActualVeins(),
         }
-        return getWorldGen(false).generate(config)
+        const galaxy = await getWorldGen(false).generate(config)
+        console.log(galaxy)
+        return galaxy
     })
 
     const search = createMemo(() =>
@@ -182,6 +210,7 @@ const View: Component<{ seed: number; index?: number }> = (props) => {
             resourceMultiplier: resourceMultiplier(),
             hiveInitialColonize: hiveInitialColonize(),
             hiveMaxDensity: hiveMaxDensity(),
+            useActualVeins: useActualVeins(),
         }),
     )
 
@@ -254,6 +283,7 @@ const View: Component<{ seed: number; index?: number }> = (props) => {
                     resourceMultiplier: resourceMultiplier(),
                     hiveInitialColonize: hiveInitialColonize(),
                     hiveMaxDensity: hiveMaxDensity(),
+                    useActualVeins: useActualVeins(),
                 }}
             />
         </Show>

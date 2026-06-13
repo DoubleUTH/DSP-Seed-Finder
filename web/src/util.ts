@@ -25,13 +25,14 @@ function modifyCondition(condition: Condition, fn: (value: float) => float) {
 }
 
 function fixRule(rule: SimpleRule): SimpleRule {
-    if (
-        rule.type === RuleType.AverageVeinAmount &&
-        rule.vein === VeinType.Oil
-    ) {
+    if (rule.type === RuleType.AverageVeinAmount) {
         return {
             ...rule,
-            condition: modifyCondition(rule.condition, (value) => value * 25e3),
+            useActual: !!rule.useActual,
+            condition:
+                rule.vein === VeinType.Oil
+                    ? modifyCondition(rule.condition, (value) => value * 25e3)
+                    : rule.condition,
         }
     }
     if (rule.type === RuleType.XDistance) {
@@ -85,12 +86,14 @@ export const hiveMaxDensityValues: ReadonlyArray<float> = [1, 1.5, 2, 2.5, 3]
 export const defaultResourceMultiplier = 1
 export const defaultHiveInitialColonize = 1
 export const defaultHiveMaxDensity = 1
+export const defaultUseActualVeins = false
 export function getDefaultParams(): GameParameters {
     return {
         starCount: defaultStarCount,
         resourceMultiplier: defaultResourceMultiplier,
         hiveInitialColonize: defaultHiveInitialColonize,
         hiveMaxDensity: defaultHiveMaxDensity,
+        useActualVeins: defaultUseActualVeins,
     }
 }
 
@@ -117,7 +120,7 @@ export const gasOrder: GasType[] = [
     GasType.Deuterium,
 ]
 
-export function statVein(vein: Vein): VeinStat {
+export function statVein(vein: EstimatedVein): VeinStat {
     const min = vein.minGroup * vein.minPatch * vein.minAmount
     const max = vein.maxGroup * vein.maxPatch * vein.maxAmount
     const avg =
@@ -133,6 +136,7 @@ export function getSearch({
     resourceMultiplier,
     hiveInitialColonize,
     hiveMaxDensity,
+    useActualVeins,
 }: GameParameters) {
     const params = new URLSearchParams()
     if (starCount !== defaultStarCount) {
@@ -146,6 +150,9 @@ export function getSearch({
     }
     if (hiveMaxDensity !== defaultHiveMaxDensity) {
         params.set("hiveMaxDensity", String(hiveMaxDensity))
+    }
+    if (useActualVeins !== defaultUseActualVeins) {
+        params.set("useActualVeins", String(useActualVeins))
     }
     const str = params.toString()
     return str ? "?" + str : ""

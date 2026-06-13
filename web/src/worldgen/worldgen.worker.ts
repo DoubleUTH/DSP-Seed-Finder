@@ -31,6 +31,7 @@ self.onmessage = (ev) => {
             starCount = 64,
             hiveInitialColonize = 1,
             hiveMaxDensity = 1,
+            useActualVeins = false,
         } = input
 
         initPromise.then(() => {
@@ -40,6 +41,7 @@ self.onmessage = (ev) => {
                 resourceMultiplier,
                 hiveInitialColonize,
                 hiveMaxDensity,
+                useActualVeins,
             })
             self.postMessage({ type: GENERATE_NAME, data: result })
         })
@@ -51,6 +53,7 @@ self.onmessage = (ev) => {
                 starCount = 64,
                 hiveInitialColonize = 1,
                 hiveMaxDensity = 1,
+                useActualVeins = false,
             },
             rule,
         } = input
@@ -63,6 +66,7 @@ self.onmessage = (ev) => {
                     resourceMultiplier,
                     hiveInitialColonize,
                     hiveMaxDensity,
+                    useActualVeins,
                 },
                 rule,
             )

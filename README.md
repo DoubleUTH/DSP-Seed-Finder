@@ -18,7 +18,9 @@ This tool runs on your own PC instead of a server, which means it will utilize y
 
 The search results are automatically stored in your browser, allowing you to pause the search at any time and resume it later. However, please note that clearing your browser history may also delete the search results.
 
-This tool offers two searching modes. By default, it operates in browser mode, conducting the search within your browser. Alternatively, it can run in native mode, requiring you to download and run a program locally for the search to take place on your machine. In my experience, native mode runs 2-5 times faster. Browser mode is provided for users who may have concerns about downloading programs.
+~~This tool does not accurately generate the amount of vein a planet has. The reason for this is that the vein generation algorithm in the game is extremely complex and relies on specific functions within the Unity Engine. Implementing this algorithm accurately in this tool is very challenging and time-consuming. Therefore, an estimated value for the Vein amount is provided as an alternative.~~
+
+Update: the generation of the actual amount of veins has been implemented. However it is extremely slow compare to the estimated amount. Therefore, using the estimated value is currently the default.
 
 This tool does not accurately generate the amount of vein a planet has. The reason for this is that the vein generation algorithm in the game is extremely complex and relies on specific functions within the Unity Engine. Implementing this algorithm accurately in this tool is very challenging and time-consuming. Therefore, an estimated value for the Vein amount is provided as an alternative.
 

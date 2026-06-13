@@ -300,7 +300,9 @@ impl<'a> Star<'a> {
                 SpectrType::X
             } else {
                 unsafe {
-                    ::std::mem::transmute::<i32, SpectrType>(self.get_class_factor().round() as i32)
+                    ::std::mem::transmute::<i32, SpectrType>(
+                        self.get_class_factor().round_ties_even() as i32,
+                    )
                 }
             }
         })
@@ -326,7 +328,7 @@ impl<'a> Star<'a> {
             };
             let real = base * factor;
             // displayed
-            (real.powf(0.33) * 1000.0).round() / 1000.0
+            (real.powf(0.33) * 1000.0).round_ties_even() / 1000.0
         })
     }
 
@@ -417,8 +419,8 @@ impl<'a> Star<'a> {
 
     pub fn get_dyson_radius(&self) -> i32 {
         *self.dyson_radius.get_or_init(|| {
-            (((self.get_orbit_scaler() * 0.28).max(self.get_radius() * 0.045) * 800.0).round()
-                as i32)
+            (((self.get_orbit_scaler() * 0.28).max(self.get_radius() * 0.045) * 800.0)
+                .round_ties_even() as i32)
                 * 100
         })
     }

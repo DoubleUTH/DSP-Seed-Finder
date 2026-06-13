@@ -17,6 +17,8 @@ pub struct GameDesc {
     pub hive_initial_colonize: f64,
     #[serde(default = "GameDesc::default_hive_max_density")]
     pub hive_max_density: f64,
+    #[serde(default)]
+    pub use_actual_veins: bool,
 }
 
 impl GameDesc {

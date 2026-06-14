@@ -1115,6 +1115,7 @@ impl<'a> Planet<'a> {
                     }
                     let surface_height = data.query_height(&pos, &height_data);
                     if theme.water_item_id == 0 || surface_height >= self.radius {
+                        // println!("{:?},{:?},{}", pos * surface_height, vein_type, amount);
                         amount_map
                             .insert(vein_type, amount_map.get(vein_type).unwrap_or(&0) + amount);
                     }

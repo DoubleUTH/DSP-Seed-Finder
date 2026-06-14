@@ -1,4 +1,3 @@
-#[cfg(test)]
 mod tests {
     use crate::data::game_desc::GameDesc;
     use crate::worldgen::galaxy_gen::create_galaxy;
@@ -17,10 +16,10 @@ mod tests {
         let galaxy = create_galaxy(&game);
         let _result = galaxy
             .stars
-            .get(1)
+            .get(0)
             .unwrap()
             .get_planets()
-            .get(1)
+            .get(3)
             .unwrap()
             .get_actual_veins();
     }

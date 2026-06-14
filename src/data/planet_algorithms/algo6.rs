@@ -1,13 +1,14 @@
 use super::super::math::{levelize, levelize2};
 use super::super::planet::Planet;
-use super::super::planet_raw_data::get_vertex;
+use crate::data::planet_grid::{get_planet_grid, PlanetGrid};
 use super::super::random::DspRandom;
 use super::super::simplex_noise::SimplexNoise;
 use super::PlanetAlgorithm;
 
 /// PlanetAlgorithm6 - Similar to algo5 but with different height/biomo formula.
 pub struct PlanetAlgorithm6 {
-    radius: f32,
+    grid: &'static PlanetGrid,
+    radius: f64,
     noise1: SimplexNoise,
     noise2: SimplexNoise,
 }
@@ -18,7 +19,8 @@ impl PlanetAlgorithm6 {
         let seed1 = rand.next_seed();
         let seed2 = rand.next_seed();
         Self {
-            radius: planet.radius,
+            grid: get_planet_grid(),
+            radius: planet.radius as f64,
             noise1: SimplexNoise::with_seed(seed1),
             noise2: SimplexNoise::with_seed(seed2),
         }
@@ -26,11 +28,11 @@ impl PlanetAlgorithm6 {
 }
 
 impl PlanetAlgorithm for PlanetAlgorithm6 {
-    fn get_height(&self, index: usize) -> f32 {
-        let v = get_vertex(index);
-        let world_x = (v.0 as f64) * self.radius as f64;
-        let world_y = (v.1 as f64) * self.radius as f64;
-        let world_z = (v.2 as f64) * self.radius as f64;
+    fn get_height(&self, index: usize) -> f64 {
+        let v = self.grid.get_vertex(index);
+        let world_x = (v.0 as f64) * self.radius;
+        let world_y = (v.1 as f64) * self.radius;
+        let world_z = (v.2 as f64) * self.radius;
 
         let height_base = 0.0;
         let leveled_x = levelize(world_x * 0.007, 1.0, 0.0);
@@ -130,6 +132,6 @@ impl PlanetAlgorithm for PlanetAlgorithm6 {
             -1.2
         };
 
-        (self.radius as f64 + result_height + 0.2) as f32
+        self.radius + result_height + 0.2
     }
 }

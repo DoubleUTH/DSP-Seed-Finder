@@ -1,13 +1,14 @@
 use super::super::math::{levelize2, levelize3};
 use super::super::planet::Planet;
-use super::super::planet_raw_data::get_vertex;
+use crate::data::planet_grid::{get_planet_grid, PlanetGrid};
 use super::super::random::DspRandom;
 use super::super::simplex_noise::SimplexNoise;
 use super::PlanetAlgorithm;
 
 /// PlanetAlgorithm9 - Complex multi-layer noise with modX/modY blending.
 pub struct PlanetAlgorithm9 {
-    radius: f32,
+    grid: &'static PlanetGrid,
+    radius: f64,
     mod_x: f64,
     mod_y: f64,
     noise1: SimplexNoise,
@@ -20,7 +21,8 @@ impl PlanetAlgorithm9 {
         let seed1 = rand.next_seed();
         let seed2 = rand.next_seed();
         Self {
-            radius: planet.radius,
+            grid: get_planet_grid(),
+            radius: planet.radius as f64,
             mod_x: planet.get_mod_x(),
             mod_y: planet.get_mod_y(),
             noise1: SimplexNoise::with_seed(seed1),
@@ -30,7 +32,7 @@ impl PlanetAlgorithm9 {
 }
 
 impl PlanetAlgorithm for PlanetAlgorithm9 {
-    fn get_height(&self, index: usize) -> f32 {
+    fn get_height(&self, index: usize) -> f64 {
         let freq_scale_x: f64 = 0.01;
         let freq_scale_y: f64 = 0.012;
         let freq_scale_z: f64 = 0.01;
@@ -39,10 +41,10 @@ impl PlanetAlgorithm for PlanetAlgorithm9 {
         let noise2_amplitude: f64 = 0.9;
         let noise2_offset: f64 = 0.5;
 
-        let v = get_vertex(index);
-        let world_x = (v.0 as f64) * self.radius as f64;
-        let world_y = (v.1 as f64) * self.radius as f64;
-        let world_z = (v.2 as f64) * self.radius as f64;
+        let v = self.grid.get_vertex(index);
+        let world_x = (v.0 as f64) * self.radius;
+        let world_y = (v.1 as f64) * self.radius;
+        let world_z = (v.2 as f64) * self.radius;
 
         let layer1_noise = self.noise1.noise_3d_fbm(
             world_x * freq_scale_x * 0.75,
@@ -128,6 +130,6 @@ impl PlanetAlgorithm for PlanetAlgorithm9 {
             blended_height
         };
 
-        (self.radius as f64 + final_height + 0.2) as f32
+        self.radius + final_height + 0.2
     }
 }

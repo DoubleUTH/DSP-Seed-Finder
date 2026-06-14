@@ -1,12 +1,13 @@
 use super::super::planet::Planet;
-use super::super::planet_raw_data::get_vertex;
 use super::super::random::DspRandom;
 use super::super::simplex_noise::SimplexNoise;
 use super::PlanetAlgorithm;
+use crate::data::planet_grid::{get_planet_grid, PlanetGrid};
 
 /// PlanetAlgorithm2 - Two-layer FBM noise with frequency modulation from modX/modY.
 pub struct PlanetAlgorithm2 {
-    radius: f32,
+    grid: &'static PlanetGrid,
+    radius: f64,
     noise1: SimplexNoise,
     scaled_freq_x: f64,
     scaled_freq_y: f64,
@@ -29,7 +30,8 @@ impl PlanetAlgorithm2 {
         let seed1 = rand.next_seed();
 
         Self {
-            radius: planet.radius,
+            grid: get_planet_grid(),
+            radius: planet.radius as f64,
             noise1: SimplexNoise::with_seed(seed1),
             scaled_freq_x: base_freq_x * mod_y_scale,
             scaled_freq_y: base_freq_y * mod_y_scale,
@@ -39,13 +41,13 @@ impl PlanetAlgorithm2 {
 }
 
 impl PlanetAlgorithm for PlanetAlgorithm2 {
-    fn get_height(&self, index: usize) -> f32 {
+    fn get_height(&self, index: usize) -> f64 {
         let noise_amplitude: f64 = 3.0;
 
-        let v = get_vertex(index);
-        let world_x = (v.0 as f64) * self.radius as f64;
-        let world_y = (v.1 as f64) * self.radius as f64;
-        let world_z = (v.2 as f64) * self.radius as f64;
+        let v = self.grid.get_vertex(index);
+        let world_x: f64 = (v.0 as f64) * self.radius;
+        let world_y = (v.1 as f64) * self.radius;
+        let world_z = (v.2 as f64) * self.radius;
 
         let base_noise = self.noise1.noise_3d_fbm(
             world_x * self.scaled_freq_x,
@@ -65,6 +67,6 @@ impl PlanetAlgorithm for PlanetAlgorithm2 {
             shaped_terrain
         };
 
-        (self.radius as f64 + final_height + 0.1) as f32
+        self.radius + final_height + 0.1
     }
 }

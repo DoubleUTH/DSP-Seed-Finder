@@ -54,8 +54,6 @@ pub struct Planet<'a> {
     estimated_veins: OnceCell<Vec<EstimatedVein>>,
     actual_veins: OnceCell<Vec<ActualVein>>,
     theme_algo_id: OnceCell<i32>,
-    theme_mod_x: OnceCell<f64>,
-    theme_mod_y: OnceCell<f64>,
 }
 
 const ORBIT_RADIUS: &'static [f32] = &[
@@ -136,8 +134,6 @@ impl<'a> Planet<'a> {
             gases: OnceCell::new(),
             estimated_veins: OnceCell::new(),
             theme_algo_id: OnceCell::new(),
-            theme_mod_x: OnceCell::new(),
-            theme_mod_y: OnceCell::new(),
             actual_veins: OnceCell::new(),
         }
     }
@@ -479,25 +475,21 @@ impl<'a> Planet<'a> {
     }
 
     pub fn get_mod_x(&self) -> f64 {
-        *self.theme_mod_x.get_or_init(|| {
-            let theme = self.get_theme();
-            if theme.algos.is_empty() {
-                0.0
-            } else {
-                theme.mod_x.0 + self.theme_rand3 * (theme.mod_x.1 - theme.mod_x.0)
-            }
-        })
+        let theme = self.get_theme();
+        if theme.algos.is_empty() {
+            0.0
+        } else {
+            theme.mod_x.0 + self.theme_rand3 * (theme.mod_x.1 - theme.mod_x.0)
+        }
     }
 
     pub fn get_mod_y(&self) -> f64 {
-        *self.theme_mod_y.get_or_init(|| {
-            let theme = self.get_theme();
-            if theme.algos.is_empty() {
-                0.0
-            } else {
-                theme.mod_y.0 + self.theme_rand4 * (theme.mod_y.1 - theme.mod_y.0)
-            }
-        })
+        let theme = self.get_theme();
+        if theme.algos.is_empty() {
+            0.0
+        } else {
+            theme.mod_y.0 + self.theme_rand4 * (theme.mod_y.1 - theme.mod_y.0)
+        }
     }
 
     pub fn get_type(&self) -> &PlanetType {
@@ -797,11 +789,11 @@ impl<'a> Planet<'a> {
 
     fn can_place_vein(
         &self,
+        algo_id: i32,
         vein_type: &VeinType,
         zero: &VectorF3,
         raw_data: &PlanetRawData,
     ) -> bool {
-        let algo_id = self.get_algo_id();
         if algo_id == 7 && vein_type != &VeinType::Bamboo {
             return true;
         }
@@ -986,6 +978,7 @@ impl<'a> Planet<'a> {
 
             let min_vein_spacing = 2.1 / self.radius;
             let min_vein_spacing_sq = (min_vein_spacing as f64) * (min_vein_spacing as f64);
+            let algo_id = self.get_algo_id();
 
             for index3 in 1..15 {
                 if vein_vectors.len() >= 512 {
@@ -1013,7 +1006,7 @@ impl<'a> Planet<'a> {
                             zero += birth_point;
                         }
                         zero.normalize();
-                        if self.can_place_vein(&vein_type, &zero, &raw_data) {
+                        if self.can_place_vein(algo_id, &vein_type, &zero, &raw_data) {
                             let not_too_close_to_other_vein =
                                 vein_vectors.iter().all(|(_, pos, _)| {
                                     (pos.distance_sq_from(&zero) as f64) >= min_sq_dist
@@ -1055,6 +1048,9 @@ impl<'a> Planet<'a> {
                     *num_array_3.get(index7 as usize).unwrap()
                 };
                 for _ in 0..20 {
+                    if tmp_vecs.len() >= target_node_count {
+                        break;
+                    }
                     for index8 in 0..tmp_vecs.len() {
                         let vector2_1 = tmp_vecs.get(index8).unwrap();
                         if vector2_1.magnitude_sq() <= 36.0 {
@@ -1076,9 +1072,6 @@ impl<'a> Planet<'a> {
                                 break;
                             }
                         }
-                    }
-                    if tmp_vecs.len() >= target_node_count {
-                        break;
                     }
                 }
                 let adjusted_resource_coef = if is_oil {

@@ -9,31 +9,31 @@ impl VectorF3 {
         Self(x, y, z)
     }
 
-    pub fn zero() -> Self {
+    pub const fn zero() -> Self {
         Self(0.0, 0.0, 0.0)
     }
 
-    pub fn up() -> Self {
+    pub const fn up() -> Self {
         Self(0.0, 1.0, 0.0)
     }
 
-    pub fn forward() -> Self {
+    pub const fn forward() -> Self {
         Self(0.0, 0.0, 1.0)
     }
 
-    pub fn back() -> Self {
+    pub const fn back() -> Self {
         Self(0.0, 0.0, -1.0)
     }
 
-    pub fn right() -> Self {
+    pub const fn right() -> Self {
         Self(1.0, 0.0, 0.0)
     }
 
-    pub fn left() -> Self {
+    pub const fn left() -> Self {
         Self(-1.0, 0.0, 0.0)
     }
 
-    pub fn down() -> Self {
+    pub const fn down() -> Self {
         Self(0.0, -1.0, 0.0)
     }
 

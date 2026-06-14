@@ -42,8 +42,8 @@ pub trait PlanetAlgorithm {
     /// * `index` - The vertex index (0..planet_raw_data::data_length())
     ///
     /// # Returns
-    /// Height in game units (f32).
-    fn get_height(&self, index: usize) -> f32;
+    /// Height in game units (f64).
+    fn get_height(&self, index: usize) -> f64;
 }
 
 /// Construct the algorithm matching the planet's algo ID.

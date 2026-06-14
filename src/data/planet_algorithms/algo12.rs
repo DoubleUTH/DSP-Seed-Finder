@@ -1,13 +1,14 @@
 use super::super::math::clamp01;
 use super::super::planet::Planet;
-use super::super::planet_raw_data::get_vertex;
+use crate::data::planet_grid::{get_planet_grid, PlanetGrid};
 use super::super::random::DspRandom;
 use super::super::simplex_noise::SimplexNoise;
 use super::PlanetAlgorithm;
 
 /// PlanetAlgorithm12 - Latitude-based terrain with ridged noise and modX/modY.
 pub struct PlanetAlgorithm12 {
-    radius: f32,
+    grid: &'static PlanetGrid,
+    radius: f64,
     noise1: SimplexNoise,
     noise2: SimplexNoise,
     freq_scale: f64,
@@ -35,7 +36,8 @@ impl PlanetAlgorithm12 {
         let seed1 = rand.next_seed();
         let seed2 = rand.next_seed();
         Self {
-            radius: planet.radius,
+            grid: get_planet_grid(),
+            radius: planet.radius as f64,
             noise1: SimplexNoise::with_seed(seed1),
             noise2: SimplexNoise::with_seed(seed2),
             freq_scale: 1.1 * planet.get_mod_x(),
@@ -45,12 +47,12 @@ impl PlanetAlgorithm12 {
 }
 
 impl PlanetAlgorithm for PlanetAlgorithm12 {
-    fn get_height(&self, index: usize) -> f32 {
+    fn get_height(&self, index: usize) -> f64 {
         let ridge_amplitude = 0.2;
         let height_multiplier = 8.0;
         let pi = std::f64::consts::PI;
 
-        let v = get_vertex(index);
+        let v = self.grid.get_vertex(index);
         let latitude_factor = ((v.1 as f64).abs().asin()) * 2.0 / pi;
         let x_pos = v.0 as f64;
         let y_pos_mod = (v.1 as f64) * 2.5 * self.mod_y;
@@ -97,6 +99,6 @@ impl PlanetAlgorithm for PlanetAlgorithm12 {
 
         let final_height = val.clamp(0.0, 2.0) * 1.1 - 0.2;
 
-        (self.radius as f64 + final_height) as f32
+        self.radius + final_height
     }
 }

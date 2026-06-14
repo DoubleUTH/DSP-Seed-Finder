@@ -1,9 +1,9 @@
 use super::super::math::{levelize2, levelize4};
 use super::super::planet::Planet;
-use super::super::planet_raw_data::get_vertex;
 use super::super::random::DspRandom;
 use super::super::simplex_noise::SimplexNoise;
 use super::PlanetAlgorithm;
+use crate::data::planet_grid::{get_planet_grid, PlanetGrid};
 
 #[inline]
 fn lerp_nc(a: f64, b: f64, t: f64) -> f64 {
@@ -12,7 +12,8 @@ fn lerp_nc(a: f64, b: f64, t: f64) -> f64 {
 
 /// PlanetAlgorithm3 - Complex FBM noise with domain warping and multi-level shaping.
 pub struct PlanetAlgorithm3 {
-    radius: f32,
+    grid: &'static PlanetGrid,
+    radius: f64,
     mod_x: f64,
     noise1: SimplexNoise,
     noise2: SimplexNoise,
@@ -24,7 +25,8 @@ impl PlanetAlgorithm3 {
         let seed1 = rand.next_seed();
         let seed2 = rand.next_seed();
         Self {
-            radius: planet.radius,
+            grid: get_planet_grid(),
+            radius: planet.radius as f64,
             mod_x: planet.get_mod_x(),
             noise1: SimplexNoise::with_seed(seed1),
             noise2: SimplexNoise::with_seed(seed2),
@@ -33,15 +35,15 @@ impl PlanetAlgorithm3 {
 }
 
 impl PlanetAlgorithm for PlanetAlgorithm3 {
-    fn get_height(&self, index: usize) -> f32 {
+    fn get_height(&self, index: usize) -> f64 {
         let freq_scale_x: f64 = 0.007;
         let freq_scale_y: f64 = 0.007;
         let freq_scale_z: f64 = 0.007;
 
-        let v = get_vertex(index);
-        let world_x = (v.0 as f64) * self.radius as f64;
-        let world_y = (v.1 as f64) * self.radius as f64;
-        let world_z = (v.2 as f64) * self.radius as f64;
+        let v = self.grid.get_vertex(index);
+        let world_x = (v.0 as f64) * self.radius;
+        let world_y = (v.1 as f64) * self.radius;
+        let world_z = (v.2 as f64) * self.radius;
 
         let warped_x = world_x + (world_y * 0.15).sin() * 3.0;
         let warped_y = world_y + (world_z * 0.15).sin() * 3.0;
@@ -133,6 +135,6 @@ impl PlanetAlgorithm for PlanetAlgorithm3 {
 
         let final_height = lerp_nc(height_a2, height_b, self.mod_x);
 
-        (self.radius as f64 + final_height + 0.2) as f32
+        self.radius + final_height + 0.2
     }
 }

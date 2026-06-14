@@ -5,6 +5,7 @@ pub mod game_desc;
 pub mod math;
 pub mod planet;
 pub mod planet_algorithms;
+pub mod planet_grid;
 pub mod planet_raw_data;
 pub mod pose;
 pub mod quaternion;

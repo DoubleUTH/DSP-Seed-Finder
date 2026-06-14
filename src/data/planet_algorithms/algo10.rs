@@ -1,6 +1,6 @@
 use super::super::math::{levelize, levelize4};
 use super::super::planet::Planet;
-use super::super::planet_raw_data::get_vertex;
+use crate::data::planet_grid::{get_planet_grid, PlanetGrid};
 use super::super::random::DspRandom;
 use super::super::random_table::RandomTable;
 use super::super::simplex_noise::SimplexNoise;
@@ -8,7 +8,8 @@ use super::PlanetAlgorithm;
 
 /// PlanetAlgorithm10 - FBM noise with 10 elliptical crater features.
 pub struct PlanetAlgorithm10 {
-    radius: f32,
+    grid: &'static PlanetGrid,
+    radius: f64,
     noise1: SimplexNoise,
     noise2: SimplexNoise,
     noise3: SimplexNoise,
@@ -55,7 +56,8 @@ impl PlanetAlgorithm10 {
         }
 
         Self {
-            radius: planet.radius,
+            grid: get_planet_grid(),
+            radius: planet.radius as f64,
             noise1: SimplexNoise::with_seed(seed1),
             noise2: SimplexNoise::with_seed(seed2),
             noise3: SimplexNoise::with_seed(seed3),
@@ -68,15 +70,15 @@ impl PlanetAlgorithm10 {
 }
 
 impl PlanetAlgorithm for PlanetAlgorithm10 {
-    fn get_height(&self, index: usize) -> f32 {
+    fn get_height(&self, index: usize) -> f64 {
         let freq_scale_x: f64 = 0.007;
         let freq_scale_y: f64 = 0.007;
         let freq_scale_z: f64 = 0.007;
 
-        let v = get_vertex(index);
-        let world_x = (v.0 as f64) * self.radius as f64;
-        let world_y = (v.1 as f64) * self.radius as f64;
-        let world_z = (v.2 as f64) * self.radius as f64;
+        let v = self.grid.get_vertex(index);
+        let world_x = (v.0 as f64) * self.radius;
+        let world_y = (v.1 as f64) * self.radius;
+        let world_z = (v.2 as f64) * self.radius;
 
         let leveled_x = levelize(world_x * 0.007, 1.0, 0.0);
         let leveled_y = levelize(world_y * 0.007, 1.0, 0.0);
@@ -236,6 +238,6 @@ impl PlanetAlgorithm for PlanetAlgorithm10 {
         }
         let final_height = terrain_height - 0.1;
 
-        (self.radius as f64 + final_height + 0.1) as f32
+        self.radius + final_height + 0.1
     }
 }

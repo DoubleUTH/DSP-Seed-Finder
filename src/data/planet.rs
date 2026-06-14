@@ -1,7 +1,6 @@
 use crate::data::birth_points::gen_birth_points;
-use crate::data::planet_algorithms::create_and_prepare_algo;
-use crate::data::planet_algorithms::PlanetAlgorithm;
-use crate::data::planet_raw_data::{self, get_raw_data, PlanetRawData};
+use crate::data::planet_raw_data::get_raw_data;
+use crate::data::planet_raw_data::PlanetRawData;
 use crate::data::vector_f2::VectorF2;
 
 use super::enums::{PlanetType, SpectrType, StarType, ThemeDistribute, VeinType};
@@ -800,7 +799,6 @@ impl<'a> Planet<'a> {
         &self,
         vein_type: &VeinType,
         zero: &VectorF3,
-        algo: &dyn PlanetAlgorithm,
         raw_data: &PlanetRawData,
     ) -> bool {
         let algo_id = self.get_algo_id();
@@ -808,7 +806,7 @@ impl<'a> Planet<'a> {
             return true;
         }
         // `zero` is already normalized by the caller
-        let height = planet_raw_data::query_height_normalized(zero, algo, raw_data);
+        let height = raw_data.query_height_normalized(zero);
         match algo_id {
             7 => height <= self.radius - 4.0,
             11 => {
@@ -854,7 +852,6 @@ impl<'a> Planet<'a> {
             if self.gas_giant {
                 return vec![];
             }
-            let algo = create_and_prepare_algo(self);
 
             let theme = self.get_theme();
             let mut rand1 = DspRandom::new(self.seed);
@@ -959,17 +956,12 @@ impl<'a> Planet<'a> {
             }
             let mut vein_vectors: Vec<(VeinType, VectorF3, bool)> = Vec::with_capacity(512);
             // Fetch PlanetRawData once and thread it through all query_height calls
-            let raw_data: &PlanetRawData = get_raw_data();
+            let raw_data = get_raw_data(&self);
 
             let birth_point = if is_birth_planet {
                 let star_direction = self.get_star_direction();
-                let birth_point_data = gen_birth_points(
-                    algo.as_ref(),
-                    birth_seed,
-                    self.radius,
-                    star_direction,
-                    raw_data,
-                );
+                let birth_point_data =
+                    gen_birth_points(&raw_data, birth_seed, self.radius, star_direction);
                 vein_vectors.push((VeinType::Iron, birth_point_data.birth_resource_point0, true));
                 vein_vectors.push((
                     VeinType::Copper,
@@ -1021,7 +1013,7 @@ impl<'a> Planet<'a> {
                             zero += birth_point;
                         }
                         zero.normalize();
-                        if self.can_place_vein(&vein_type, &zero, algo.as_ref(), raw_data) {
+                        if self.can_place_vein(&vein_type, &zero, &raw_data) {
                             let not_too_close_to_other_vein =
                                 vein_vectors.iter().all(|(_, pos, _)| {
                                     (pos.distance_sq_from(&zero) as f64) >= min_sq_dist
@@ -1121,8 +1113,7 @@ impl<'a> Planet<'a> {
                     if is_oil {
                         pos = self.snap_to(&pos);
                     }
-                    let surface_height =
-                        planet_raw_data::query_height(&pos, algo.as_ref(), raw_data);
+                    let surface_height = raw_data.query_height(&pos);
                     if theme.water_item_id == 0 || surface_height >= self.radius {
                         // println!("{:?},{:?},{}", pos * surface_height, vein_type, amount);
                         amount_map[*vein_type as usize] += amount;

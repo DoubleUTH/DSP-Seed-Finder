@@ -185,7 +185,11 @@ const View: Component<{ seed: number; index?: number }> = (props) => {
     const useActualVeins = createMemo(() => {
         const { useActualVeins } = searchParams
         if (useActualVeins) {
-            return useActualVeins === "1" || useActualVeins === "true"
+            if (defaultUseActualVeins) {
+                return useActualVeins !== "0" && useActualVeins !== "false"
+            } else {
+                return useActualVeins === "1" || useActualVeins === "true"
+            }
         }
         return defaultUseActualVeins
     })

@@ -31,7 +31,7 @@ self.onmessage = (ev) => {
             starCount = 64,
             hiveInitialColonize = 1,
             hiveMaxDensity = 1,
-            useActualVeins = false,
+            useActualVeins = true,
         } = input
 
         initPromise.then(() => {
@@ -53,7 +53,7 @@ self.onmessage = (ev) => {
                 starCount = 64,
                 hiveInitialColonize = 1,
                 hiveMaxDensity = 1,
-                useActualVeins = false,
+                useActualVeins = true,
             },
             rule,
         } = input

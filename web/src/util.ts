@@ -86,7 +86,7 @@ export const hiveMaxDensityValues: ReadonlyArray<float> = [1, 1.5, 2, 2.5, 3]
 export const defaultResourceMultiplier = 1
 export const defaultHiveInitialColonize = 1
 export const defaultHiveMaxDensity = 1
-export const defaultUseActualVeins = false
+export const defaultUseActualVeins = true
 export function getDefaultParams(): GameParameters {
     return {
         starCount: defaultStarCount,

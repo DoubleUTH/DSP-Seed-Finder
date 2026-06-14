@@ -20,7 +20,7 @@ The search results are automatically stored in your browser, allowing you to pau
 
 ~~This tool does not accurately generate the amount of vein a planet has. The reason for this is that the vein generation algorithm in the game is extremely complex and relies on specific functions within the Unity Engine. Implementing this algorithm accurately in this tool is very challenging and time-consuming. Therefore, an estimated value for the Vein amount is provided as an alternative.~~
 
-Update: the generation of the actual amount of veins has been implemented. However it is extremely slow compare to the estimated amount. Therefore, using the estimated value is currently the default.
+Update: the generation of the actual amount of veins has been implemented. It is quite a bit slower compare to the estimated amount, therfore using the estimated value is still provided as an alternative.
 
 This tool does not accurately generate the amount of vein a planet has. The reason for this is that the vein generation algorithm in the game is extremely complex and relies on specific functions within the Unity Engine. Implementing this algorithm accurately in this tool is very challenging and time-consuming. Therefore, an estimated value for the Vein amount is provided as an alternative.
 

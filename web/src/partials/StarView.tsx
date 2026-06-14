@@ -386,6 +386,13 @@ const PlanetView: Component<{ star: Star; planet: Planet }> = (props) => {
                             : t`Ice Giant`}
                     </div>
                 </div>
+                <div class={styles.row}>
+                    <div class={styles.field}>{t`Orbit radius`}</div>
+                    <div class={styles.value}>
+                        {toPrecision(props.planet.orbitRadius * metersPerAU, 0)}{" "}
+                        m
+                    </div>
+                </div>
             </Show>
             <Show when={!isGas()}>
                 <Show when={props.planet.orbitAround != null}>

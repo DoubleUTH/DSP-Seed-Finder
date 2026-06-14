@@ -20,14 +20,14 @@ const Header: Component = () => {
                     store.searching && styles.buttonsDisabled,
                 )}
             >
-                <A href="/find-star" class={styles.button}>
-                    {t`Star Finder`}
-                </A>
                 <A href="/find-galaxy" class={styles.button}>
                     {t`Galaxy Finder`}
                 </A>
                 <A href="/galaxy" class={styles.button}>
                     {t`Galaxy Viewer`}
+                </A>
+                <A href="/find-star" class={clsx(styles.button, styles.legacy)}>
+                    {t`Star Finder`}
                 </A>
             </div>
             <div class={styles.icons}>

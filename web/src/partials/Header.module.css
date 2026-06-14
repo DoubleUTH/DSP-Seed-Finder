@@ -27,6 +27,11 @@
     padding: 0 8px;
 }
 
+.legacy {
+    color: rgba(160, 160, 160, 0.8);
+    text-decoration: line-through;
+}
+
 .buttonsDisabled {
     cursor: not-allowed;
 }

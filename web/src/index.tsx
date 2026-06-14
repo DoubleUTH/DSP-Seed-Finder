@@ -17,7 +17,7 @@ const dispose = render(
             <Route path="/find-star/:profileId?" component={FindStar} />
             <Route path="/find-galaxy/:profileId?" component={FindGalaxy} />
             <Route path="/galaxy/:seed?/:index?" component={Galaxy} />
-            <Route path="" component={() => <Navigate href="/find-star" />} />
+            <Route path="" component={() => <Navigate href="/find-galaxy" />} />
         </Router>
     ),
     root!,

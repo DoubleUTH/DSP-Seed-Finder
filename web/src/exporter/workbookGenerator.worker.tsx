@@ -10,7 +10,7 @@ import { loadLanguage } from "../linguiCore"
 import { VeinType, GasType } from "../enums"
 import { gasOrder, veinOrder } from "../util"
 
-function getVeinFieldsOrder(): string[] {
+function getVeinFieldsOrder(useActualVeins: boolean): string[] {
     const veinNames: Record<VeinType, string> = {
         [VeinType.None]: "",
         [VeinType.Iron]: t`Iron Ore`,
@@ -39,7 +39,9 @@ function getVeinFieldsOrder(): string[] {
     const veinFieldsOrder = [
         ...veinOrder.flatMap((type) => {
             const name = veinNames[type]
-            return [t`${name} (Avg)`, t`${name} (Min)`, t`${name} (Max)`]
+            return useActualVeins
+                ? [name]
+                : [t`${name} (Avg)`, t`${name} (Min)`, t`${name} (Max)`]
         }),
         t`Water`,
         t`Sulfuric Acid`,
@@ -91,11 +93,11 @@ function getPlanetFieldNames(): Record<PlanetField, string> {
     }
 }
 
-function createWorkbook() {
+function createWorkbook(useActualVeins: boolean) {
     const book = new Workbook()
     const starFieldNames = getStarFieldNames()
     const planetFieldNames = getPlanetFieldNames()
-    const veinFieldsOrder = getVeinFieldsOrder()
+    const veinFieldsOrder = getVeinFieldsOrder(useActualVeins)
     const starsSheet = book.addWorksheet("Stars", {
         views: [{ state: "frozen", xSplit: 3, ySplit: 1 }],
     })
@@ -161,6 +163,8 @@ self.onmessage = (ev) => {
             }
         })
     } else {
-        loadPromise = loadLanguage(ev.data).then(() => createWorkbook())
+        loadPromise = loadLanguage(ev.data.language).then(() =>
+            createWorkbook(ev.data.useActualVeins),
+        )
     }
 }

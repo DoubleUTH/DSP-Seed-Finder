@@ -119,7 +119,11 @@ function normalizeVein(vein: VeinStat): VeinStat {
     }
 }
 
-function constructStarData(galaxy: Galaxy, star: Star) {
+function constructStarData(
+    galaxy: Galaxy,
+    star: Star,
+    useActualVeins: boolean,
+) {
     const output: any[] = []
     const positions = galaxy.stars
         .filter(
@@ -167,14 +171,12 @@ function constructStarData(galaxy: Galaxy, star: Star) {
                         : vein.amount
                 const existing = veins[vein.veinType]
                 if (existing) {
-                    existing.min += amount
-                    existing.max += amount
                     existing.avg += amount
                 } else {
                     veins[vein.veinType] = {
                         veinType: vein.veinType,
-                        min: amount,
-                        max: amount,
+                        min: 0,
+                        max: 0,
                         avg: amount,
                     }
                 }
@@ -183,8 +185,10 @@ function constructStarData(galaxy: Galaxy, star: Star) {
     }
     for (const type of veinOrder) {
         output.push(veins[type]?.avg ?? 0)
-        output.push(veins[type]?.min ?? 0)
-        output.push(veins[type]?.max ?? 0)
+        if (!useActualVeins) {
+            output.push(veins[type]?.min ?? 0)
+            output.push(veins[type]?.max ?? 0)
+        }
     }
     output.push(
         !!star.planets.find(
@@ -209,7 +213,12 @@ function constructStarData(galaxy: Galaxy, star: Star) {
     return output
 }
 
-function constructPlanetData(galaxy: Galaxy, star: Star, planet: Planet) {
+function constructPlanetData(
+    galaxy: Galaxy,
+    star: Star,
+    planet: Planet,
+    useActualVeins: boolean,
+) {
     const output: any[] = []
     for (const field of planetFieldsOrder) {
         output.push(planetFieldsGetter[field]?.(galaxy, star, planet))
@@ -227,16 +236,18 @@ function constructPlanetData(galaxy: Galaxy, star: Star, planet: Planet) {
                     : vein.amount
             veins[vein.veinType] = {
                 veinType: vein.veinType,
-                min: amount,
-                max: amount,
+                min: 0,
+                max: 0,
                 avg: amount,
             }
         }
     }
     for (const type of veinOrder) {
         output.push(veins[type]?.avg ?? 0)
-        output.push(veins[type]?.min ?? 0)
-        output.push(veins[type]?.max ?? 0)
+        if (!useActualVeins) {
+            output.push(veins[type]?.min ?? 0)
+            output.push(veins[type]?.max ?? 0)
+        }
     }
     output.push(planet.theme.waterItemId === OceanType.Water)
     output.push(planet.theme.waterItemId === OceanType.Sulfur)
@@ -254,6 +265,7 @@ function generateExportData(
     galaxy: Galaxy,
     indexes: integer[],
     exportAllStars: boolean,
+    useActualVeins: boolean,
 ): ExportData {
     let stars = galaxy.stars
     if (!exportAllStars) {
@@ -261,10 +273,12 @@ function generateExportData(
     }
     return {
         seed: galaxy.seed,
-        stars: stars.map((star) => constructStarData(galaxy, star)),
+        stars: stars.map((star) =>
+            constructStarData(galaxy, star, useActualVeins),
+        ),
         planets: stars.flatMap((star) =>
             star.planets.map((planet) =>
-                constructPlanetData(galaxy, star, planet),
+                constructPlanetData(galaxy, star, planet, useActualVeins),
             ),
         ),
         indexes: exportAllStars ? indexes : undefined,
@@ -290,7 +304,12 @@ self.onmessage = (ev) => {
 
     loadPromise.then(({ exportAllStars, params }) => {
         const result = generate({ seed, ...params })
-        const data = generateExportData(result, indexes, exportAllStars)
+        const data = generateExportData(
+            result,
+            indexes,
+            exportAllStars,
+            params.useActualVeins,
+        )
         self.postMessage(data)
     })
 }

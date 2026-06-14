@@ -10,7 +10,7 @@ async function go(options: ExportOptions) {
     let running = threads
     let end = () => {}
     const generator = new GeneratorWorker()
-    generator.postMessage(language)
+    generator.postMessage({ language, useActualVeins: params.useActualVeins })
     for (let i = 0; i < threads; ++i) {
         const worker = new ExporterWorker()
         const stop = () => {

@@ -346,6 +346,22 @@ const ExportModal: Component<{
                             }
                         />
                     </div>
+                    <div class={styles.label}>
+                        <Tooltip
+                            text={t`It is much faster to estimate the amount of veins over generating the excat numbers.`}
+                        >
+                            {t`Use estimated veins`}
+                        </Tooltip>
+                        :
+                    </div>
+                    <div class={styles.input}>
+                        <Toggle
+                            value={!options.params.useActualVeins}
+                            onChange={(value) =>
+                                setOptions("params", "useActualVeins", !value)
+                            }
+                        />
+                    </div>
                 </Show>
                 <Show when={props.mode !== "single"}>
                     <div class={styles.label}>{t`Seed range`}</div>

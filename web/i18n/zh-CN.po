@@ -394,7 +394,7 @@ msgstr "有 <1/>/s 的 <0/>"
 
 #: web/src/partials/RuleEditor.tsx:160
 msgid "Has <0/> and the <1/> amount is <2/>"
-msgstr "<0/> 储量 <1/> 有 <1/>"
+msgstr "<0/> 储量 <1/> 有 <2/>"
 
 #: web/src/partials/RuleEditor.tsx:550
 msgid "Has <0/> planet(s) within Max dyson sphere radius, <1/> gas/ice giants."
@@ -580,7 +580,7 @@ msgstr "中子星"
 
 #: web/src/partials/ProfileManager.tsx:41
 msgid "New"
-msgstr "建立"
+msgstr "创建"
 
 #: web/src/partials/ProgressEditor.tsx:37
 msgid "New Profile Name"
@@ -895,7 +895,7 @@ msgstr "钛石"
 
 #: web/src/partials/ProgressEditor.tsx:118
 msgid "To run the search in (faster) native mode, click the download button and run the program on your PC, then enable this option."
-msgstr "要在（更快的）本机模式下运行搜索，请点击下载按钮并在您的电脑上运行程序，然后启用此选项"
+msgstr "如要在（更快的）本机模式下运行搜索，请点击下载按钮并在您的电脑上运行程序，然后启用此选项"
 
 #: web/src/names.tsx:90
 msgid "Tropicana"

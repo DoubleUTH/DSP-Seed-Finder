@@ -194,7 +194,7 @@ const MultiRuleEditor: Component<{
                 {(group, index) => (
                     <>
                         <Show when={index > 0}>
-                            <div class={styles.and}>AND</div>
+                            <div class={styles.and}>{t`AND`}</div>
                         </Show>
                         <div class={styles.block}>
                             <RuleBlockContent

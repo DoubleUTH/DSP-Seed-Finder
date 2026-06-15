@@ -38,7 +38,6 @@ export default defineConfig({
     build: {
         outDir: path.resolve(process.cwd(), "dist"),
         emptyOutDir: true,
-        minify: false,
     },
     worker: {
         format: "es",

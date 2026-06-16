@@ -320,6 +320,7 @@ const FindGalaxy: Component = () => {
                             if (info && info.id === profileId) {
                                 batch(() => {
                                     setProfile(info)
+                                    setName(info.name)
                                     if (progress && progress.id === profileId) {
                                         setProgress(progress)
                                     }

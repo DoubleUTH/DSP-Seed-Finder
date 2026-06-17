@@ -23,9 +23,7 @@ function ProgressEditor(props: {
     isLoaded: boolean
     searching: boolean
 }): JSX.Element {
-    const hasProgress = () =>
-        props.progress.start > -1 &&
-        props.progress.current > props.progress.start
+    const hasProgress = () => props.progress.nextBatchId > 0
     const isDisabled = () => props.searching || hasProgress()
 
     const { t } = useLingui()

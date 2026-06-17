@@ -1,9 +1,9 @@
 use super::super::math::{levelize, levelize2};
 use super::super::planet::Planet;
-use crate::data::planet_grid::{get_planet_grid, PlanetGrid};
 use super::super::random::DspRandom;
 use super::super::simplex_noise::SimplexNoise;
 use super::PlanetAlgorithm;
+use crate::data::planet_grid::{get_planet_grid, PlanetGrid};
 
 /// PlanetAlgorithm6 - Similar to algo5 but with different height/biomo formula.
 pub struct PlanetAlgorithm6 {

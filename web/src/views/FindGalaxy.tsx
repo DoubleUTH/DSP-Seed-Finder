@@ -31,7 +31,7 @@ import {
     setMultiProfileInfo,
     setMultiProfileProgress,
 } from "../profile"
-import { getWorldGen } from "../worldgen"
+import { startSearchingGalaxies, stopSearchingGalaxies } from "../worldgen"
 import ProgressEditor from "../partials/ProgressEditor"
 import ProfileManager from "../partials/ProfileManager"
 import styles from "./FindGalaxy.module.css"
@@ -44,6 +44,7 @@ import { ConditionType } from "../enums"
 import { useStore } from "../store"
 import ExportModal from "../partials/ExportModal"
 import { useLingui } from "#lingui"
+import { DEFAULT_BATCH_SIZE } from "../constants"
 
 const PAGE_SIZE = 100
 
@@ -54,8 +55,10 @@ const defaultProgress: () => MultiProfileProgress = () => ({
     autosave: 5,
     start: 0,
     end: 1e8,
-    current: 0,
+    total: 0,
     found: 0,
+    batchSize: DEFAULT_BATCH_SIZE,
+    nextBatchId: 0,
     multiRules: [
         [
             {
@@ -143,11 +146,12 @@ const FindGalaxy: Component = () => {
     const [currentPage, setCurrentPage] = createSignal(1)
     const [tick, setTick] = createSignal(0)
     const isLoaded = () => !!profile()
-    const hasProgress = () =>
-        progress.start > -1 && progress.current > progress.start
+    const hasProgress = () => progress.nextBatchId > 0
     const isDisabled = () => store.searching || hasProgress()
-    const hasCompleted = () =>
-        progress.start > -1 && progress.current >= progress.end
+    const hasCompleted = () => {
+        const totalBatchCount = Math.ceil(progress.total / progress.batchSize)
+        return totalBatchCount > 0 && progress.nextBatchId >= totalBatchCount
+    }
 
     function changeProfile(profile: ProfileInfo | null) {
         batch(() => {
@@ -166,6 +170,7 @@ const FindGalaxy: Component = () => {
     async function onSelectProfile(profile: ProfileInfo) {
         const progress = await getMultiProfileProgress(profile.id)
         if (progress) {
+            console.debug(progress)
             batch(() => {
                 changeProfile(profile)
                 setProgress(progress)
@@ -186,7 +191,12 @@ const FindGalaxy: Component = () => {
             const origName = name()
             changeProfile(null)
             setName(origName + t` - Copy`)
-            setProgress({ id: "", current: 0 })
+            setProgress({
+                id: "",
+                batchSize: DEFAULT_BATCH_SIZE,
+                nextBatchId: 0,
+                found: 0,
+            })
         })
     }
 
@@ -249,8 +259,11 @@ const FindGalaxy: Component = () => {
         }
         batch(() => {
             setCurrentPage(1)
-            setProgress("current", 0)
-            setProgress("found", 0)
+            setProgress({
+                found: 0,
+                nextBatchId: 0,
+                batchSize: DEFAULT_BATCH_SIZE,
+            })
         })
     }
 
@@ -267,20 +280,25 @@ const FindGalaxy: Component = () => {
     async function onStartSearching() {
         await onSaveProfile()
         setStore("searching", true)
-        let results: FindResult[] = []
-        getWorldGen(nativeMode()).find({
+        let results: integer[] = []
+        setProgress({
+            total: progress.end - progress.start,
+        })
+        startSearchingGalaxies(nativeMode(), {
+            batchSize: progress.batchSize,
+            nextBatchId: progress.nextBatchId,
             gameDesc: progress.params,
-            range: [Math.max(progress.start, progress.current), progress.end],
+            range: [progress.start, progress.end],
             concurrency: progress.concurrency,
             autosave: progress.autosave,
             rule: constructMultiRule(unwrap(progress.multiRules)),
             onResult: (result) => {
                 console.debug("result", result)
-                results.push(result)
+                results.push(...result)
             },
-            onProgress: (current) => {
+            onProgress: (nextBatchId) => {
                 batch(() => {
-                    setProgress("current", (c) => Math.max(c, current))
+                    setProgress("nextBatchId", (c) => Math.max(c, nextBatchId))
                     setProgress("found", (found) => found + results.length)
                 })
                 setMultiProfileProgress(unwrap(progress), results).then(() => {
@@ -304,7 +322,7 @@ const FindGalaxy: Component = () => {
     }
 
     function onStopSearching() {
-        getWorldGen(nativeMode()).stop()
+        stopSearchingGalaxies(nativeMode())
     }
 
     createEffect(
@@ -319,6 +337,7 @@ const FindGalaxy: Component = () => {
                         ]).then(([info, progress]): void => {
                             if (info && info.id === profileId) {
                                 batch(() => {
+                                    setName(info.name)
                                     setProfile(info)
                                     setName(info.name)
                                     if (progress && progress.id === profileId) {
@@ -373,8 +392,8 @@ const FindGalaxy: Component = () => {
                         <div class={styles.progressText}>{t`Progress:`}</div>
                         <ProgressBar
                             class={styles.progressBar}
-                            current={progress.current - progress.start}
-                            total={progress.end - progress.start}
+                            current={progress.nextBatchId * progress.batchSize}
+                            total={progress.total}
                         />
                     </Show>
                 </div>

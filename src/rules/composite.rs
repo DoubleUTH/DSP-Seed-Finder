@@ -1,7 +1,7 @@
 use crate::data::rule::{Condition, Rule};
 
 pub struct RuleComposite {
-    pub rule: Box<dyn Rule + Send>,
+    pub rule: Box<dyn Rule + Send + Sync>,
     pub condition: Condition,
 }
 
@@ -23,7 +23,7 @@ impl Rule for RuleComposite {
 }
 
 pub struct RuleCompositeAnd {
-    pub rules: Vec<Box<dyn Rule + Send>>,
+    pub rules: Vec<Box<dyn Rule + Send + Sync>>,
 }
 
 impl Rule for RuleCompositeAnd {
@@ -50,7 +50,7 @@ impl Rule for RuleCompositeAnd {
 }
 
 pub struct RuleCompositeOr {
-    pub rules: Vec<Box<dyn Rule + Send>>,
+    pub rules: Vec<Box<dyn Rule + Send + Sync>>,
 }
 
 impl Rule for RuleCompositeOr {

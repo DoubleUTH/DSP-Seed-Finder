@@ -10,7 +10,7 @@ import {
 } from "solid-js"
 import NumberInput from "../components/NumberInput"
 import Button from "../components/Button"
-import { getWorldGen } from "../worldgen"
+import { generateGalaxy } from "../worldgen"
 import { useStore } from "../store"
 import clsx from "clsx"
 import StarView from "../partials/StarView"
@@ -195,15 +195,14 @@ const View: Component<{ seed: number; index?: number }> = (props) => {
     })
 
     const [galaxy] = createResource<Galaxy>(async () => {
-        const config = {
-            seed: props.seed,
+        const config: GameParameters = {
             starCount: starCount(),
             resourceMultiplier: resourceMultiplier(),
             hiveInitialColonize: hiveInitialColonize(),
             hiveMaxDensity: hiveMaxDensity(),
             useActualVeins: useActualVeins(),
         }
-        const galaxy = await getWorldGen(false).generate(config)
+        const galaxy = await generateGalaxy(false, props.seed, config)
         console.log(galaxy)
         return galaxy
     })

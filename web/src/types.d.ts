@@ -24,10 +24,6 @@ declare global {
         useActualVeins: boolean
     }
 
-    declare interface GameDesc extends GameParameters {
-        seed: integer
-    }
-
     declare interface Galaxy {
         seed: integer
         stars: Star[]
@@ -261,27 +257,35 @@ declare global {
         | Rule.CompositeOr
 
     declare interface FindOptions {
-        gameDesc: Omit<GameDesc, "seed">
-        range: [number, number]
+        gameDesc: GameParameters
+        batchSize: integer
+        nextBatchId: integer
+        range: [integer, integer]
         rule: Rule | CompositeRule
         concurrency: integer
         autosave: integer
-        onError?: (error?: any) => void
-        onResult?: (result: FindResult) => void
-        onProgress?: (current: number) => void
-        onComplete?: () => void
-        onInterrupt?: () => void
+        onError: (error?: any) => void
+        onResult: (result: integer[]) => void
+        onProgress: (nextBatchId: number) => void
+        onComplete: () => void
+        onInterrupt: () => void
+    }
+
+    declare interface InternalFindOptions {
+        gameDesc: GameParameters
+        batchSize: integer
+        nextBatchId: integer
+        range: [integer, integer]
+        rule: Rule | CompositeRule
+        concurrency: integer
+        onBatchResult: (batchId: integer, result: integer[]) => void
+        onInterrupt: () => void
     }
 
     declare interface WorldGen {
-        generate(gameDesc: GameDesc): Promise<Galaxy>
-        find(options: FindOptions): void
+        generate(seed: integer, gameDesc: GameParameters): Promise<Galaxy>
+        find(options: InternalFindOptions): Promise<void>
         stop(): void
-    }
-
-    declare interface FindResult {
-        seed: integer
-        indexes: integer[]
     }
 
     declare interface Store {
@@ -308,8 +312,10 @@ declare global {
         concurrency: integer
         start: integer
         end: integer
-        current: integer
+        total: integer
         found: integer
+        batchSize: integer
+        nextBatchId: integer
     }
 
     declare interface ProfileProgress extends ProfileProgressInfo {

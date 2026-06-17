@@ -233,9 +233,8 @@ impl<'a> Planet<'a> {
 
     fn increment_habitable_count(&self) {
         self.star
-            .game_desc
             .habitable_count
-            .set(self.star.game_desc.habitable_count.get() + 1);
+            .set(self.star.habitable_count.get() + 1);
     }
 
     fn get_unmodified_planet_type(&self) -> PlanetType {
@@ -249,7 +248,7 @@ impl<'a> Planet<'a> {
             if !self.star.is_birth() {
                 let star_count = self.star.game_desc.star_count;
                 let num18 = ((star_count as f32) * 0.29).ceil().max(11.0);
-                let num19 = (num18 as f64) - (self.star.game_desc.habitable_count.get() as f64);
+                let num19 = (num18 as f64) - (self.star.habitable_count.get() as f64);
                 let num20 = (star_count - self.star.index) as f32;
                 let num23 = num20 as f64;
                 let a = (num19 / num23) as f32;

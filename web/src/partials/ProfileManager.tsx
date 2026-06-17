@@ -6,11 +6,11 @@ import { useLingui } from "#lingui"
 
 const ProfileManager: Component<{
     onLoad: () => void
-    onSave: () => void
-    onNew: () => void
-    onClone: () => void
-    onClear: () => void
-    onDelete: () => void
+    onSave?: () => void
+    onNew?: () => void
+    onClone?: () => void
+    onClear?: () => void
+    onDelete?: () => void
     disabled: boolean
     isLoaded: boolean
     isValid: boolean
@@ -27,36 +27,46 @@ const ProfileManager: Component<{
             <Button onClick={props.onLoad} disabled={props.disabled}>
                 {t`Load`}
             </Button>
-            <Button
-                onClick={props.onSave}
-                disabled={props.disabled || !props.isValid}
-            >
-                {t`Save`}
-            </Button>
+            <Show when={props.onSave}>
+                <Button
+                    onClick={props.onSave}
+                    disabled={props.disabled || !props.isValid}
+                >
+                    {t`Save`}
+                </Button>
+            </Show>
             <Show when={props.isLoaded}>
-                <Button
-                    onClick={() => setNewModal(true)}
-                    disabled={props.disabled}
-                >
-                    {t`New`}
-                </Button>
-                <Button onClick={props.onClone} disabled={props.disabled}>
-                    {t`Clone`}
-                </Button>
-                <Button
-                    theme="error"
-                    onClick={() => setClearModal(true)}
-                    disabled={props.disabled}
-                >
-                    {t`Clear`}
-                </Button>
-                <Button
-                    theme="error"
-                    onClick={() => setDeleteModal(true)}
-                    disabled={props.disabled}
-                >
-                    {t`Delete`}
-                </Button>
+                <Show when={props.onNew}>
+                    <Button
+                        onClick={() => setNewModal(true)}
+                        disabled={props.disabled}
+                    >
+                        {t`New`}
+                    </Button>
+                </Show>
+                <Show when={props.onClone}>
+                    <Button onClick={props.onClone} disabled={props.disabled}>
+                        {t`Clone`}
+                    </Button>
+                </Show>
+                <Show when={props.onClear}>
+                    <Button
+                        theme="error"
+                        onClick={() => setClearModal(true)}
+                        disabled={props.disabled}
+                    >
+                        {t`Clear`}
+                    </Button>
+                </Show>
+                <Show when={props.onDelete}>
+                    <Button
+                        theme="error"
+                        onClick={() => setDeleteModal(true)}
+                        disabled={props.disabled}
+                    >
+                        {t`Delete`}
+                    </Button>
+                </Show>
             </Show>
             <Modal
                 visible={clearModal()}
@@ -72,7 +82,7 @@ const ProfileManager: Component<{
                         theme="error"
                         onClick={() => {
                             setClearModal(false)
-                            props.onClear()
+                            props.onClear?.()
                         }}
                     >
                         {t`Clear`}
@@ -96,7 +106,7 @@ const ProfileManager: Component<{
                         theme="error"
                         onClick={() => {
                             setDeleteModal(false)
-                            props.onDelete()
+                            props.onDelete?.()
                         }}
                     >
                         {t`Delete`}
@@ -122,7 +132,7 @@ const ProfileManager: Component<{
                     <Button
                         onClick={() => {
                             setNewModal(false)
-                            props.onNew()
+                            props.onNew?.()
                         }}
                     >
                         {t`Confirm`}

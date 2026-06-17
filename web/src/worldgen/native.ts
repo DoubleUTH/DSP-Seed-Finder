@@ -1,3 +1,25 @@
+type BatchGenerator = Generator<Int32Array<ArrayBuffer>, void, void>
+
+function* generateBatchFromRange(
+    batchSize: integer,
+    nextBatchId: integer,
+    range: InternalFindOptions["range"],
+): BatchGenerator {
+    let current = range[0] + batchSize * nextBatchId
+    const end = range[1]
+    if (current >= end) return
+    do {
+        const next = Math.min(current + batchSize, end)
+        const array = new Int32Array(next - current + 1)
+        array[0] = nextBatchId++
+        for (let i = current; i < next; ++i) {
+            array[i - current + 1] = i
+        }
+        yield array
+        current = next
+    } while (current < end)
+}
+
 function waitConnect(ws: WebSocket) {
     return new Promise<void>((resolve, reject) => {
         ws.addEventListener("error", reject)
@@ -13,84 +35,126 @@ function waitConnect(ws: WebSocket) {
 
 async function connect() {
     const ws = new WebSocket("ws://127.0.0.1:62879")
+    ws.binaryType = "arraybuffer"
     console.debug("connecting")
     await waitConnect(ws)
     console.debug("connected")
     return ws
 }
 
-export class WorldGenNative implements WorldGen {
-    private _stop: () => void = () => {}
+function createSender(
+    ws: WebSocket,
+    generator: BatchGenerator,
+    stopped: () => boolean,
+): (batchId: number) => boolean {
+    if (stopped()) return () => false
+    const batch = generator.next()
+    if (batch.done) return () => false
+    ws.send(batch.value)
+    let prevBatchId = batch.value[0]
+    let done = false
+    return (batchId) => {
+        if (done || stopped()) return false
+        if (prevBatchId !== batchId) return true
+        const batch = generator.next()
+        if (batch.done) {
+            done = true
+            return false
+        }
+        ws.send(batch.value)
+        prevBatchId = batch.value[0]
+        return true
+    }
+}
 
-    async generate(gameDesc: GameDesc): Promise<Galaxy> {
+async function send(ws: WebSocket, msg: any) {
+    const promise = new Promise<any>((resolve) => {
+        const listener = (ev: MessageEvent) => {
+            if (typeof ev.data === "string") {
+                const resp = JSON.parse(ev.data)
+                if (resp.type === msg.type) {
+                    ws.removeEventListener("message", listener)
+                    resolve(JSON.parse(ev.data))
+                }
+            }
+        }
+        ws.addEventListener("message", listener)
+    })
+    ws.send(JSON.stringify(msg))
+    return promise
+}
+
+export class WorldGenNative implements WorldGen {
+    private stopped: boolean = false
+
+    async generate(seed: integer, gameDesc: GameParameters): Promise<Galaxy> {
         const ws = await connect()
-        const promise = new Promise<Galaxy>((resolve) => {
-            ws.addEventListener("message", (ev) => {
-                resolve(JSON.parse(ev.data))
-                ws.close()
-            })
+        const resp = await send(ws, {
+            type: "Generate",
+            seed: seed,
+            game: gameDesc,
         })
-        ws.send(JSON.stringify({ type: "Generate", game: gameDesc }))
-        return promise
+        return resp.galaxy
     }
 
-    find({
-        gameDesc,
+    async find({
+        batchSize,
+        nextBatchId,
         range,
-        rule,
+        gameDesc,
         concurrency,
-        autosave,
-        onError,
-        onResult,
-        onProgress,
-        onComplete,
+        rule,
+        onBatchResult,
         onInterrupt,
-    }: FindOptions) {
-        connect()
-            .then((ws) => {
-                let done = false
+    }: InternalFindOptions) {
+        this.stopped = false
+        const batch = generateBatchFromRange(batchSize, nextBatchId, range)
+        const ws = await connect()
+        try {
+            let running = true
+            ws.addEventListener("close", () => {
+                running = false
+                onInterrupt()
+            })
+            const setupRes = await send(ws, {
+                type: "Setup",
+                concurrency,
+                game: gameDesc,
+                rule,
+            })
+            if (!setupRes?.success) return
+            const stopped = () => !running || this.stopped
+            let senders = [
+                createSender(ws, batch, stopped),
+                createSender(ws, batch, stopped),
+                createSender(ws, batch, stopped),
+                createSender(ws, batch, stopped),
+            ].filter((sender) => sender(NaN))
 
-                this._stop = () => {
-                    if (ws.readyState === WebSocket.OPEN) {
-                        ws.send(JSON.stringify({ type: "Stop" }))
-                    }
-                }
+            if (senders.length === 0) return
 
-                ws.addEventListener("close", () => {
-                    if (!done) {
-                        onInterrupt?.()
-                    }
-                })
-
+            await new Promise<void>((resolve) => {
                 ws.addEventListener("message", (ev) => {
-                    const msg = JSON.parse(ev.data)
-                    if (msg.type === "Result") {
-                        onResult?.({ seed: msg.seed, indexes: msg.indexes })
-                    } else {
-                        onProgress?.(msg.end)
-                        if (msg.type === "Done") {
-                            done = true
-                            onComplete?.()
-                            ws.close()
+                    if (ev.data instanceof ArrayBuffer) {
+                        const array = new Int32Array(ev.data)
+                        const seeds = Array.from(array.slice(1))
+                        const batchId = array[0]!
+                        onBatchResult(batchId, seeds)
+                        senders = senders.filter((sender) => sender(batchId))
+                        if (senders.length === 0) {
+                            resolve()
                         }
                     }
                 })
-                ws.send(
-                    JSON.stringify({
-                        type: "Find",
-                        game: gameDesc,
-                        range,
-                        rule,
-                        concurrency,
-                        autosave,
-                    }),
-                )
             })
-            .catch((err) => onError?.(err))
+        } finally {
+            if (ws.readyState === WebSocket.OPEN) {
+                ws.close()
+            }
+        }
     }
 
     stop() {
-        this._stop()
-        this._stop = () => {}
+        this.stopped = true
     }
 }

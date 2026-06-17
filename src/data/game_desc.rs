@@ -1,18 +1,12 @@
-use std::cell::Cell;
-
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GameDesc {
-    #[serde(default)]
-    pub seed: i32,
     #[serde(default = "GameDesc::default_star_count")]
     pub star_count: usize,
     #[serde(default = "GameDesc::default_resource_multiplier")]
     pub resource_multiplier: f32,
-    #[serde(skip)]
-    pub habitable_count: Cell<i32>,
     #[serde(default = "GameDesc::default_hive_initial_colonize")]
     pub hive_initial_colonize: f64,
     #[serde(default = "GameDesc::default_hive_max_density")]

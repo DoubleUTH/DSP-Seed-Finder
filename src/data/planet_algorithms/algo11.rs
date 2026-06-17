@@ -1,9 +1,9 @@
 use super::super::math::{levelize2, levelize3};
 use super::super::planet::Planet;
-use crate::data::planet_grid::{get_planet_grid, PlanetGrid};
 use super::super::random::DspRandom;
 use super::super::simplex_noise::SimplexNoise;
 use super::PlanetAlgorithm;
+use crate::data::planet_grid::{get_planet_grid, PlanetGrid};
 
 /// PlanetAlgorithm11 - Complex noise with Remap, Levelize2/Levelize3 and modX/modY.
 pub struct PlanetAlgorithm11 {

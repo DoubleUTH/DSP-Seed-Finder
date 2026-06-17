@@ -1,21 +1,21 @@
 import { TinyEmitter } from "tiny-emitter"
 import init, { generate, findStars } from "worldgen-wasm"
 
-const GENERATE_NAME = "generate"
-const FIND_NAME = "find"
-const FIND_NEXT_NAME = "next"
+const TYPE_GENERATE = "generate"
+const TYPE_FIND = "find"
+const TYPE_NEXT = "next"
 
 const initPromise = init()
 const emitter = new TinyEmitter()
 
 const worldgen = {
     async found(result: any) {
-        const wait = new Promise<number | null>((resolve) =>
-            emitter.once(FIND_NEXT_NAME, resolve),
+        const wait = new Promise<number[] | null>((resolve) =>
+            emitter.once(TYPE_NEXT, resolve),
         )
-        self.postMessage({ type: FIND_NAME, data: result })
-        const nextSeed = await wait
-        return nextSeed
+        self.postMessage({ type: TYPE_FIND, data: result })
+        const nextSeeds = await wait
+        return nextSeeds
     },
 }
 
@@ -24,31 +24,31 @@ const worldgen = {
 self.onmessage = (ev) => {
     const { type, input } = ev.data
 
-    if (type === GENERATE_NAME) {
+    if (type === TYPE_GENERATE) {
         const {
             seed,
-            resourceMultiplier = 1,
-            starCount = 64,
-            hiveInitialColonize = 1,
-            hiveMaxDensity = 1,
-            useActualVeins = true,
+            gameDesc: {
+                resourceMultiplier = 1,
+                starCount = 64,
+                hiveInitialColonize = 1,
+                hiveMaxDensity = 1,
+                useActualVeins = true,
+            },
         } = input
 
         initPromise.then(() => {
-            const result = generate({
-                seed,
+            const result = generate(seed, {
                 starCount,
                 resourceMultiplier,
                 hiveInitialColonize,
                 hiveMaxDensity,
                 useActualVeins,
             })
-            self.postMessage({ type: GENERATE_NAME, data: result })
+            self.postMessage({ type: TYPE_GENERATE, data: result })
         })
-    } else if (type === FIND_NAME) {
+    } else if (type === TYPE_FIND) {
         const {
             game: {
-                seed,
                 resourceMultiplier = 1,
                 starCount = 64,
                 hiveInitialColonize = 1,
@@ -56,12 +56,12 @@ self.onmessage = (ev) => {
                 useActualVeins = true,
             },
             rule,
+            seeds,
         } = input
 
         initPromise.then(() => {
             findStars(
                 {
-                    seed,
                     starCount,
                     resourceMultiplier,
                     hiveInitialColonize,
@@ -69,9 +69,10 @@ self.onmessage = (ev) => {
                     useActualVeins,
                 },
                 rule,
+                seeds,
             )
         })
-    } else if (type === FIND_NEXT_NAME) {
-        emitter.emit(FIND_NEXT_NAME, input)
+    } else if (type === TYPE_NEXT) {
+        emitter.emit(TYPE_NEXT, input)
     }
 }

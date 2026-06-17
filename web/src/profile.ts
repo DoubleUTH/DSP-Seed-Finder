@@ -5,6 +5,7 @@ import {
     defaultResourceMultiplier,
     defaultStarCount,
 } from "./util"
+import { DEFAULT_BATCH_SIZE } from "./constants"
 
 const databases = new Map<string, Promise<IDBDatabase>>()
 const nanoid = customAlphabet(
@@ -110,18 +111,6 @@ export async function getProfileInfo(id: string): Promise<ProfileInfo | null> {
     })
 }
 
-export async function setProfileInfo(info: ProfileInfo): Promise<void> {
-    const db = await openInfoDatabase()
-    const txn = db.transaction([INFO], "readwrite")
-    const store = txn.objectStore(INFO)
-    store.put(info)
-
-    await new Promise((resolve, reject) => {
-        txn.onerror = reject
-        txn.oncomplete = resolve
-    })
-}
-
 function backCompatGameParams(data: any) {
     if (data && !data.params) {
         data.params = {
@@ -136,6 +125,17 @@ function backCompatGameParams(data: any) {
         delete data.resourceMultiplier
         delete data.hiveInitialColonize
         delete data.hiveMaxDensity
+    }
+    if (data && data.current !== undefined) {
+        data.total = data.end - data.start
+        data.batchSize = DEFAULT_BATCH_SIZE
+        data.nextBatchId =
+            data.current === 0
+                ? 0
+                : data.start > -1 && data.current >= data.end
+                  ? Math.ceil(data.total / DEFAULT_BATCH_SIZE)
+                  : Math.floor((data.current - data.start) / DEFAULT_BATCH_SIZE)
+        delete data.current
     }
 }
 
@@ -153,93 +153,6 @@ export async function getProfileProgress(
         req.onsuccess = () => {
             backCompatGameParams(req.result)
             resolve(req.result || null)
-        }
-    })
-}
-
-export async function setProfileProgress(
-    progress: ProfileProgress,
-    results: FindResult[] = [],
-) {
-    const db = await openProfileDatabase(progress.id)
-    const txn = db.transaction(
-        results.length > 0 ? [PROGRESS, STARS] : [PROGRESS],
-        "readwrite",
-    )
-    await new Promise((resolve, reject) => {
-        txn.oncomplete = resolve
-        txn.onerror = reject
-
-        const progressStore = txn.objectStore(PROGRESS)
-        const req = progressStore.get(progress.id)
-        req.onsuccess = () => {
-            if (!req.result || req.result.current <= progress.current) {
-                progressStore.put(progress)
-            }
-        }
-
-        if (results.length > 0) {
-            const store = txn.objectStore(STARS)
-            results.forEach((result) => {
-                result.indexes.forEach((index) => {
-                    store.put({
-                        id: result.seed * 100 + index,
-                        seed: result.seed,
-                        index: index,
-                    })
-                })
-            })
-        }
-    })
-}
-
-export async function clearProfile(id: string) {
-    const db = await openProfileDatabase(id)
-    const txn = db.transaction([PROGRESS, STARS], "readwrite")
-
-    const progressStore = txn.objectStore(PROGRESS)
-    const req = progressStore.get(id)
-    req.onsuccess = () => {
-        if (req.result) {
-            progressStore.put({
-                ...req.result,
-                current: req.result.start,
-                found: 0,
-            })
-        }
-    }
-
-    const store = txn.objectStore(STARS)
-    store.clear()
-
-    await new Promise((resolve, reject) => {
-        txn.oncomplete = resolve
-        txn.onerror = reject
-    })
-}
-
-export async function deleteProfile(id: string) {
-    const conn = databases.get(id)
-    if (conn) {
-        const db = await conn
-        db.close()
-        databases.delete(id)
-    }
-    const deleteRequest = indexedDB.deleteDatabase(id)
-    const db = await openInfoDatabase()
-    const txn = db.transaction([INFO], "readwrite")
-    const store = txn.objectStore(INFO)
-    store.delete(id)
-
-    await new Promise<void>((resolve, reject) => {
-        let count = 2
-        txn.onerror = reject
-        txn.oncomplete = () => {
-            if (!--count) resolve()
-        }
-        deleteRequest.onerror = reject
-        deleteRequest.onsuccess = () => {
-            if (!--count) resolve()
         }
     })
 }
@@ -361,7 +274,7 @@ export async function getMultiProfileProgress(
 
 export async function setMultiProfileProgress(
     progress: MultiProfileProgress,
-    results: FindResult[] = [],
+    results: integer[] = [],
 ) {
     const db = await openMultiProfileDatabase(progress.id)
     const txn = db.transaction(
@@ -375,17 +288,13 @@ export async function setMultiProfileProgress(
         const progressStore = txn.objectStore(PROGRESS)
         const req = progressStore.get(progress.id)
         req.onsuccess = () => {
-            if (!req.result || req.result.current <= progress.current) {
-                progressStore.put(progress)
-            }
+            progressStore.put(progress)
         }
 
         if (results.length > 0) {
             const store = txn.objectStore(GALAXIES)
-            results.forEach((result) => {
-                store.put({
-                    seed: result.seed,
-                })
+            results.forEach((seed) => {
+                store.put({ seed })
             })
         }
     })

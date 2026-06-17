@@ -1,8 +1,8 @@
 use super::super::planet::Planet;
-use crate::data::planet_grid::{get_planet_grid, PlanetGrid};
 use super::super::random::DspRandom;
 use super::super::simplex_noise::SimplexNoise;
 use super::PlanetAlgorithm;
+use crate::data::planet_grid::{get_planet_grid, PlanetGrid};
 
 /// PlanetAlgorithm13 - Noise-based terrain with modX/modY and piecewise height shaping.
 pub struct PlanetAlgorithm13 {

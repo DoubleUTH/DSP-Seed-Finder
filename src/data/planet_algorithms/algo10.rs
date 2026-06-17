@@ -1,10 +1,10 @@
 use super::super::math::{levelize, levelize4};
 use super::super::planet::Planet;
-use crate::data::planet_grid::{get_planet_grid, PlanetGrid};
 use super::super::random::DspRandom;
 use super::super::random_table::RandomTable;
 use super::super::simplex_noise::SimplexNoise;
 use super::PlanetAlgorithm;
+use crate::data::planet_grid::{get_planet_grid, PlanetGrid};
 
 /// PlanetAlgorithm10 - FBM noise with 10 elliptical crater features.
 pub struct PlanetAlgorithm10 {

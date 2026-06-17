@@ -41,13 +41,14 @@ pub enum Rules {
     HiveCount(rules::hive_count::RuleHiveCount),
 }
 
-pub fn sort_rules(rules: Vec<Rules>) -> Vec<Box<dyn Rule + Send>> {
-    let mut result: Vec<Box<dyn Rule + Send>> = rules.into_iter().map(transform_rules).collect();
+pub fn sort_rules(rules: Vec<Rules>) -> Vec<Box<dyn Rule + Send + Sync>> {
+    let mut result: Vec<Box<dyn Rule + Send + Sync>> =
+        rules.into_iter().map(transform_rules).collect();
     result.sort_by_key(|rule| rule.get_priority());
     result
 }
 
-pub fn transform_rules(r: Rules) -> Box<dyn Rule + Send> {
+pub fn transform_rules(r: Rules) -> Box<dyn Rule + Send + Sync> {
     match r {
         Rules::Composite { rule, condition } => Box::new(rules::composite::RuleComposite {
             rule: transform_rules(*rule),

@@ -1,9 +1,9 @@
 use super::super::math::{levelize2, levelize3};
 use super::super::planet::Planet;
-use crate::data::planet_grid::{get_planet_grid, PlanetGrid};
 use super::super::random::DspRandom;
 use super::super::simplex_noise::SimplexNoise;
 use super::PlanetAlgorithm;
+use crate::data::planet_grid::{get_planet_grid, PlanetGrid};
 
 /// PlanetAlgorithm7 - Similar to algo1 but without +0.2 offset in height and different constants.
 pub struct PlanetAlgorithm7 {

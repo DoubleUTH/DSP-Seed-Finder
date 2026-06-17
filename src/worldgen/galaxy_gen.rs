@@ -7,6 +7,7 @@ use crate::data::rule::{Evaluaton, Rule};
 use crate::data::star::Star;
 use crate::data::star_planets::StarWithPlanets;
 use crate::data::vector3::Vector3;
+use std::cell::Cell;
 use std::rc::Rc;
 
 fn generate_temp_poses(
@@ -118,10 +119,12 @@ fn check_collision(tmp_poses: &Vec<Vector3>, pt: &Vector3, min_dist: f64) -> boo
         .any(|pt1| pt1.distance_sq_from(pt) < min_dist_sq)
 }
 
-fn generate_stars<'a>(game_desc: &'a GameDesc) -> Vec<StarWithPlanets<'a>> {
-    let galaxy_seed = game_desc.seed;
-
-    let mut rand = DspRandom::new(galaxy_seed);
+fn generate_stars<'a>(
+    seed: i32,
+    game_desc: &'a GameDesc,
+    habitable_count: &'a Cell<i32>,
+) -> Vec<StarWithPlanets<'a>> {
+    let mut rand = DspRandom::new(seed);
     let tmp_poses = generate_temp_poses(
         rand.next_seed(),
         game_desc.star_count,
@@ -155,6 +158,7 @@ fn generate_stars<'a>(game_desc: &'a GameDesc) -> Vec<StarWithPlanets<'a>> {
         if index == 0 {
             stars.push(StarWithPlanets::new(Rc::new(Star::new(
                 game_desc,
+                habitable_count,
                 0,
                 seed,
                 Vector3::zero(),
@@ -182,6 +186,7 @@ fn generate_stars<'a>(game_desc: &'a GameDesc) -> Vec<StarWithPlanets<'a>> {
             };
             stars.push(StarWithPlanets::new(Rc::new(Star::new(
                 game_desc,
+                habitable_count,
                 index,
                 seed,
                 position,
@@ -193,8 +198,12 @@ fn generate_stars<'a>(game_desc: &'a GameDesc) -> Vec<StarWithPlanets<'a>> {
     stars
 }
 
-pub fn create_galaxy<'a>(game_desc: &'a GameDesc) -> Galaxy<'a> {
-    let mut stars = generate_stars(game_desc);
+pub fn create_galaxy<'a>(
+    seed: i32,
+    game_desc: &'a GameDesc,
+    habitable_count: &'a Cell<i32>,
+) -> Galaxy<'a> {
+    let mut stars = generate_stars(seed, game_desc, habitable_count);
     let mut names: Vec<&str> = vec![];
 
     for sp in stars.iter_mut() {
@@ -204,16 +213,18 @@ pub fn create_galaxy<'a>(game_desc: &'a GameDesc) -> Galaxy<'a> {
         sp.load_planets();
     }
 
-    Galaxy {
-        seed: game_desc.seed,
-        stars,
-    }
+    Galaxy { seed, stars }
 }
 
-pub fn find_stars(game_desc: &GameDesc, rule: &Box<dyn Rule + Send>) -> Vec<usize> {
+pub fn find_stars(
+    seed: i32,
+    game_desc: &GameDesc,
+    habitable_count: &Cell<i32>,
+    rule: &Box<dyn Rule + Send + Sync>,
+) -> Vec<usize> {
     let galaxy = Galaxy {
-        seed: game_desc.seed,
-        stars: generate_stars(game_desc),
+        seed,
+        stars: generate_stars(seed, game_desc, habitable_count),
     };
 
     let evaluation = Evaluaton::new(game_desc.star_count);

@@ -1,9 +1,9 @@
 use super::super::math::clamp01;
 use super::super::planet::Planet;
-use crate::data::planet_grid::{get_planet_grid, PlanetGrid};
 use super::super::random::DspRandom;
 use super::super::simplex_noise::SimplexNoise;
 use super::PlanetAlgorithm;
+use crate::data::planet_grid::{get_planet_grid, PlanetGrid};
 
 /// PlanetAlgorithm12 - Latitude-based terrain with ridged noise and modX/modY.
 pub struct PlanetAlgorithm12 {

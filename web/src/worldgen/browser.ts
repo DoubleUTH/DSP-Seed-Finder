@@ -1,25 +1,51 @@
 import WorldgenWorker from "./worldgen.worker?worker"
 
-const GENERATE_NAME = "generate"
-const FIND_NAME = "find"
-const FIND_NEXT_NAME = "next"
+const TYPE_GENERATE = "generate"
+const TYPE_FIND = "find"
+const TYPE_NEXT = "next"
+
+interface Batch {
+    id: integer
+    seeds: integer[]
+}
+
+function* generateBatchFromRange(
+    batchSize: integer,
+    nextBatchId: integer,
+    range: InternalFindOptions["range"],
+): Generator<Batch, void, void> {
+    let current = range[0] + batchSize * nextBatchId
+    const end = range[1]
+    if (current >= end) return
+    do {
+        const next = Math.min(current + batchSize, end)
+        const seeds = Array.from({ length: next - current }).map(
+            (_, i) => current + i,
+        )
+        yield { id: nextBatchId++, seeds }
+        current = next
+    } while (current < end)
+}
 
 export class WorldGenBrowser implements WorldGen {
-    private _stop: () => void = () => {}
+    private stopped = false
 
-    async generate(gameDesc: GameDesc): Promise<Galaxy> {
+    async generate(seed: integer, gameDesc: GameParameters): Promise<Galaxy> {
         const worker = new WorldgenWorker()
         try {
             const result = await new Promise<Galaxy>((resolve) => {
                 const eventHandler = (ev: MessageEvent) => {
                     const message = ev.data
-                    if (message.type === GENERATE_NAME) {
+                    if (message.type === TYPE_GENERATE) {
                         worker.removeEventListener("message", eventHandler)
                         resolve(message.data)
                     }
                 }
                 worker.addEventListener("message", eventHandler)
-                worker.postMessage({ type: GENERATE_NAME, input: gameDesc })
+                worker.postMessage({
+                    type: TYPE_GENERATE,
+                    input: { seed, gameDesc },
+                })
             })
             return result
         } finally {
@@ -27,80 +53,69 @@ export class WorldGenBrowser implements WorldGen {
         }
     }
 
-    find({
+    async find({
+        batchSize,
+        nextBatchId,
         gameDesc,
         range,
         rule,
         concurrency,
-        autosave,
-        onResult,
-        onProgress,
-        onComplete,
-    }: FindOptions) {
-        let currentSeed = range[0]
-        const endSeed = range[1]
+        onBatchResult,
+    }: InternalFindOptions) {
+        this.stopped = false
+        const batch = generateBatchFromRange(batchSize, nextBatchId, range)
 
-        let stopped = false
-        this._stop = () => {
-            stopped = true
-        }
-
-        const maxWorker = Math.min(concurrency, endSeed - currentSeed)
-        let progressEnd = currentSeed
-        const pendingSeeds = new Set<integer>()
-        let done = maxWorker
-        let lastNotify = Date.now()
-
-        function run(worker: Worker) {
-            const eventHandler = (ev: MessageEvent) => {
+        const run = (worker: Worker) => {
+            let currentBatch = batch.next()
+            if (currentBatch.done) {
+                worker.terminate()
+                return
+            }
+            let resolved = () => {}
+            const promise = new Promise<void>((resolve) => {
+                resolved = resolve
+            })
+            worker.addEventListener("message", (ev) => {
                 const message = ev.data
-                if (message.type === FIND_NAME) {
-                    const result: FindResult = message.data
-                    const seed = result.seed
-                    if (result.indexes.length > 0) {
-                        onResult?.(result)
-                    }
-                    if (progressEnd === seed) {
-                        ++progressEnd
-                        while (pendingSeeds.delete(progressEnd)) {
-                            ++progressEnd
-                        }
-                    } else {
-                        pendingSeeds.add(seed)
-                    }
-                    const now = Date.now()
-                    if (now - lastNotify >= autosave * 1000) {
-                        lastNotify = now
-                        onProgress?.(progressEnd)
-                    }
-                    if (!stopped && currentSeed < endSeed) {
-                        worker.postMessage({
-                            type: FIND_NEXT_NAME,
-                            input: currentSeed++,
-                        })
-                    } else {
+                if (message.type === TYPE_FIND) {
+                    const result: integer[] = message.data
+                    onBatchResult(currentBatch.value!.id, result)
+                    if (this.stopped) {
                         worker.terminate()
-                        if (--done === 0) {
-                            onProgress?.(progressEnd)
-                            onComplete?.()
+                        resolved()
+                    } else {
+                        currentBatch = batch.next()
+                        if (currentBatch.done) {
+                            worker.terminate()
+                            resolved()
+                        } else {
+                            worker.postMessage({
+                                type: TYPE_NEXT,
+                                input: currentBatch.value.seeds,
+                            })
                         }
                     }
                 }
-            }
-            worker.addEventListener("message", eventHandler)
-            worker.postMessage({
-                type: FIND_NAME,
-                input: { game: { ...gameDesc, seed: currentSeed++ }, rule },
             })
+            worker.postMessage({
+                type: TYPE_FIND,
+                input: {
+                    game: gameDesc,
+                    rule,
+                    seeds: currentBatch.value.seeds,
+                },
+            })
+            return promise
         }
 
-        for (let i = 0; i < maxWorker; ++i) {
-            run(new WorldgenWorker())
-        }
+        await Promise.all(
+            Array.from({ length: concurrency }).map(() =>
+                run(new WorldgenWorker()),
+            ),
+        )
     }
 
     stop() {
-        this._stop()
-        this._stop = () => {}
+        this.stopped = true
     }
 }

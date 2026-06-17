@@ -1,9 +1,7 @@
 import {
     Component,
     Index,
-    Match,
     Show,
-    Switch,
     batch,
     createEffect,
     createMemo,
@@ -11,20 +9,13 @@ import {
     on,
 } from "solid-js"
 import Button from "../components/Button"
-import { getWorldGen } from "../worldgen"
 import {
-    clearProfile,
-    deleteProfile,
-    generateProfileId,
     getProfileInfo,
     getProfileProgress,
     getProfileResult,
     listProfiles,
-    setProfileInfo,
-    setProfileProgress,
 } from "../profile"
 import {
-    constructRule,
     getDefaultParams,
     getSearch,
     maxStarCount,
@@ -33,7 +24,7 @@ import {
 } from "../util"
 import RuleEditor from "../partials/RuleEditor"
 import styles from "./FindStar.module.css"
-import { createStore, unwrap } from "solid-js/store"
+import { createStore } from "solid-js/store"
 import ProfilesModal from "../partials/ProfilesModal"
 import Modal from "../components/Modal"
 import ProgressBar from "../components/ProgressBar"
@@ -46,6 +37,8 @@ import Pagination from "../components/Pagination"
 import { useStore } from "../store"
 import ExportModal from "../partials/ExportModal"
 import { useLingui } from "#lingui"
+import { DEFAULT_BATCH_SIZE } from "../constants"
+import { generateGalaxy } from "../worldgen"
 
 const defaultProgress: () => ProfileProgress = () => ({
     id: "",
@@ -54,8 +47,11 @@ const defaultProgress: () => ProfileProgress = () => ({
     autosave: 5,
     start: 0,
     end: 1e8,
-    current: 0,
+    total: 0,
     found: 0,
+    batchSize: DEFAULT_BATCH_SIZE,
+    nextBatchId: 0,
+    totalBatchCount: 0,
     rules: [],
 })
 
@@ -70,14 +66,9 @@ const StarViewModal: Component<{
     const [galaxy, setGalaxy] = createSignal<Galaxy | null>(null)
 
     createEffect(() => {
-        getWorldGen(false)
-            .generate({
-                seed: props.seed,
-                ...props.params,
-            })
-            .then((g): void => {
-                setGalaxy(g)
-            })
+        generateGalaxy(false, props.seed, props.params).then((g): void => {
+            setGalaxy(g)
+        })
     })
 
     function buildUrl(starIndex: integer) {
@@ -206,15 +197,15 @@ const FindStar: Component = () => {
     const [nativeMode, setNativeMode] = createSignal(false)
     const [profileModal, setProfileModal] = createSignal(false)
     const [exportModal, setExportModal] = createSignal(false)
-    const [store, setStore] = useStore()
+    const [store] = useStore()
     const [currentPage, setCurrentPage] = createSignal(1)
-    const [tick, setTick] = createSignal(0)
     const isLoaded = () => !!profile()
-    const hasProgress = () =>
-        progress.start > -1 && progress.current > progress.start
+    const hasProgress = () => progress.nextBatchId > 0
     const isDisabled = () => store.searching || hasProgress()
-    const hasCompleted = () =>
-        progress.start > -1 && progress.current >= progress.end
+    const hasCompleted = () => {
+        const totalBatchCount = Math.ceil(progress.total / progress.batchSize)
+        return totalBatchCount > 0 && progress.nextBatchId >= totalBatchCount
+    }
 
     function changeProfile(profile: ProfileInfo | null) {
         batch(() => {
@@ -241,22 +232,6 @@ const FindStar: Component = () => {
         }
     }
 
-    function onNewProfile() {
-        batch(() => {
-            setProgress(defaultProgress())
-            changeProfile(null)
-        })
-    }
-
-    function onCloneProfile() {
-        batch(() => {
-            const origName = name()
-            changeProfile(null)
-            setName(origName + t` - Copy`)
-            setProgress({ id: "", current: 0 })
-        })
-    }
-
     const isRuleValid = createMemo(() => validateRules(progress.rules))
 
     function isValid(): boolean {
@@ -274,104 +249,6 @@ const FindStar: Component = () => {
             return false
         }
         return isRuleValid()
-    }
-
-    async function onSaveProfile() {
-        const existingProfile = profile()
-        if (existingProfile) {
-            await setProfileProgress(unwrap(progress))
-            if (existingProfile.name !== name()) {
-                const newProfile: ProfileInfo = {
-                    ...existingProfile,
-                    name: name(),
-                }
-                await setProfileInfo(newProfile)
-                changeProfile(newProfile)
-            }
-        } else {
-            const id = generateProfileId()
-            const newProfile: ProfileInfo = {
-                id,
-                name: name(),
-                createdAt: Date.now(),
-            }
-            await setProfileInfo(newProfile)
-            const newProgress: ProfileProgress = { ...unwrap(progress), id }
-            await setProfileProgress(newProgress)
-            batch(() => {
-                setProgress(newProgress)
-                changeProfile(newProfile)
-            })
-            return
-        }
-    }
-
-    async function onClearProfile() {
-        const existingProfile = profile()
-        if (existingProfile) {
-            await clearProfile(existingProfile.id)
-        }
-        batch(() => {
-            setCurrentPage(1)
-            setProgress("current", 0)
-            setProgress("found", 0)
-        })
-    }
-
-    async function onDeleteProfile() {
-        const existingProfile = profile()
-        if (existingProfile) {
-            await deleteProfile(existingProfile.id)
-        }
-        onNewProfile()
-    }
-
-    async function onStartSearching() {
-        await onSaveProfile()
-        setStore("searching", true)
-        let results: FindResult[] = []
-        getWorldGen(nativeMode()).find({
-            gameDesc: progress.params,
-            range: [Math.max(progress.start, progress.current), progress.end],
-            concurrency: progress.concurrency,
-            autosave: progress.autosave,
-            rule: constructRule(unwrap(progress.rules)),
-            onResult: (result) => {
-                console.debug("result", result)
-                results.push(result)
-            },
-            onProgress: (current) => {
-                batch(() => {
-                    setProgress("current", (c) => Math.max(c, current))
-                    setProgress("found", (found) =>
-                        results.reduce(
-                            (acc, r) => acc + r.indexes.length,
-                            found,
-                        ),
-                    )
-                })
-                setProfileProgress(unwrap(progress), results).then(() => {
-                    setTick((prev) => (prev + 1) % 1024)
-                })
-                results = []
-            },
-            onError: (err) => {
-                console.error(err)
-                setStore("searching", false)
-            },
-            onComplete: () => {
-                console.debug("done")
-                setStore("searching", false)
-            },
-            onInterrupt: () => {
-                console.debug("interrupt")
-                setStore("searching", false)
-            },
-        })
-    }
-
-    function onStopSearching() {
-        getWorldGen(nativeMode()).stop()
     }
 
     createEffect(
@@ -404,11 +281,6 @@ const FindStar: Component = () => {
         <div class={styles.content}>
             <ProfileManager
                 onLoad={() => setProfileModal(true)}
-                onSave={onSaveProfile}
-                onNew={onNewProfile}
-                onClone={onCloneProfile}
-                onClear={onClearProfile}
-                onDelete={onDeleteProfile}
                 disabled={store.searching}
                 isValid={isValid()}
                 isLoaded={isLoaded()}
@@ -440,8 +312,8 @@ const FindStar: Component = () => {
                         <div class={styles.progressText}>{t`Progress:`}</div>
                         <ProgressBar
                             class={styles.progressBar}
-                            current={progress.current - progress.start}
-                            total={progress.end - progress.start}
+                            current={progress.nextBatchId * progress.batchSize}
+                            total={progress.total}
                         />
                     </Show>
                 </div>
@@ -450,23 +322,6 @@ const FindStar: Component = () => {
                         onClick={() => setExportModal(true)}
                     >{t`Export`}</Button>
                 </Show>
-                <Switch
-                    fallback={
-                        <Button
-                            disabled={!isValid()}
-                            onClick={onStartSearching}
-                        >
-                            {hasProgress() ? t`Resume` : t`Start`}
-                        </Button>
-                    }
-                >
-                    <Match when={store.searching}>
-                        <Button onClick={onStopSearching}>{t`Pause`}</Button>
-                    </Match>
-                    <Match when={hasCompleted()}>
-                        <span class={styles.completed}>{t`Completed!`}</span>
-                    </Match>
-                </Switch>
             </div>
             <Show when={hasProgress()}>
                 <Pagination
@@ -482,7 +337,7 @@ const FindStar: Component = () => {
                 <SearchResult
                     id={profile()!.id}
                     page={currentPage()}
-                    updateKey={tick()}
+                    updateKey={0}
                     params={progress.params}
                 />
             </Show>

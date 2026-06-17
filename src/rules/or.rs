@@ -1,7 +1,7 @@
 use crate::data::rule::Rule;
 
 pub struct RuleOr {
-    pub rules: Vec<Box<dyn Rule + Send>>,
+    pub rules: Vec<Box<dyn Rule + Send + Sync>>,
 }
 
 impl Rule for RuleOr {

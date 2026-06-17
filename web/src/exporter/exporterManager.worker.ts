@@ -2,8 +2,7 @@ import ExporterWorker from "./exporter.worker?worker"
 import GeneratorWorker from "./workbookGenerator.worker?worker"
 
 async function go(options: ExportOptions) {
-    const { format, concurrency, exportAllStars, results, params, language } =
-        options
+    const { format, concurrency, results, params, language } = options
     const threads = Math.max(1, Math.min(concurrency - 1, results.length))
     let index = 0
     let count = 0
@@ -34,7 +33,6 @@ async function go(options: ExportOptions) {
         })
         worker.postMessage({
             params,
-            exportAllStars,
             language,
         })
         sendNext()

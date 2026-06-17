@@ -263,14 +263,9 @@ function constructPlanetData(
 
 function generateExportData(
     galaxy: Galaxy,
-    indexes: integer[],
-    exportAllStars: boolean,
     useActualVeins: boolean,
 ): ExportData {
-    let stars = galaxy.stars
-    if (!exportAllStars) {
-        stars = stars.filter((s) => indexes.includes(s.index))
-    }
+    const stars = galaxy.stars
     return {
         seed: galaxy.seed,
         stars: stars.map((star) =>
@@ -281,35 +276,24 @@ function generateExportData(
                 constructPlanetData(galaxy, star, planet, useActualVeins),
             ),
         ),
-        indexes: exportAllStars ? indexes : undefined,
     }
 }
 
-let loadPromise:
-    | Promise<Pick<ExportOptions, "exportAllStars" | "params">>
-    | undefined
+let loadPromise: Promise<ExportOptions["params"]> | undefined
 
 self.onmessage = (ev) => {
     if (!loadPromise) {
-        const { params, exportAllStars, language } = ev.data
+        const { params, language } = ev.data
         loadPromise = initPromise
             .then(() => loadLanguage(language))
-            .then(() => ({
-                params,
-                exportAllStars,
-            }))
+            .then(() => params)
         return
     }
-    const { seed, indexes } = ev.data
+    const seed = ev.data
 
-    loadPromise.then(({ exportAllStars, params }) => {
-        const result = generate({ seed, ...params })
-        const data = generateExportData(
-            result,
-            indexes,
-            exportAllStars,
-            params.useActualVeins,
-        )
+    loadPromise.then((params) => {
+        const result = generate(seed, params)
+        const data = generateExportData(result, params.useActualVeins)
         self.postMessage(data)
     })
 }

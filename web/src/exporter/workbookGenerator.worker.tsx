@@ -115,14 +115,7 @@ function createWorkbook(useActualVeins: boolean) {
 
     return {
         add(data: ExportData) {
-            const rows = starsSheet.addRows(data.stars)
-            if (data.indexes) {
-                for (const index of data.indexes) {
-                    rows[index]!.font = {
-                        bold: true,
-                    }
-                }
-            }
+            starsSheet.addRows(data.stars)
             planetsSheet.addRows(data.planets)
         },
         async buffer(format: ExportOptions["format"]): Promise<Uint8Array> {

@@ -351,8 +351,7 @@ declare global {
         format: "csv" | "xlsx" | "txt"
         concurrency: integer
         params: GameParameters
-        exportAllStars: boolean // always true for galaxy finder
-        results: FindResult[]
+        results: integer[]
         onProgress: (current: integer) => boolean
         onGenerate: () => void
     }

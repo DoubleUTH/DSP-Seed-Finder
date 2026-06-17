@@ -30,7 +30,7 @@ type Mode = "star" | "galaxy" | "single"
 
 interface Options extends Pick<
     ExportOptions,
-    "format" | "concurrency" | "exportAllStars" | "params" | "language"
+    "format" | "concurrency" | "params" | "language"
 > {
     start: number
     end: number
@@ -48,18 +48,13 @@ async function getStarResults(
     id: string,
     start: number,
     end: number,
-): Promise<FindResult[]> {
+): Promise<integer[]> {
     const results = await getProfileResultRange(id, start, end)
-    const output: FindResult[] = []
-    let last: FindResult | undefined
+    const output: integer[] = []
+    let last: integer | undefined
     for (const result of results) {
-        if (last?.seed === result.seed) {
-            last.indexes.push(result.index)
-        } else {
-            last = {
-                seed: result.seed,
-                indexes: [result.index],
-            }
+        if (last !== result.seed) {
+            last = result.seed
             output.push(last)
         }
     }
@@ -70,34 +65,26 @@ async function getGalaxyResults(
     id: string,
     start: number,
     end: number,
-): Promise<FindResult[]> {
+): Promise<integer[]> {
     const results = await getMultiProfileResultRange(id, start, end)
-    return results as FindResult[]
+    return results.map((r) => r.seed)
 }
 
 async function execute(
     emitter: TinyEmitter,
     mode: Mode,
     id: string,
-    {
-        start,
-        end,
-        format,
-        concurrency,
-        exportAllStars,
-        params,
-        language,
-    }: Options,
+    { start, end, format, concurrency, params, language }: Options,
 ) {
     const fn =
         mode === "star"
             ? getStarResults
             : mode === "galaxy"
               ? getGalaxyResults
-              : () => [{ seed: start, indexes: [] }]
+              : () => [start]
     const results = await fn(id, start, end)
     if (format === "txt") {
-        const content = results.map(({ seed }) => seed).join("\n")
+        const content = results.join("\n")
         return new Blob([content], { type: "text/plain" })
     }
     emitter.emit("start", results.length)
@@ -109,7 +96,6 @@ async function execute(
         format,
         concurrency,
         params,
-        exportAllStars: mode !== "star" || exportAllStars,
         results,
         language,
         onProgress: (current) => {
@@ -249,7 +235,6 @@ const ExportModal: Component<{
         params: getDefaultParams(),
         format: "xlsx",
         concurrency: navigator.hardwareConcurrency,
-        exportAllStars: false,
         language: store.settings.language,
     })
     const { t } = useLingui()
@@ -373,8 +358,7 @@ const ExportModal: Component<{
                             emptyValue={-1}
                             maxLength={8}
                             error={
-                                options.start < 0 ||
-                                options.start >= options.end
+                                options.start < 0 || options.start > options.end
                             }
                         />{" "}
                         to{" "}
@@ -385,25 +369,7 @@ const ExportModal: Component<{
                             emptyValue={-1}
                             maxLength={8}
                             error={
-                                options.end > 1e8 ||
-                                options.start >= options.end
-                            }
-                        />
-                    </div>
-                </Show>
-                <Show when={props.mode === "star" && options.format !== "txt"}>
-                    <div class={styles.label}>
-                        <Tooltip
-                            text={t`Export all stars instead of only the matching ones`}
-                        >
-                            {t`Export all`}
-                        </Tooltip>
-                    </div>
-                    <div class={styles.input}>
-                        <Toggle
-                            value={options.exportAllStars}
-                            onChange={(value) =>
-                                setOptions("exportAllStars", value)
+                                options.end > 1e8 || options.start > options.end
                             }
                         />
                     </div>

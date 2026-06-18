@@ -111,7 +111,7 @@ export async function getProfileInfo(id: string): Promise<ProfileInfo | null> {
     })
 }
 
-function backCompatGameParams(data: any) {
+function backCompatProfile(data: any) {
     if (data && !data.params) {
         data.params = {
             starCount: data.starCount ?? defaultStarCount,
@@ -125,6 +125,11 @@ function backCompatGameParams(data: any) {
         delete data.resourceMultiplier
         delete data.hiveInitialColonize
         delete data.hiveMaxDensity
+    }
+    if (data.end !== undefined) {
+        data.range = [data.start, data.end]
+        delete data.start
+        delete data.end
     }
     if (data && data.current !== undefined) {
         data.total = data.end - data.start
@@ -151,7 +156,7 @@ export async function getProfileProgress(
         txn.onerror = reject
         req.onerror = reject
         req.onsuccess = () => {
-            backCompatGameParams(req.result)
+            backCompatProfile(req.result)
             resolve(req.result || null)
         }
     })
@@ -266,7 +271,7 @@ export async function getMultiProfileProgress(
         txn.onerror = reject
         req.onerror = reject
         req.onsuccess = () => {
-            backCompatGameParams(req.result)
+            backCompatProfile(req.result)
             resolve(req.result || null)
         }
     })

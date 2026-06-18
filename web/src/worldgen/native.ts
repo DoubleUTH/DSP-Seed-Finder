@@ -5,19 +5,31 @@ function* generateBatchFromRange(
     nextBatchId: integer,
     range: InternalFindOptions["range"],
 ): BatchGenerator {
-    let current = range[0] + batchSize * nextBatchId
-    const end = range[1]
-    if (current >= end) return
-    do {
-        const next = Math.min(current + batchSize, end)
-        const array = new Int32Array(next - current + 1)
-        array[0] = nextBatchId++
-        for (let i = current; i < next; ++i) {
-            array[i - current + 1] = i
+    if (Array.isArray(range)) {
+        let current = range[0] + batchSize * nextBatchId
+        const end = range[1]
+        while (current < end) {
+            const next = Math.min(current + batchSize, end)
+            const array = new Int32Array(next - current + 1)
+            array[0] = nextBatchId++
+            for (let i = current; i < next; ++i) {
+                array[i - current + 1] = i
+            }
+            yield array
+            current = next
         }
-        yield array
-        current = next
-    } while (current < end)
+    } else {
+        let current = batchSize * nextBatchId
+        const end = range.length
+        while (current < end) {
+            const next = Math.min(current + batchSize, end)
+            const array = new Int32Array(next - current + 1)
+            array[0] = nextBatchId++
+            array.set(range.slice(current, next), 1)
+            yield array
+            current = next
+        }
+    }
 }
 
 function waitConnect(ws: WebSocket) {

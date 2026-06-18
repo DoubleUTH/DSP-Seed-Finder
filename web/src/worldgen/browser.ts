@@ -14,17 +14,27 @@ function* generateBatchFromRange(
     nextBatchId: integer,
     range: InternalFindOptions["range"],
 ): Generator<Batch, void, void> {
-    let current = range[0] + batchSize * nextBatchId
-    const end = range[1]
-    if (current >= end) return
-    do {
-        const next = Math.min(current + batchSize, end)
-        const seeds = Array.from({ length: next - current }).map(
-            (_, i) => current + i,
-        )
-        yield { id: nextBatchId++, seeds }
-        current = next
-    } while (current < end)
+    if (Array.isArray(range)) {
+        let current = range[0] + batchSize * nextBatchId
+        const end = range[1]
+        while (current < end) {
+            const next = Math.min(current + batchSize, end)
+            const seeds = Array.from({ length: next - current }).map(
+                (_, i) => current + i,
+            )
+            yield { id: nextBatchId++, seeds }
+            current = next
+        }
+    } else {
+        let current = batchSize * nextBatchId
+        const end = range.length
+        while (current < end) {
+            const next = Math.min(current + batchSize, end)
+            const seeds = Array.from(range.slice(current, next))
+            yield { id: nextBatchId++, seeds }
+            current = next
+        }
+    }
 }
 
 export class WorldGenBrowser implements WorldGen {

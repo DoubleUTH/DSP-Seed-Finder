@@ -35,3 +35,15 @@
 .inputSmall {
     width: 80px;
 }
+
+.seedImport {
+    display: flex;
+    align-items: center;
+}
+
+.delete {
+    color: var(--error);
+    flex: none;
+    padding: 0 8px;
+    cursor: pointer;
+}

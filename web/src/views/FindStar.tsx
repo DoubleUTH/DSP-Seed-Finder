@@ -45,8 +45,7 @@ const defaultProgress: () => ProfileProgress = () => ({
     params: getDefaultParams(),
     concurrency: navigator.hardwareConcurrency,
     autosave: 5,
-    start: 0,
-    end: 1e8,
+    range: [0, 1e8],
     total: 0,
     found: 0,
     batchSize: DEFAULT_BATCH_SIZE,
@@ -237,9 +236,6 @@ const FindStar: Component = () => {
     function isValid(): boolean {
         if (
             name() === "" ||
-            progress.start < 0 ||
-            progress.end > 1e8 ||
-            progress.start >= progress.end ||
             progress.params.starCount < minStarCount ||
             progress.params.starCount > maxStarCount ||
             !Number.isInteger(progress.concurrency) ||
@@ -247,6 +243,15 @@ const FindStar: Component = () => {
             progress.autosave <= 0
         ) {
             return false
+        }
+        if (Array.isArray(progress.range)) {
+            if (
+                progress.range[0] < 0 ||
+                progress.range[1] > 1e8 ||
+                progress.range[0] >= progress.range[1]
+            ) {
+                return false
+            }
         }
         return isRuleValid()
     }

@@ -256,11 +256,13 @@ declare global {
         | Rule.CompositeAnd
         | Rule.CompositeOr
 
+    declare type FindRange = [integer, integer] | Int32Array<ArrayBuffer>
+
     declare interface FindOptions {
         gameDesc: GameParameters
         batchSize: integer
         nextBatchId: integer
-        range: [integer, integer]
+        range: FindRange
         rule: Rule | CompositeRule
         concurrency: integer
         autosave: integer
@@ -275,7 +277,7 @@ declare global {
         gameDesc: GameParameters
         batchSize: integer
         nextBatchId: integer
-        range: [integer, integer]
+        range: FindRange
         rule: Rule | CompositeRule
         concurrency: integer
         onBatchResult: (batchId: integer, result: integer[]) => void
@@ -310,8 +312,7 @@ declare global {
         params: GameParameters
         autosave: float
         concurrency: integer
-        start: integer
-        end: integer
+        range: FindRange
         total: integer
         found: integer
         batchSize: integer

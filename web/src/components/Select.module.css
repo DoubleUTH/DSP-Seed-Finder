@@ -49,4 +49,5 @@
 
 .disabled {
     cursor: not-allowed;
+    background-color: rgba(160, 160, 160, 0.1);
 }

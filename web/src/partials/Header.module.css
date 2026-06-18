@@ -27,8 +27,17 @@
     padding: 0 8px;
 }
 
+.button:global(.active) {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
 .legacy {
     color: rgba(160, 160, 160, 0.8);
+    text-decoration: line-through;
+}
+
+.legacy:global(.active) {
     text-decoration: line-through;
 }
 

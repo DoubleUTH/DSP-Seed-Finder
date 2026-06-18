@@ -134,17 +134,6 @@ const EditDysonRadius: Component<{
     )
 }
 
-const EditAverageVeinAmountWarning: Component<{ visible: boolean }> = (
-    props,
-) => {
-    const { t } = useLingui()
-    return (
-        <Show when={props.visible}>
-            <span>{t`Warning: using actual values is much slower.`}</span>
-        </Show>
-    )
-}
-
 const EditAverageVeinAmount: Component<{
     value: Rule.AverageVeinAmount
     onChange: (value: Rule.AverageVeinAmount) => void

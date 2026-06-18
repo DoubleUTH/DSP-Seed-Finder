@@ -13,8 +13,7 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: web/src/views/FindGalaxy.tsx:188
-#: web/src/views/FindStar.tsx:255
+#: web/src/views/FindGalaxy.tsx:192
 msgid " - Copy"
 msgstr " - 副本"
 
@@ -36,25 +35,25 @@ msgstr "最大{name}"
 msgid "{name} (Min)"
 msgstr "最小{name}"
 
-#: web/src/partials/RuleEditor.tsx:616
+#: web/src/partials/RuleEditor.tsx:605
 msgid "<0/> number of hives is <1/>."
 msgstr "黑雾巢穴的 <0/> 数目 <1/>"
 
-#: web/src/partials/ProgressEditor.tsx:65
+#: web/src/partials/ProgressEditor.tsx:130
 msgid "<0/> to <1/>"
 msgstr "<0/> 至 <1/>"
 
-#: web/src/partials/RuleEditor.tsx:181
+#: web/src/partials/RuleEditor.tsx:170
 msgid "actual"
 msgstr "实际"
 
 #: web/src/partials/MultiRuleEditor.tsx:214
-#: web/src/partials/RuleEditor.tsx:881
+#: web/src/partials/RuleEditor.tsx:870
 msgid "Add AND rule"
 msgstr "添加 与 规则"
 
 #: web/src/partials/MultiRuleEditor.tsx:147
-#: web/src/partials/RuleEditor.tsx:808
+#: web/src/partials/RuleEditor.tsx:797
 msgid "Add OR rule"
 msgstr "添加 或 规则"
 
@@ -63,15 +62,16 @@ msgstr "添加 或 规则"
 msgid "Age"
 msgstr "年龄"
 
-#: web/src/partials/RuleEditor.tsx:450
+#: web/src/partials/RuleEditor.tsx:439
 msgid "all"
 msgstr "所有"
 
-#: web/src/partials/RuleEditor.tsx:855
+#: web/src/partials/MultiRuleEditor.tsx:197
+#: web/src/partials/RuleEditor.tsx:844
 msgid "AND"
 msgstr "与"
 
-#: web/src/partials/RuleEditor.tsx:450
+#: web/src/partials/RuleEditor.tsx:439
 msgid "any"
 msgstr "任意"
 
@@ -79,9 +79,9 @@ msgstr "任意"
 msgid "Aquatica"
 msgstr "水世界"
 
-#: web/src/partials/ProfileManager.tsx:66
-#: web/src/partials/ProfileManager.tsx:90
-#: web/src/partials/ProfileManager.tsx:117
+#: web/src/partials/ProfileManager.tsx:76
+#: web/src/partials/ProfileManager.tsx:100
+#: web/src/partials/ProfileManager.tsx:127
 msgid "Are you sure?"
 msgstr "确认操作"
 
@@ -93,7 +93,7 @@ msgstr "至少"
 msgid "at most"
 msgstr "至多"
 
-#: web/src/partials/ProgressEditor.tsx:198
+#: web/src/partials/ProgressEditor.tsx:294
 msgid "Autosave interval"
 msgstr "自动保存间隔"
 
@@ -112,22 +112,26 @@ msgstr "黑洞 / 中子星"
 msgid "Blue Giant"
 msgstr "蓝巨星"
 
-#: web/src/partials/ProfileManager.tsx:81
-#: web/src/partials/ProfileManager.tsx:108
-#: web/src/partials/ProfileManager.tsx:131
+#: web/src/partials/ProfileManager.tsx:91
+#: web/src/partials/ProfileManager.tsx:118
+#: web/src/partials/ProfileManager.tsx:141
 msgid "Cancel"
 msgstr "取消"
 
-#: web/src/partials/ProfileManager.tsx:51
-#: web/src/partials/ProfileManager.tsx:78
+#: web/src/partials/ProgressEditor.tsx:71
+msgid "Choose file"
+msgstr "选择文件"
+
+#: web/src/partials/ProfileManager.tsx:58
+#: web/src/partials/ProfileManager.tsx:88
 msgid "Clear"
 msgstr "清空"
 
-#: web/src/partials/ProfileManager.tsx:44
+#: web/src/partials/ProfileManager.tsx:49
 msgid "Clone"
 msgstr "拷贝"
 
-#: web/src/partials/ExportModal.tsx:230
+#: web/src/partials/ExportModal.tsx:216
 msgid "Close"
 msgstr "关闭"
 
@@ -136,17 +140,16 @@ msgstr "关闭"
 msgid "Coal"
 msgstr "煤矿"
 
-#: web/src/views/FindGalaxy.tsx:399
-#: web/src/views/FindStar.tsx:466
+#: web/src/views/FindGalaxy.tsx:426
 msgid "Completed!"
 msgstr "完成！"
 
-#: web/src/partials/ExportModal.tsx:414
-#: web/src/partials/ProgressEditor.tsx:156
+#: web/src/partials/ExportModal.tsx:380
+#: web/src/partials/ProgressEditor.tsx:252
 msgid "Concurrency"
 msgstr "线程并发"
 
-#: web/src/partials/ProfileManager.tsx:128
+#: web/src/partials/ProfileManager.tsx:138
 msgid "Confirm"
 msgstr "确认"
 
@@ -168,20 +171,20 @@ msgstr "原油"
 msgid "Cyclonius"
 msgstr "飓风石林"
 
-#: web/src/partials/ExportModal.tsx:325
-#: web/src/partials/ProgressEditor.tsx:135
+#: web/src/partials/ExportModal.tsx:310
+#: web/src/partials/ProgressEditor.tsx:231
 #: web/src/views/Galaxy.tsx:102
 msgid "Dark Fog initial occupation"
 msgstr "黑雾初始占领情况"
 
-#: web/src/partials/ExportModal.tsx:339
-#: web/src/partials/ProgressEditor.tsx:177
+#: web/src/partials/ExportModal.tsx:324
+#: web/src/partials/ProgressEditor.tsx:273
 #: web/src/views/Galaxy.tsx:111
 msgid "Dark Fog max density"
 msgstr "最大黑雾浓度"
 
-#: web/src/partials/ProfileManager.tsx:58
-#: web/src/partials/ProfileManager.tsx:102
+#: web/src/partials/ProfileManager.tsx:67
+#: web/src/partials/ProfileManager.tsx:112
 msgid "Delete"
 msgstr "删除"
 
@@ -224,24 +227,24 @@ msgstr "距离初始星系"
 msgid "Distance from X Star"
 msgstr "距离X型恒星"
 
-#: web/src/partials/ProfileManager.tsx:68
+#: web/src/partials/ProfileManager.tsx:78
 msgid "Do you really want to clear all progress? This cannot be undone."
 msgstr "您确定要清空所有进度吗？此操作无法撤销。"
 
-#: web/src/partials/ProfileManager.tsx:119
+#: web/src/partials/ProfileManager.tsx:129
 msgid "Do you really want to create a new profile? All unsaved changes will be lost."
 msgstr "您确定要创建新配置吗？所有未保存的更改将丢失。"
 
-#: web/src/partials/ProfileManager.tsx:92
+#: web/src/partials/ProfileManager.tsx:102
 msgid "Do you really want to delete all settings and progress? This cannot be undone."
 msgstr "您确定要删除所有设置和进度吗？此操作无法撤销。"
 
-#: web/src/partials/ExportModal.tsx:154
+#: web/src/partials/ExportModal.tsx:140
 msgid "Done"
 msgstr "完成"
 
-#: web/src/partials/ExportModal.tsx:222
-#: web/src/partials/ProgressEditor.tsx:130
+#: web/src/partials/ExportModal.tsx:208
+#: web/src/partials/ProgressEditor.tsx:226
 msgid "Download"
 msgstr "下载"
 
@@ -249,7 +252,7 @@ msgstr "下载"
 msgid "DSP Seed Finder"
 msgstr "戴森球计划种子查找器"
 
-#: web/src/partials/RuleEditor.tsx:181
+#: web/src/partials/RuleEditor.tsx:170
 msgid "estimated"
 msgstr "大约"
 
@@ -261,7 +264,7 @@ msgid ""
 "{0} - {1}"
 msgstr "大約有 {0} - {1}"
 
-#: web/src/partials/ProgressEditor.tsx:202
+#: web/src/partials/ProgressEditor.tsx:298
 msgid "Every <0/> seconds"
 msgstr "每 <0/> 秒"
 
@@ -269,30 +272,30 @@ msgstr "每 <0/> 秒"
 msgid "exactly"
 msgstr "等于"
 
-#: web/src/partials/RuleEditor.tsx:391
-#: web/src/partials/RuleEditor.tsx:569
+#: web/src/partials/RuleEditor.tsx:380
+#: web/src/partials/RuleEditor.tsx:558
 msgid "excluding"
 msgstr "不包括"
 
-#: web/src/partials/ExportModal.tsx:275
-#: web/src/partials/ExportModal.tsx:436
-#: web/src/views/FindGalaxy.tsx:383
-#: web/src/views/FindStar.tsx:450
-#: web/src/views/Galaxy.tsx:241
+#: web/src/partials/ExportModal.tsx:260
+#: web/src/partials/ExportModal.tsx:402
+#: web/src/views/FindGalaxy.tsx:410
+#: web/src/views/FindStar.tsx:328
+#: web/src/views/Galaxy.tsx:240
 msgid "Export"
 msgstr "汇出"
 
 #: web/src/partials/ExportModal.tsx:399
-msgid "Export all"
-msgstr "汇出所有"
+#~ msgid "Export all"
+#~ msgstr "汇出所有"
 
 #: web/src/partials/ExportModal.tsx:397
-msgid "Export all stars instead of only the matching ones"
-msgstr "导出所有恒星而不仅仅是匹配的恒星"
+#~ msgid "Export all stars instead of only the matching ones"
+#~ msgstr "导出所有恒星而不仅仅是匹配的恒星"
 
 #. placeholder {0}: progress()
 #. placeholder {1}: total()
-#: web/src/partials/ExportModal.tsx:150
+#: web/src/partials/ExportModal.tsx:136
 msgid "Exporting {0} / {1}"
 msgstr "导出中 {0} / {1}"
 
@@ -303,7 +306,7 @@ msgstr "导出中 {0} / {1}"
 msgid "Fire Ice"
 msgstr "可燃冰"
 
-#: web/src/partials/ExportModal.tsx:282
+#: web/src/partials/ExportModal.tsx:267
 msgid "Format"
 msgstr "格式"
 
@@ -320,7 +323,7 @@ msgstr "星系查找器"
 msgid "Galaxy Viewer"
 msgstr "查看星系"
 
-#: web/src/partials/RuleEditor.tsx:329
+#: web/src/partials/RuleEditor.tsx:318
 msgid "gas"
 msgstr "气态"
 
@@ -335,7 +338,7 @@ msgstr "气态巨行星"
 msgid "Gas rate"
 msgstr "采集气体速度"
 
-#: web/src/partials/RuleEditor.tsx:329
+#: web/src/partials/RuleEditor.tsx:318
 msgid "gas/ice"
 msgstr "气态/冰"
 
@@ -347,7 +350,7 @@ msgstr "气态/冰巨行星数量"
 msgid "Geloterra"
 msgstr "灰烬冻土"
 
-#: web/src/partials/ExportModal.tsx:152
+#: web/src/partials/ExportModal.tsx:138
 msgid "Generating file"
 msgstr "生成档案中"
 
@@ -376,7 +379,7 @@ msgstr "大于"
 msgid "Halitum"
 msgstr "黑石盐滩"
 
-#: web/src/partials/RuleEditor.tsx:313
+#: web/src/partials/RuleEditor.tsx:302
 msgid "Has <0/> <1/> giant(s)"
 msgstr "有 <0/> 顆 <1/> 巨星"
 
@@ -384,39 +387,39 @@ msgstr "有 <0/> 顆 <1/> 巨星"
 msgid "Has <0/> <1/> star(s) that satisfy <2/>. Description: "
 msgstr "有 <0/> <1/> 颗恒星符合 <2/>。註记："
 
-#: web/src/partials/RuleEditor.tsx:470
+#: web/src/partials/RuleEditor.tsx:459
 msgid "Has <0/> <1/> type stars that are <2/> ly away."
 msgstr "在 <2/> 光年範围内，有 <0/> 顆 <1/> 型恒星"
 
-#: web/src/partials/RuleEditor.tsx:514
+#: web/src/partials/RuleEditor.tsx:503
 msgid "Has <0/> and <1/>/s of it"
 msgstr "有 <1/>/s 的 <0/>"
 
-#: web/src/partials/RuleEditor.tsx:160
+#: web/src/partials/RuleEditor.tsx:149
 msgid "Has <0/> and the <1/> amount is <2/>"
 msgstr "<0/> 储量 <1/> 有 <2/>"
 
-#: web/src/partials/RuleEditor.tsx:550
+#: web/src/partials/RuleEditor.tsx:539
 msgid "Has <0/> planet(s) within Max dyson sphere radius, <1/> gas/ice giants."
 msgstr "在最大戴森球範围内，有 <0/> 顆行星，<1/> 气态/冰巨行星"
 
-#: web/src/partials/RuleEditor.tsx:372
+#: web/src/partials/RuleEditor.tsx:361
 msgid "Has <0/> planets, <1/> gas/ice giants."
 msgstr "有 <0/> 颗行星，<1/> 气态/冰巨行星"
 
-#: web/src/partials/RuleEditor.tsx:347
+#: web/src/partials/RuleEditor.tsx:336
 msgid "Has <0/> satellite(s)"
 msgstr "有 <0/> 颗卫星"
 
-#: web/src/partials/RuleEditor.tsx:239
+#: web/src/partials/RuleEditor.tsx:228
 msgid "Has <0/> tidally locked planets"
 msgstr "有 <0/> 顆潮汐锁定行星"
 
-#: web/src/partials/RuleEditor.tsx:589
+#: web/src/partials/RuleEditor.tsx:578
 msgid "Has a <0/> planet."
 msgstr "有一颗 <0/> 行星"
 
-#: web/src/partials/RuleEditor.tsx:261
+#: web/src/partials/RuleEditor.tsx:250
 msgid "Has planets with <0/> Ocean"
 msgstr "有至少一颗行星拥有 <0/> 海洋"
 
@@ -433,7 +436,7 @@ msgstr "侧向自转"
 msgid "Hydrogen"
 msgstr "氢气"
 
-#: web/src/partials/RuleEditor.tsx:329
+#: web/src/partials/RuleEditor.tsx:318
 msgid "ice"
 msgstr "冰"
 
@@ -447,8 +450,17 @@ msgstr "冰巨行星"
 msgid "Icefrostia"
 msgstr "极寒冻土"
 
-#: web/src/partials/RuleEditor.tsx:391
-#: web/src/partials/RuleEditor.tsx:569
+#: web/src/partials/ProgressEditor.tsx:181
+msgid "Import seeds"
+msgstr "导入种子"
+
+#. placeholder {0}: props.value.length
+#: web/src/partials/ProgressEditor.tsx:74
+msgid "Imported {0} seeds"
+msgstr "已导入 {0} 种子"
+
+#: web/src/partials/RuleEditor.tsx:380
+#: web/src/partials/RuleEditor.tsx:558
 msgid "including"
 msgstr "包括"
 
@@ -457,7 +469,7 @@ msgstr "包括"
 msgid "Index"
 msgstr "索引"
 
-#: web/src/partials/RuleEditor.tsx:624
+#: web/src/partials/RuleEditor.tsx:613
 msgid "Initial"
 msgstr "起始"
 
@@ -471,7 +483,7 @@ msgstr "起始巢穴数目"
 msgid "Iron Ore"
 msgstr "铁矿"
 
-#: web/src/partials/RuleEditor.tsx:434
+#: web/src/partials/RuleEditor.tsx:423
 msgid "Is <0/> ly away from <1/> black hole / neutron star."
 msgstr "距离 <1/> 黑洞/中子星 <0/> 光年"
 
@@ -479,7 +491,7 @@ msgstr "距离 <1/> 黑洞/中子星 <0/> 光年"
 msgid "Is <0/>L"
 msgstr "<0/>L"
 
-#: web/src/partials/RuleEditor.tsx:409
+#: web/src/partials/RuleEditor.tsx:398
 msgid "Is <0/>ly away from the Starting system"
 msgstr "距离初始星系 <0/> 光年"
 
@@ -487,19 +499,19 @@ msgstr "距离初始星系 <0/> 光年"
 msgid "Is <0/>m"
 msgstr "<0/> 米"
 
-#: web/src/partials/RuleEditor.tsx:287
+#: web/src/partials/RuleEditor.tsx:276
 msgid "Is a <0/>"
 msgstr "是 <0/>"
 
-#: web/src/partials/RuleEditor.tsx:213
+#: web/src/partials/RuleEditor.tsx:202
 msgid "Is a <0/> type star"
 msgstr "是 <0/> 型恒星"
 
-#: web/src/partials/RuleEditor.tsx:724
+#: web/src/partials/RuleEditor.tsx:713
 msgid "Is the Starting system"
 msgstr "是初始星系"
 
-#: web/src/partials/ExportModal.tsx:351
+#: web/src/partials/ExportModal.tsx:336
 #: web/src/views/Galaxy.tsx:121
 msgid "It is much faster to estimate the amount of veins over generating the excat numbers."
 msgstr "估算资源比计算确切数量要快得多。"
@@ -521,7 +533,7 @@ msgstr "小于"
 msgid "Load"
 msgstr "读取"
 
-#: web/src/views/Galaxy.tsx:230
+#: web/src/views/Galaxy.tsx:229
 msgid "Loading..."
 msgstr "载入中..."
 
@@ -544,7 +556,7 @@ msgstr "灰烬冻土"
 msgid "Mass"
 msgstr "质量"
 
-#: web/src/partials/RuleEditor.tsx:624
+#: web/src/partials/RuleEditor.tsx:613
 msgid "Max"
 msgstr "最大"
 
@@ -559,12 +571,16 @@ msgstr "戴森球最大半径"
 msgid "Maximum number of hives"
 msgstr "最大巢穴数目"
 
+#: web/src/partials/ProgressEditor.tsx:179
+msgid "Must be .txt / .csv / .tsv. One seed per line. Maximum 10MB."
+msgstr "文件格式必须为 .txt / .csv / .tsv。每行一个种子。最大10MB。"
+
 #: web/src/exporter/workbookGenerator.worker.tsx:57
 #: web/src/exporter/workbookGenerator.worker.tsx:81
 msgid "Name"
 msgstr "名称"
 
-#: web/src/partials/ProgressEditor.tsx:120
+#: web/src/partials/ProgressEditor.tsx:216
 msgid "Native Mode"
 msgstr "本机模式"
 
@@ -578,11 +594,11 @@ msgstr "附近恒星"
 msgid "Neutron Star"
 msgstr "中子星"
 
-#: web/src/partials/ProfileManager.tsx:41
+#: web/src/partials/ProfileManager.tsx:44
 msgid "New"
 msgstr "创建"
 
-#: web/src/partials/ProgressEditor.tsx:37
+#: web/src/partials/ProgressEditor.tsx:116
 msgid "New Profile Name"
 msgstr "新配置名称"
 
@@ -598,8 +614,8 @@ msgstr "恒星"
 msgid "not equal to"
 msgstr "不等于"
 
-#: web/src/partials/ExportModal.tsx:299
-#: web/src/partials/ProgressEditor.tsx:50
+#: web/src/partials/ExportModal.tsx:284
+#: web/src/partials/ProgressEditor.tsx:164
 #: web/src/views/Galaxy.tsx:87
 msgid "Number of stars"
 msgstr "恒星数量"
@@ -621,7 +637,7 @@ msgid "Onyxtopia"
 msgstr "橙晶荒漠"
 
 #: web/src/partials/MultiRuleEditor.tsx:72
-#: web/src/partials/RuleEditor.tsx:783
+#: web/src/partials/RuleEditor.tsx:772
 msgid "OR"
 msgstr "或"
 
@@ -664,8 +680,7 @@ msgstr "有机晶体"
 msgid "Pandora Swamp"
 msgstr "潘多拉沼泽"
 
-#: web/src/views/FindGalaxy.tsx:396
-#: web/src/views/FindStar.tsx:463
+#: web/src/views/FindGalaxy.tsx:423
 msgid "Pause"
 msgstr "暂停"
 
@@ -689,7 +704,7 @@ msgstr "在戴森球内的行星"
 msgid "Prairiea"
 msgstr "草原"
 
-#: web/src/partials/ProgressEditor.tsx:37
+#: web/src/partials/ProgressEditor.tsx:116
 msgid "Profile Name"
 msgstr "配置名称"
 
@@ -701,8 +716,8 @@ msgstr "配置:"
 msgid "Profiles"
 msgstr "配置"
 
-#: web/src/views/FindGalaxy.tsx:372
-#: web/src/views/FindStar.tsx:439
+#: web/src/views/FindGalaxy.tsx:399
+#: web/src/views/FindStar.tsx:317
 msgid "Progress:"
 msgstr "进度:"
 
@@ -720,8 +735,8 @@ msgstr "随机"
 msgid "Red Giant"
 msgstr "红巨星"
 
-#: web/src/partials/ExportModal.tsx:309
-#: web/src/partials/ProgressEditor.tsx:99
+#: web/src/partials/ExportModal.tsx:294
+#: web/src/partials/ProgressEditor.tsx:195
 #: web/src/views/Galaxy.tsx:93
 msgid "Resource multiplier"
 msgstr "资源倍率"
@@ -730,12 +745,11 @@ msgstr "资源倍率"
 msgid "Resources"
 msgstr "资源"
 
-#: web/src/views/FindGalaxy.tsx:391
-#: web/src/views/FindStar.tsx:458
+#: web/src/views/FindGalaxy.tsx:418
 msgid "Resume"
 msgstr "继续"
 
-#: web/src/partials/ExportModal.tsx:148
+#: web/src/partials/ExportModal.tsx:134
 msgid "Retriving data"
 msgstr "检索数据中"
 
@@ -743,8 +757,8 @@ msgstr "检索数据中"
 msgid "Rotation period"
 msgstr "自转周期"
 
-#: web/src/views/FindGalaxy.tsx:358
-#: web/src/views/FindStar.tsx:425
+#: web/src/views/FindGalaxy.tsx:385
+#: web/src/views/FindStar.tsx:303
 msgid "Rules"
 msgstr "条件"
 
@@ -752,7 +766,7 @@ msgstr "条件"
 msgid "Ruleset"
 msgstr "条件集"
 
-#: web/src/partials/ProgressEditor.tsx:196
+#: web/src/partials/ProgressEditor.tsx:292
 msgid "Running autosave too frequently may decrease search performance."
 msgstr "频繁运行自动保存可能会降低搜索性能"
 
@@ -772,7 +786,7 @@ msgstr "卫星数量"
 msgid "Savanna"
 msgstr "热带草原"
 
-#: web/src/partials/ProfileManager.tsx:34
+#: web/src/partials/ProfileManager.tsx:35
 msgid "Save"
 msgstr "保存"
 
@@ -786,16 +800,16 @@ msgstr "干旱荒漠"
 msgid "Seed"
 msgstr "种子"
 
-#: web/src/partials/ExportModal.tsx:294
+#: web/src/partials/ExportModal.tsx:279
 msgid "Seed only"
 msgstr "只汇出种子"
 
-#: web/src/partials/ExportModal.tsx:367
-#: web/src/partials/ProgressEditor.tsx:63
+#: web/src/partials/ExportModal.tsx:352
+#: web/src/partials/ProgressEditor.tsx:128
 msgid "Seed range"
 msgstr "种子范围"
 
-#: web/src/views/FindStar.tsx:93
+#: web/src/views/FindStar.tsx:83
 msgid "Seed: "
 msgstr "种子: "
 
@@ -829,12 +843,11 @@ msgstr "刺笋结晶"
 msgid "Star Finder"
 msgstr "恒星查找器"
 
-#: web/src/views/Galaxy.tsx:236
+#: web/src/views/Galaxy.tsx:235
 msgid "Starmap"
 msgstr "星系图"
 
-#: web/src/views/FindGalaxy.tsx:391
-#: web/src/views/FindStar.tsx:458
+#: web/src/views/FindGalaxy.tsx:418
 msgid "Start"
 msgstr "开始搜索"
 
@@ -847,7 +860,7 @@ msgstr "初始星系"
 msgid "Stone"
 msgstr "石矿"
 
-#: web/src/partials/ExportModal.tsx:230
+#: web/src/partials/ExportModal.tsx:216
 msgid "Stop"
 msgstr "停止"
 
@@ -856,7 +869,7 @@ msgid "Sulfuria"
 msgstr "火山灰"
 
 #: web/src/exporter/workbookGenerator.worker.tsx:47
-#: web/src/partials/RuleEditor.tsx:271
+#: web/src/partials/RuleEditor.tsx:260
 #: web/src/partials/StarView.tsx:317
 #: web/src/partials/StarView.tsx:478
 msgid "Sulfuric Acid"
@@ -867,7 +880,7 @@ msgstr "硫酸"
 msgid "Temperature"
 msgstr "温度"
 
-#: web/src/partials/ProgressEditor.tsx:154
+#: web/src/partials/ProgressEditor.tsx:250
 msgid "The number of parallel processes to run the search."
 msgstr "运行搜索的并行进程数"
 
@@ -893,7 +906,7 @@ msgstr "潮汐锁定行星数量"
 msgid "Titanium Ore"
 msgstr "钛石"
 
-#: web/src/partials/ProgressEditor.tsx:118
+#: web/src/partials/ProgressEditor.tsx:214
 msgid "To run the search in (faster) native mode, click the download button and run the program on your PC, then enable this option."
 msgstr "如要在（更快的）本机模式下运行搜索，请点击下载按钮并在您的电脑上运行程序，然后启用此选项"
 
@@ -917,12 +930,12 @@ msgstr "恒星类型"
 msgid "Unipolar Magnet"
 msgstr "单极磁石"
 
-#: web/src/views/FindGalaxy.tsx:135
-#: web/src/views/FindStar.tsx:202
+#: web/src/views/FindGalaxy.tsx:137
+#: web/src/views/FindStar.tsx:192
 msgid "Untitled"
 msgstr "未命名"
 
-#: web/src/partials/ExportModal.tsx:353
+#: web/src/partials/ExportModal.tsx:338
 #: web/src/views/Galaxy.tsx:123
 msgid "Use estimated veins"
 msgstr "估算资源数量"
@@ -935,21 +948,20 @@ msgstr "资源储量"
 msgid "View"
 msgstr "查看"
 
-#: web/src/views/FindStar.tsx:101
+#: web/src/views/FindStar.tsx:91
 msgid "View in new tab"
 msgstr "在新标签页中查看"
 
-#: web/src/partials/ExportModal.tsx:278
+#: web/src/partials/ExportModal.tsx:263
 msgid "Warning: Exporting too many seeds may cause out of memory error."
 msgstr "警告：导出过多种子可能会导致内存不足错误"
 
-#: web/src/partials/RuleEditor.tsx:143
-#: web/src/partials/RuleEditor.tsx:201
+#: web/src/partials/RuleEditor.tsx:190
 msgid "Warning: using actual values is much slower."
 msgstr "警告：使用实际值会慢得多。"
 
 #: web/src/exporter/workbookGenerator.worker.tsx:46
-#: web/src/partials/RuleEditor.tsx:271
+#: web/src/partials/RuleEditor.tsx:260
 #: web/src/partials/StarView.tsx:311
 #: web/src/partials/StarView.tsx:472
 msgid "Water"

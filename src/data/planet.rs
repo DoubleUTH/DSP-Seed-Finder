@@ -1089,7 +1089,6 @@ impl<'a> Planet<'a> {
                 let min_value = total_amount - amount_variance;
                 let value_range = amount_variance * 2 + 1;
                 for pos in tmp_vecs.iter() {
-                    let vector3_3 = ((vector3_1 * pos.0) + (vector3_2 * pos.1)) * min_vein_spacing;
                     let raw_amount = rand2.next_i32(value_range) + min_value;
                     let amount = if is_infinite_resource && !is_oil {
                         1
@@ -1101,14 +1100,20 @@ impl<'a> Planet<'a> {
                         };
                         (((raw_amount as f32) * 1.1 * multiplier).round_ties_even() as i32).max(1)
                     };
-                    let mut pos = normalized + vector3_3;
-                    if is_oil {
-                        pos = self.snap_to(&pos);
-                    }
-                    let surface_height = raw_data.query_height(&pos);
-                    if theme.water_item_id == 0 || surface_height >= self.radius {
-                        // println!("{:?},{:?},{}", pos * surface_height, vein_type, amount);
+                    if algo_id == 7 {
                         amount_map[*vein_type as usize] += amount;
+                    } else {
+                        let vector3_3 =
+                            ((vector3_1 * pos.0) + (vector3_2 * pos.1)) * min_vein_spacing;
+                        let mut pos = normalized + vector3_3;
+                        if is_oil {
+                            pos = self.snap_to(&pos);
+                        }
+                        let surface_height = raw_data.query_height(&pos);
+                        if theme.water_item_id == 0 || surface_height >= self.radius {
+                            // println!("{:?},{:?},{}", pos * surface_height, vein_type, amount);
+                            amount_map[*vein_type as usize] += amount;
+                        }
                     }
                 }
             }

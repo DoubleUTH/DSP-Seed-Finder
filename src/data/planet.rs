@@ -1100,7 +1100,7 @@ impl<'a> Planet<'a> {
                         };
                         (((raw_amount as f32) * 1.1 * multiplier).round_ties_even() as i32).max(1)
                     };
-                    if algo_id == 7 {
+                    if algo_id == 7 || theme.water_item_id == 0 {
                         amount_map[*vein_type as usize] += amount;
                     } else {
                         let vector3_3 =
@@ -1110,7 +1110,7 @@ impl<'a> Planet<'a> {
                             pos = self.snap_to(&pos);
                         }
                         let surface_height = raw_data.query_height(&pos);
-                        if theme.water_item_id == 0 || surface_height >= self.radius {
+                        if surface_height >= self.radius {
                             // println!("{:?},{:?},{}", pos * surface_height, vein_type, amount);
                             amount_map[*vein_type as usize] += amount;
                         }

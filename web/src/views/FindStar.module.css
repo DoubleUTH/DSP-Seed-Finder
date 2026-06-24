@@ -56,3 +56,7 @@
 .viewTitle {
     margin-right: 12px;
 }
+
+.warning {
+    color: rgb(213, 170, 15);
+}

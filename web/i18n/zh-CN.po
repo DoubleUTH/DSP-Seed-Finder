@@ -280,18 +280,10 @@ msgstr "不包括"
 #: web/src/partials/ExportModal.tsx:260
 #: web/src/partials/ExportModal.tsx:402
 #: web/src/views/FindGalaxy.tsx:410
-#: web/src/views/FindStar.tsx:328
+#: web/src/views/FindStar.tsx:329
 #: web/src/views/Galaxy.tsx:240
 msgid "Export"
 msgstr "汇出"
-
-#: web/src/partials/ExportModal.tsx:399
-#~ msgid "Export all"
-#~ msgstr "汇出所有"
-
-#: web/src/partials/ExportModal.tsx:397
-#~ msgid "Export all stars instead of only the matching ones"
-#~ msgstr "导出所有恒星而不仅仅是匹配的恒星"
 
 #. placeholder {0}: progress()
 #. placeholder {1}: total()
@@ -717,7 +709,7 @@ msgid "Profiles"
 msgstr "配置"
 
 #: web/src/views/FindGalaxy.tsx:399
-#: web/src/views/FindStar.tsx:317
+#: web/src/views/FindStar.tsx:318
 msgid "Progress:"
 msgstr "进度:"
 
@@ -758,7 +750,7 @@ msgid "Rotation period"
 msgstr "自转周期"
 
 #: web/src/views/FindGalaxy.tsx:385
-#: web/src/views/FindStar.tsx:303
+#: web/src/views/FindStar.tsx:304
 msgid "Rules"
 msgstr "条件"
 
@@ -842,6 +834,10 @@ msgstr "刺笋结晶"
 #: web/src/partials/Header.tsx:30
 msgid "Star Finder"
 msgstr "恒星查找器"
+
+#: web/src/views/FindStar.tsx:287
+msgid "Star Finder is no longer supported. Please use Galaxy Finder instead."
+msgstr "恒星查找器已停用。请改用星系查找器。"
 
 #: web/src/views/Galaxy.tsx:235
 msgid "Starmap"

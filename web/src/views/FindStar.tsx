@@ -200,7 +200,7 @@ const FindStar: Component = () => {
     const [currentPage, setCurrentPage] = createSignal(1)
     const isLoaded = () => !!profile()
     const hasProgress = () => progress.nextBatchId > 0
-    const isDisabled = () => store.searching || hasProgress()
+    const isDisabled = () => true
     const hasCompleted = () => {
         const totalBatchCount = Math.ceil(progress.total / progress.batchSize)
         return totalBatchCount > 0 && progress.nextBatchId >= totalBatchCount
@@ -284,6 +284,9 @@ const FindStar: Component = () => {
 
     return (
         <div class={styles.content}>
+            <div
+                class={styles.warning}
+            >{t`Star Finder is no longer supported. Please use Galaxy Finder instead.`}</div>
             <ProfileManager
                 onLoad={() => setProfileModal(true)}
                 disabled={store.searching}

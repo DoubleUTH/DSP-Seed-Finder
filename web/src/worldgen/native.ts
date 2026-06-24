@@ -166,6 +166,47 @@ export class WorldGenNative implements WorldGen {
         }
     }
 
+    async createDatabase({
+        range,
+        params,
+        concurrency,
+        onProgress,
+        onInterrupt,
+    }: InternalGenerateDatabaseOptions) {
+        const ws = await connect()
+        try {
+            ws.addEventListener("close", () => {
+                onInterrupt()
+            })
+            ws.send(
+                JSON.stringify({
+                    type: "Database",
+                    concurrency,
+                    range,
+                    game: params,
+                }),
+            )
+
+            await new Promise<void>((resolve) => {
+                ws.addEventListener("message", (ev) => {
+                    if (typeof ev.data === "string") {
+                        const data = JSON.parse(ev.data)
+                        if (data.type === "Database") {
+                            onProgress(data.progress)
+                        }
+                        if (data.progress === range[1]) {
+                            resolve()
+                        }
+                    }
+                })
+            })
+        } finally {
+            if (ws.readyState === WebSocket.OPEN) {
+                ws.close()
+            }
+        }
+    }
+
     stop() {
         this.stopped = true
     }

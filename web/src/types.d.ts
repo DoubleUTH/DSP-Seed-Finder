@@ -284,9 +284,28 @@ declare global {
         onInterrupt: () => void
     }
 
+    declare interface GenerateDatabaseOptions {
+        range: [integer, integer]
+        params: GameParameters
+        concurrency: integer
+        onProgress: (seed: integer) => void
+        onInterrupt: () => void
+        onComplete: () => void
+        onError: (error?: any) => void
+    }
+
+    declare interface InternalGenerateDatabaseOptions {
+        range: [integer, integer]
+        params: GameParameters
+        concurrency: integer
+        onProgress: (seed: integer) => void
+        onInterrupt: () => void
+    }
+
     declare interface WorldGen {
         generate(seed: integer, gameDesc: GameParameters): Promise<Galaxy>
         find(options: InternalFindOptions): Promise<void>
+        createDatabase(options: InternalGenerateDatabaseOptions): Promise<void>
         stop(): void
     }
 

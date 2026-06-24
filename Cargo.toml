@@ -20,6 +20,7 @@ path = "src/main.rs"
 
 [dependencies]
 once_cell = "1.21.4"
+rusqlite = { version = "0.40.1", features = ["bundled"] }
 serde = { version = "1.0.228", features = ["derive", "rc"] }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]

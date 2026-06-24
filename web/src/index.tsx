@@ -8,6 +8,7 @@ import App from "./App"
 import FindStar from "./views/FindStar"
 import Galaxy from "./views/Galaxy"
 import FindGalaxy from "./views/FindGalaxy"
+import GenerateDatabase from "./views/GenerateDatabase"
 
 const root = document.getElementById("root")
 
@@ -17,6 +18,7 @@ const dispose = render(
             <Route path="/find-star/:profileId?" component={FindStar} />
             <Route path="/find-galaxy/:profileId?" component={FindGalaxy} />
             <Route path="/galaxy/:seed?/:index?" component={Galaxy} />
+            <Route path="/generate-database" component={GenerateDatabase} />
             <Route path="" component={() => <Navigate href="/find-galaxy" />} />
         </Router>
     ),

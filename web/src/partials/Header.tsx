@@ -26,6 +26,9 @@ const Header: Component = () => {
                 <A href="/galaxy" class={styles.button}>
                     {t`Galaxy Viewer`}
                 </A>
+                <A href="/generate-database" class={styles.button}>
+                    {t`Generate Database`}
+                </A>
                 <A href="/find-star" class={clsx(styles.button, styles.legacy)}>
                     {t`Star Finder`}
                 </A>

@@ -125,6 +125,10 @@ export class WorldGenBrowser implements WorldGen {
         )
     }
 
+    async createDatabase(_: InternalGenerateDatabaseOptions) {
+        throw new Error("Not implemented.")
+    }
+
     stop() {
         this.stopped = true
     }

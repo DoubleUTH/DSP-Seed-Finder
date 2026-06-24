@@ -1,6 +1,7 @@
 #![cfg(not(target_arch = "wasm32"))]
 
 mod data;
+mod database;
 mod rules;
 mod tests;
 mod transform_rules;
@@ -8,14 +9,16 @@ mod worldgen;
 
 use data::game_desc::GameDesc;
 use futures_util::{SinkExt, StreamExt};
-use rayon::iter::{ParallelExtend, ParallelIterator};
+use rayon::iter::{ParallelBridge, ParallelExtend, ParallelIterator};
 use rayon::slice::ParallelSlice;
 use rayon::{ThreadPool, ThreadPoolBuilder};
+use rusqlite::{params, Connection};
 use serde::{Deserialize, Serialize};
 use std::cell::Cell;
 use std::sync::Arc;
 use tokio::net::{TcpListener, TcpStream};
 use tokio::sync::mpsc;
+use tokio::sync::mpsc::Sender;
 use tokio_tungstenite::accept_async;
 use tokio_tungstenite::tungstenite::Message;
 use transform_rules::Rules;
@@ -23,6 +26,9 @@ use worldgen::galaxy_gen::{create_galaxy, find_stars};
 
 use crate::data::galaxy::Galaxy;
 use crate::data::rule::Rule;
+use crate::database::{
+    create_database, create_insert_seed_stmt, get_seed_params, insert_seed, set_info, SeedParams,
+};
 use crate::transform_rules::transform_rules;
 
 #[tokio::main(flavor = "multi_thread")]
@@ -49,6 +55,12 @@ enum IncomingMessage {
         game: GameDesc,
         rule: Rules,
     },
+    Database {
+        name: String,
+        concurrency: usize,
+        range: (i32, i32),
+        game: GameDesc,
+    },
 }
 
 #[derive(Serialize)]
@@ -56,6 +68,7 @@ enum IncomingMessage {
 enum OutgoingMessage<'a> {
     Generate { galaxy: Galaxy<'a> },
     Setup { success: bool },
+    Database { success: bool, progress: i32 },
 }
 
 struct SetupData {
@@ -64,15 +77,51 @@ struct SetupData {
     pub rule: Arc<Box<dyn Rule + Send + Sync>>,
 }
 
-async fn handle_message(msg: IncomingMessage, current_setup: &mut Option<SetupData>) -> String {
-    match msg {
-        IncomingMessage::Generate { seed, game } => tokio::task::spawn_blocking(move || {
+fn generate_database(name: String, range: &(i32, i32), game: &GameDesc) -> rusqlite::Result<bool> {
+    let mut conn = create_database(name)?;
+    if !set_info(&mut conn, range, game)? {
+        return Ok(false);
+    }
+    let (start, end) = *range;
+    let use_actual_veins = game.use_actual_veins;
+    let (tx, mut rx) = mpsc::channel::<Vec<SeedParams>>(1000);
+    rayon::spawn(move || {
+        while let Some(msg) = rx.blocking_recv() {
+            let mut trans = conn.transaction().unwrap();
+            {
+                let mut stmt = create_insert_seed_stmt(&mut trans).unwrap();
+                insert_seed(&mut stmt, msg);
+            }
+            trans.commit().unwrap();
+        }
+    });
+    let _ = (start..end).par_bridge().map_init(
+        move || tx.clone(),
+        |tx, seed| {
             let habitable_count = Cell::new(0_i32);
-            let galaxy = create_galaxy(seed, &game, &habitable_count);
-            serde_json::to_string(&OutgoingMessage::Generate { galaxy }).unwrap()
-        })
-        .await
-        .unwrap(),
+            let galaxy = create_galaxy(seed, game, &habitable_count);
+            let _ = tx.blocking_send(get_seed_params(&galaxy, use_actual_veins));
+        },
+    );
+    Ok(true)
+}
+
+async fn handle_message(
+    msg: IncomingMessage,
+    current_setup: &mut Option<SetupData>,
+    tx: &Sender<Message>,
+) {
+    match msg {
+        IncomingMessage::Generate { seed, game } => {
+            let resp = tokio::task::spawn_blocking(move || {
+                let habitable_count = Cell::new(0_i32);
+                let galaxy = create_galaxy(seed, &game, &habitable_count);
+                serde_json::to_string(&OutgoingMessage::Generate { galaxy }).unwrap()
+            })
+            .await
+            .unwrap();
+            let _ = tx.send(Message::Text(resp.into())).await;
+        }
         IncomingMessage::Setup {
             concurrency,
             game,
@@ -86,7 +135,22 @@ async fn handle_message(msg: IncomingMessage, current_setup: &mut Option<SetupDa
                 game,
                 rule: Arc::new(transform_rules(rule)),
             });
-            serde_json::to_string(&OutgoingMessage::Setup { success: true }).unwrap()
+            let resp = serde_json::to_string(&OutgoingMessage::Setup { success: true }).unwrap();
+            let _ = tx.send(Message::Text(resp.into())).await;
+        }
+        IncomingMessage::Database {
+            name,
+            concurrency,
+            range,
+            game,
+        } => {
+            let pool = ThreadPoolBuilder::new()
+                .num_threads(concurrency)
+                .build()
+                .unwrap();
+            pool.spawn(move || {
+                let conn = create_database(name);
+            });
         }
     }
 }
@@ -111,8 +175,7 @@ async fn accept_connection(stream: TcpStream) -> Result<(), tokio_tungstenite::t
         match msg {
             Message::Text(text) => {
                 let msg: IncomingMessage = serde_json::from_str(&text).unwrap();
-                let resp = handle_message(msg, &mut current_setup).await;
-                let _ = tx.send(Message::Text(resp.into())).await;
+                handle_message(msg, &mut current_setup, &tx).await;
             }
             Message::Binary(bytes) => {
                 // println!("Receive search request for {} seeds", size);

@@ -36,6 +36,7 @@ import ExportModal from "../partials/ExportModal"
 import Starmap from "../partials/Starmap"
 import Tooltip from "../components/Tooltip"
 import Toggle from "../components/Toggle"
+import GalaxyOverview from "../partials/GalaxyOverview"
 
 function randomSeed() {
     return Math.floor(Math.random() * 1e8)
@@ -263,7 +264,10 @@ const View: Component<{ seed: number; index?: number }> = (props) => {
                     <Show
                         when={props.index !== undefined}
                         fallback={
-                            <Starmap galaxy={galaxy()!} search={search()} />
+                            <GalaxyOverview
+                                galaxy={galaxy()!}
+                                search={search()}
+                            />
                         }
                     >
                         <StarView

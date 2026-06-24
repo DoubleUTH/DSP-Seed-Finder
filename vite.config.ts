@@ -87,6 +87,15 @@ export default defineConfig({
                     "lingui.tsx",
                 ),
             },
+            {
+                find: "~styles",
+                replacement: "",
+                customResolver: (_, importer) => {
+                    if (!importer) return null
+                    const parsed = path.parse(importer)
+                    return path.join(parsed.dir, parsed.name + ".module.css")
+                },
+            },
         ],
     },
 })

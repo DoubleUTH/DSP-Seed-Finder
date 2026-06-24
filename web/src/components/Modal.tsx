@@ -1,4 +1,4 @@
-import styles from "./Modal.module.css"
+import styles from "~styles"
 import { ParentComponent, Show } from "solid-js"
 import clsx from "clsx"
 import { IoClose } from "solid-icons/io"

@@ -1,4 +1,4 @@
-import styles from "./Button.module.css"
+import styles from "~styles"
 import { ParentComponent } from "solid-js"
 import clsx from "clsx"
 

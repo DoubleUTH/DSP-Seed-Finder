@@ -23,7 +23,7 @@ import {
     validateRules,
 } from "../util"
 import RuleEditor from "../partials/RuleEditor"
-import styles from "./FindStar.module.css"
+import styles from "~styles"
 import { createStore } from "solid-js/store"
 import ProfilesModal from "../partials/ProfilesModal"
 import Modal from "../components/Modal"

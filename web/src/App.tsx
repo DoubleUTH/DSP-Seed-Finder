@@ -1,6 +1,6 @@
 import { createStore } from "solid-js/store"
 import clsx from "clsx"
-import styles from "./App.module.css"
+import styles from "~styles"
 import { StoreContext, defaultStore } from "./store"
 import Header from "./partials/Header"
 import { ParentComponent, createEffect, onCleanup } from "solid-js"

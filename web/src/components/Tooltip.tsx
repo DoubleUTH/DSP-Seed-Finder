@@ -1,6 +1,6 @@
 import { ParentComponent, createEffect, createSignal } from "solid-js"
 import clsx from "clsx"
-import styles from "./Tooltip.module.css"
+import styles from "~styles"
 import { computePosition, flip, shift } from "@floating-ui/dom"
 
 const Tooltip: ParentComponent<{ text: string; class?: string }> = (props) => {

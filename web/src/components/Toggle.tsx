@@ -1,4 +1,4 @@
-import styles from "./Toggle.module.css"
+import styles from "~styles"
 import { Component } from "solid-js"
 import clsx from "clsx"
 

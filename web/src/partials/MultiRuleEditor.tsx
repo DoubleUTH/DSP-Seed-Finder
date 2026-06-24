@@ -8,7 +8,7 @@ import { ConditionType } from "../enums"
 import { validateRules } from "../util"
 import NumberInput from "../components/NumberInput"
 import { IoTrash } from "solid-icons/io"
-import styles from "./MultiRuleEditor.module.css"
+import styles from "~styles"
 import { Trans, useLingui } from "#lingui"
 import { useConditionTypeNames } from "../names"
 

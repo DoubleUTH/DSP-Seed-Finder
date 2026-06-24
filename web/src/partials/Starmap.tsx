@@ -1,5 +1,5 @@
 import { Component, createMemo, createSignal, For, JSX, Show } from "solid-js"
-import styles from "./Starmap.module.css"
+import styles from "~styles"
 import { A, useNavigate } from "@solidjs/router"
 import { StarType } from "../enums"
 import { Portal } from "solid-js/web"

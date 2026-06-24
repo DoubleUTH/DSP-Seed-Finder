@@ -1,7 +1,7 @@
 import { IoChevronBack, IoChevronForward } from "solid-icons/io"
 import NumberInput from "./NumberInput"
 import { Component, createSignal } from "solid-js"
-import styles from "./Pagination.module.css"
+import styles from "~styles"
 
 const Pagination: Component<{
     current: integer

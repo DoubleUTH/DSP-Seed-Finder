@@ -1,4 +1,4 @@
-import styles from "./Header.module.css"
+import styles from "~styles"
 import { useStore } from "../store"
 import { A } from "@solidjs/router"
 import { IoContrast, IoLogoGithub } from "solid-icons/io"

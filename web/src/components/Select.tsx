@@ -1,4 +1,4 @@
-import styles from "./Select.module.css"
+import styles from "~styles"
 import { For, JSX, createEffect, createSignal, onCleanup } from "solid-js"
 import clsx from "clsx"
 import { computePosition, flip } from "@floating-ui/dom"

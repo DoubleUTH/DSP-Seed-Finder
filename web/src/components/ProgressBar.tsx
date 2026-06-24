@@ -1,5 +1,5 @@
 import { Component } from "solid-js"
-import styles from "./ProgressBar.module.css"
+import styles from "~styles"
 import clsx from "clsx"
 
 const ProgressBar: Component<{

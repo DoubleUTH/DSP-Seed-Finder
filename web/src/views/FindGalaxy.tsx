@@ -34,7 +34,7 @@ import {
 import { startSearchingGalaxies, stopSearchingGalaxies } from "../worldgen"
 import ProgressEditor from "../partials/ProgressEditor"
 import ProfileManager from "../partials/ProfileManager"
-import styles from "./FindGalaxy.module.css"
+import styles from "~styles"
 import ProgressBar from "../components/ProgressBar"
 import Button from "../components/Button"
 import Pagination from "../components/Pagination"

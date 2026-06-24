@@ -1,6 +1,6 @@
 import { For, JSX, Show, createEffect, createSignal } from "solid-js"
 import Modal from "../components/Modal"
-import styles from "./ProfilesModal.module.css"
+import styles from "~styles"
 import { useLingui } from "#lingui"
 
 function ProfilesModal(props: {

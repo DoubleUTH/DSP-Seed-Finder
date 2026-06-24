@@ -1,5 +1,5 @@
 import { Component, Show, createSignal } from "solid-js"
-import styles from "./ProfileManager.module.css"
+import styles from "~styles"
 import Button from "../components/Button"
 import Modal from "../components/Modal"
 import { useLingui } from "#lingui"

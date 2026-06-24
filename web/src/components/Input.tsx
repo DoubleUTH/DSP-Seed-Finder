@@ -1,5 +1,5 @@
 import clsx from "clsx"
-import styles from "./NumberInput.module.css"
+import styles from "~styles"
 import { Component } from "solid-js"
 
 const Input: Component<{

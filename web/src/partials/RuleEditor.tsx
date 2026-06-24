@@ -8,7 +8,7 @@ import {
     StarType,
     VeinType,
 } from "../enums"
-import styles from "./RuleEditor.module.css"
+import styles from "~styles"
 import Select from "../components/Select"
 import { IoTrash } from "solid-icons/io"
 import Button from "../components/Button"

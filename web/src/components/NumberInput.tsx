@@ -1,5 +1,5 @@
 import clsx from "clsx"
-import styles from "./NumberInput.module.css"
+import styles from "~styles"
 import { Component, batch, createRenderEffect, createSignal } from "solid-js"
 
 const NumberInput: Component<{

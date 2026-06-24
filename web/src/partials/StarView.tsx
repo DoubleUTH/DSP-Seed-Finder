@@ -12,7 +12,7 @@ import {
     toPrecision,
     veinOrder,
 } from "../util"
-import styles from "./StarView.module.css"
+import styles from "~styles"
 import { Component, Show, For, createMemo } from "solid-js"
 import { IoChevronDown } from "solid-icons/io"
 import clsx from "clsx"

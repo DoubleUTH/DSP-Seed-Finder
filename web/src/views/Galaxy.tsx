@@ -1,4 +1,4 @@
-import styles from "./Galaxy.module.css"
+import styles from "~styles"
 import { A, useNavigate, useParams, useSearchParams } from "@solidjs/router"
 import {
     Component,
@@ -33,7 +33,6 @@ import HiveInitialColonizeSelector from "../partials/HiveInitialColonizeSelector
 import HiveMaxDensitySelector from "../partials/HiveMaxDensitySelector"
 import { useLingui } from "#lingui"
 import ExportModal from "../partials/ExportModal"
-import Starmap from "../partials/Starmap"
 import Tooltip from "../components/Tooltip"
 import Toggle from "../components/Toggle"
 import GalaxyOverview from "../partials/GalaxyOverview"

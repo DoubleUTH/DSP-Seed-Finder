@@ -1,6 +1,6 @@
 import { Component, createMemo, Show } from "solid-js"
 import Input from "../components/Input"
-import styles from "./ProgressEditor.module.css"
+import styles from "~styles"
 import StarCountSelector from "./StarCountSelector"
 import Tooltip from "../components/Tooltip"
 import Toggle from "../components/Toggle"

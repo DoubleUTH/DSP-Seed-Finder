@@ -121,14 +121,14 @@ const GalaxyOverview: Component<{ galaxy: Galaxy; search: string }> = (
                 <div class={styles.card}>
                     <div class={styles.title}>
                         <span>
-                            {t`Galaxy Seed`}: {props.galaxy.seed}
+                            {t`Seed`}: {props.galaxy.seed}
                         </span>
                     </div>
                 </div>
                 <Show when={Object.keys(starTypeCounts()).length > 0}>
                     <div class={styles.card}>
                         <div class={styles.title}>
-                            <span>{t`Star Types`}</span>
+                            <span>{t`Star types`}</span>
                         </div>
                         <For each={Object.keys(starTypeCounts())}>
                             {(type) => (
@@ -162,7 +162,7 @@ const GalaxyOverview: Component<{ galaxy: Galaxy; search: string }> = (
                 <Show when={allGases().length > 0}>
                     <div class={styles.card}>
                         <div class={styles.title}>
-                            <span>{t`Gas Giants`}</span>
+                            <span>{t`Gas rate`}</span>
                         </div>
                         <For each={allGases()}>
                             {([type, amount]) => (

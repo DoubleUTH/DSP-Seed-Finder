@@ -258,6 +258,7 @@ msgstr ""
 
 #. placeholder {0}: min()
 #. placeholder {1}: max()
+#: web/src/partials/GalaxyOverview.tsx:87
 #: web/src/partials/StarView.tsx:285
 msgid ""
 "Estimated:\n"
@@ -280,7 +281,7 @@ msgstr ""
 #: web/src/partials/ExportModal.tsx:260
 #: web/src/partials/ExportModal.tsx:402
 #: web/src/views/FindGalaxy.tsx:410
-#: web/src/views/FindStar.tsx:329
+#: web/src/views/FindStar.tsx:331
 #: web/src/views/Galaxy.tsx:240
 msgid "Export"
 msgstr ""
@@ -327,6 +328,7 @@ msgid "Gas Giant"
 msgstr ""
 
 #: web/src/names.tsx:52
+#: web/src/partials/GalaxyOverview.tsx:165
 msgid "Gas rate"
 msgstr ""
 
@@ -709,7 +711,7 @@ msgid "Profiles"
 msgstr ""
 
 #: web/src/views/FindGalaxy.tsx:399
-#: web/src/views/FindStar.tsx:318
+#: web/src/views/FindStar.tsx:320
 msgid "Progress:"
 msgstr ""
 
@@ -733,6 +735,7 @@ msgstr ""
 msgid "Resource multiplier"
 msgstr ""
 
+#: web/src/partials/GalaxyOverview.tsx:148
 #: web/src/partials/StarView.tsx:542
 msgid "Resources"
 msgstr ""
@@ -750,7 +753,7 @@ msgid "Rotation period"
 msgstr ""
 
 #: web/src/views/FindGalaxy.tsx:385
-#: web/src/views/FindStar.tsx:304
+#: web/src/views/FindStar.tsx:306
 msgid "Rules"
 msgstr ""
 
@@ -788,6 +791,7 @@ msgstr ""
 
 #: web/src/exporter/workbookGenerator.worker.tsx:55
 #: web/src/exporter/workbookGenerator.worker.tsx:79
+#: web/src/partials/GalaxyOverview.tsx:124
 #: web/src/views/Galaxy.tsx:64
 msgid "Seed"
 msgstr ""
@@ -835,8 +839,12 @@ msgstr ""
 msgid "Star Finder"
 msgstr ""
 
-#: web/src/views/FindStar.tsx:287
+#: web/src/views/FindStar.tsx:289
 msgid "Star Finder is no longer supported. Please use Galaxy Finder instead."
+msgstr ""
+
+#: web/src/partials/GalaxyOverview.tsx:131
+msgid "Star types"
 msgstr ""
 
 #: web/src/views/Galaxy.tsx:235

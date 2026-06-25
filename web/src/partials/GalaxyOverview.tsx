@@ -10,7 +10,7 @@ import {
     formatNumber,
     toPrecision,
 } from "../util"
-import { VeinType, GasType } from "../enums"
+import { VeinType, GasType, StarType, SpectrType } from "../enums"
 import Tooltip from "../components/Tooltip"
 
 function combineAllVeins(stars: Star[]): VeinStat[] {
@@ -101,12 +101,30 @@ const GalaxyOverview: Component<{ galaxy: Galaxy; search: string }> = (
     const gasTypeNames = useGasTypeNames()
 
     const starTypeCounts = createMemo(() => {
+        const order = [
+            getStarType({ type: StarType.MainSeqStar, spectr: SpectrType.M }),
+            getStarType({ type: StarType.MainSeqStar, spectr: SpectrType.K }),
+            getStarType({ type: StarType.MainSeqStar, spectr: SpectrType.G }),
+            getStarType({ type: StarType.MainSeqStar, spectr: SpectrType.F }),
+            getStarType({ type: StarType.MainSeqStar, spectr: SpectrType.A }),
+            getStarType({ type: StarType.MainSeqStar, spectr: SpectrType.B }),
+            getStarType({ type: StarType.MainSeqStar, spectr: SpectrType.O }),
+            getStarType({ type: StarType.GiantStar, spectr: SpectrType.M }),
+            getStarType({ type: StarType.GiantStar, spectr: SpectrType.G }),
+            getStarType({ type: StarType.GiantStar, spectr: SpectrType.A }),
+            getStarType({ type: StarType.GiantStar, spectr: SpectrType.B }),
+            getStarType({ type: StarType.WhiteDwarf, spectr: SpectrType.X }),
+            getStarType({ type: StarType.NeutronStar, spectr: SpectrType.X }),
+            getStarType({ type: StarType.BlackHole, spectr: SpectrType.X }),
+        ]
         const counts: Record<string, number> = {}
         for (const star of props.galaxy.stars) {
             const name = getStarType(star)
             counts[name] = (counts[name] ?? 0) + 1
         }
-        return counts
+        return order
+            .filter((name) => counts[name])
+            .map((name) => [name, counts[name]!] as const)
     })
 
     const allVeins = createMemo(() => combineAllVeins(props.galaxy.stars))
@@ -125,18 +143,16 @@ const GalaxyOverview: Component<{ galaxy: Galaxy; search: string }> = (
                         </span>
                     </div>
                 </div>
-                <Show when={Object.keys(starTypeCounts()).length > 0}>
+                <Show when={starTypeCounts().length > 0}>
                     <div class={styles.card}>
                         <div class={styles.title}>
                             <span>{t`Star types`}</span>
                         </div>
-                        <For each={Object.keys(starTypeCounts())}>
-                            {(type) => (
+                        <For each={starTypeCounts()}>
+                            {([name, count]) => (
                                 <div class={styles.row}>
-                                    <div class={styles.field}>{type}:</div>
-                                    <div class={styles.value}>
-                                        {starTypeCounts()[type]}
-                                    </div>
+                                    <div class={styles.field}>{name}:</div>
+                                    <div class={styles.value}>{count}</div>
                                 </div>
                             )}
                         </For>

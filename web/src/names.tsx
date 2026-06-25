@@ -120,7 +120,9 @@ export function useConditionTypeNames(): Record<ConditionType, () => string> {
     }
 }
 
-export function useStarTypeFullName(): (star: Star) => string {
+export function useStarTypeFullName(): (
+    star: Pick<Star, "spectr" | "type">,
+) => string {
     const { t } = useLingui()
     return (star) => {
         if (star.type === StarType.GiantStar) {

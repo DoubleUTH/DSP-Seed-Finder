@@ -167,6 +167,7 @@ export class WorldGenNative implements WorldGen {
     }
 
     async createDatabase({
+        name,
         range,
         params,
         concurrency,
@@ -181,6 +182,7 @@ export class WorldGenNative implements WorldGen {
             ws.send(
                 JSON.stringify({
                     type: "Database",
+                    name,
                     concurrency,
                     range,
                     game: params,

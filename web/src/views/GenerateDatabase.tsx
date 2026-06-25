@@ -7,12 +7,13 @@ import HiveInitialColonizeSelector from "../partials/HiveInitialColonizeSelector
 import HiveMaxDensitySelector from "../partials/HiveMaxDensitySelector"
 import ResourceMultiplierSelector from "../partials/ResourceMultiplierSelector"
 import StarCountSelector from "../partials/StarCountSelector"
-import { createStore } from "solid-js/store"
+import { createStore, unwrap } from "solid-js/store"
 import { getDefaultParams } from "../util"
 import ExeUrl from "../../../target/release/dsp_seed.exe?url"
 import Button from "../components/Button"
 import NumberInput from "../components/NumberInput"
 import Input from "../components/Input"
+import { startGeneratingDatabase } from "../worldgen"
 
 const GenerateDatabase: Component = () => {
     const [params, setParams] = createStore(getDefaultParams())
@@ -25,6 +26,24 @@ const GenerateDatabase: Component = () => {
 
     function handleSubmit(ev: Event) {
         ev.preventDefault()
+        startGeneratingDatabase({
+            name: name(),
+            range: [start(), end()],
+            params: unwrap(params),
+            concurrency: concurrency(),
+            onProgress(seed) {
+                console.log(seed)
+            },
+            onInterrupt() {
+                console.log("interrupt")
+            },
+            onComplete() {
+                console.log("complete")
+            },
+            onError(err) {
+                console.error(err)
+            },
+        })
     }
 
     const { t } = useLingui()

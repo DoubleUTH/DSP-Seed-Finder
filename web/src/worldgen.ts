@@ -92,3 +92,8 @@ export function startSearchingGalaxies(
 export function stopSearchingGalaxies(nativeMode: boolean) {
     getWorldGen(nativeMode).stop()
 }
+
+export function startGeneratingDatabase(options: GenerateDatabaseOptions) {
+    const { onError, onComplete, ...rest } = options
+    getWorldGen(true).createDatabase(rest).then(onComplete).catch(onError)
+}

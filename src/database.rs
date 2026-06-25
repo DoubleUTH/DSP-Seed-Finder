@@ -113,13 +113,14 @@ pub fn set_info(conn: &mut Connection, range: &(i32, i32), game: &GameDesc) -> R
         {
             return Ok(false);
         }
+    } else {
+        tx.execute("INSERT INTO info (id, start, end, star_count, resource_multiplier,
+            hive_initial_colonize, hive_max_density, use_actual_veins) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)", params![
+                INFO_ID, range.0, range.1, game.star_count as u32, game.resource_multiplier, game.hive_initial_colonize,
+                game.hive_max_density, if game.use_actual_veins { 1 } else { 0 }
+            ])?;
+        tx.commit()?;
     }
-    tx.execute("INSERT INTO info (id, start, end, star_count, resource_multiplier,
-        hive_initial_colonize, hive_max_density, use_actual_veins) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)", params![
-            INFO_ID, range.0, range.1, game.star_count as u32, game.resource_multiplier, game.hive_initial_colonize,
-            game.hive_max_density, if game.use_actual_veins { 1 } else { 0 }
-        ])?;
-    tx.commit()?;
     Ok(true)
 }
 
@@ -137,7 +138,7 @@ pub fn create_insert_seed_stmt<'a, 'b: 'a>(tx: &'b mut Transaction) -> Result<St
     ")
 }
 
-type VeinAmount = i32;
+type VeinAmount = i64;
 
 pub type SeedParams = (
     i32,
@@ -249,9 +250,9 @@ pub fn get_seed_params(galaxy: &Galaxy, use_actual_veins: bool) -> Vec<SeedParam
                     }
                 } else {
                     for vein in planet.get_estimated_veins() {
-                        let amount = ((vein.min_patch + vein.max_patch)
-                            * (vein.min_group + vein.max_group)
-                            * (vein.min_amount + vein.max_amount)
+                        let amount = ((vein.min_patch + vein.max_patch) as i64
+                            * (vein.min_group + vein.max_group) as i64
+                            * (vein.min_amount + vein.max_amount) as i64
                             / 8) as VeinAmount;
                         match vein.vein_type {
                             VeinType::Iron => iron_ore += amount,
@@ -324,7 +325,7 @@ pub fn get_seed_params(galaxy: &Galaxy, use_actual_veins: bool) -> Vec<SeedParam
         .collect()
 }
 
-pub fn insert_seed(stmt: &mut Statement<'_>, p: Vec<SeedParams>) {
+pub fn insert_seed(stmt: &mut Statement<'_>, p: &Vec<SeedParams>) {
     for (
         p1,
         p2,

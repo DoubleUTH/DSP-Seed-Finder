@@ -285,6 +285,7 @@ declare global {
     }
 
     declare interface GenerateDatabaseOptions {
+        name: string
         range: [integer, integer]
         params: GameParameters
         concurrency: integer
@@ -295,6 +296,7 @@ declare global {
     }
 
     declare interface InternalGenerateDatabaseOptions {
+        name: string
         range: [integer, integer]
         params: GameParameters
         concurrency: integer

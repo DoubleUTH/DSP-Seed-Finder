@@ -12,7 +12,6 @@ use futures_util::{SinkExt, StreamExt};
 use rayon::iter::{ParallelBridge, ParallelExtend, ParallelIterator};
 use rayon::slice::ParallelSlice;
 use rayon::{ThreadPool, ThreadPoolBuilder};
-use rusqlite::{params, Connection};
 use serde::{Deserialize, Serialize};
 use std::cell::Cell;
 use std::sync::Arc;
@@ -77,6 +76,8 @@ struct SetupData {
     pub rule: Arc<Box<dyn Rule + Send + Sync>>,
 }
 
+const DATABASE_CHUNK_SIZE: usize = 100;
+
 fn generate_database(name: String, range: &(i32, i32), game: &GameDesc) -> rusqlite::Result<bool> {
     let mut conn = create_database(name)?;
     if !set_info(&mut conn, range, game)? {
@@ -85,24 +86,33 @@ fn generate_database(name: String, range: &(i32, i32), game: &GameDesc) -> rusql
     let (start, end) = *range;
     let use_actual_veins = game.use_actual_veins;
     let (tx, mut rx) = mpsc::channel::<Vec<SeedParams>>(1000);
-    rayon::spawn(move || {
-        while let Some(msg) = rx.blocking_recv() {
-            let mut trans = conn.transaction().unwrap();
-            {
-                let mut stmt = create_insert_seed_stmt(&mut trans).unwrap();
-                insert_seed(&mut stmt, msg);
+    rayon::scope(|s| {
+        s.spawn(move |_| {
+            let mut buffer = Vec::with_capacity(DATABASE_CHUNK_SIZE);
+            loop {
+                buffer.clear();
+                let count = rx.blocking_recv_many(&mut buffer, DATABASE_CHUNK_SIZE);
+                if count == 0 {
+                    break;
+                }
+                let mut trans = conn.transaction().unwrap();
+                {
+                    let mut stmt = create_insert_seed_stmt(&mut trans).unwrap();
+                    for params in buffer.iter().take(count) {
+                        insert_seed(&mut stmt, params);
+                    }
+                }
+                trans.commit().unwrap();
             }
-            trans.commit().unwrap();
-        }
-    });
-    let _ = (start..end).par_bridge().map_init(
-        move || tx.clone(),
-        |tx, seed| {
+        });
+        let _ = (start..end).par_bridge().for_each(move |seed| {
+            let tx = tx.clone();
             let habitable_count = Cell::new(0_i32);
             let galaxy = create_galaxy(seed, game, &habitable_count);
+            // println!("{}", seed);
             let _ = tx.blocking_send(get_seed_params(&galaxy, use_actual_veins));
-        },
-    );
+        });
+    });
     Ok(true)
 }
 
@@ -148,8 +158,28 @@ async fn handle_message(
                 .num_threads(concurrency)
                 .build()
                 .unwrap();
+            let tx = tx.clone();
             pool.spawn(move || {
-                let conn = create_database(name);
+                let res = generate_database(name, &range, &game);
+                match res {
+                    Ok(_) => {
+                        let resp = serde_json::to_string(&&OutgoingMessage::Database {
+                            success: true,
+                            progress: range.1,
+                        })
+                        .unwrap();
+                        let _ = tx.blocking_send(Message::Text(resp.into()));
+                    }
+                    Err(err) => {
+                        eprintln!("{}", err);
+                        let resp = serde_json::to_string(&&OutgoingMessage::Database {
+                            success: false,
+                            progress: 0,
+                        })
+                        .unwrap();
+                        let _ = tx.blocking_send(Message::Text(resp.into()));
+                    }
+                };
             });
         }
     }

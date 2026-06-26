@@ -10,28 +10,22 @@ use crate::data::vector3::Vector3;
 use std::cell::Cell;
 use std::rc::Rc;
 
-fn generate_temp_poses(
-    seed: i32,
-    target_count: usize,
-    iter_count: usize,
-    min_dist: f64,
-    min_step_len: f64,
-    max_step_len: f64,
-    flatten: f64,
-) -> Vec<Vector3> {
-    let mut tmp_poses: Vec<Vector3> = vec![];
-    let actual_iter_count = iter_count.clamp(1, 16);
-    random_poses(
-        &mut tmp_poses,
-        seed,
-        target_count * actual_iter_count,
-        min_dist,
-        max_step_len - min_step_len,
-        flatten,
-    );
+const ITER_COUNT: usize = 4;
+const MIN_DIST: f64 = 2.0;
+const MIN_DIST_SQ: f64 = MIN_DIST * MIN_DIST;
+const STEP_DIFF: f64 = 3.5 - 2.3;
+const FLATTEN: f64 = 0.18;
+const MIN_DRUNK_NUM: i32 = 6;
+const MAX_DRUNK_NUM: i32 = 8;
+const DRUNK_NUM_RANGE: f64 = (MAX_DRUNK_NUM - MIN_DRUNK_NUM) as f64;
+
+fn generate_temp_poses(seed: i32, target_count: usize) -> Vec<Vector3> {
+    let max_count = target_count * ITER_COUNT;
+    let mut tmp_poses = Vec::with_capacity(max_count);
+    random_poses(&mut tmp_poses, seed, max_count);
 
     for index in (0..tmp_poses.len()).rev() {
-        if index % iter_count != 0 {
+        if index % ITER_COUNT != 0 {
             tmp_poses.remove(index);
         }
         if tmp_poses.len() <= target_count {
@@ -42,35 +36,25 @@ fn generate_temp_poses(
     tmp_poses
 }
 
-fn random_poses(
-    tmp_poses: &mut Vec<Vector3>,
-    seed: i32,
-    max_count: usize,
-    min_dist: f64,
-    step_diff: f64,
-    flatten: f64,
-) {
+fn random_poses(tmp_poses: &mut Vec<Vector3>, seed: i32, max_count: usize) {
     let mut rand = DspRandom::new(seed);
     let r1 = rand.next_f64();
-    let mut tmp_drunk: Vec<Vector3> = vec![];
+    let mut tmp_drunk: Vec<Vector3> = Vec::with_capacity(max_count);
     tmp_poses.push(Vector3::zero());
-    let min_drunk_num = 6;
-    let max_drunk_num = 8;
-    let drunk_num_range = (max_drunk_num - min_drunk_num) as f64;
-    let drunk_num = (r1 * drunk_num_range + (min_drunk_num as f64)) as i32;
+    let drunk_num = (r1 * DRUNK_NUM_RANGE + (MIN_DRUNK_NUM as f64)) as i32;
     for _ in 0..drunk_num {
         for _ in 0..256 {
             let u = rand.next_f64() * 2.0 - 1.0;
-            let w = (rand.next_f64() * 2.0 - 1.0) * flatten;
+            let w = (rand.next_f64() * 2.0 - 1.0) * FLATTEN;
             let v = rand.next_f64() * 2.0 - 1.0;
             let r2 = rand.next_f64();
             let d = u * u + w * w + v * v;
             if d <= 1.0 && d >= 1e-8 {
                 let distance = d.sqrt();
-                let step_len_mult = (r2 * step_diff + min_dist) / distance;
+                let step_len_mult = (r2 * STEP_DIFF + MIN_DIST) / distance;
                 let pt = Vector3(u * step_len_mult, w * step_len_mult, v * step_len_mult);
-                if !check_collision(tmp_poses, &pt, min_dist) {
-                    tmp_drunk.push(pt.clone());
+                if !check_collision(tmp_poses, &pt) {
+                    tmp_drunk.push(pt);
                     tmp_poses.push(pt);
                     if tmp_poses.len() >= max_count {
                         return;
@@ -85,20 +69,20 @@ fn random_poses(
             if rand.next_f64() <= 0.7 {
                 for _ in 0..256 {
                     let u = rand.next_f64() * 2.0 - 1.0;
-                    let w = (rand.next_f64() * 2.0 - 1.0) * flatten;
+                    let w = (rand.next_f64() * 2.0 - 1.0) * FLATTEN;
                     let v = rand.next_f64() * 2.0 - 1.0;
                     let r3 = rand.next_f64();
                     let d = u * u + w * w + v * v;
                     if d <= 1.0 && d >= 1e-8 {
                         let distance = d.sqrt();
-                        let step_len_mult = (r3 * step_diff + min_dist) / distance;
+                        let step_len_mult = (r3 * STEP_DIFF + MIN_DIST) / distance;
                         let new_pt = Vector3(
                             pt.0 + u * step_len_mult,
                             pt.1 + w * step_len_mult,
                             pt.2 + v * step_len_mult,
                         );
-                        if !check_collision(tmp_poses, &new_pt, min_dist) {
-                            *pt = new_pt.clone();
+                        if !check_collision(tmp_poses, &new_pt) {
+                            *pt = new_pt;
                             tmp_poses.push(new_pt);
                             if tmp_poses.len() >= max_count {
                                 return;
@@ -112,11 +96,10 @@ fn random_poses(
     }
 }
 
-fn check_collision(tmp_poses: &Vec<Vector3>, pt: &Vector3, min_dist: f64) -> bool {
-    let min_dist_sq = min_dist * min_dist;
+fn check_collision(tmp_poses: &Vec<Vector3>, pt: &Vector3) -> bool {
     tmp_poses
         .iter()
-        .any(|pt1| pt1.distance_sq_from(pt) < min_dist_sq)
+        .any(|pt1| pt1.distance_sq_from(pt) < MIN_DIST_SQ)
 }
 
 fn generate_stars<'a>(
@@ -125,15 +108,7 @@ fn generate_stars<'a>(
     habitable_count: &'a Cell<i32>,
 ) -> Vec<StarWithPlanets<'a>> {
     let mut rand = DspRandom::new(seed);
-    let tmp_poses = generate_temp_poses(
-        rand.next_seed(),
-        game_desc.star_count,
-        4,
-        2.0,
-        2.3,
-        3.5,
-        0.18,
-    );
+    let tmp_poses = generate_temp_poses(rand.next_seed(), game_desc.star_count);
     let star_count = tmp_poses.len();
 
     let r1 = rand.next_f32();
@@ -151,7 +126,7 @@ fn generate_stars<'a>(
     let giant_group_num = (white_dwarf_start - 1) / giant_star_num;
     let giant_offset = giant_group_num / 2;
 
-    let mut stars: Vec<StarWithPlanets> = vec![];
+    let mut stars: Vec<StarWithPlanets> = Vec::with_capacity(star_count);
 
     for (index, position) in tmp_poses.into_iter().enumerate() {
         let seed = rand.next_seed();
@@ -210,7 +185,7 @@ pub fn create_galaxy<'a>(
     habitable_count: &'a Cell<i32>,
 ) -> Galaxy<'a> {
     let mut stars = generate_stars(seed, game_desc, habitable_count);
-    let mut names: Vec<&str> = vec![];
+    let mut names: Vec<&str> = Vec::with_capacity(game_desc.star_count);
 
     for sp in stars.iter_mut() {
         let name = random_name(sp.star.name_seed, &sp.star, names.iter());

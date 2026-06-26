@@ -1,5 +1,4 @@
 use std::cell::{Cell, UnsafeCell};
-use std::collections::HashMap;
 use std::rc::Rc;
 
 use crate::data::game_desc::GameDesc;
@@ -20,6 +19,8 @@ where
     unsafe { &*planets.get() }.serialize(serializer)
 }
 
+const MAX_VEIN_COUNT: usize = VeinType::Max as usize;
+
 #[derive(Debug, Serialize)]
 pub struct StarWithPlanets<'a> {
     pub name: String,
@@ -31,9 +32,9 @@ pub struct StarWithPlanets<'a> {
     #[serde(skip)]
     safe: UnsafeCell<bool>,
     #[serde(skip)]
-    avg_veins: UnsafeCell<HashMap<VeinType, f32>>,
+    avg_veins: UnsafeCell<[f32; MAX_VEIN_COUNT]>,
     #[serde(skip)]
-    actual_veins: UnsafeCell<HashMap<VeinType, f32>>,
+    actual_veins: UnsafeCell<[f32; MAX_VEIN_COUNT]>,
     #[serde(skip)]
     game_desc: &'a GameDesc,
     #[serde(skip)]
@@ -48,10 +49,10 @@ impl<'a> StarWithPlanets<'a> {
     ) -> Self {
         Self {
             star,
-            planets: UnsafeCell::new(vec![]),
+            planets: UnsafeCell::new(Vec::with_capacity(6)),
             safe: UnsafeCell::new(false),
-            avg_veins: UnsafeCell::new(HashMap::new()),
-            actual_veins: UnsafeCell::new(HashMap::new()),
+            avg_veins: UnsafeCell::new([f32::NAN; MAX_VEIN_COUNT]),
+            actual_veins: UnsafeCell::new([f32::NAN; MAX_VEIN_COUNT]),
             name: Default::default(),
             game_desc,
             habitable_count,
@@ -83,9 +84,13 @@ impl<'a> StarWithPlanets<'a> {
         {
             return 0.0;
         }
-        let map = unsafe { &mut *self.avg_veins.get() };
-        if let Some(val) = map.get(vein_type) {
-            return *val;
+        let index = *vein_type as usize;
+        let cached_value = unsafe {
+            let arr = &mut *self.avg_veins.get();
+            arr.get_unchecked_mut(index)
+        };
+        if !cached_value.is_nan() {
+            return *cached_value;
         }
         let mut count = 0_f32;
         for planet in self.get_planets() {
@@ -110,7 +115,7 @@ impl<'a> StarWithPlanets<'a> {
                 }
             }
         }
-        map.insert(vein_type.clone(), count);
+        *cached_value = count;
         self.mark_safe();
         count
     }
@@ -122,9 +127,13 @@ impl<'a> StarWithPlanets<'a> {
         {
             return 0.0;
         }
-        let map = unsafe { &mut *self.actual_veins.get() };
-        if let Some(val) = map.get(vein_type) {
-            return *val;
+        let index = *vein_type as usize;
+        let cached_value = unsafe {
+            let arr = &mut *self.actual_veins.get();
+            arr.get_unchecked_mut(index)
+        };
+        if !cached_value.is_nan() {
+            return *cached_value;
         }
         let mut count = 0;
         for planet in self.get_planets() {
@@ -137,7 +146,7 @@ impl<'a> StarWithPlanets<'a> {
                 }
             }
         }
-        map.insert(vein_type.clone(), count as f32);
+        *cached_value = count as f32;
         self.mark_safe();
         count as f32
     }
@@ -348,7 +357,7 @@ impl<'a> StarWithPlanets<'a> {
             let mut satellite_count = 0;
             let mut orbit_around: Option<usize> = None;
             let mut num10: usize = 1;
-            let mut orbits: Vec<(usize, usize)> = vec![];
+            let mut orbits: Vec<(usize, usize)> = Vec::with_capacity(4);
             for index in 0..planet_count as usize {
                 let info_seed = rand2.next_seed();
                 let gen_seed = rand2.next_seed();

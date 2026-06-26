@@ -36,7 +36,7 @@ pub trait Rule {
     }
 
     fn evaluate(&self, galaxy: &Galaxy, evaluation: &Evaluaton) -> Vec<usize> {
-        vec![]
+        Vec::with_capacity(0)
     }
 }
 

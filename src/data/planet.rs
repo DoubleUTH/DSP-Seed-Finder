@@ -15,7 +15,6 @@ use serde::ser::{Serialize, SerializeStruct, Serializer};
 use std::cell::{Cell, OnceCell, RefCell};
 use std::f64::consts::PI;
 use std::rc::Rc;
-use std::vec;
 
 #[derive(Debug)]
 pub struct Planet<'a> {
@@ -500,10 +499,10 @@ impl<'a> Planet<'a> {
     }
     pub fn get_gases(&self) -> &Vec<(i32, f32)> {
         self.gases.get_or_init(|| {
-            let mut gases: Vec<(i32, f32)> = vec![];
             if !self.is_gas_giant() {
-                return gases;
+                return Vec::with_capacity(0);
             }
+            let mut gases: Vec<(i32, f32)> = Vec::with_capacity(2);
             let gas_coef = self.game_desc.gas_coef();
             let mut rand = DspRandom::new(self.theme_seed);
             let theme_proto = self.get_theme();
@@ -536,10 +535,10 @@ impl<'a> Planet<'a> {
 
     pub fn get_estimated_veins(&self) -> &Vec<EstimatedVein> {
         self.estimated_veins.get_or_init(|| {
-            let mut output: Vec<EstimatedVein> = vec![];
             if self.is_gas_giant() {
-                return output;
+                return Vec::with_capacity(0);
             }
+            let mut output: Vec<EstimatedVein> = Vec::with_capacity(14);
             let mut rand1 = DspRandom::new(self.seed);
             rand1.next_f64();
             rand1.next_f64();
@@ -621,7 +620,7 @@ impl<'a> Planet<'a> {
                 f *= 0.7;
             }
             for (index1, rare_vein_ref) in theme_proto.rare_veins.iter().enumerate() {
-                let rare_vein = rare_vein_ref.clone() as usize;
+                let rare_vein = *rare_vein_ref as usize;
                 let num2 = theme_proto.rare_settings
                     [index1 * 4 + (if self.star.is_birth() { 0 } else { 1 })];
                 let rare_setting_1 = theme_proto.rare_settings[index1 * 4 + 2];
@@ -845,7 +844,7 @@ impl<'a> Planet<'a> {
     pub fn get_actual_veins(&self) -> &Vec<ActualVein> {
         self.actual_veins.get_or_init(|| {
             if self.gas_giant {
-                return vec![];
+                return Vec::with_capacity(0);
             }
 
             let theme = self.get_theme();
@@ -917,7 +916,7 @@ impl<'a> Planet<'a> {
             };
 
             for (index1, rare_vein_ref) in theme.rare_veins.iter().enumerate() {
-                let rare_vein = rare_vein_ref.clone() as usize;
+                let rare_vein = *rare_vein_ref as usize;
                 let rare_vein_chance =
                     theme.rare_settings[index1 * 4 + (if self.star.is_birth() { 0 } else { 1 })];
                 let rare_setting_1 = theme.rare_settings[index1 * 4 + 2];

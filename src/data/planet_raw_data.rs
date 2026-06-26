@@ -68,7 +68,7 @@ impl PlanetRawData {
 
     #[inline]
     pub fn query_height(&mut self, vpos: &VectorF3) -> f32 {
-        let mut vpos = vpos.clone();
+        let mut vpos = *vpos;
         vpos.normalize();
         self.query_height_normalized(&vpos)
     }

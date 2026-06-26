@@ -143,7 +143,7 @@ async fn accept_connection(stream: TcpStream) -> Result<(), tokio_tungstenite::t
                 }
                 let tx = tx.clone();
                 let setup = current_setup.as_ref().unwrap();
-                let game = setup.game.clone();
+                let game = setup.game;
                 let rule = Arc::clone(&setup.rule);
                 setup.pool.spawn(move || {
                     let mut result = bytes[..4].to_vec();

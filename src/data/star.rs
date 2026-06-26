@@ -3,13 +3,12 @@ use super::game_desc::GameDesc;
 use super::random::DspRandom;
 use super::vector3::Vector3;
 use serde::ser::{Serialize, SerializeStruct, Serializer};
-use std::cell::{Cell, OnceCell, RefCell};
+use std::cell::{OnceCell, RefCell};
 use std::f64::consts::PI;
 
 #[derive(Debug)]
 pub struct Star<'a> {
     pub game_desc: &'a GameDesc,
-    pub habitable_count: &'a Cell<i32>,
     pub used_theme_ids: RefCell<Vec<i32>>,
     pub index: usize,
     pub name_seed: i32,
@@ -49,7 +48,6 @@ pub struct Star<'a> {
 impl<'a> Star<'a> {
     pub fn new(
         game_desc: &'a GameDesc,
-        habitable_count: &'a Cell<i32>,
         index: usize,
         seed: i32,
         position: Vector3,
@@ -91,7 +89,6 @@ impl<'a> Star<'a> {
 
         Self {
             game_desc,
-            habitable_count,
             used_theme_ids: RefCell::new(vec![]),
             index,
             name_seed,

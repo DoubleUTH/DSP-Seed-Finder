@@ -1,5 +1,4 @@
-use crate::data::birth_points::gen_birth_points;
-use crate::data::planet_raw_data::get_raw_data;
+use crate::data::birth_points::BirthPoints;
 use crate::data::planet_raw_data::PlanetRawData;
 use crate::data::vector_f2::VectorF2;
 
@@ -12,7 +11,7 @@ use super::theme_proto::{ThemeProto, THEME_PROTOS};
 use super::vector_f3::VectorF3;
 use super::vein::{ActualVein, EstimatedVein};
 use serde::ser::{Serialize, SerializeStruct, Serializer};
-use std::cell::{OnceCell, RefCell};
+use std::cell::{Cell, OnceCell, RefCell};
 use std::f64::consts::PI;
 use std::rc::Rc;
 use std::vec;
@@ -21,6 +20,7 @@ use std::vec;
 pub struct Planet<'a> {
     pub star: Rc<Star<'a>>,
     pub index: usize,
+    habitable_count: &'a Cell<i32>,
     pub seed: i32,
     pub theme_seed: i32,
     pub orbit_around: RefCell<Option<&'a Planet<'a>>>,
@@ -64,6 +64,7 @@ impl<'a> Planet<'a> {
     pub fn new(
         star: Rc<Star<'a>>,
         index: usize,
+        habitable_count: &'a Cell<i32>,
         orbit_index: usize,
         gas_giant: bool,
         info_seed: i32,
@@ -102,6 +103,7 @@ impl<'a> Planet<'a> {
         Self {
             star,
             index,
+            habitable_count,
             seed: gen_seed,
             theme_seed,
             orbit_around: RefCell::new(None),
@@ -232,9 +234,7 @@ impl<'a> Planet<'a> {
     }
 
     fn increment_habitable_count(&self) {
-        self.star
-            .habitable_count
-            .set(self.star.habitable_count.get() + 1);
+        self.habitable_count.set(self.habitable_count.get() + 1);
     }
 
     fn get_unmodified_planet_type(&self) -> PlanetType {
@@ -248,7 +248,7 @@ impl<'a> Planet<'a> {
             if !self.star.is_birth() {
                 let star_count = self.star.game_desc.star_count;
                 let num18 = ((star_count as f32) * 0.29).ceil().max(11.0);
-                let num19 = (num18 as f64) - (self.star.habitable_count.get() as f64);
+                let num19 = (num18 as f64) - (self.habitable_count.get() as f64);
                 let num20 = (star_count - self.star.index) as f32;
                 let num23 = num20 as f64;
                 let a = (num19 / num23) as f32;
@@ -791,7 +791,7 @@ impl<'a> Planet<'a> {
         algo_id: i32,
         vein_type: &VeinType,
         zero: &VectorF3,
-        raw_data: &PlanetRawData,
+        raw_data: &mut PlanetRawData,
     ) -> bool {
         if algo_id == 7 && vein_type != &VeinType::Bamboo {
             return true;
@@ -947,12 +947,12 @@ impl<'a> Planet<'a> {
             }
             let mut vein_vectors: Vec<(VeinType, VectorF3, bool)> = Vec::with_capacity(512);
             // Fetch PlanetRawData once and thread it through all query_height calls
-            let raw_data = get_raw_data(&self);
+            let mut raw_data = PlanetRawData::new(&self);
 
             let birth_point = if is_birth_planet {
                 let star_direction = self.get_star_direction();
                 let birth_point_data =
-                    gen_birth_points(&raw_data, birth_seed, self.radius, star_direction);
+                    BirthPoints::new(&mut raw_data, birth_seed, self.radius, star_direction);
                 vein_vectors.push((VeinType::Iron, birth_point_data.birth_resource_point0, true));
                 vein_vectors.push((
                     VeinType::Copper,
@@ -1005,7 +1005,7 @@ impl<'a> Planet<'a> {
                             zero += birth_point;
                         }
                         zero.normalize();
-                        if self.can_place_vein(algo_id, &vein_type, &zero, &raw_data) {
+                        if self.can_place_vein(algo_id, &vein_type, &zero, &mut raw_data) {
                             let not_too_close_to_other_vein =
                                 vein_vectors.iter().all(|(_, pos, _)| {
                                     (pos.distance_sq_from(&zero) as f64) >= min_sq_dist

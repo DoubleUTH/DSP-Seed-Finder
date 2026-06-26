@@ -1,4 +1,4 @@
-use std::cell::UnsafeCell;
+use std::cell::{Cell, UnsafeCell};
 use std::collections::HashMap;
 use std::rc::Rc;
 
@@ -30,11 +30,13 @@ pub struct StarWithPlanets<'a> {
     avg_veins: UnsafeCell<HashMap<VeinType, f32>>,
     #[serde(skip)]
     actual_veins: UnsafeCell<HashMap<VeinType, f32>>,
+    #[serde(skip)]
+    habitable_count: &'a Cell<i32>,
     pub name: String,
 }
 
 impl<'a> StarWithPlanets<'a> {
-    pub fn new(star: Rc<Star<'a>>) -> Self {
+    pub fn new(star: Rc<Star<'a>>, habitable_count: &'a Cell<i32>) -> Self {
         Self {
             star,
             planets: UnsafeCell::new(vec![]),
@@ -42,6 +44,7 @@ impl<'a> StarWithPlanets<'a> {
             avg_veins: UnsafeCell::new(HashMap::new()),
             actual_veins: UnsafeCell::new(HashMap::new()),
             name: Default::default(),
+            habitable_count,
         }
     }
 
@@ -149,6 +152,7 @@ impl<'a> StarWithPlanets<'a> {
             Planet::new(
                 self.star.clone(),
                 index,
+                self.habitable_count,
                 orbit_index,
                 gas_giant,
                 info_seed,
@@ -375,6 +379,7 @@ impl<'a> StarWithPlanets<'a> {
                 let planet = Planet::new(
                     self.star.clone(),
                     index,
+                    self.habitable_count,
                     if orbit_around.is_none() {
                         num10
                     } else {

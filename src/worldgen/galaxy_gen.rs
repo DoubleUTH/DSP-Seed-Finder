@@ -156,15 +156,17 @@ fn generate_stars<'a>(
     for (index, position) in tmp_poses.into_iter().enumerate() {
         let seed = rand.next_seed();
         if index == 0 {
-            stars.push(StarWithPlanets::new(Rc::new(Star::new(
-                game_desc,
+            stars.push(StarWithPlanets::new(
+                Rc::new(Star::new(
+                    game_desc,
+                    0,
+                    seed,
+                    Vector3::zero(),
+                    StarType::MainSeqStar,
+                    &SpectrType::X,
+                )),
                 habitable_count,
-                0,
-                seed,
-                Vector3::zero(),
-                StarType::MainSeqStar,
-                &SpectrType::X,
-            ))));
+            ));
         } else {
             let need_spectr = if index == 3 {
                 SpectrType::M
@@ -184,15 +186,17 @@ fn generate_stars<'a>(
             } else {
                 StarType::MainSeqStar
             };
-            stars.push(StarWithPlanets::new(Rc::new(Star::new(
-                game_desc,
+            stars.push(StarWithPlanets::new(
+                Rc::new(Star::new(
+                    game_desc,
+                    index,
+                    seed,
+                    position,
+                    need_type,
+                    &need_spectr,
+                )),
                 habitable_count,
-                index,
-                seed,
-                position,
-                need_type,
-                &need_spectr,
-            ))));
+            ));
         }
     }
     stars

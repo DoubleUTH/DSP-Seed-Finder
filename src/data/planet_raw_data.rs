@@ -10,22 +10,31 @@ use std::f64::consts::PI;
 pub struct PlanetRawData {
     grid: &'static PlanetGrid,
     algo: Box<dyn PlanetAlgorithm>,
-}
-
-/// Returns a reference to the thread-local `PlanetRawData`, initializing it on first access.
-pub fn get_raw_data(planet: &Planet) -> PlanetRawData {
-    PlanetRawData {
-        grid: get_planet_grid(),
-        algo: create_and_prepare_algo(planet),
-    }
+    cache: Vec<f32>,
 }
 
 impl PlanetRawData {
-    #[inline]
-    pub fn get_height(&self, index: usize) -> f32 {
-        (self.algo.get_height(index) * 100.0) as u16 as f32
+    pub fn new(planet: &Planet) -> Self {
+        Self {
+            grid: get_planet_grid(),
+            algo: create_and_prepare_algo(planet),
+            cache: vec![f32::NAN; DATA_LENGTH],
+        }
     }
-    pub fn query_height_normalized(&self, vpos_normalized: &VectorF3) -> f32 {
+
+    #[inline]
+    fn get_height(&mut self, index: usize) -> f32 {
+        let val = self.cache[index];
+        if val.is_nan() {
+            let h = (self.algo.get_height(index) * 100.0) as u16 as f32;
+            self.cache[index] = h;
+            h
+        } else {
+            val
+        }
+    }
+
+    pub fn query_height_normalized(&mut self, vpos_normalized: &VectorF3) -> f32 {
         let index1 = self.grid.index_map[position_hash(vpos_normalized, 0)];
 
         let num1: f64 = (PI / (PRECISION as f64 * 2.0)) * 1.2_f64;
@@ -57,7 +66,8 @@ impl PlanetRawData {
         }
     }
 
-    pub fn query_height(&self, vpos: &VectorF3) -> f32 {
+    #[inline]
+    pub fn query_height(&mut self, vpos: &VectorF3) -> f32 {
         let mut vpos = vpos.clone();
         vpos.normalize();
         self.query_height_normalized(&vpos)

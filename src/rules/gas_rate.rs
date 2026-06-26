@@ -17,8 +17,8 @@ impl Rule for RuleGasRate {
         &self,
         galaxy: &crate::data::galaxy::Galaxy,
         evaluation: &crate::data::rule::Evaluaton,
-    ) -> Vec<usize> {
-        let mut result: Vec<usize> = vec![];
+    ) -> u64 {
+        let mut result: u64 = 0;
         for (index, sp) in galaxy.stars.iter().take(evaluation.get_len()).enumerate() {
             let is_safe = sp.is_safe();
             if evaluation.is_known(index) {
@@ -43,7 +43,7 @@ impl Rule for RuleGasRate {
             }
             sp.mark_safe();
             if self.condition.eval(total) {
-                result.push(index);
+                result |= 1 << index;
             }
         }
         result

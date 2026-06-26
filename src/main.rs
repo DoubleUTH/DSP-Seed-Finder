@@ -61,7 +61,7 @@ enum IncomingMessage {
 enum OutgoingMessage<'a> {
     Generate { galaxy: Galaxy<'a> },
     Setup { success: bool },
-    SearchStar { indexes: Vec<usize> },
+    SearchStar { indexes: Vec<u8> },
 }
 
 struct SetupData {
@@ -99,7 +99,9 @@ async fn handle_message(msg: IncomingMessage, current_setup: &mut Option<SetupDa
                 let transformed_rule = transform_rules(rule);
                 let star_indexes = find_stars(seed, &game, &transformed_rule);
                 serde_json::to_string(&OutgoingMessage::SearchStar {
-                    indexes: star_indexes,
+                    indexes: (0..64)
+                        .filter(|&i| (star_indexes & (1_u64 << i)) != 0)
+                        .collect(),
                 })
                 .unwrap()
             })
@@ -154,7 +156,7 @@ async fn accept_connection(stream: TcpStream) -> Result<(), tokio_tungstenite::t
                             let array: [u8; 4] = (*chunk).try_into().unwrap();
                             let seed = i32::from_ne_bytes(array);
                             let star_indexes = find_stars(seed, &game, &rule);
-                            !star_indexes.is_empty()
+                            star_indexes != 0
                         })
                         .flatten()
                         .copied();

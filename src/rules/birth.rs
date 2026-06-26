@@ -9,11 +9,7 @@ impl Rule for RuleBirth {
     fn get_priority(&self) -> i32 {
         10
     }
-    fn evaluate(
-        &self,
-        _: &crate::data::galaxy::Galaxy,
-        _: &crate::data::rule::Evaluaton,
-    ) -> Vec<usize> {
-        vec![0]
+    fn evaluate(&self, _: &crate::data::galaxy::Galaxy, _: &crate::data::rule::Evaluaton) -> u64 {
+        1
     }
 }

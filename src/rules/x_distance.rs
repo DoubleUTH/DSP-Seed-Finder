@@ -20,8 +20,8 @@ impl Rule for RuleXDistance {
         &self,
         galaxy: &crate::data::galaxy::Galaxy,
         evaluation: &crate::data::rule::Evaluaton,
-    ) -> Vec<usize> {
-        let mut result: Vec<usize> = vec![];
+    ) -> u64 {
+        let mut result: u64 = 0;
         let x_stars: Vec<&Vector3> = galaxy
             .stars
             .iter()
@@ -46,14 +46,14 @@ impl Rule for RuleXDistance {
                     .iter()
                     .all(|p| self.condition.eval(star.position.distance_from(p) as f32))
                 {
-                    result.push(index)
+                    result |= 1 << index;
                 }
             } else {
                 if x_stars
                     .iter()
                     .any(|p| self.condition.eval(star.position.distance_from(p) as f32))
                 {
-                    result.push(index)
+                    result |= 1 << index;
                 }
             }
         }

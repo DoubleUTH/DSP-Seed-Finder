@@ -13,12 +13,13 @@ impl Rule for RuleComposite {
         &self,
         galaxy: &crate::data::galaxy::Galaxy,
         evaluation: &crate::data::rule::Evaluaton,
-    ) -> Vec<usize> {
+    ) -> u64 {
         let result = self.rule.evaluate(galaxy, evaluation);
-        if self.condition.eval(result.len() as f32) {
-            return vec![0];
+        if self.condition.eval(result.count_ones() as f32) {
+            1
+        } else {
+            0
         }
-        vec![]
     }
 }
 
@@ -38,14 +39,14 @@ impl Rule for RuleCompositeAnd {
         &self,
         galaxy: &crate::data::galaxy::Galaxy,
         evaluation: &crate::data::rule::Evaluaton,
-    ) -> Vec<usize> {
+    ) -> u64 {
         for rule in &self.rules {
             let result = rule.evaluate(galaxy, evaluation);
-            if result.is_empty() {
-                return result;
+            if result == 0 {
+                return 0;
             }
         }
-        vec![0]
+        1
     }
 }
 
@@ -65,13 +66,13 @@ impl Rule for RuleCompositeOr {
         &self,
         galaxy: &crate::data::galaxy::Galaxy,
         evaluation: &crate::data::rule::Evaluaton,
-    ) -> Vec<usize> {
+    ) -> u64 {
         for rule in &self.rules {
             let result = rule.evaluate(galaxy, evaluation);
-            if !result.is_empty() {
-                return result;
+            if result != 0 {
+                return 1;
             }
         }
-        vec![]
+        0
     }
 }

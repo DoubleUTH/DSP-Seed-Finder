@@ -16,11 +16,11 @@ impl Rule for RuleAnd {
         &self,
         galaxy: &crate::data::galaxy::Galaxy,
         evaluation: &crate::data::rule::Evaluaton,
-    ) -> Vec<usize> {
-        let mut e = evaluation.clone();
+    ) -> u64 {
+        let mut e = *evaluation;
         for rule in &self.rules {
             let result = rule.evaluate(galaxy, &e);
-            e.reject_others(&result);
+            e.reject_others(result);
             if e.is_done() {
                 return e.collect_unknown();
             }

@@ -204,11 +204,7 @@ pub fn create_galaxy<'a>(
     Galaxy { seed, stars }
 }
 
-pub fn find_stars(
-    seed: i32,
-    game_desc: &GameDesc,
-    rule: &Box<dyn Rule + Send + Sync>,
-) -> Vec<usize> {
+pub fn find_stars(seed: i32, game_desc: &GameDesc, rule: &Box<dyn Rule + Send + Sync>) -> u64 {
     let habitable_count = Cell::new(0_i32);
     let galaxy = Galaxy {
         seed,
@@ -217,6 +213,5 @@ pub fn find_stars(
 
     let evaluation = Evaluaton::new(game_desc.star_count);
     let result = rule.evaluate(&galaxy, &evaluation);
-
     result
 }

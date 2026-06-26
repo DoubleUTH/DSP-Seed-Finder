@@ -23,8 +23,8 @@ impl Rule for RuleAverageVeinAmount {
         &self,
         galaxy: &crate::data::galaxy::Galaxy,
         evaluation: &crate::data::rule::Evaluaton,
-    ) -> Vec<usize> {
-        let mut result: Vec<usize> = vec![];
+    ) -> u64 {
+        let mut result: u64 = 0;
         for (index, sp) in galaxy.stars.iter().take(evaluation.get_len()).enumerate() {
             if evaluation.is_known(index) {
                 if !sp.is_safe() {
@@ -38,7 +38,7 @@ impl Rule for RuleAverageVeinAmount {
                 sp.get_avg_vein(&self.vein)
             };
             if self.condition.eval(count) {
-                result.push(index);
+                result |= 1 << index;
             }
         }
         result

@@ -40,7 +40,10 @@ pub fn searchStar(
     let rule = serde_wasm_bindgen::from_value(rule).unwrap();
     let transformed = transform_rules::transform_rules(rule);
     let star_indexes = find_stars(seed, &game_desc, &transformed);
-    serde_wasm_bindgen::to_value(&star_indexes)
+    let indexes: Vec<u8> = (0..64)
+        .filter(|&i| (star_indexes & (1_u64 << i)) != 0)
+        .collect();
+    serde_wasm_bindgen::to_value(&indexes)
 }
 
 #[wasm_bindgen]
@@ -55,7 +58,7 @@ pub fn findStars(gameDesc: JsValue, rule: JsValue, seeds: JsValue) {
             let mut results: Vec<i32> = vec![];
             for seed in seeds {
                 let star_indexes = find_stars(seed, &game_desc, &transformed);
-                if !star_indexes.is_empty() {
+                if star_indexes != 0 {
                     results.push(seed);
                 }
             }

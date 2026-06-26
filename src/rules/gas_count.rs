@@ -22,8 +22,8 @@ impl Rule for RuleGasCount {
         &self,
         galaxy: &crate::data::galaxy::Galaxy,
         evaluation: &crate::data::rule::Evaluaton,
-    ) -> Vec<usize> {
-        let mut result: Vec<usize> = vec![];
+    ) -> u64 {
+        let mut result: u64 = 0;
         if let Some(ice) = self.ice {
             for (index, sp) in galaxy.stars.iter().take(evaluation.get_len()).enumerate() {
                 let is_safe = sp.is_safe();
@@ -48,7 +48,7 @@ impl Rule for RuleGasCount {
                 }
                 sp.mark_safe();
                 if self.condition.eval(count as f32) {
-                    result.push(index);
+                    result |= 1 << index;
                 }
             }
         } else {
@@ -62,7 +62,7 @@ impl Rule for RuleGasCount {
                     .filter(|planet| planet.is_gas_giant())
                     .count();
                 if self.condition.eval(targets as f32) {
-                    result.push(index)
+                    result |= 1 << index;
                 }
             }
         }

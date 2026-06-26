@@ -21,8 +21,8 @@ impl Rule for RuleSpectrDistance {
         &self,
         galaxy: &crate::data::galaxy::Galaxy,
         evaluation: &crate::data::rule::Evaluaton,
-    ) -> Vec<usize> {
-        let mut result: Vec<usize> = vec![];
+    ) -> u64 {
+        let mut result: u64 = 0;
         let good_stars: Vec<&StarWithPlanets> = galaxy
             .stars
             .iter()
@@ -48,7 +48,7 @@ impl Rule for RuleSpectrDistance {
                 })
                 .count();
             if self.count_condition.eval(count as f32) {
-                result.push(index)
+                result |= 1 << index;
             }
         }
         result

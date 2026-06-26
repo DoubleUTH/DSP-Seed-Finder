@@ -1,7 +1,8 @@
 import { TinyEmitter } from "tiny-emitter"
-import init, { generate, findStars } from "worldgen-wasm"
+import init, { generate, findStars, searchStar } from "worldgen-wasm"
 
 const TYPE_GENERATE = "generate"
+const TYPE_SEARCH_STAR = "search_star"
 const TYPE_FIND = "find"
 const TYPE_NEXT = "next"
 
@@ -45,6 +46,33 @@ self.onmessage = (ev) => {
                 useActualVeins,
             })
             self.postMessage({ type: TYPE_GENERATE, data: result })
+        })
+    } else if (type === TYPE_SEARCH_STAR) {
+        const {
+            seed,
+            gameDesc: {
+                resourceMultiplier = 1,
+                starCount = 64,
+                hiveInitialColonize = 1,
+                hiveMaxDensity = 1,
+                useActualVeins = true,
+            },
+            rule,
+        } = input
+
+        initPromise.then(() => {
+            const result = searchStar(
+                seed,
+                {
+                    starCount,
+                    resourceMultiplier,
+                    hiveInitialColonize,
+                    hiveMaxDensity,
+                    useActualVeins,
+                },
+                rule,
+            )
+            self.postMessage({ type: TYPE_SEARCH_STAR, data: result })
         })
     } else if (type === TYPE_FIND) {
         const {

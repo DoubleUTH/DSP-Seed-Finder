@@ -3,18 +3,21 @@ import { A, useNavigate, useParams, useSearchParams } from "@solidjs/router"
 import {
     Component,
     For,
+    Match,
     Show,
+    Switch,
     createMemo,
     createResource,
     createSignal,
 } from "solid-js"
 import NumberInput from "../components/NumberInput"
 import Button from "../components/Button"
-import { generateGalaxy } from "../worldgen"
+import { generateGalaxy, searchStar } from "../worldgen"
 import { useStore } from "../store"
 import clsx from "clsx"
 import StarView from "../partials/StarView"
 import {
+    constructRule,
     defaultHiveInitialColonize,
     defaultHiveMaxDensity,
     defaultResourceMultiplier,
@@ -26,6 +29,7 @@ import {
     maxStarCount,
     minStarCount,
     resourceMultipliers,
+    validateRules,
 } from "../util"
 import StarCountSelector from "../partials/StarCountSelector"
 import ResourceMultiplierSelector from "../partials/ResourceMultiplierSelector"
@@ -36,6 +40,8 @@ import ExportModal from "../partials/ExportModal"
 import Tooltip from "../components/Tooltip"
 import Toggle from "../components/Toggle"
 import GalaxyOverview from "../partials/GalaxyOverview"
+import RuleEditor from "../partials/RuleEditor"
+import { getInitialStarSearchRules, setStarSearchRules } from "../localStorage"
 
 function randomSeed() {
     return Math.floor(Math.random() * 1e8)
@@ -134,7 +140,65 @@ const Search: Component = () => {
     )
 }
 
-const View: Component<{ seed: number; index?: number }> = (props) => {
+const StarSearch: Component<{
+    seed: number
+    params: GameParameters
+    galaxy: Galaxy
+    searchString: string
+    rules: SimpleRule[][]
+    onChangeRules: (value: SimpleRule[][]) => void
+    results: integer[]
+    onChangeResults: (value: integer[]) => void
+}> = (props) => {
+    const isRuleValid = createMemo(() => validateRules(props.rules))
+    const { t } = useLingui()
+
+    async function search() {
+        props.onChangeResults(
+            await searchStar(
+                false,
+                props.seed,
+                props.params,
+                constructRule(props.rules),
+            ),
+        )
+    }
+
+    function buildUrl(index: integer) {
+        return `/galaxy/${props.seed}/${index}${props.searchString}`
+    }
+
+    return (
+        <div class={styles.starSearch}>
+            <div
+                class={styles.starSearchTitle}
+            >{t`Find stars matching the following criteria in seed ${props.seed}.`}</div>
+            <RuleEditor
+                value={props.rules}
+                onChange={(value) => props.onChangeRules(value)}
+            />
+            <Button
+                class={styles.starSearchButton}
+                disabled={!isRuleValid()}
+                onClick={search}
+            >{t`Search`}</Button>
+            <div class={styles.results}>
+                <For each={props.results}>
+                    {(index) => (
+                        <A href={buildUrl(index)} class={styles.result}>
+                            <span>{props.galaxy.stars[index]?.name}</span>
+                            <span class={styles.resultIndex}>#{index + 1}</span>
+                        </A>
+                    )}
+                </For>
+            </div>
+        </div>
+    )
+}
+
+const View: Component<{ seed: number; index?: number; isSearch: boolean }> = (
+    props,
+) => {
     const [searchParams] = useSearchParams()
     const [exportModal, setExportModal] = createSignal(false)
 
@@ -194,21 +258,8 @@ const View: Component<{ seed: number; index?: number }> = (props) => {
         return defaultUseActualVeins
     })
 
-    const [galaxy] = createResource<Galaxy>(async () => {
-        const config: GameParameters = {
-            starCount: starCount(),
-            resourceMultiplier: resourceMultiplier(),
-            hiveInitialColonize: hiveInitialColonize(),
-            hiveMaxDensity: hiveMaxDensity(),
-            useActualVeins: useActualVeins(),
-        }
-        const galaxy = await generateGalaxy(false, props.seed, config)
-        console.log(galaxy)
-        return galaxy
-    })
-
-    const search = createMemo(() =>
-        getSearch({
+    const params = createMemo(
+        (): GameParameters => ({
             starCount: starCount(),
             resourceMultiplier: resourceMultiplier(),
             hiveInitialColonize: hiveInitialColonize(),
@@ -217,11 +268,26 @@ const View: Component<{ seed: number; index?: number }> = (props) => {
         }),
     )
 
+    const [galaxy] = createResource<Galaxy>(async () => {
+        const galaxy = await generateGalaxy(false, props.seed, params())
+        console.log(galaxy)
+        return galaxy
+    })
+
+    const search = createMemo(() => getSearch(params()))
+
     function buildUrl(starIndex: integer) {
         return `/galaxy/${props.seed}/${starIndex}${search()}`
     }
 
     const { t } = useLingui()
+
+    const [rules, setRules] = createSignal<SimpleRule[][]>(
+        getInitialStarSearchRules(),
+    )
+    const [starSearchResults, setStarSearchResults] = createSignal<integer[]>(
+        [],
+    )
 
     return (
         <Show
@@ -232,12 +298,15 @@ const View: Component<{ seed: number; index?: number }> = (props) => {
                 <div class={styles.left}>
                     <div class={styles.leftButtons}>
                         <A href={`/galaxy/${props.seed}${search()}`}>
-                            <Button class={styles.export}>{t`Starmap`}</Button>
+                            <Button class={styles.button}>{t`Starmap`}</Button>
                         </A>
                         <Button
-                            class={styles.export}
+                            class={styles.button}
                             onClick={() => setExportModal(true)}
                         >{t`Export`}</Button>
+                        <A href={`/galaxy/${props.seed}/search${search()}`}>
+                            <Button class={styles.button}>{t`Search`}</Button>
+                        </A>
                     </div>
                     <div class={styles.starList}>
                         <For each={galaxy()!.stars}>
@@ -260,8 +329,7 @@ const View: Component<{ seed: number; index?: number }> = (props) => {
                     </div>
                 </div>
                 <div class={styles.right}>
-                    <Show
-                        when={props.index !== undefined}
+                    <Switch
                         fallback={
                             <GalaxyOverview
                                 galaxy={galaxy()!}
@@ -269,12 +337,29 @@ const View: Component<{ seed: number; index?: number }> = (props) => {
                             />
                         }
                     >
-                        <StarView
-                            star={galaxy()!.stars[props.index!]!}
-                            galaxy={galaxy()!}
-                            buildUrl={buildUrl}
-                        />
-                    </Show>
+                        <Match when={props.isSearch}>
+                            <StarSearch
+                                seed={props.seed}
+                                params={params()}
+                                galaxy={galaxy()!}
+                                searchString={search()}
+                                rules={rules()}
+                                onChangeRules={(value) => {
+                                    setRules(value)
+                                    setStarSearchRules(value)
+                                }}
+                                results={starSearchResults()}
+                                onChangeResults={setStarSearchResults}
+                            />
+                        </Match>
+                        <Match when={props.index !== undefined}>
+                            <StarView
+                                star={galaxy()!.stars[props.index!]!}
+                                galaxy={galaxy()!}
+                                buildUrl={buildUrl}
+                            />
+                        </Match>
+                    </Switch>
                 </div>
             </div>
             <ExportModal
@@ -284,13 +369,7 @@ const View: Component<{ seed: number; index?: number }> = (props) => {
                 id=""
                 name={String(props.seed)}
                 singleSeed={props.seed}
-                params={{
-                    starCount: starCount(),
-                    resourceMultiplier: resourceMultiplier(),
-                    hiveInitialColonize: hiveInitialColonize(),
-                    hiveMaxDensity: hiveMaxDensity(),
-                    useActualVeins: useActualVeins(),
-                }}
+                params={params()}
             />
         </Show>
     )
@@ -304,10 +383,11 @@ const Galaxy: Component = () => {
             <View
                 seed={Number(params.seed)}
                 index={
-                    params.index !== undefined
+                    params.index !== undefined && params.index !== "search"
                         ? Number(params.index) || 0
                         : undefined
                 }
+                isSearch={params.index === "search"}
             />
         </Show>
     )

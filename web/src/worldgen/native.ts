@@ -109,6 +109,21 @@ export class WorldGenNative implements WorldGen {
         return resp.galaxy
     }
 
+    async searchStar(
+        seed: integer,
+        gameDesc: GameParameters,
+        rule: Rule,
+    ): Promise<integer[]> {
+        const ws = await connect()
+        const resp = await send(ws, {
+            type: "SearchStar",
+            seed: seed,
+            game: gameDesc,
+            rule: rule,
+        })
+        return resp.indexes
+    }
+
     async find({
         batchSize,
         nextBatchId,

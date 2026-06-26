@@ -81,6 +81,41 @@
     flex: 1 1 0;
 }
 
-.export {
+.button {
     margin: 4px 8px;
+}
+
+.starSearch {
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    gap: 8px;
+}
+
+.starSearchTitle {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.starSearchButton {
+    align-self: flex-start;
+}
+
+.results {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px 0;
+}
+
+.result {
+    background-color: rgba(160, 160, 160, 0.1);
+    border-radius: 8px;
+    padding: 8px;
+    display: flex;
+}
+
+.resultIndex {
+    color: #808080;
+    margin-left: 12px;
 }

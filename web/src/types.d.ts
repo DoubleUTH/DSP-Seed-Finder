@@ -286,6 +286,11 @@ declare global {
 
     declare interface WorldGen {
         generate(seed: integer, gameDesc: GameParameters): Promise<Galaxy>
+        searchStar(
+            seed: integer,
+            gameDesc: GameParameters,
+            rule: Rule,
+        ): Promise<integer[]>
         find(options: InternalFindOptions): Promise<void>
         stop(): void
     }

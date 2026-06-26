@@ -30,6 +30,21 @@ pub fn generate(seed: JsValue, gameDesc: JsValue) -> Result<JsValue, serde_wasm_
 
 #[wasm_bindgen]
 #[allow(non_snake_case)]
+pub fn searchStar(
+    seed: JsValue,
+    gameDesc: JsValue,
+    rule: JsValue,
+) -> Result<JsValue, serde_wasm_bindgen::Error> {
+    let seed: i32 = serde_wasm_bindgen::from_value(seed)?;
+    let game_desc: GameDesc = serde_wasm_bindgen::from_value(gameDesc)?;
+    let rule = serde_wasm_bindgen::from_value(rule).unwrap();
+    let transformed = transform_rules::transform_rules(rule);
+    let star_indexes = find_stars(seed, &game_desc, &transformed);
+    serde_wasm_bindgen::to_value(&star_indexes)
+}
+
+#[wasm_bindgen]
+#[allow(non_snake_case)]
 pub fn findStars(gameDesc: JsValue, rule: JsValue, seeds: JsValue) {
     spawn_local(async {
         let game_desc: GameDesc = serde_wasm_bindgen::from_value(gameDesc).unwrap();
@@ -39,8 +54,7 @@ pub fn findStars(gameDesc: JsValue, rule: JsValue, seeds: JsValue) {
         loop {
             let mut results: Vec<i32> = vec![];
             for seed in seeds {
-                let habitable_count = Cell::new(0_i32);
-                let star_indexes = find_stars(seed, &game_desc, &habitable_count, &transformed);
+                let star_indexes = find_stars(seed, &game_desc, &transformed);
                 if !star_indexes.is_empty() {
                     results.push(seed);
                 }

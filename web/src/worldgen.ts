@@ -18,6 +18,15 @@ export function generateGalaxy(
     return getWorldGen(nativeMode).generate(seed, gameDesc)
 }
 
+export function searchStar(
+    nativeMode: boolean,
+    seed: integer,
+    gameDesc: GameParameters,
+    rule: Rule,
+) {
+    return getWorldGen(nativeMode).searchStar(seed, gameDesc, rule)
+}
+
 export function startSearchingGalaxies(
     nativeMode: boolean,
     options: FindOptions,

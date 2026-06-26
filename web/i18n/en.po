@@ -19,7 +19,7 @@ msgstr ""
 
 #. placeholder {0}: star.spectr
 #: web/src/exporter/exporter.worker.tsx:48
-#: web/src/names.tsx:146
+#: web/src/names.tsx:148
 msgid "{0} type Star"
 msgstr ""
 
@@ -99,7 +99,7 @@ msgstr ""
 
 #: web/src/exporter/exporter.worker.tsx:46
 #: web/src/names.tsx:27
-#: web/src/names.tsx:144
+#: web/src/names.tsx:146
 msgid "Black Hole"
 msgstr ""
 
@@ -108,7 +108,7 @@ msgid "Black Hole / Neutron Star"
 msgstr ""
 
 #: web/src/exporter/exporter.worker.tsx:39
-#: web/src/names.tsx:137
+#: web/src/names.tsx:139
 msgid "Blue Giant"
 msgstr ""
 
@@ -173,13 +173,13 @@ msgstr ""
 
 #: web/src/partials/ExportModal.tsx:310
 #: web/src/partials/ProgressEditor.tsx:231
-#: web/src/views/Galaxy.tsx:102
+#: web/src/views/Galaxy.tsx:108
 msgid "Dark Fog initial occupation"
 msgstr ""
 
 #: web/src/partials/ExportModal.tsx:324
 #: web/src/partials/ProgressEditor.tsx:273
-#: web/src/views/Galaxy.tsx:111
+#: web/src/views/Galaxy.tsx:117
 msgid "Dark Fog max density"
 msgstr ""
 
@@ -282,7 +282,7 @@ msgstr ""
 #: web/src/partials/ExportModal.tsx:402
 #: web/src/views/FindGalaxy.tsx:410
 #: web/src/views/FindStar.tsx:331
-#: web/src/views/Galaxy.tsx:240
+#: web/src/views/Galaxy.tsx:306
 msgid "Export"
 msgstr ""
 
@@ -290,6 +290,11 @@ msgstr ""
 #. placeholder {1}: total()
 #: web/src/partials/ExportModal.tsx:136
 msgid "Exporting {0} / {1}"
+msgstr ""
+
+#. placeholder {0}: props.seed
+#: web/src/views/Galaxy.tsx:175
+msgid "Find stars matching the following criteria in seed {0}."
 msgstr ""
 
 #: web/src/exporter/workbookGenerator.worker.tsx:23
@@ -328,7 +333,7 @@ msgid "Gas Giant"
 msgstr ""
 
 #: web/src/names.tsx:52
-#: web/src/partials/GalaxyOverview.tsx:165
+#: web/src/partials/GalaxyOverview.tsx:181
 msgid "Gas rate"
 msgstr ""
 
@@ -506,7 +511,7 @@ msgid "Is the Starting system"
 msgstr ""
 
 #: web/src/partials/ExportModal.tsx:336
-#: web/src/views/Galaxy.tsx:121
+#: web/src/views/Galaxy.tsx:127
 msgid "It is much faster to estimate the amount of veins over generating the excat numbers."
 msgstr ""
 
@@ -527,7 +532,7 @@ msgstr ""
 msgid "Load"
 msgstr ""
 
-#: web/src/views/Galaxy.tsx:229
+#: web/src/views/Galaxy.tsx:295
 msgid "Loading..."
 msgstr ""
 
@@ -584,7 +589,7 @@ msgstr ""
 
 #: web/src/exporter/exporter.worker.tsx:44
 #: web/src/names.tsx:28
-#: web/src/names.tsx:142
+#: web/src/names.tsx:144
 msgid "Neutron Star"
 msgstr ""
 
@@ -610,7 +615,7 @@ msgstr ""
 
 #: web/src/partials/ExportModal.tsx:284
 #: web/src/partials/ProgressEditor.tsx:164
-#: web/src/views/Galaxy.tsx:87
+#: web/src/views/Galaxy.tsx:93
 msgid "Number of stars"
 msgstr ""
 
@@ -720,22 +725,22 @@ msgstr ""
 msgid "Radius"
 msgstr ""
 
-#: web/src/views/Galaxy.tsx:77
+#: web/src/views/Galaxy.tsx:83
 msgid "Random"
 msgstr ""
 
 #: web/src/exporter/exporter.worker.tsx:32
-#: web/src/names.tsx:130
+#: web/src/names.tsx:132
 msgid "Red Giant"
 msgstr ""
 
 #: web/src/partials/ExportModal.tsx:294
 #: web/src/partials/ProgressEditor.tsx:195
-#: web/src/views/Galaxy.tsx:93
+#: web/src/views/Galaxy.tsx:99
 msgid "Resource multiplier"
 msgstr ""
 
-#: web/src/partials/GalaxyOverview.tsx:148
+#: web/src/partials/GalaxyOverview.tsx:164
 #: web/src/partials/StarView.tsx:542
 msgid "Resources"
 msgstr ""
@@ -789,10 +794,15 @@ msgstr ""
 msgid "Scorchedia"
 msgstr ""
 
+#: web/src/views/Galaxy.tsx:184
+#: web/src/views/Galaxy.tsx:308
+msgid "Search"
+msgstr ""
+
 #: web/src/exporter/workbookGenerator.worker.tsx:55
 #: web/src/exporter/workbookGenerator.worker.tsx:79
-#: web/src/partials/GalaxyOverview.tsx:124
-#: web/src/views/Galaxy.tsx:64
+#: web/src/partials/GalaxyOverview.tsx:142
+#: web/src/views/Galaxy.tsx:70
 msgid "Seed"
 msgstr ""
 
@@ -843,11 +853,11 @@ msgstr ""
 msgid "Star Finder is no longer supported. Please use Galaxy Finder instead."
 msgstr ""
 
-#: web/src/partials/GalaxyOverview.tsx:131
+#: web/src/partials/GalaxyOverview.tsx:149
 msgid "Star types"
 msgstr ""
 
-#: web/src/views/Galaxy.tsx:235
+#: web/src/views/Galaxy.tsx:301
 msgid "Starmap"
 msgstr ""
 
@@ -940,7 +950,7 @@ msgid "Untitled"
 msgstr ""
 
 #: web/src/partials/ExportModal.tsx:338
-#: web/src/views/Galaxy.tsx:123
+#: web/src/views/Galaxy.tsx:129
 msgid "Use estimated veins"
 msgstr ""
 
@@ -948,7 +958,7 @@ msgstr ""
 msgid "Vein amount"
 msgstr ""
 
-#: web/src/views/Galaxy.tsx:84
+#: web/src/views/Galaxy.tsx:90
 msgid "View"
 msgstr ""
 
@@ -973,12 +983,12 @@ msgstr ""
 
 #: web/src/exporter/exporter.worker.tsx:42
 #: web/src/names.tsx:26
-#: web/src/names.tsx:140
+#: web/src/names.tsx:142
 msgid "White Dwarf"
 msgstr ""
 
 #: web/src/exporter/exporter.worker.tsx:37
-#: web/src/names.tsx:135
+#: web/src/names.tsx:137
 msgid "White Giant"
 msgstr ""
 
@@ -1000,7 +1010,7 @@ msgid "Y"
 msgstr ""
 
 #: web/src/exporter/exporter.worker.tsx:35
-#: web/src/names.tsx:133
+#: web/src/names.tsx:135
 msgid "Yellow Giant"
 msgstr ""
 

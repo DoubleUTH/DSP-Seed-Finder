@@ -49,6 +49,11 @@ enum IncomingMessage {
         game: GameDesc,
         rule: Rules,
     },
+    SearchStar {
+        seed: i32,
+        game: GameDesc,
+        rule: Rules,
+    },
 }
 
 #[derive(Serialize)]
@@ -56,6 +61,7 @@ enum IncomingMessage {
 enum OutgoingMessage<'a> {
     Generate { galaxy: Galaxy<'a> },
     Setup { success: bool },
+    SearchStar { indexes: Vec<usize> },
 }
 
 struct SetupData {
@@ -87,6 +93,18 @@ async fn handle_message(msg: IncomingMessage, current_setup: &mut Option<SetupDa
                 rule: Arc::new(transform_rules(rule)),
             });
             serde_json::to_string(&OutgoingMessage::Setup { success: true }).unwrap()
+        }
+        IncomingMessage::SearchStar { seed, game, rule } => {
+            tokio::task::spawn_blocking(move || {
+                let transformed_rule = transform_rules(rule);
+                let star_indexes = find_stars(seed, &game, &transformed_rule);
+                serde_json::to_string(&OutgoingMessage::SearchStar {
+                    indexes: star_indexes,
+                })
+                .unwrap()
+            })
+            .await
+            .unwrap()
         }
     }
 }
@@ -135,8 +153,7 @@ async fn accept_connection(stream: TcpStream) -> Result<(), tokio_tungstenite::t
                         .filter(move |chunk| {
                             let array: [u8; 4] = (*chunk).try_into().unwrap();
                             let seed = i32::from_ne_bytes(array);
-                            let habitable_count = Cell::new(0_i32);
-                            let star_indexes = find_stars(seed, &game, &habitable_count, &rule);
+                            let star_indexes = find_stars(seed, &game, &rule);
                             !star_indexes.is_empty()
                         })
                         .flatten()

@@ -1,6 +1,7 @@
 import WorldgenWorker from "./worldgen.worker?worker"
 
 const TYPE_GENERATE = "generate"
+const TYPE_SEARCH_STAR = "search_star"
 const TYPE_FIND = "find"
 const TYPE_NEXT = "next"
 
@@ -55,6 +56,33 @@ export class WorldGenBrowser implements WorldGen {
                 worker.postMessage({
                     type: TYPE_GENERATE,
                     input: { seed, gameDesc },
+                })
+            })
+            return result
+        } finally {
+            worker.terminate()
+        }
+    }
+
+    async searchStar(
+        seed: integer,
+        gameDesc: GameParameters,
+        rule: Rule,
+    ): Promise<integer[]> {
+        const worker = new WorldgenWorker()
+        try {
+            const result = await new Promise<integer[]>((resolve) => {
+                const eventHandler = (ev: MessageEvent) => {
+                    const message = ev.data
+                    if (message.type === TYPE_SEARCH_STAR) {
+                        worker.removeEventListener("message", eventHandler)
+                        resolve(message.data)
+                    }
+                }
+                worker.addEventListener("message", eventHandler)
+                worker.postMessage({
+                    type: TYPE_SEARCH_STAR,
+                    input: { seed, gameDesc, rule },
                 })
             })
             return result

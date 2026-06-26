@@ -1,4 +1,5 @@
 use crate::data::birth_points::BirthPoints;
+use crate::data::game_desc::GameDesc;
 use crate::data::planet_raw_data::PlanetRawData;
 use crate::data::vector_f2::VectorF2;
 
@@ -18,6 +19,7 @@ use std::vec;
 
 #[derive(Debug)]
 pub struct Planet<'a> {
+    game_desc: &'a GameDesc,
     pub star: Rc<Star<'a>>,
     pub index: usize,
     habitable_count: &'a Cell<i32>,
@@ -62,6 +64,7 @@ const ORBIT_RADIUS: &'static [f32] = &[
 
 impl<'a> Planet<'a> {
     pub fn new(
+        game_desc: &'a GameDesc,
         star: Rc<Star<'a>>,
         index: usize,
         habitable_count: &'a Cell<i32>,
@@ -101,6 +104,7 @@ impl<'a> Planet<'a> {
         };
 
         Self {
+            game_desc,
             star,
             index,
             habitable_count,
@@ -246,7 +250,7 @@ impl<'a> Planet<'a> {
         } else {
             let f2 = self.get_temperature_factor();
             if !self.star.is_birth() {
-                let star_count = self.star.game_desc.star_count;
+                let star_count = self.game_desc.star_count;
                 let num18 = ((star_count as f32) * 0.29).ceil().max(11.0);
                 let num19 = (num18 as f64) - (self.habitable_count.get() as f64);
                 let num20 = (star_count - self.star.index) as f32;
@@ -500,7 +504,7 @@ impl<'a> Planet<'a> {
             if !self.is_gas_giant() {
                 return gases;
             }
-            let gas_coef = self.star.game_desc.gas_coef();
+            let gas_coef = self.game_desc.gas_coef();
             let mut rand = DspRandom::new(self.theme_seed);
             let theme_proto = self.get_theme();
             let coef = self.star.get_resource_coef().powf(0.3);
@@ -606,7 +610,7 @@ impl<'a> Planet<'a> {
                     5.0
                 }
             };
-            let is_rare_resource = self.star.game_desc.is_rare_resource();
+            let is_rare_resource = self.game_desc.is_rare_resource();
             let mut f = self.star.get_resource_coef();
             if theme_proto.distribute == ThemeDistribute::Birth {
                 f *= 2.0 / 3.0;
@@ -636,7 +640,7 @@ impl<'a> Planet<'a> {
                     }
                 }
             }
-            let is_infinite_resource = self.star.game_desc.is_infinite_resource();
+            let is_infinite_resource = self.game_desc.is_infinite_resource();
             for index3 in 1..15 {
                 let num8 = num_array_1[index3 as usize];
                 if num8 > 0 {
@@ -673,9 +677,9 @@ impl<'a> Planet<'a> {
                         let map_amount = |amount: i32| -> i32 {
                             let x1 = ((amount as f32) * 1.1).round_ties_even();
                             let x2 = (if vein.vein_type == VeinType::Oil {
-                                x1 * self.star.game_desc.oil_amount_multiplier()
+                                x1 * self.game_desc.oil_amount_multiplier()
                             } else {
-                                x1 * self.star.game_desc.resource_multiplier
+                                x1 * self.game_desc.resource_multiplier
                             })
                             .round_ties_even() as i32;
                             x2.max(1)
@@ -934,7 +938,7 @@ impl<'a> Planet<'a> {
                 }
             }
 
-            let is_rare_resource = self.star.game_desc.is_rare_resource();
+            let is_rare_resource = self.game_desc.is_rare_resource();
             let mut resource_coef = self.star.get_resource_coef();
             let is_birth_planet = theme.distribute == ThemeDistribute::Birth;
             if is_birth_planet {
@@ -971,7 +975,7 @@ impl<'a> Planet<'a> {
                 birth_point * (rand2.next_f64() * 0.4 + 0.2) as f32
             };
 
-            let is_infinite_resource = self.star.game_desc.is_infinite_resource();
+            let is_infinite_resource = self.game_desc.is_infinite_resource();
             // Fixed array indexed by VeinType discriminant (0..16) — avoids HashMap hashing overhead
             let mut amount_map: [i32; 16] = [0; 16];
 
@@ -1094,9 +1098,9 @@ impl<'a> Planet<'a> {
                         1
                     } else {
                         let multiplier = if is_oil {
-                            self.star.game_desc.oil_amount_multiplier()
+                            self.game_desc.oil_amount_multiplier()
                         } else {
-                            self.star.game_desc.resource_multiplier
+                            self.game_desc.resource_multiplier
                         };
                         (((raw_amount as f32) * 1.1 * multiplier).round_ties_even() as i32).max(1)
                     };
@@ -1217,7 +1221,7 @@ impl Serialize for Planet<'_> {
         state.serialize_field("luminosity", &self.get_luminosity())?;
         state.serialize_field("theme", &self.get_theme())?;
         state.serialize_field("gases", &self.get_gases())?;
-        if self.star.game_desc.use_actual_veins {
+        if self.game_desc.use_actual_veins {
             state.serialize_field("actualVeins", &self.get_actual_veins())?;
         } else {
             state.serialize_field("veins", &self.get_estimated_veins())?;

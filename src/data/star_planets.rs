@@ -2,6 +2,8 @@ use std::cell::{Cell, UnsafeCell};
 use std::collections::HashMap;
 use std::rc::Rc;
 
+use crate::data::game_desc::GameDesc;
+
 use super::enums::{SpectrType, StarType, VeinType};
 use super::planet::Planet;
 use super::random::DspRandom;
@@ -20,10 +22,12 @@ where
 
 #[derive(Debug, Serialize)]
 pub struct StarWithPlanets<'a> {
+    pub name: String,
     #[serde(flatten)]
     pub star: Rc<Star<'a>>,
     #[serde(serialize_with = "serialize_planets")]
     planets: UnsafeCell<Vec<Planet<'a>>>,
+
     #[serde(skip)]
     safe: UnsafeCell<bool>,
     #[serde(skip)]
@@ -31,12 +35,17 @@ pub struct StarWithPlanets<'a> {
     #[serde(skip)]
     actual_veins: UnsafeCell<HashMap<VeinType, f32>>,
     #[serde(skip)]
+    game_desc: &'a GameDesc,
+    #[serde(skip)]
     habitable_count: &'a Cell<i32>,
-    pub name: String,
 }
 
 impl<'a> StarWithPlanets<'a> {
-    pub fn new(star: Rc<Star<'a>>, habitable_count: &'a Cell<i32>) -> Self {
+    pub fn new(
+        star: Rc<Star<'a>>,
+        game_desc: &'a GameDesc,
+        habitable_count: &'a Cell<i32>,
+    ) -> Self {
         Self {
             star,
             planets: UnsafeCell::new(vec![]),
@@ -44,6 +53,7 @@ impl<'a> StarWithPlanets<'a> {
             avg_veins: UnsafeCell::new(HashMap::new()),
             actual_veins: UnsafeCell::new(HashMap::new()),
             name: Default::default(),
+            game_desc,
             habitable_count,
         }
     }
@@ -150,6 +160,7 @@ impl<'a> StarWithPlanets<'a> {
             let info_seed = rand2.next_seed();
             let gen_seed = rand2.next_seed();
             Planet::new(
+                self.game_desc,
                 self.star.clone(),
                 index,
                 self.habitable_count,
@@ -377,6 +388,7 @@ impl<'a> StarWithPlanets<'a> {
                     satellite_count += 1;
                 }
                 let planet = Planet::new(
+                    self.game_desc,
                     self.star.clone(),
                     index,
                     self.habitable_count,

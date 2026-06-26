@@ -165,6 +165,7 @@ fn generate_stars<'a>(
                     StarType::MainSeqStar,
                     &SpectrType::X,
                 )),
+                game_desc,
                 habitable_count,
             ));
         } else {
@@ -195,6 +196,7 @@ fn generate_stars<'a>(
                     need_type,
                     &need_spectr,
                 )),
+                game_desc,
                 habitable_count,
             ));
         }

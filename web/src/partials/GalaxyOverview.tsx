@@ -132,9 +132,6 @@ const GalaxyOverview: Component<{ galaxy: Galaxy; search: string }> = (
 
     return (
         <div class={styles.root}>
-            <div class={styles.map}>
-                <Starmap galaxy={props.galaxy} search={props.search} />
-            </div>
             <div class={styles.info}>
                 <div class={styles.card}>
                     <div class={styles.title}>
@@ -194,6 +191,9 @@ const GalaxyOverview: Component<{ galaxy: Galaxy; search: string }> = (
                         </For>
                     </div>
                 </Show>
+            </div>
+            <div class={styles.map}>
+                <Starmap galaxy={props.galaxy} search={props.search} />
             </div>
         </div>
     )

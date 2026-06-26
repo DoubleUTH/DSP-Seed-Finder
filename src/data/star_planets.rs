@@ -157,9 +157,9 @@ impl<'a> StarWithPlanets<'a> {
             return planets;
         }
         let mut rand2 = DspRandom::new(self.star.planets_seed);
-        let num1 = rand2.next_f64();
-        let num2 = rand2.next_f64();
-        let num3 = if rand2.next_f64() > 0.5 { 1 } else { 0 };
+        let planet_count_rand = rand2.next_f64();
+        let planet_config_rand = rand2.next_f64();
+        let orbit_offset = if rand2.next_f64() > 0.5 { 1 } else { 0 };
         rand2.next_f64();
         rand2.next_f64();
         rand2.next_f64();
@@ -185,9 +185,9 @@ impl<'a> StarWithPlanets<'a> {
         if star_type == &StarType::BlackHole || star_type == &StarType::NeutronStar {
             planets.push(make_planet(0, 3, false));
         } else if star_type == &StarType::WhiteDwarf {
-            if num1 < 0.7 {
+            if planet_count_rand < 0.7 {
                 planets.push(make_planet(0, 3, false));
-            } else if num2 < 0.3 {
+            } else if planet_config_rand < 0.3 {
                 planets.push(make_planet(0, 3, false));
                 planets.push(make_planet(1, 4, false));
             } else {
@@ -198,12 +198,12 @@ impl<'a> StarWithPlanets<'a> {
                 planet2.orbit_around.replace(Some(planet1));
             }
         } else if star_type == &StarType::GiantStar {
-            if num1 < 0.3 {
-                planets.push(make_planet(0, 2 + num3, false));
-            } else if num1 < 0.8 {
-                if num2 < 0.25 {
-                    planets.push(make_planet(0, 2 + num3, false));
-                    planets.push(make_planet(1, 3 + num3, false));
+            if planet_count_rand < 0.3 {
+                planets.push(make_planet(0, 2 + orbit_offset, false));
+            } else if planet_count_rand < 0.8 {
+                if planet_config_rand < 0.25 {
+                    planets.push(make_planet(0, 2 + orbit_offset, false));
+                    planets.push(make_planet(1, 3 + orbit_offset, false));
                 } else {
                     planets.push(make_planet(0, 3, true));
                     planets.push(make_planet(1, 1, false));
@@ -212,19 +212,19 @@ impl<'a> StarWithPlanets<'a> {
                     planet2.orbit_around.replace(Some(planet1));
                 }
             } else {
-                if num2 < 0.15 {
-                    planets.push(make_planet(0, 2 + num3, false));
-                    planets.push(make_planet(1, 3 + num3, false));
-                    planets.push(make_planet(2, 4 + num3, false));
-                } else if num2 < 0.75 {
-                    planets.push(make_planet(0, 2 + num3, false));
+                if planet_config_rand < 0.15 {
+                    planets.push(make_planet(0, 2 + orbit_offset, false));
+                    planets.push(make_planet(1, 3 + orbit_offset, false));
+                    planets.push(make_planet(2, 4 + orbit_offset, false));
+                } else if planet_config_rand < 0.75 {
+                    planets.push(make_planet(0, 2 + orbit_offset, false));
                     planets.push(make_planet(1, 4, true));
                     planets.push(make_planet(2, 1, false));
                     let planet2 = &planets[1];
                     let planet3 = &planets[2];
                     planet3.orbit_around.replace(Some(planet2));
                 } else {
-                    planets.push(make_planet(0, 3 + num3, true));
+                    planets.push(make_planet(0, 3 + orbit_offset, true));
                     planets.push(make_planet(1, 1, false));
                     planets.push(make_planet(2, 2, false));
                     let planet1 = &planets[0];
@@ -240,11 +240,11 @@ impl<'a> StarWithPlanets<'a> {
             } else {
                 match self.star.get_spectr() {
                     SpectrType::M => {
-                        let planet_count = if num1 >= 0.8 {
+                        let planet_count = if planet_count_rand >= 0.8 {
                             4
-                        } else if num1 >= 0.3 {
+                        } else if planet_count_rand >= 0.3 {
                             3
-                        } else if num1 >= 0.1 {
+                        } else if planet_count_rand >= 0.1 {
                             2
                         } else {
                             1
@@ -259,13 +259,13 @@ impl<'a> StarWithPlanets<'a> {
                         )
                     }
                     SpectrType::K => {
-                        let planet_count = if num1 >= 0.95 {
+                        let planet_count = if planet_count_rand >= 0.95 {
                             5
-                        } else if num1 >= 0.7 {
+                        } else if planet_count_rand >= 0.7 {
                             4
-                        } else if num1 >= 0.2 {
+                        } else if planet_count_rand >= 0.2 {
                             3
-                        } else if num1 >= 0.1 {
+                        } else if planet_count_rand >= 0.1 {
                             2
                         } else {
                             1
@@ -280,9 +280,9 @@ impl<'a> StarWithPlanets<'a> {
                         )
                     }
                     SpectrType::G => {
-                        let planet_count = if num1 >= 0.9 {
+                        let planet_count = if planet_count_rand >= 0.9 {
                             5
-                        } else if num1 >= 0.4 {
+                        } else if planet_count_rand >= 0.4 {
                             4
                         } else {
                             3
@@ -297,9 +297,9 @@ impl<'a> StarWithPlanets<'a> {
                         )
                     }
                     SpectrType::F => {
-                        let planet_count = if num1 >= 0.8 {
+                        let planet_count = if planet_count_rand >= 0.8 {
                             5
-                        } else if num1 >= 0.35 {
+                        } else if planet_count_rand >= 0.35 {
                             4
                         } else {
                             3
@@ -314,9 +314,9 @@ impl<'a> StarWithPlanets<'a> {
                         )
                     }
                     SpectrType::A => {
-                        let planet_count = if num1 >= 0.75 {
+                        let planet_count = if planet_count_rand >= 0.75 {
                             5
-                        } else if num1 >= 0.3 {
+                        } else if planet_count_rand >= 0.3 {
                             4
                         } else {
                             3
@@ -331,9 +331,9 @@ impl<'a> StarWithPlanets<'a> {
                         )
                     }
                     SpectrType::B => {
-                        let planet_count = if num1 >= 0.75 {
+                        let planet_count = if planet_count_rand >= 0.75 {
                             6
-                        } else if num1 >= 0.3 {
+                        } else if planet_count_rand >= 0.3 {
                             5
                         } else {
                             4
@@ -348,7 +348,7 @@ impl<'a> StarWithPlanets<'a> {
                         )
                     }
                     SpectrType::O => {
-                        let planet_count = if num1 >= 0.5 { 6 } else { 5 };
+                        let planet_count = if planet_count_rand >= 0.5 { 6 } else { 5 };
                         (planet_count, P_GASES[9])
                     }
                     _ => (1, P_GASES[0]),
@@ -356,31 +356,37 @@ impl<'a> StarWithPlanets<'a> {
             };
             let mut satellite_count = 0;
             let mut orbit_around: Option<usize> = None;
-            let mut num10: usize = 1;
+            let mut current_orbit_index: usize = 1;
             let mut orbits: Vec<(usize, usize)> = Vec::with_capacity(4);
             for index in 0..planet_count as usize {
                 let info_seed = rand2.next_seed();
                 let gen_seed = rand2.next_seed();
-                let num11 = rand2.next_f64();
-                let num12 = rand2.next_f64();
+                let gas_giant_chance_rand = rand2.next_f64();
+                let stop_satellite_chance_rand = rand2.next_f64();
                 let mut gas_giant = false;
 
                 if orbit_around.is_none() {
-                    if index < planet_count - 1 && num11 < p_gas[index] {
+                    if index < planet_count - 1 && gas_giant_chance_rand < p_gas[index] {
                         gas_giant = true;
-                        if num10 < 3 {
-                            num10 = 3;
+                        if current_orbit_index < 3 {
+                            current_orbit_index = 3;
                         }
                     }
                     let mut broke_from_loop = false;
-                    while !self.star.is_birth() || num10 != 3 {
-                        let num13 = planet_count - index;
-                        let num14 = 9 - num10;
-                        if num14 > num13 {
-                            let a = (num13 as f32) / (num14 as f32);
-                            let a2 = if num10 <= 3 { 0.15_f32 } else { 0.45_f32 };
-                            let num15 = a + (1.0 - a) * a2 + 0.01;
-                            if rand2.next_f64() < num15 as f64 {
+                    while !self.star.is_birth() || current_orbit_index != 3 {
+                        let remaining_planets = planet_count - index;
+                        let remaining_orbit_slots = 9 - current_orbit_index;
+                        if remaining_orbit_slots > remaining_planets {
+                            let remaining_ratio =
+                                (remaining_planets as f32) / (remaining_orbit_slots as f32);
+                            let skip_chance_base = if current_orbit_index <= 3 {
+                                0.15_f32
+                            } else {
+                                0.45_f32
+                            };
+                            let orbit_skip_threshold =
+                                remaining_ratio + (1.0 - remaining_ratio) * skip_chance_base + 0.01;
+                            if rand2.next_f64() < orbit_skip_threshold as f64 {
                                 broke_from_loop = true;
                                 break;
                             }
@@ -388,7 +394,7 @@ impl<'a> StarWithPlanets<'a> {
                             broke_from_loop = true;
                             break;
                         }
-                        num10 += 1;
+                        current_orbit_index += 1;
                     }
                     if !broke_from_loop {
                         gas_giant = true;
@@ -402,7 +408,7 @@ impl<'a> StarWithPlanets<'a> {
                     index,
                     self.habitable_count,
                     if orbit_around.is_none() {
-                        num10
+                        current_orbit_index
                     } else {
                         satellite_count
                     },
@@ -413,12 +419,12 @@ impl<'a> StarWithPlanets<'a> {
                 if let Some(around) = orbit_around {
                     orbits.push((index, around))
                 }
-                num10 += 1;
+                current_orbit_index += 1;
                 if gas_giant {
                     orbit_around = Some(index);
                     satellite_count = 0;
                 }
-                if satellite_count >= 1 && num12 < 0.8 {
+                if satellite_count >= 1 && stop_satellite_chance_rand < 0.8 {
                     orbit_around = None;
                     satellite_count = 0;
                 }

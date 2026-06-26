@@ -38,20 +38,20 @@ fn generate_temp_poses(seed: i32, target_count: usize) -> Vec<Vector3> {
 
 fn random_poses(tmp_poses: &mut Vec<Vector3>, seed: i32, max_count: usize) {
     let mut rand = DspRandom::new(seed);
-    let r1 = rand.next_f64();
+    let drunk_walk_count_rand = rand.next_f64();
     let mut tmp_drunk: Vec<Vector3> = Vec::with_capacity(max_count);
     tmp_poses.push(Vector3::zero());
-    let drunk_num = (r1 * DRUNK_NUM_RANGE + (MIN_DRUNK_NUM as f64)) as i32;
+    let drunk_num = (drunk_walk_count_rand * DRUNK_NUM_RANGE + (MIN_DRUNK_NUM as f64)) as i32;
     for _ in 0..drunk_num {
         for _ in 0..256 {
             let u = rand.next_f64() * 2.0 - 1.0;
             let w = (rand.next_f64() * 2.0 - 1.0) * FLATTEN;
             let v = rand.next_f64() * 2.0 - 1.0;
-            let r2 = rand.next_f64();
-            let d = u * u + w * w + v * v;
-            if d <= 1.0 && d >= 1e-8 {
-                let distance = d.sqrt();
-                let step_len_mult = (r2 * STEP_DIFF + MIN_DIST) / distance;
+            let first_step_len_rand = rand.next_f64();
+            let squared_length = u * u + w * w + v * v;
+            if squared_length <= 1.0 && squared_length >= 1e-8 {
+                let distance = squared_length.sqrt();
+                let step_len_mult = (first_step_len_rand * STEP_DIFF + MIN_DIST) / distance;
                 let pt = Vector3(u * step_len_mult, w * step_len_mult, v * step_len_mult);
                 if !check_collision(tmp_poses, &pt) {
                     tmp_drunk.push(pt);
@@ -71,11 +71,11 @@ fn random_poses(tmp_poses: &mut Vec<Vector3>, seed: i32, max_count: usize) {
                     let u = rand.next_f64() * 2.0 - 1.0;
                     let w = (rand.next_f64() * 2.0 - 1.0) * FLATTEN;
                     let v = rand.next_f64() * 2.0 - 1.0;
-                    let r3 = rand.next_f64();
-                    let d = u * u + w * w + v * v;
-                    if d <= 1.0 && d >= 1e-8 {
-                        let distance = d.sqrt();
-                        let step_len_mult = (r3 * STEP_DIFF + MIN_DIST) / distance;
+                    let step_len_rand = rand.next_f64();
+                    let squared_length2 = u * u + w * w + v * v;
+                    if squared_length2 <= 1.0 && squared_length2 >= 1e-8 {
+                        let distance = squared_length2.sqrt();
+                        let step_len_mult = (step_len_rand * STEP_DIFF + MIN_DIST) / distance;
                         let new_pt = Vector3(
                             pt.0 + u * step_len_mult,
                             pt.1 + w * step_len_mult,
@@ -99,7 +99,7 @@ fn random_poses(tmp_poses: &mut Vec<Vector3>, seed: i32, max_count: usize) {
 fn check_collision(tmp_poses: &Vec<Vector3>, pt: &Vector3) -> bool {
     tmp_poses
         .iter()
-        .any(|pt1| pt1.distance_sq_from(pt) < MIN_DIST_SQ)
+        .any(|existing_point| existing_point.distance_sq_from(pt) < MIN_DIST_SQ)
 }
 
 fn generate_stars<'a>(
@@ -111,15 +111,22 @@ fn generate_stars<'a>(
     let tmp_poses = generate_temp_poses(rand.next_seed(), game_desc.star_count);
     let star_count = tmp_poses.len();
 
-    let r1 = rand.next_f32();
-    let r2 = rand.next_f32();
-    let r3 = rand.next_f32();
-    let r4 = rand.next_f32();
-    let black_hole_num = ((0.01 * (star_count as f64) + (r1 as f64) * 0.3) as f32).ceil() as usize;
-    let neutro_star_num = ((0.01 * (star_count as f64) + (r2 as f64) * 0.3) as f32).ceil() as usize;
-    let white_dwarf_num =
-        ((0.016 * (star_count as f64) + (r3 as f64) * 0.4) as f32).ceil() as usize;
-    let giant_star_num = ((0.013 * (star_count as f64) + (r4 as f64) * 1.4) as f32).ceil() as usize;
+    let black_hole_count_rand = rand.next_f32();
+    let neutron_star_count_rand = rand.next_f32();
+    let white_dwarf_count_rand = rand.next_f32();
+    let giant_star_count_rand = rand.next_f32();
+    let black_hole_num = ((0.01 * (star_count as f64) + (black_hole_count_rand as f64) * 0.3)
+        as f32)
+        .ceil() as usize;
+    let neutro_star_num = ((0.01 * (star_count as f64) + (neutron_star_count_rand as f64) * 0.3)
+        as f32)
+        .ceil() as usize;
+    let white_dwarf_num = ((0.016 * (star_count as f64) + (white_dwarf_count_rand as f64) * 0.4)
+        as f32)
+        .ceil() as usize;
+    let giant_star_num = ((0.013 * (star_count as f64) + (giant_star_count_rand as f64) * 1.4)
+        as f32)
+        .ceil() as usize;
     let black_hole_start = star_count - black_hole_num;
     let neutron_star_start = black_hole_start - neutro_star_num;
     let white_dwarf_start = neutron_star_start - white_dwarf_num;

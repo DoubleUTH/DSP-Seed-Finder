@@ -74,18 +74,18 @@ impl<'a> Planet<'a> {
     ) -> Self {
         let mut rand = DspRandom::new(info_seed);
 
-        let num3 = rand.next_f64();
-        let num4 = rand.next_f64();
-        let orbit_radius_factor = num3 * (num4 - 0.5) * 0.5;
+        let orbit_radius_rand1 = rand.next_f64();
+        let orbit_radius_rand2 = rand.next_f64();
+        let orbit_radius_factor = orbit_radius_rand1 * (orbit_radius_rand2 - 0.5) * 0.5;
         let orbit_inclination_factor = rand.next_f64();
         let orbit_longitude = (rand.next_f64() * 360.0) as f32;
         let orbit_phase = (rand.next_f64() * 360.0) as f32;
-        let num8 = rand.next_f64();
-        let num9 = rand.next_f64();
-        let obliquity_scale = num8 * (num9 - 0.5);
-        let num10 = rand.next_f64();
-        let num11 = rand.next_f64();
-        let rotation_scale = num10 * num11 * 1000.0 + 400.0;
+        let obliquity_rand1 = rand.next_f64();
+        let obliquity_rand2 = rand.next_f64();
+        let obliquity_scale = obliquity_rand1 * (obliquity_rand2 - 0.5);
+        let rotation_rand1 = rand.next_f64();
+        let rotation_rand2 = rand.next_f64();
+        let rotation_scale = rotation_rand1 * rotation_rand2 * 1000.0 + 400.0;
         let rotation_phase = (rand.next_f64() * 360.0) as f32;
         let habitable_factor = rand.next_f64();
         let type_factor = rand.next_f64();
@@ -170,8 +170,8 @@ impl<'a> Planet<'a> {
                     / 40000.0) as f32
             } else {
                 let b = ORBIT_RADIUS[self.orbit_index] * self.star.get_orbit_scaler();
-                let num16 = (((a - 1.0) as f64) / (b.max(1.0) as f64) + 1.0) as f32;
-                b * num16
+                let adjusted_orbit_radius = (((a - 1.0) as f64) / (b.max(1.0) as f64) + 1.0) as f32;
+                b * adjusted_orbit_radius
             }
         })
     }
@@ -206,13 +206,13 @@ impl<'a> Planet<'a> {
             1000.0
         } else {
             let habitable_radius = self.star.get_habitable_radius();
-            let num21 = if habitable_radius > 0.0 {
+            let distance_log_factor = if habitable_radius > 0.0 {
                 (self.get_sun_distance() / habitable_radius).ln().abs()
             } else {
                 1000.0
             };
-            let num22 = habitable_radius.sqrt().clamp(1.0, 2.0) - 0.04;
-            num21 * num22
+            let habitable_radius_sqrt_clamped = habitable_radius.sqrt().clamp(1.0, 2.0) - 0.04;
+            distance_log_factor * habitable_radius_sqrt_clamped
         }
     }
 
@@ -220,8 +220,8 @@ impl<'a> Planet<'a> {
         if self.is_gas_giant() {
             0.0
         } else {
-            let f2 = self.get_temperature_factor();
-            (1.2 / ((f2 as f64) + 0.2) - 1.0) as f32
+            let temperature_factor_val = self.get_temperature_factor();
+            (1.2 / ((temperature_factor_val as f64) + 0.2) - 1.0) as f32
         }
     }
 
@@ -250,23 +250,25 @@ impl<'a> Planet<'a> {
             let f2 = self.get_temperature_factor();
             if !self.star.is_birth() {
                 let star_count = self.game_desc.star_count;
-                let num18 = ((star_count as f32) * 0.29).ceil().max(11.0);
-                let num19 = (num18 as f64) - (self.habitable_count.get() as f64);
-                let num20 = (star_count - self.star.index) as f32;
-                let num23 = num20 as f64;
-                let a = (num19 / num23) as f32;
-                let num24 = (a + (0.35 - a) * 0.5).clamp(0.08, 0.8);
-                let num25 = (self.get_habitable_bias() / num24)
+                let habitable_ceiling = ((star_count as f32) * 0.29).ceil().max(11.0);
+                let remaining_habitable_slots =
+                    (habitable_ceiling as f64) - (self.habitable_count.get() as f64);
+                let remaining_stars = (star_count - self.star.index) as f32;
+                let remaining_stars_f64 = remaining_stars as f64;
+                let remaining_ratio = (remaining_habitable_slots / remaining_stars_f64) as f32;
+                let allocation_probability =
+                    (remaining_ratio + (0.35 - remaining_ratio) * 0.5).clamp(0.08, 0.8);
+                let habitable_bias_threshold = (self.get_habitable_bias() / allocation_probability)
                     .clamp(0.0, 1.1)
-                    .powf(num24 * 10.0);
-                if self.habitable_factor > (num25 as f64) {
+                    .powf(allocation_probability * 10.0);
+                if self.habitable_factor > (habitable_bias_threshold as f64) {
                     self.increment_habitable_count();
                     return PlanetType::Ocean;
                 }
             }
             if f2 < 5.0 / 6.0 {
-                let num26 = ((f2 as f64) * 2.5 - 0.85).max(0.15);
-                if self.type_factor >= num26 {
+                let volcano_type_threshold = ((f2 as f64) * 2.5 - 0.85).max(0.15);
+                if self.type_factor >= volcano_type_threshold {
                     PlanetType::Volcano
                 } else {
                     PlanetType::Desert
@@ -274,8 +276,8 @@ impl<'a> Planet<'a> {
             } else if f2 < 1.2 {
                 PlanetType::Desert
             } else {
-                let num27 = 0.9 / (f2 as f64) - 0.1;
-                if self.type_factor >= num27 {
+                let ice_type_threshold = 0.9 / (f2 as f64) - 0.1;
+                if self.type_factor >= ice_type_threshold {
                     PlanetType::Ice
                 } else {
                     PlanetType::Desert
@@ -314,8 +316,8 @@ impl<'a> Planet<'a> {
     pub fn get_orbital_period(&self) -> f64 {
         *self.orbital_period.get_or_init(|| {
             const FOUR_PI_SQUARE: f64 = 4.0 * PI * PI;
-            let f1 = self.get_orbital_radius() as f64;
-            (FOUR_PI_SQUARE * f1 * f1 * f1
+            let orbital_radius_f64 = self.get_orbital_radius() as f64;
+            (FOUR_PI_SQUARE * orbital_radius_f64 * orbital_radius_f64 * orbital_radius_f64
                 / (if self.has_orbit_around() {
                     1.08308421068537e-08
                 } else {
@@ -417,14 +419,14 @@ impl<'a> Planet<'a> {
                         potential_themes.push(theme);
                     }
                 } else {
-                    let flag2 = if theme.temperature.abs() < 0.5
+                    let temperature_matches = if theme.temperature.abs() < 0.5
                         && theme.planet_type == PlanetType::Desert
                     {
                         (temperature_bias.abs() as f64) < (theme.temperature.abs() as f64) + 0.1
                     } else {
                         (theme.temperature as f64) * (temperature_bias as f64) >= -0.1
                     };
-                    if (theme.planet_type == planet_type) && flag2 {
+                    if (theme.planet_type == planet_type) && temperature_matches {
                         if self.star.is_birth() {
                             if theme.distribute == ThemeDistribute::Default {
                                 potential_themes.push(theme);
@@ -547,13 +549,13 @@ impl<'a> Planet<'a> {
             rand1.next_f64();
             rand1.next_f64();
             let theme_proto = self.get_theme();
-            let mut num_array_1: Vec<i32> = (0..15_i32)
+            let mut vein_spots: Vec<i32> = (0..15_i32)
                 .map(|i| *theme_proto.vein_spot.get((i - 1) as usize).unwrap_or(&0))
                 .collect();
-            let mut num_array_2: Vec<f32> = (0..15_i32)
+            let mut vein_counts: Vec<f32> = (0..15_i32)
                 .map(|i| *theme_proto.vein_count.get((i - 1) as usize).unwrap_or(&0.0))
                 .collect();
-            let mut num_array_3: Vec<f32> = (0..15_i32)
+            let mut vein_opacities: Vec<f32> = (0..15_i32)
                 .map(|i| {
                     *theme_proto
                         .vein_opacity
@@ -569,7 +571,7 @@ impl<'a> Planet<'a> {
                     *i += 1;
                 }
             };
-            let p: f32 = match self.star.star_type {
+            let star_type_multiplier: f32 = match self.star.star_type {
                 StarType::MainSeqStar => match self.star.get_spectr() {
                     SpectrType::M => 2.5,
                     SpectrType::G => 0.7,
@@ -580,32 +582,32 @@ impl<'a> Planet<'a> {
                 },
                 StarType::GiantStar => 2.5,
                 StarType::WhiteDwarf => {
-                    num_array_1[9] += 2;
-                    add_until(num_array_1.get_mut(9).unwrap(), 0.45);
-                    num_array_2[9] = 0.7;
-                    num_array_3[9] = 1.0;
-                    num_array_1[10] += 2;
-                    add_until(num_array_1.get_mut(10).unwrap(), 0.45);
-                    num_array_2[10] = 0.7;
-                    num_array_3[10] = 1.0;
-                    num_array_1[12] += 1;
-                    add_until(num_array_1.get_mut(12).unwrap(), 0.5);
-                    num_array_2[12] = 0.7;
-                    num_array_3[12] = 0.3;
+                    vein_spots[9] += 2;
+                    add_until(vein_spots.get_mut(9).unwrap(), 0.45);
+                    vein_counts[9] = 0.7;
+                    vein_opacities[9] = 1.0;
+                    vein_spots[10] += 2;
+                    add_until(vein_spots.get_mut(10).unwrap(), 0.45);
+                    vein_counts[10] = 0.7;
+                    vein_opacities[10] = 1.0;
+                    vein_spots[12] += 1;
+                    add_until(vein_spots.get_mut(12).unwrap(), 0.5);
+                    vein_counts[12] = 0.7;
+                    vein_opacities[12] = 0.3;
                     3.5
                 }
                 StarType::NeutronStar => {
-                    num_array_1[14] += 1;
-                    add_until(num_array_1.get_mut(14).unwrap(), 0.65);
-                    num_array_2[14] = 0.7;
-                    num_array_3[14] = 0.3;
+                    vein_spots[14] += 1;
+                    add_until(vein_spots.get_mut(14).unwrap(), 0.65);
+                    vein_counts[14] = 0.7;
+                    vein_opacities[14] = 0.3;
                     4.5
                 }
                 StarType::BlackHole => {
-                    num_array_1[14] += 1;
-                    add_until(num_array_1.get_mut(14).unwrap(), 0.65);
-                    num_array_2[14] = 0.7;
-                    num_array_3[14] = 0.3;
+                    vein_spots[14] += 1;
+                    add_until(vein_spots.get_mut(14).unwrap(), 0.65);
+                    vein_counts[14] = 0.7;
+                    vein_opacities[14] = 0.3;
                     5.0
                 }
             };
@@ -621,42 +623,43 @@ impl<'a> Planet<'a> {
             }
             for (index1, rare_vein_ref) in theme_proto.rare_veins.iter().enumerate() {
                 let rare_vein = *rare_vein_ref as usize;
-                let num2 = theme_proto.rare_settings
+                let rare_vein_chance = theme_proto.rare_settings
                     [index1 * 4 + (if self.star.is_birth() { 0 } else { 1 })];
                 let rare_setting_1 = theme_proto.rare_settings[index1 * 4 + 2];
                 let rare_setting_2 = theme_proto.rare_settings[index1 * 4 + 3];
-                let num4 = 1.0 - (1.0 - num2).powf(p);
-                let num5 = 1.0 - (1.0 - rare_setting_2).powf(p);
-                if rand1.next_f64() < (num4 as f64) {
-                    num_array_1[rare_vein] += 1;
-                    num_array_2[rare_vein] = num5;
-                    num_array_3[rare_vein] = num5;
+                let adjusted_rare_chance =
+                    1.0 - (1.0 - rare_vein_chance).powf(star_type_multiplier);
+                let adjusted_rare_count = 1.0 - (1.0 - rare_setting_2).powf(star_type_multiplier);
+                if rand1.next_f64() < (adjusted_rare_chance as f64) {
+                    vein_spots[rare_vein] += 1;
+                    vein_counts[rare_vein] = adjusted_rare_count;
+                    vein_opacities[rare_vein] = adjusted_rare_count;
                     for _ in 1..12 {
                         if rand1.next_f64() >= (rare_setting_1 as f64) {
                             break;
                         }
-                        num_array_1[rare_vein] += 1;
+                        vein_spots[rare_vein] += 1;
                     }
                 }
             }
             let is_infinite_resource = self.game_desc.is_infinite_resource();
             for index3 in 1..15 {
-                let num8 = num_array_1[index3 as usize];
-                if num8 > 0 {
+                let vein_spot_count = vein_spots[index3 as usize];
+                if vein_spot_count > 0 {
                     let vein_type: VeinType = unsafe { ::std::mem::transmute(index3) };
                     let mut vein = EstimatedVein::new();
                     vein.vein_type = vein_type;
-                    vein.min_group = num8 - 1;
-                    vein.max_group = num8 + 1;
+                    vein.min_group = vein_spot_count - 1;
+                    vein.max_group = vein_spot_count + 1;
                     if vein.vein_type == VeinType::Oil {
                         vein.min_patch = 1;
                         vein.max_patch = 1;
                     } else {
-                        let num12 = num_array_2[index3 as usize];
-                        vein.min_patch = (num12 * 20.0).round_ties_even() as i32;
-                        vein.max_patch = (num12 * 24.0).round_ties_even() as i32;
+                        let vein_count_factor = vein_counts[index3 as usize];
+                        vein.min_patch = (vein_count_factor * 20.0).round_ties_even() as i32;
+                        vein.max_patch = (vein_count_factor * 24.0).round_ties_even() as i32;
                     }
-                    let num16 = if vein.vein_type == VeinType::Oil {
+                    let total_amount_factor = if vein.vein_type == VeinType::Oil {
                         f.powf(0.5)
                     } else {
                         f
@@ -665,11 +668,12 @@ impl<'a> Planet<'a> {
                         vein.min_amount = 1;
                         vein.max_amount = 1;
                     } else {
-                        let num17 = ((num_array_3[index3 as usize] * 100000.0 * num16)
-                            .round_ties_even() as i32)
-                            .max(20);
-                        let num18 = if num17 < 16000 {
-                            ((num17 as f32) * (15.0 / 16.0)).floor() as i32
+                        let base_amount =
+                            ((vein_opacities[index3 as usize] * 100000.0 * total_amount_factor)
+                                .round_ties_even() as i32)
+                                .max(20);
+                        let amount_variance = if base_amount < 16000 {
+                            ((base_amount as f32) * (15.0 / 16.0)).floor() as i32
                         } else {
                             15000
                         };
@@ -683,8 +687,8 @@ impl<'a> Planet<'a> {
                             .round_ties_even() as i32;
                             x2.max(1)
                         };
-                        vein.min_amount = map_amount(num17 - num18);
-                        vein.max_amount = map_amount(num17 + num18);
+                        vein.min_amount = map_amount(base_amount - amount_variance);
+                        vein.max_amount = map_amount(base_amount + amount_variance);
                     }
                     output.push(vein);
                 }
@@ -711,16 +715,16 @@ impl<'a> Planet<'a> {
         use std::f64::consts::PI as PI_F64;
 
         // Orbit angle
-        let num1 = time / self.get_orbital_period() + (self.orbit_phase as f64) / 360.0;
-        let num2 = (num1 + 0.1) as i32;
-        let num3 = num1 - (num2 as f64);
-        let num4 = num3 * 2.0 * PI_F64;
+        let orbit_phase_time = time / self.get_orbital_period() + (self.orbit_phase as f64) / 360.0;
+        let orbit_cycle = (orbit_phase_time + 0.1) as i32;
+        let orbit_fraction = orbit_phase_time - (orbit_cycle as f64);
+        let orbit_angle = orbit_fraction * 2.0 * PI_F64;
 
         let orbit_radius = self.get_orbital_radius() as f64;
         let local_pos = VectorF3(
-            (num4.cos() * orbit_radius) as f32,
+            (orbit_angle.cos() * orbit_radius) as f32,
             0.0,
-            (num4.sin() * orbit_radius) as f32,
+            (orbit_angle.sin() * orbit_radius) as f32,
         );
 
         let orbit_rot = self.get_runtime_orbit_rotation();
@@ -737,12 +741,13 @@ impl<'a> Planet<'a> {
         }
 
         // Rotation angle from time
-        let num5 = time / self.get_rotation_period() + (self.rotation_phase as f64) / 360.0;
-        let num6 = (num5 + 0.1) as i32;
-        let angle1 = (num5 - (num6 as f64)) * 360.0;
+        let rotation_phase_time =
+            time / self.get_rotation_period() + (self.rotation_phase as f64) / 360.0;
+        let rotation_cycle = (rotation_phase_time + 0.1) as i32;
+        let rotation_angle = (rotation_phase_time - (rotation_cycle as f64)) * 360.0;
 
         let rotation = self.get_runtime_system_rotation()
-            * Quaternion::angle_axis(angle1 as f32, &VectorF3::down());
+            * Quaternion::angle_axis(rotation_angle as f32, &VectorF3::down());
 
         Pose::new(position, rotation)
     }
@@ -855,13 +860,13 @@ impl<'a> Planet<'a> {
             rand1.next_f64();
             let birth_seed = rand1.next_seed();
             let mut rand2 = DspRandom::new(rand1.next_seed());
-            let mut num_array_1: Vec<i32> = (0..15_i32)
+            let mut vein_spots: Vec<i32> = (0..15_i32)
                 .map(|i| *theme.vein_spot.get((i - 1) as usize).unwrap_or(&0))
                 .collect();
-            let mut num_array_2: Vec<f32> = (0..15_i32)
+            let mut vein_counts: Vec<f32> = (0..15_i32)
                 .map(|i| *theme.vein_count.get((i - 1) as usize).unwrap_or(&0.0))
                 .collect();
-            let mut num_array_3: Vec<f32> = (0..15_i32)
+            let mut vein_opacities: Vec<f32> = (0..15_i32)
                 .map(|i| *theme.vein_opacity.get((i - 1) as usize).unwrap_or(&0.0))
                 .collect();
 
@@ -885,32 +890,32 @@ impl<'a> Planet<'a> {
                 },
                 StarType::GiantStar => 2.5,
                 StarType::WhiteDwarf => {
-                    num_array_1[9] += 2;
-                    add_until(num_array_1.get_mut(9).unwrap(), 0.45);
-                    num_array_2[9] = 0.7;
-                    num_array_3[9] = 1.0;
-                    num_array_1[10] += 2;
-                    add_until(num_array_1.get_mut(10).unwrap(), 0.45);
-                    num_array_2[10] = 0.7;
-                    num_array_3[10] = 1.0;
-                    num_array_1[12] += 1;
-                    add_until(num_array_1.get_mut(12).unwrap(), 0.5);
-                    num_array_2[12] = 0.7;
-                    num_array_3[12] = 0.3;
+                    vein_spots[9] += 2;
+                    add_until(vein_spots.get_mut(9).unwrap(), 0.45);
+                    vein_counts[9] = 0.7;
+                    vein_opacities[9] = 1.0;
+                    vein_spots[10] += 2;
+                    add_until(vein_spots.get_mut(10).unwrap(), 0.45);
+                    vein_counts[10] = 0.7;
+                    vein_opacities[10] = 1.0;
+                    vein_spots[12] += 1;
+                    add_until(vein_spots.get_mut(12).unwrap(), 0.5);
+                    vein_counts[12] = 0.7;
+                    vein_opacities[12] = 0.3;
                     3.5
                 }
                 StarType::NeutronStar => {
-                    num_array_1[14] += 1;
-                    add_until(num_array_1.get_mut(14).unwrap(), 0.65);
-                    num_array_2[14] = 0.7;
-                    num_array_3[14] = 0.3;
+                    vein_spots[14] += 1;
+                    add_until(vein_spots.get_mut(14).unwrap(), 0.65);
+                    vein_counts[14] = 0.7;
+                    vein_opacities[14] = 0.3;
                     4.5
                 }
                 StarType::BlackHole => {
-                    num_array_1[14] += 1;
-                    add_until(num_array_1.get_mut(14).unwrap(), 0.65);
-                    num_array_2[14] = 0.7;
-                    num_array_3[14] = 0.3;
+                    vein_spots[14] += 1;
+                    add_until(vein_spots.get_mut(14).unwrap(), 0.65);
+                    vein_counts[14] = 0.7;
+                    vein_opacities[14] = 0.3;
                     5.0
                 }
             };
@@ -925,14 +930,14 @@ impl<'a> Planet<'a> {
                     1.0 - (1.0 - rare_vein_chance).powf(star_type_multiplier);
                 let adjust_rare_count = 1.0 - (1.0 - rare_setting_2).powf(star_type_multiplier);
                 if rand1.next_f64() < (adjusted_rare_chance as f64) {
-                    num_array_1[rare_vein] += 1;
-                    num_array_2[rare_vein] = adjust_rare_count;
-                    num_array_3[rare_vein] = adjust_rare_count;
+                    vein_spots[rare_vein] += 1;
+                    vein_counts[rare_vein] = adjust_rare_count;
+                    vein_opacities[rare_vein] = adjust_rare_count;
                     for _ in 1..12 {
                         if rand1.next_f64() >= (rare_setting_1 as f64) {
                             break;
                         }
-                        num_array_1[rare_vein] += 1;
+                        vein_spots[rare_vein] += 1;
                     }
                 }
             }
@@ -986,7 +991,7 @@ impl<'a> Planet<'a> {
                 if vein_vectors.len() >= 512 {
                     break;
                 }
-                let mut vein_spot_count = num_array_1[index3 as usize];
+                let mut vein_spot_count = vein_spots[index3 as usize];
                 if vein_spot_count > 1 {
                     vein_spot_count += rand2.next_i32(3) - 1;
                 }
@@ -1003,18 +1008,18 @@ impl<'a> Planet<'a> {
                         let x = rand2.next_f64() * 2.0 - 1.0;
                         let y = rand2.next_f64() * 2.0 - 1.0;
                         let z = rand2.next_f64() * 2.0 - 1.0;
-                        let mut zero = VectorF3(x as f32, y as f32, z as f32);
+                        let mut normal_dir = VectorF3(x as f32, y as f32, z as f32);
                         if vein_type != VeinType::Oil {
-                            zero += birth_point;
+                            normal_dir += birth_point;
                         }
-                        zero.normalize();
-                        if self.can_place_vein(algo_id, &vein_type, &zero, &mut raw_data) {
+                        normal_dir.normalize();
+                        if self.can_place_vein(algo_id, &vein_type, &normal_dir, &mut raw_data) {
                             let not_too_close_to_other_vein =
                                 vein_vectors.iter().all(|(_, pos, _)| {
-                                    (pos.distance_sq_from(&zero) as f64) >= min_sq_dist
+                                    (pos.distance_sq_from(&normal_dir) as f64) >= min_sq_dist
                                 });
                             if not_too_close_to_other_vein {
-                                vein_vectors.push((vein_type, zero, false));
+                                vein_vectors.push((vein_type, normal_dir, false));
                                 break;
                             }
                         }
@@ -1029,9 +1034,9 @@ impl<'a> Planet<'a> {
                 let is_oil = vein_type == &VeinType::Oil;
                 let normalized = vein_vector.normalized();
                 let rotation = Quaternion::from_to_rotation(&VectorF3::up(), &normalized);
-                let vector3_1 = &rotation * &VectorF3::right();
-                let vector3_2 = &rotation * &VectorF3::forward();
-                let index7 = *vein_type as i32;
+                let right_axis = &rotation * &VectorF3::right();
+                let forward_axis = &rotation * &VectorF3::forward();
+                let vein_type_index = *vein_type as i32;
                 let target_node_count = if *is_birth_resource {
                     rand2.next_f64();
                     6
@@ -1039,38 +1044,39 @@ impl<'a> Planet<'a> {
                     rand2.next_f64();
                     1
                 } else {
-                    (num_array_2.get(index7 as usize).unwrap() * (rand2.next_i32(5) + 20) as f32)
+                    (vein_counts.get(vein_type_index as usize).unwrap()
+                        * (rand2.next_i32(5) + 20) as f32)
                         .round_ties_even() as usize
                 };
-                let mut tmp_vecs = Vec::with_capacity(target_node_count);
-                tmp_vecs.push(VectorF2::zero());
+                let mut vein_nodes = Vec::with_capacity(target_node_count);
+                vein_nodes.push(VectorF2::zero());
                 let vein_density = if *is_birth_resource {
                     0.2_f32
                 } else {
-                    *num_array_3.get(index7 as usize).unwrap()
+                    *vein_opacities.get(vein_type_index as usize).unwrap()
                 };
                 for _ in 0..20 {
-                    if tmp_vecs.len() >= target_node_count {
+                    if vein_nodes.len() >= target_node_count {
                         break;
                     }
-                    for index8 in 0..tmp_vecs.len() {
-                        let vector2_1 = tmp_vecs.get(index8).unwrap();
-                        if vector2_1.magnitude_sq() <= 36.0 {
+                    for index8 in 0..vein_nodes.len() {
+                        let existing_node = vein_nodes.get(index8).unwrap();
+                        if existing_node.magnitude_sq() <= 36.0 {
                             let random_angle_radians = rand2.next_f64() * PI * 2.0;
-                            let mut vector2_2 = VectorF2::new(
+                            let mut random_dir = VectorF2::new(
                                 random_angle_radians.cos() as f32,
                                 random_angle_radians.sin() as f32,
                             );
-                            vector2_2 += vector2_1 * 0.2;
-                            vector2_2.normalize();
-                            let vector2_3 = vector2_1 + &vector2_2;
-                            let not_too_close_to_other_node = tmp_vecs
+                            random_dir += existing_node * 0.2;
+                            random_dir.normalize();
+                            let new_node = existing_node + &random_dir;
+                            let not_too_close_to_other_node = vein_nodes
                                 .iter()
-                                .all(|v| v.distance_sq_from(&vector2_3) >= 0.85);
+                                .all(|v| v.distance_sq_from(&new_node) >= 0.85);
                             if not_too_close_to_other_node {
-                                tmp_vecs.push(vector2_3);
+                                vein_nodes.push(new_node);
                             }
-                            if tmp_vecs.len() >= target_node_count {
+                            if vein_nodes.len() >= target_node_count {
                                 break;
                             }
                         }
@@ -1091,7 +1097,7 @@ impl<'a> Planet<'a> {
                 };
                 let min_value = total_amount - amount_variance;
                 let value_range = amount_variance * 2 + 1;
-                for pos in tmp_vecs.iter() {
+                for pos in vein_nodes.iter() {
                     let raw_amount = rand2.next_i32(value_range) + min_value;
                     let amount = if is_infinite_resource && !is_oil {
                         1
@@ -1106,9 +1112,9 @@ impl<'a> Planet<'a> {
                     if algo_id == 7 || theme.water_item_id == 0 {
                         amount_map[*vein_type as usize] += amount;
                     } else {
-                        let vector3_3 =
-                            ((vector3_1 * pos.0) + (vector3_2 * pos.1)) * min_vein_spacing;
-                        let mut pos = normalized + vector3_3;
+                        let node_offset =
+                            ((right_axis * pos.0) + (forward_axis * pos.1)) * min_vein_spacing;
+                        let mut pos = normalized + node_offset;
                         if is_oil {
                             pos = self.snap_to(&pos);
                         }
@@ -1141,34 +1147,39 @@ impl<'a> Planet<'a> {
         let segment = ((self.radius / 4.0 + 0.1) as i32 * 4) as f32;
         let two_pi = PI as f32 * 2.0;
         let pos = pos.normalized();
-        let num = pos.1.asin();
-        let mut num2 = pos.0.atan2(-pos.2);
-        let mut num3 = num / two_pi * segment;
-        let latitude_index = (num3.abs() - 0.1).max(0.0) as i32;
-        let num4 = determine_longitude_segment_count(latitude_index, segment) as f32;
-        let mut num5 = num2 / two_pi * num4;
-        num3 = (num3 * 5.0).round_ties_even() / 5.0;
-        num5 = (num5 * 5.0).round_ties_even() / 5.0;
-        let f = num3 / segment * two_pi;
-        num2 = num5 / num4 * two_pi;
-        let y = f.sin();
-        let num6 = f.cos();
-        let num7 = num2.sin();
-        let num8 = num2.cos();
-        VectorF3(num6 * num7, y, num6 * (-num8))
+        let latitude_angle = pos.1.asin();
+        let mut longitude_angle = pos.0.atan2(-pos.2);
+        let mut latitude_index_raw = latitude_angle / two_pi * segment;
+        let latitude_index = (latitude_index_raw.abs() - 0.1).max(0.0) as i32;
+        let longitude_segment_count =
+            determine_longitude_segment_count(latitude_index, segment) as f32;
+        let mut longitude_index_raw = longitude_angle / two_pi * longitude_segment_count;
+        latitude_index_raw = (latitude_index_raw * 5.0).round_ties_even() / 5.0;
+        longitude_index_raw = (longitude_index_raw * 5.0).round_ties_even() / 5.0;
+        let latitude_radians = latitude_index_raw / segment * two_pi;
+        longitude_angle = longitude_index_raw / longitude_segment_count * two_pi;
+        let latitude_sin = latitude_radians.sin();
+        let latitude_cos = latitude_radians.cos();
+        let longitude_sin = longitude_angle.sin();
+        let longitude_cos = longitude_angle.cos();
+        VectorF3(
+            latitude_cos * longitude_sin,
+            latitude_sin,
+            latitude_cos * (-longitude_cos),
+        )
     }
 }
 
 fn determine_longitude_segment_count(latitude_index: i32, segment: f32) -> i32 {
-    let num = (((latitude_index as f32) / (segment / 4.0) * PI as f32 * 0.5)
+    let candidate_segment_count = (((latitude_index as f32) / (segment / 4.0) * PI as f32 * 0.5)
         .cos()
         .abs()
         * segment)
         .ceil() as usize;
-    if num < 500 {
-        SEGMENT_TABLE[num]
+    if candidate_segment_count < 500 {
+        SEGMENT_TABLE[candidate_segment_count]
     } else {
-        ((num as i32) + 49) / 100 * 100
+        ((candidate_segment_count as i32) + 49) / 100 * 100
     }
 }
 

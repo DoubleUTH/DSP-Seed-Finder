@@ -14,12 +14,14 @@
 
 .light {
     --text: #213547;
+    --text-light: #444d55;
     --background: #ffffff;
     --modal-background: #f5f5f5;
 }
 
 .dark {
     --text: #ffffff;
+    --text-light: #b0b4b8;
     --background: #242424;
     --modal-background: #1f1f1f;
 }

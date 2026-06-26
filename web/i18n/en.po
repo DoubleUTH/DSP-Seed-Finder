@@ -333,7 +333,7 @@ msgid "Gas Giant"
 msgstr ""
 
 #: web/src/names.tsx:52
-#: web/src/partials/GalaxyOverview.tsx:181
+#: web/src/partials/GalaxyOverview.tsx:178
 msgid "Gas rate"
 msgstr ""
 
@@ -570,10 +570,6 @@ msgstr ""
 msgid "Maximum number of hives"
 msgstr ""
 
-#: web/src/partials/ProgressEditor.tsx:179
-msgid "Must be .txt / .csv / .tsv. One seed per line. Maximum 10MB."
-msgstr ""
-
 #: web/src/exporter/workbookGenerator.worker.tsx:57
 #: web/src/exporter/workbookGenerator.worker.tsx:81
 msgid "Name"
@@ -720,6 +716,10 @@ msgstr ""
 msgid "Progress:"
 msgstr ""
 
+#: web/src/partials/ProgressEditor.tsx:179
+msgid "Provide a seed list to limit the search to these seeds only. Must be .txt / .csv / .tsv. One seed per line. Maximum 10MB."
+msgstr ""
+
 #: web/src/exporter/workbookGenerator.worker.tsx:67
 #: web/src/partials/StarView.tsx:243
 msgid "Radius"
@@ -740,7 +740,7 @@ msgstr ""
 msgid "Resource multiplier"
 msgstr ""
 
-#: web/src/partials/GalaxyOverview.tsx:164
+#: web/src/partials/GalaxyOverview.tsx:161
 #: web/src/partials/StarView.tsx:542
 msgid "Resources"
 msgstr ""
@@ -801,7 +801,7 @@ msgstr ""
 
 #: web/src/exporter/workbookGenerator.worker.tsx:55
 #: web/src/exporter/workbookGenerator.worker.tsx:79
-#: web/src/partials/GalaxyOverview.tsx:142
+#: web/src/partials/GalaxyOverview.tsx:139
 #: web/src/views/Galaxy.tsx:70
 msgid "Seed"
 msgstr ""
@@ -853,7 +853,7 @@ msgstr ""
 msgid "Star Finder is no longer supported. Please use Galaxy Finder instead."
 msgstr ""
 
-#: web/src/partials/GalaxyOverview.tsx:149
+#: web/src/partials/GalaxyOverview.tsx:146
 msgid "Star types"
 msgstr ""
 

@@ -176,7 +176,7 @@ const ProgressEditor: Component<{
             <div class={styles.field}>
                 <div class={styles.label}>
                     <Tooltip
-                        text={t`Must be .txt / .csv / .tsv. One seed per line. Maximum 10MB.`}
+                        text={t`Provide a seed list to limit the search to these seeds only. Must be .txt / .csv / .tsv. One seed per line. Maximum 10MB.`}
                     >
                         {t`Import seeds`}
                     </Tooltip>

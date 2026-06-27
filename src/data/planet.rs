@@ -523,7 +523,9 @@ impl<'a> Planet<'a> {
 
     pub fn can_have_vein(&self, vein_type: &VeinType) -> bool {
         let theme = self.get_theme();
-        if vein_type.is_rare() {
+        if self.is_gas_giant() {
+            false
+        } else if vein_type.is_rare() {
             theme.rare_veins.contains(vein_type)
                 || match self.star.star_type {
                     StarType::BlackHole | StarType::NeutronStar => vein_type == &VeinType::Mag,

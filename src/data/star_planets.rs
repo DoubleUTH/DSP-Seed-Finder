@@ -82,6 +82,9 @@ impl<'a> StarWithPlanets<'a> {
             && self.star.star_type != StarType::BlackHole
             && self.star.star_type != StarType::NeutronStar
         {
+            if !self.is_safe() {
+                self.load_planets();
+            }
             return 0.0;
         }
         let index = *vein_type as usize;
@@ -125,6 +128,9 @@ impl<'a> StarWithPlanets<'a> {
             && self.star.star_type != StarType::BlackHole
             && self.star.star_type != StarType::NeutronStar
         {
+            if !self.is_safe() {
+                self.load_planets();
+            }
             return 0.0;
         }
         let index = *vein_type as usize;

@@ -1,4 +1,8 @@
-use crate::data::rule::{Condition, Rule};
+use crate::data::galaxy::Galaxy;
+use crate::data::rule::Condition;
+use crate::data::rule::Evaluation;
+use crate::data::rule::Rule;
+use crate::evaluate_safe;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -7,21 +11,13 @@ pub struct RulePlanetInDysonCount {
     pub include_giant: bool,
     pub condition: Condition,
 }
-
 impl Rule for RulePlanetInDysonCount {
     fn get_priority(&self) -> i32 {
         34
     }
-    fn evaluate(
-        &self,
-        galaxy: &crate::data::galaxy::Galaxy,
-        evaluation: &crate::data::rule::Evaluation,
-    ) -> u64 {
-        let mut result: u64 = 0;
-        for (index, sp) in galaxy.stars.iter().take(evaluation.get_len()).enumerate() {
-            if evaluation.is_known(index) {
-                continue;
-            }
+
+    fn evaluate(&self, galaxy: &Galaxy, evaluation: &Evaluation) -> u64 {
+        evaluate_safe!(galaxy, evaluation, |sp| {
             let planets = sp.get_planets();
             let dyson_radius = sp.star.get_dyson_radius() as f32;
             let targets = planets
@@ -31,10 +27,7 @@ impl Rule for RulePlanetInDysonCount {
                         && planet.get_sun_distance() * 40000.0 < dyson_radius
                 })
                 .count();
-            if self.condition.eval(targets as f32) {
-                result |= 1 << index;
-            }
-        }
-        result
+            self.condition.eval(targets as f32)
+        })
     }
 }

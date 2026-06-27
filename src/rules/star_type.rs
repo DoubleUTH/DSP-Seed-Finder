@@ -1,5 +1,8 @@
 use crate::data::enums::StarType;
+use crate::data::galaxy::Galaxy;
+use crate::data::rule::Evaluation;
 use crate::data::rule::Rule;
+use crate::evaluate_safe;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -12,21 +15,10 @@ impl Rule for RuleStarType {
     fn get_priority(&self) -> i32 {
         11
     }
-    fn evaluate(
-        &self,
-        galaxy: &crate::data::galaxy::Galaxy,
-        evaluation: &crate::data::rule::Evaluation,
-    ) -> u64 {
-        let mut result: u64 = 0;
-        for (index, sp) in galaxy.stars.iter().take(evaluation.get_len()).enumerate() {
-            if evaluation.is_known(index) {
-                continue;
-            }
-            let star = &sp.star;
-            if self.star_type.contains(&star.star_type) {
-                result |= 1 << index;
-            }
-        }
-        result
+
+    fn evaluate(&self, galaxy: &Galaxy, evaluation: &Evaluation) -> u64 {
+        evaluate_safe!(galaxy, evaluation, |sp| {
+            self.star_type.contains(&sp.star.star_type)
+        })
     }
 }

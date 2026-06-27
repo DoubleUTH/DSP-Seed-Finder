@@ -1,3 +1,5 @@
+use crate::data::galaxy::Galaxy;
+use crate::data::rule::Evaluation;
 use crate::data::rule::Rule;
 use serde::{Deserialize, Serialize};
 
@@ -9,7 +11,7 @@ impl Rule for RuleBirth {
     fn get_priority(&self) -> i32 {
         10
     }
-    fn evaluate(&self, _: &crate::data::galaxy::Galaxy, _: &crate::data::rule::Evaluation) -> u64 {
+    fn evaluate(&self, _: &Galaxy, _: &Evaluation) -> u64 {
         1
     }
 }

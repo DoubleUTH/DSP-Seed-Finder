@@ -1,3 +1,5 @@
+use crate::data::galaxy::Galaxy;
+use crate::data::rule::Evaluation;
 use crate::data::rule::Rule;
 
 pub struct RuleAnd {
@@ -12,11 +14,8 @@ impl Rule for RuleAnd {
             .max()
             .unwrap_or_default()
     }
-    fn evaluate(
-        &self,
-        galaxy: &crate::data::galaxy::Galaxy,
-        evaluation: &crate::data::rule::Evaluation,
-    ) -> u64 {
+
+    fn evaluate(&self, galaxy: &Galaxy, evaluation: &Evaluation) -> u64 {
         let mut e = *evaluation;
         for rule in &self.rules {
             let result = rule.evaluate(galaxy, &e);

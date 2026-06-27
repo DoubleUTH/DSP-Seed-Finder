@@ -1,4 +1,7 @@
+use crate::data::galaxy::Galaxy;
+use crate::data::rule::Evaluation;
 use crate::data::rule::Rule;
+use crate::evaluate_unsafe;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -13,30 +16,18 @@ impl Rule for RuleOceanType {
     }
     fn evaluate(
         &self,
-        galaxy: &crate::data::galaxy::Galaxy,
-        evaluation: &crate::data::rule::Evaluation,
+        galaxy: &Galaxy,
+        evaluation: &Evaluation,
     ) -> u64 {
-        let mut result: u64 = 0;
-        for (index, sp) in galaxy.stars.iter().take(evaluation.get_len()).enumerate() {
-            if evaluation.is_known(index) {
-                if !sp.is_safe() {
-                    sp.load_planets()
-                }
-                continue;
-            }
+        evaluate_unsafe!(galaxy, evaluation, |sp| {
             let mut found = false;
             for planet in sp.get_planets() {
                 let theme = planet.get_theme();
                 if self.ocean_type == theme.water_item_id {
                     found = true;
-                    // cannot early break because it is not safe
                 }
             }
-            sp.mark_safe();
-            if found {
-                result |= 1 << index;
-            }
-        }
-        result
+            found
+        })
     }
 }

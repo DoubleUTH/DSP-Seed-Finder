@@ -1,6 +1,9 @@
 use crate::data::enums::VeinType;
+use crate::data::galaxy::Galaxy;
 use crate::data::rule::Condition;
+use crate::data::rule::Evaluation;
 use crate::data::rule::Rule;
+use crate::evaluate_unsafe;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -19,28 +22,15 @@ impl Rule for RuleAverageVeinAmount {
             51
         }
     }
-    fn evaluate(
-        &self,
-        galaxy: &crate::data::galaxy::Galaxy,
-        evaluation: &crate::data::rule::Evaluation,
-    ) -> u64 {
-        let mut result: u64 = 0;
-        for (index, sp) in galaxy.stars.iter().take(evaluation.get_len()).enumerate() {
-            if evaluation.is_known(index) {
-                if !sp.is_safe() {
-                    sp.load_planets();
-                }
-                continue;
-            }
+
+    fn evaluate(&self, galaxy: &Galaxy, evaluation: &Evaluation) -> u64 {
+        evaluate_unsafe!(galaxy, evaluation, |sp| {
             let count = if self.use_actual {
                 sp.get_actual_vein(&self.vein)
             } else {
                 sp.get_avg_vein(&self.vein)
             };
-            if self.condition.eval(count) {
-                result |= 1 << index;
-            }
-        }
-        result
+            self.condition.eval(count)
+        })
     }
 }

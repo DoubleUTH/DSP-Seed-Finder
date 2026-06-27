@@ -1,8 +1,10 @@
-use crate::data::{
-    enums::StarType,
-    rule::{Condition, Rule},
-    vector3::Vector3,
-};
+use crate::data::enums::StarType;
+use crate::data::galaxy::Galaxy;
+use crate::data::rule::Condition;
+use crate::data::rule::Evaluation;
+use crate::data::rule::Rule;
+use crate::data::vector3::Vector3;
+use crate::evaluate_safe;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -16,12 +18,8 @@ impl Rule for RuleXDistance {
     fn get_priority(&self) -> i32 {
         14
     }
-    fn evaluate(
-        &self,
-        galaxy: &crate::data::galaxy::Galaxy,
-        evaluation: &crate::data::rule::Evaluation,
-    ) -> u64 {
-        let mut result: u64 = 0;
+
+    fn evaluate(&self, galaxy: &Galaxy, evaluation: &Evaluation) -> u64 {
         let x_stars: Vec<&Vector3> = galaxy
             .stars
             .iter()
@@ -33,30 +31,20 @@ impl Rule for RuleXDistance {
             .collect();
 
         if x_stars.is_empty() {
-            return result;
+            return 0;
         }
 
-        for (index, sp) in galaxy.stars.iter().take(evaluation.get_len()).enumerate() {
-            if evaluation.is_known(index) {
-                continue;
-            }
+        evaluate_safe!(galaxy, evaluation, |sp| {
             let star = &sp.star;
             if self.all {
-                if x_stars
+                x_stars
                     .iter()
                     .all(|p| self.condition.eval(star.position.distance_from(p) as f32))
-                {
-                    result |= 1 << index;
-                }
             } else {
-                if x_stars
+                x_stars
                     .iter()
                     .any(|p| self.condition.eval(star.position.distance_from(p) as f32))
-                {
-                    result |= 1 << index;
-                }
             }
-        }
-        result
+        })
     }
 }

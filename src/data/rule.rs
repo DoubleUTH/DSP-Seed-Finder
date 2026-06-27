@@ -29,6 +29,43 @@ impl Condition {
     }
 }
 
+#[macro_export]
+macro_rules! evaluate_safe {
+    ($galaxy:expr, $evaluation:expr, |$sp:ident| $logic:expr) => {{
+        let mut result: u64 = 0;
+        for (index, $sp) in $galaxy.stars.iter().take($evaluation.get_len()).enumerate() {
+            if $evaluation.is_known(index) {
+                continue;
+            }
+            if $logic {
+                result |= 1 << index;
+            }
+        }
+        result
+    }};
+}
+
+#[macro_export]
+macro_rules! evaluate_unsafe {
+    ($galaxy:expr, $evaluation:expr, |$sp:ident| $logic:expr) => {{
+        let mut result: u64 = 0;
+        for (index, $sp) in $galaxy.stars.iter().take($evaluation.get_len()).enumerate() {
+            if $evaluation.is_known(index) {
+                if !$sp.is_safe() {
+                    $sp.load_planets()
+                }
+                continue;
+            }
+
+            if $logic {
+                result |= 1 << index;
+            }
+            $sp.mark_safe();
+        }
+        result
+    }};
+}
+
 #[allow(unused_variables)]
 pub trait Rule {
     fn get_priority(&self) -> i32 {

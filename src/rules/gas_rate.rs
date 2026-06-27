@@ -1,5 +1,8 @@
+use crate::data::galaxy::Galaxy;
 use crate::data::rule::Condition;
+use crate::data::rule::Evaluation;
 use crate::data::rule::Rule;
+use crate::evaluate_unsafe;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -13,26 +16,13 @@ impl Rule for RuleGasRate {
     fn get_priority(&self) -> i32 {
         50
     }
-    fn evaluate(
-        &self,
-        galaxy: &crate::data::galaxy::Galaxy,
-        evaluation: &crate::data::rule::Evaluation,
-    ) -> u64 {
-        let mut result: u64 = 0;
-        for (index, sp) in galaxy.stars.iter().take(evaluation.get_len()).enumerate() {
-            let is_safe = sp.is_safe();
-            if evaluation.is_known(index) {
-                if !is_safe {
-                    sp.load_planets()
-                }
-                continue;
-            }
+
+    fn evaluate(&self, galaxy: &Galaxy, evaluation: &Evaluation) -> u64 {
+        evaluate_unsafe!(galaxy, evaluation, |sp| {
             let mut total = 0.0;
             for planet in sp.get_planets() {
                 if !planet.is_gas_giant() {
-                    if !is_safe {
-                        planet.get_theme();
-                    }
+                    planet.get_theme();
                     continue;
                 }
                 for (gas_type, rate) in planet.get_gases() {
@@ -41,11 +31,7 @@ impl Rule for RuleGasRate {
                     }
                 }
             }
-            sp.mark_safe();
-            if self.condition.eval(total) {
-                result |= 1 << index;
-            }
-        }
-        result
+            self.condition.eval(total)
+        })
     }
 }

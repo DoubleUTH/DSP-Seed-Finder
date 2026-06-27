@@ -1,4 +1,7 @@
-use crate::data::rule::{Condition, Rule};
+use crate::data::galaxy::Galaxy;
+use crate::data::rule::Condition;
+use crate::data::rule::Evaluation;
+use crate::data::rule::Rule;
 
 pub struct RuleComposite {
     pub rule: Box<dyn Rule + Send + Sync>,
@@ -9,11 +12,8 @@ impl Rule for RuleComposite {
     fn get_priority(&self) -> i32 {
         self.rule.get_priority()
     }
-    fn evaluate(
-        &self,
-        galaxy: &crate::data::galaxy::Galaxy,
-        evaluation: &crate::data::rule::Evaluation,
-    ) -> u64 {
+
+    fn evaluate(&self, galaxy: &Galaxy, evaluation: &Evaluation) -> u64 {
         let result = self.rule.evaluate(galaxy, evaluation);
         if self.condition.eval(result.count_ones() as f32) {
             1
@@ -35,11 +35,8 @@ impl Rule for RuleCompositeAnd {
             .max()
             .unwrap_or_default()
     }
-    fn evaluate(
-        &self,
-        galaxy: &crate::data::galaxy::Galaxy,
-        evaluation: &crate::data::rule::Evaluation,
-    ) -> u64 {
+
+    fn evaluate(&self, galaxy: &Galaxy, evaluation: &Evaluation) -> u64 {
         for rule in &self.rules {
             let result = rule.evaluate(galaxy, evaluation);
             if result == 0 {
@@ -62,11 +59,8 @@ impl Rule for RuleCompositeOr {
             .max()
             .unwrap_or_default()
     }
-    fn evaluate(
-        &self,
-        galaxy: &crate::data::galaxy::Galaxy,
-        evaluation: &crate::data::rule::Evaluation,
-    ) -> u64 {
+
+    fn evaluate(&self, galaxy: &Galaxy, evaluation: &Evaluation) -> u64 {
         for rule in &self.rules {
             let result = rule.evaluate(galaxy, evaluation);
             if result != 0 {

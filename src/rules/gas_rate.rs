@@ -16,7 +16,7 @@ impl Rule for RuleGasRate {
     fn evaluate(
         &self,
         galaxy: &crate::data::galaxy::Galaxy,
-        evaluation: &crate::data::rule::Evaluaton,
+        evaluation: &crate::data::rule::Evaluation,
     ) -> u64 {
         let mut result: u64 = 0;
         for (index, sp) in galaxy.stars.iter().take(evaluation.get_len()).enumerate() {

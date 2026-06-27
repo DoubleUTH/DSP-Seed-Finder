@@ -12,7 +12,7 @@ impl Rule for RuleComposite {
     fn evaluate(
         &self,
         galaxy: &crate::data::galaxy::Galaxy,
-        evaluation: &crate::data::rule::Evaluaton,
+        evaluation: &crate::data::rule::Evaluation,
     ) -> u64 {
         let result = self.rule.evaluate(galaxy, evaluation);
         if self.condition.eval(result.count_ones() as f32) {
@@ -38,7 +38,7 @@ impl Rule for RuleCompositeAnd {
     fn evaluate(
         &self,
         galaxy: &crate::data::galaxy::Galaxy,
-        evaluation: &crate::data::rule::Evaluaton,
+        evaluation: &crate::data::rule::Evaluation,
     ) -> u64 {
         for rule in &self.rules {
             let result = rule.evaluate(galaxy, evaluation);
@@ -65,7 +65,7 @@ impl Rule for RuleCompositeOr {
     fn evaluate(
         &self,
         galaxy: &crate::data::galaxy::Galaxy,
-        evaluation: &crate::data::rule::Evaluaton,
+        evaluation: &crate::data::rule::Evaluation,
     ) -> u64 {
         for rule in &self.rules {
             let result = rule.evaluate(galaxy, evaluation);

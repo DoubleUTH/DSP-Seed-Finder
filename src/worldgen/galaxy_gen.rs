@@ -3,7 +3,7 @@ use crate::data::enums::{SpectrType, StarType};
 use crate::data::galaxy::Galaxy;
 use crate::data::game_desc::GameDesc;
 use crate::data::random::DspRandom;
-use crate::data::rule::{Evaluaton, Rule};
+use crate::data::rule::{Evaluation, Rule};
 use crate::data::star::Star;
 use crate::data::star_planets::StarWithPlanets;
 use crate::data::vector3::Vector3;
@@ -211,7 +211,7 @@ pub fn find_stars(seed: i32, game_desc: &GameDesc, rule: &Box<dyn Rule + Send + 
         stars: generate_stars(seed, game_desc, &habitable_count),
     };
 
-    let evaluation = Evaluaton::new(game_desc.star_count);
+    let evaluation = Evaluation::new(game_desc.star_count);
     let result = rule.evaluate(&galaxy, &evaluation);
     result
 }

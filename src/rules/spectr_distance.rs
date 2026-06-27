@@ -20,7 +20,7 @@ impl Rule for RuleSpectrDistance {
     fn evaluate(
         &self,
         galaxy: &crate::data::galaxy::Galaxy,
-        evaluation: &crate::data::rule::Evaluaton,
+        evaluation: &crate::data::rule::Evaluation,
     ) -> u64 {
         let mut result: u64 = 0;
         let good_stars: Vec<&StarWithPlanets> = galaxy

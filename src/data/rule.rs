@@ -35,19 +35,19 @@ pub trait Rule {
         0
     }
 
-    fn evaluate(&self, galaxy: &Galaxy, evaluation: &Evaluaton) -> u64 {
+    fn evaluate(&self, galaxy: &Galaxy, evaluation: &Evaluation) -> u64 {
         0
     }
 }
 
 #[derive(Debug, Clone, Copy)]
-pub struct Evaluaton {
+pub struct Evaluation {
     value: u64,
     unknown: u64,
     max_len: usize,
 }
 
-impl Evaluaton {
+impl Evaluation {
     pub fn new(size: usize) -> Self {
         Self {
             value: 0,

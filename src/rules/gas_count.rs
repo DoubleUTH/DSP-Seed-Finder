@@ -21,7 +21,7 @@ impl Rule for RuleGasCount {
     fn evaluate(
         &self,
         galaxy: &crate::data::galaxy::Galaxy,
-        evaluation: &crate::data::rule::Evaluaton,
+        evaluation: &crate::data::rule::Evaluation,
     ) -> u64 {
         let mut result: u64 = 0;
         if let Some(ice) = self.ice {

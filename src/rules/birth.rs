@@ -9,7 +9,7 @@ impl Rule for RuleBirth {
     fn get_priority(&self) -> i32 {
         10
     }
-    fn evaluate(&self, _: &crate::data::galaxy::Galaxy, _: &crate::data::rule::Evaluaton) -> u64 {
+    fn evaluate(&self, _: &crate::data::galaxy::Galaxy, _: &crate::data::rule::Evaluation) -> u64 {
         1
     }
 }

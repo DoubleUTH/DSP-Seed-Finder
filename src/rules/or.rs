@@ -15,7 +15,7 @@ impl Rule for RuleOr {
     fn evaluate(
         &self,
         galaxy: &crate::data::galaxy::Galaxy,
-        evaluation: &crate::data::rule::Evaluaton,
+        evaluation: &crate::data::rule::Evaluation,
     ) -> u64 {
         let mut e = *evaluation;
         for rule in &self.rules {

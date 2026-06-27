@@ -127,7 +127,7 @@ impl<'a> Star<'a> {
     }
 
     pub fn is_birth(&self) -> bool {
-        return self.index == 0;
+        self.index == 0
     }
 
     pub fn get_unmodified_mass(&self) -> f32 {

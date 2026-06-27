@@ -573,14 +573,16 @@ impl<'a> Planet<'a> {
                         .unwrap_or(&0.0)
                 })
                 .collect();
-            let mut add_until = |i: &mut i32, t: f64| {
-                for _ in 1..12 {
+
+            let mut random_vein_spots = |t: f64| {
+                for i in 0..11 {
                     if rand1.next_f64() >= t {
-                        break;
+                        return i;
                     }
-                    *i += 1;
                 }
+                11
             };
+
             let star_type_multiplier: f32 = match self.star.star_type {
                 StarType::MainSeqStar => match self.star.get_spectr() {
                     SpectrType::M => 2.5,
@@ -592,30 +594,25 @@ impl<'a> Planet<'a> {
                 },
                 StarType::GiantStar => 2.5,
                 StarType::WhiteDwarf => {
-                    vein_spots[9] += 2;
-                    add_until(vein_spots.get_mut(9).unwrap(), 0.45);
+                    vein_spots[9] += 2 + random_vein_spots(0.45);
                     vein_counts[9] = 0.7;
                     vein_opacities[9] = 1.0;
-                    vein_spots[10] += 2;
-                    add_until(vein_spots.get_mut(10).unwrap(), 0.45);
+                    vein_spots[10] += 2 + random_vein_spots(0.45);
                     vein_counts[10] = 0.7;
                     vein_opacities[10] = 1.0;
-                    vein_spots[12] += 1;
-                    add_until(vein_spots.get_mut(12).unwrap(), 0.5);
+                    vein_spots[12] += 1 + random_vein_spots(0.5);
                     vein_counts[12] = 0.7;
                     vein_opacities[12] = 0.3;
                     3.5
                 }
                 StarType::NeutronStar => {
-                    vein_spots[14] += 1;
-                    add_until(vein_spots.get_mut(14).unwrap(), 0.65);
+                    vein_spots[14] += 1 + random_vein_spots(0.65);
                     vein_counts[14] = 0.7;
                     vein_opacities[14] = 0.3;
                     4.5
                 }
                 StarType::BlackHole => {
-                    vein_spots[14] += 1;
-                    add_until(vein_spots.get_mut(14).unwrap(), 0.65);
+                    vein_spots[14] += 1 + random_vein_spots(0.65);
                     vein_counts[14] = 0.7;
                     vein_opacities[14] = 0.3;
                     5.0
@@ -880,13 +877,13 @@ impl<'a> Planet<'a> {
                 .map(|i| *theme.vein_opacity.get((i - 1) as usize).unwrap_or(&0.0))
                 .collect();
 
-            let mut add_until = |i: &mut i32, t: f64| {
-                for _ in 1..12 {
+            let mut random_vein_spots = |t: f64| {
+                for i in 0..11 {
                     if rand1.next_f64() >= t {
-                        break;
+                        return i;
                     }
-                    *i += 1;
                 }
+                11
             };
 
             let star_type_multiplier: f32 = match self.star.star_type {
@@ -900,30 +897,25 @@ impl<'a> Planet<'a> {
                 },
                 StarType::GiantStar => 2.5,
                 StarType::WhiteDwarf => {
-                    vein_spots[9] += 2;
-                    add_until(vein_spots.get_mut(9).unwrap(), 0.45);
+                    vein_spots[9] += 2 + random_vein_spots(0.45);
                     vein_counts[9] = 0.7;
                     vein_opacities[9] = 1.0;
-                    vein_spots[10] += 2;
-                    add_until(vein_spots.get_mut(10).unwrap(), 0.45);
+                    vein_spots[10] += 2 + random_vein_spots(0.45);
                     vein_counts[10] = 0.7;
                     vein_opacities[10] = 1.0;
-                    vein_spots[12] += 1;
-                    add_until(vein_spots.get_mut(12).unwrap(), 0.5);
+                    vein_spots[12] += 1 + random_vein_spots(0.5);
                     vein_counts[12] = 0.7;
                     vein_opacities[12] = 0.3;
                     3.5
                 }
                 StarType::NeutronStar => {
-                    vein_spots[14] += 1;
-                    add_until(vein_spots.get_mut(14).unwrap(), 0.65);
+                    vein_spots[14] += 1 + random_vein_spots(0.65);
                     vein_counts[14] = 0.7;
                     vein_opacities[14] = 0.3;
                     4.5
                 }
                 StarType::BlackHole => {
-                    vein_spots[14] += 1;
-                    add_until(vein_spots.get_mut(14).unwrap(), 0.65);
+                    vein_spots[14] += 1 + random_vein_spots(0.65);
                     vein_counts[14] = 0.7;
                     vein_opacities[14] = 0.3;
                     5.0

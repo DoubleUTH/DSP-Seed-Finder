@@ -525,6 +525,11 @@ impl<'a> Planet<'a> {
         let theme = self.get_theme();
         if vein_type.is_rare() {
             theme.rare_veins.contains(vein_type)
+        } else if vein_type == &VeinType::Mag {
+            matches!(
+                self.star.star_type,
+                StarType::BlackHole | StarType::NeutronStar
+            )
         } else {
             let vein_index = *vein_type as i32;
             if let Some(x) = theme.vein_spot.get((vein_index - 1) as usize) {

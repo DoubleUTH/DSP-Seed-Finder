@@ -16,6 +16,10 @@ impl Rule for RuleTidalLockCount {
         33
     }
 
+    fn needs_walk(&self) -> bool {
+        false
+    }
+
     fn evaluate(&self, galaxy: &Galaxy, evaluation: &Evaluation) -> u64 {
         evaluate_safe!(galaxy, evaluation, |sp| {
             let targets = sp

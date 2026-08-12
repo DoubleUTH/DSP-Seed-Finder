@@ -13,6 +13,10 @@ impl Rule for RuleComposite {
         self.rule.get_priority()
     }
 
+    fn needs_walk(&self) -> bool {
+        self.rule.needs_walk()
+    }
+
     fn evaluate(&self, galaxy: &Galaxy, evaluation: &Evaluation) -> u64 {
         let result = self.rule.evaluate(galaxy, evaluation);
         if self.condition.eval(result.count_ones() as f32) {
@@ -34,6 +38,10 @@ impl Rule for RuleCompositeAnd {
             .map(|rule| rule.get_priority())
             .max()
             .unwrap_or_default()
+    }
+
+    fn needs_walk(&self) -> bool {
+        self.rules.iter().any(|rule| rule.needs_walk())
     }
 
     fn evaluate(&self, galaxy: &Galaxy, evaluation: &Evaluation) -> u64 {
@@ -58,6 +66,10 @@ impl Rule for RuleCompositeOr {
             .map(|rule| rule.get_priority())
             .max()
             .unwrap_or_default()
+    }
+
+    fn needs_walk(&self) -> bool {
+        self.rules.iter().any(|rule| rule.needs_walk())
     }
 
     fn evaluate(&self, galaxy: &Galaxy, evaluation: &Evaluation) -> u64 {

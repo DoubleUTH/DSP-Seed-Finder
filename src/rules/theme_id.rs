@@ -15,6 +15,10 @@ impl Rule for RuleThemeId {
         40
     }
 
+    fn needs_walk(&self) -> bool {
+        false
+    }
+
     fn evaluate(&self, galaxy: &Galaxy, evaluation: &Evaluation) -> u64 {
         evaluate_unsafe!(galaxy, evaluation, |sp| {
             let mut found = false;

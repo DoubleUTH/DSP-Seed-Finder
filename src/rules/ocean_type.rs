@@ -14,6 +14,10 @@ impl Rule for RuleOceanType {
     fn get_priority(&self) -> i32 {
         42
     }
+
+    fn needs_walk(&self) -> bool {
+        false
+    }
     fn evaluate(
         &self,
         galaxy: &Galaxy,

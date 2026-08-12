@@ -72,6 +72,15 @@ pub trait Rule {
         0
     }
 
+    /// Whether this rule reads anything derived from star positions (distance
+    /// rules, resource_coef-scaled values, hive safety factor). Rules that
+    /// return false can be evaluated on a galaxy generated without the
+    /// expensive star-position walk. Defaults to true so new rules stay
+    /// correct until explicitly audited.
+    fn needs_walk(&self) -> bool {
+        true
+    }
+
     fn evaluate(&self, galaxy: &Galaxy, evaluation: &Evaluation) -> u64 {
         0
     }

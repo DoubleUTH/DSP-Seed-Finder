@@ -15,6 +15,10 @@ impl Rule for RuleDysonRadius {
         22
     }
 
+    fn needs_walk(&self) -> bool {
+        false
+    }
+
     fn evaluate(&self, galaxy: &Galaxy, evaluation: &Evaluation) -> u64 {
         evaluate_safe!(galaxy, evaluation, |sp| {
             self.condition.eval(sp.star.get_dyson_radius() as f32)

@@ -21,6 +21,12 @@ impl Rule for RuleHiveCount {
         }
     }
 
+    fn needs_walk(&self) -> bool {
+        // The initial hive count depends on the star's safety factor, which is
+        // derived from the star position's magnitude. The max hive count is not.
+        self.initial
+    }
+
     fn evaluate(&self, galaxy: &Galaxy, evaluation: &Evaluation) -> u64 {
         evaluate_safe!(galaxy, evaluation, |sp| {
             let count = if self.initial {

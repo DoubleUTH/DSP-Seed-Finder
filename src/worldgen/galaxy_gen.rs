@@ -107,9 +107,42 @@ fn generate_stars<'a>(
     game_desc: &'a GameDesc,
     habitable_count: &'a Cell<i32>,
 ) -> Vec<StarWithPlanets<'a>> {
+    generate_stars_impl(seed, game_desc, habitable_count, true)
+}
+
+/// Star generation without the star-position walk, for rules that never read
+/// positions (`Rule::needs_walk() == false`). The galaxy RNG stream is
+/// identical to `generate_stars` (the pose seed is still consumed), and the
+/// walk always yields exactly `star_count` poses, so star seeds and types
+/// match the real galaxy. Positions are all zero and must not be read;
+/// `find_stars` re-evaluates matches on a fully generated galaxy before
+/// reporting them.
+fn generate_stars_positionless<'a>(
+    seed: i32,
+    game_desc: &'a GameDesc,
+    habitable_count: &'a Cell<i32>,
+) -> Vec<StarWithPlanets<'a>> {
+    generate_stars_impl(seed, game_desc, habitable_count, false)
+}
+
+fn generate_stars_impl<'a>(
+    seed: i32,
+    game_desc: &'a GameDesc,
+    habitable_count: &'a Cell<i32>,
+    with_positions: bool,
+) -> Vec<StarWithPlanets<'a>> {
     let mut rand = DspRandom::new(seed);
-    let tmp_poses = generate_temp_poses(rand.next_seed(), game_desc.star_count);
-    let star_count = tmp_poses.len();
+    let pose_seed = rand.next_seed();
+    let tmp_poses = if with_positions {
+        generate_temp_poses(pose_seed, game_desc.star_count)
+    } else {
+        Vec::new()
+    };
+    let star_count = if with_positions {
+        tmp_poses.len()
+    } else {
+        game_desc.star_count
+    };
 
     let black_hole_count_rand = rand.next_f32();
     let neutron_star_count_rand = rand.next_f32();
@@ -135,7 +168,8 @@ fn generate_stars<'a>(
 
     let mut stars: Vec<StarWithPlanets> = Vec::with_capacity(star_count);
 
-    for (index, position) in tmp_poses.into_iter().enumerate() {
+    for index in 0..star_count {
+        let position = tmp_poses.get(index).copied().unwrap_or(Vector3::zero());
         let seed = rand.next_seed();
         if index == 0 {
             stars.push(StarWithPlanets::new(
@@ -204,7 +238,26 @@ pub fn create_galaxy<'a>(
     Galaxy { seed, stars }
 }
 
-pub fn find_stars(seed: i32, game_desc: &GameDesc, rule: &Box<dyn Rule + Send + Sync>) -> u64 {
+/// Evaluates a position-free rule on a positionless galaxy. Only meaningful
+/// when `rule.needs_walk()` is false; public for the equivalence test.
+pub fn find_stars_positionless(
+    seed: i32,
+    game_desc: &GameDesc,
+    rule: &Box<dyn Rule + Send + Sync>,
+) -> u64 {
+    let habitable_count = Cell::new(0_i32);
+    let galaxy = Galaxy {
+        seed,
+        stars: generate_stars_positionless(seed, game_desc, &habitable_count),
+    };
+
+    let evaluation = Evaluation::new(game_desc.star_count);
+    rule.evaluate(&galaxy, &evaluation)
+}
+
+/// Full evaluation on a really generated galaxy, never taking the
+/// positionless fast path; public for the equivalence test.
+pub fn find_stars_full(seed: i32, game_desc: &GameDesc, rule: &Box<dyn Rule + Send + Sync>) -> u64 {
     let habitable_count = Cell::new(0_i32);
     let galaxy = Galaxy {
         seed,
@@ -214,4 +267,16 @@ pub fn find_stars(seed: i32, game_desc: &GameDesc, rule: &Box<dyn Rule + Send + 
     let evaluation = Evaluation::new(game_desc.star_count);
     let result = rule.evaluate(&galaxy, &evaluation);
     result
+}
+
+pub fn find_stars(seed: i32, game_desc: &GameDesc, rule: &Box<dyn Rule + Send + Sync>) -> u64 {
+    // Fast path: rules that never read star positions can be evaluated
+    // without the expensive position walk (~74% of the per-seed cost).
+    // Matches are re-evaluated on the fully generated galaxy below, so a
+    // reported seed is always backed by a real generation.
+    if !rule.needs_walk() && find_stars_positionless(seed, game_desc, rule) == 0 {
+        return 0;
+    }
+
+    find_stars_full(seed, game_desc, rule)
 }

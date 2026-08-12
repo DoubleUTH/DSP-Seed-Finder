@@ -11,6 +11,10 @@ impl Rule for RuleBirth {
     fn get_priority(&self) -> i32 {
         10
     }
+
+    fn needs_walk(&self) -> bool {
+        false
+    }
     fn evaluate(&self, _: &Galaxy, _: &Evaluation) -> u64 {
         1
     }

@@ -15,6 +15,10 @@ impl Rule for RuleAnd {
             .unwrap_or_default()
     }
 
+    fn needs_walk(&self) -> bool {
+        self.rules.iter().any(|rule| rule.needs_walk())
+    }
+
     fn evaluate(&self, galaxy: &Galaxy, evaluation: &Evaluation) -> u64 {
         let mut e = *evaluation;
         for rule in &self.rules {

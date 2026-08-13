@@ -27,6 +27,94 @@ impl Condition {
             Condition::NotBetween(f1, f2) => *f1 > value || value > *f2,
         }
     }
+
+    /// Definite outcome of this condition when the value is only known to lie
+    /// in [min, max], or None if both outcomes are still possible.
+    pub fn eval_interval(&self, min: f64, max: f64) -> Option<bool> {
+        let all = |b: bool| Some(b);
+        match self {
+            Condition::Eq(f) => {
+                let f = *f as f64;
+                if f < min || f > max {
+                    all(false)
+                } else if min == max {
+                    all(true)
+                } else {
+                    None
+                }
+            }
+            Condition::Neq(f) => {
+                let f = *f as f64;
+                if f < min || f > max {
+                    all(true)
+                } else if min == max {
+                    all(false)
+                } else {
+                    None
+                }
+            }
+            Condition::Lt(f) => {
+                let f = *f as f64;
+                if max < f {
+                    all(true)
+                } else if min >= f {
+                    all(false)
+                } else {
+                    None
+                }
+            }
+            Condition::Lte(f) => {
+                let f = *f as f64;
+                if max <= f {
+                    all(true)
+                } else if min > f {
+                    all(false)
+                } else {
+                    None
+                }
+            }
+            Condition::Gt(f) => {
+                let f = *f as f64;
+                if min > f {
+                    all(true)
+                } else if max <= f {
+                    all(false)
+                } else {
+                    None
+                }
+            }
+            Condition::Gte(f) => {
+                let f = *f as f64;
+                if min >= f {
+                    all(true)
+                } else if max < f {
+                    all(false)
+                } else {
+                    None
+                }
+            }
+            Condition::Between(f1, f2) => {
+                let (f1, f2) = (*f1 as f64, *f2 as f64);
+                if min >= f1 && max <= f2 {
+                    all(true)
+                } else if max < f1 || min > f2 {
+                    all(false)
+                } else {
+                    None
+                }
+            }
+            Condition::NotBetween(f1, f2) => {
+                let (f1, f2) = (*f1 as f64, *f2 as f64);
+                if max < f1 || min > f2 {
+                    all(true)
+                } else if min >= f1 && max <= f2 {
+                    all(false)
+                } else {
+                    None
+                }
+            }
+        }
+    }
 }
 
 #[macro_export]

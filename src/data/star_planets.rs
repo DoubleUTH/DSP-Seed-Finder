@@ -123,6 +123,55 @@ impl<'a> StarWithPlanets<'a> {
         count
     }
 
+    /// Upper bound on `get_actual_vein` that only needs the cheap estimated
+    /// veins, never terrain generation. Actual generation draws its group
+    /// count in [spots-1, spots+1] = the estimator's group range, its node
+    /// count per group at most round(count * 24) = the estimator's max patch,
+    /// and its per-node amount within the estimator's variance around the same
+    /// base; placement can only fail (rejection walk, 512-vector cap, node
+    /// spacing, underwater drop), so actual <= max_group * max_patch *
+    /// max_amount per planet. Two exceptions are handled conservatively:
+    /// birth planets add bonus iron/copper groups outside the vein_spot table
+    /// (birth stars are never bounded), and the actual path multiplies the
+    /// resource multiplier in one rounding step where the estimator uses two,
+    /// so each node can exceed the estimated max by up to multiplier + 1.
+    pub fn get_max_possible_vein(&self, vein_type: &VeinType) -> f64 {
+        if self.star.is_birth() {
+            return f64::INFINITY;
+        }
+        if vein_type == &VeinType::Mag
+            && self.star.star_type != StarType::BlackHole
+            && self.star.star_type != StarType::NeutronStar
+        {
+            // Same side effect as get_actual_vein's Mag path: planet themes
+            // must still be generated in star order for habitable_count.
+            if !self.is_safe() {
+                self.load_planets();
+            }
+            return 0.0;
+        }
+        let multiplier = if vein_type == &VeinType::Oil {
+            self.game_desc.oil_amount_multiplier()
+        } else {
+            self.game_desc.resource_multiplier
+        };
+        let node_slack = (multiplier as f64) + 1.0;
+        let mut bound = 0.0_f64;
+        for planet in self.get_planets() {
+            if !planet.can_have_vein(vein_type) {
+                continue;
+            }
+            for vein in planet.get_estimated_veins() {
+                if &vein.vein_type == vein_type {
+                    bound += (vein.max_group as f64)
+                        * (vein.max_patch as f64)
+                        * ((vein.max_amount as f64) + node_slack);
+                }
+            }
+        }
+        bound
+    }
+
     pub fn get_actual_vein(&self, vein_type: &VeinType) -> f32 {
         if vein_type == &VeinType::Mag
             && self.star.star_type != StarType::BlackHole

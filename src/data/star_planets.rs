@@ -34,7 +34,7 @@ pub struct StarWithPlanets<'a> {
     #[serde(skip)]
     avg_veins: UnsafeCell<[f32; MAX_VEIN_COUNT]>,
     #[serde(skip)]
-    actual_veins: UnsafeCell<[f32; MAX_VEIN_COUNT]>,
+    actual_veins: UnsafeCell<[i64; MAX_VEIN_COUNT]>,
     #[serde(skip)]
     game_desc: &'a GameDesc,
     #[serde(skip)]
@@ -52,7 +52,7 @@ impl<'a> StarWithPlanets<'a> {
             planets: UnsafeCell::new(Vec::with_capacity(6)),
             safe: UnsafeCell::new(false),
             avg_veins: UnsafeCell::new([f32::NAN; MAX_VEIN_COUNT]),
-            actual_veins: UnsafeCell::new([f32::NAN; MAX_VEIN_COUNT]),
+            actual_veins: UnsafeCell::new([i64::MIN; MAX_VEIN_COUNT]),
             name: Default::default(),
             game_desc,
             habitable_count,
@@ -123,7 +123,18 @@ impl<'a> StarWithPlanets<'a> {
         count
     }
 
-    pub fn get_actual_vein(&self, vein_type: &VeinType) -> f32 {
+    /// Exact total of `vein_type` across this star's planets.
+    ///
+    /// Per-vein amounts are integers and are summed exactly, so this is the
+    /// authoritative figure. Prefer it to [`Self::get_actual_vein`] whenever the
+    /// total can exceed 2^24 (16,777,216): above that an `f32` cannot represent
+    /// every integer, so the value is silently rounded to the nearest multiple
+    /// of 4, 32, 64 ... depending on magnitude. Star totals for the common ores
+    /// routinely reach the hundreds of millions, well past that point.
+    ///
+    /// The accumulator is `i64` rather than `i32` so a star whose total exceeds
+    /// `i32::MAX` cannot overflow.
+    pub fn get_actual_vein_exact(&self, vein_type: &VeinType) -> i64 {
         if vein_type == &VeinType::Mag
             && self.star.star_type != StarType::BlackHole
             && self.star.star_type != StarType::NeutronStar
@@ -131,30 +142,40 @@ impl<'a> StarWithPlanets<'a> {
             if !self.is_safe() {
                 self.load_planets();
             }
-            return 0.0;
+            return 0;
         }
         let index = *vein_type as usize;
         let cached_value = unsafe {
             let arr = &mut *self.actual_veins.get();
             arr.get_unchecked_mut(index)
         };
-        if !cached_value.is_nan() {
+        // i64::MIN is the "not yet computed" sentinel; a real total is >= 0.
+        if *cached_value != i64::MIN {
             return *cached_value;
         }
-        let mut count = 0;
+        let mut count: i64 = 0;
         for planet in self.get_planets() {
             if !planet.can_have_vein(vein_type) {
                 continue;
             }
             for vein in planet.get_actual_veins() {
                 if &vein.vein_type == vein_type {
-                    count += vein.amount;
+                    count += vein.amount as i64;
                 }
             }
         }
-        *cached_value = count as f32;
+        *cached_value = count;
         self.mark_safe();
-        count as f32
+        count
+    }
+
+    /// Total of `vein_type` as `f32`.
+    ///
+    /// Kept for callers that feed the value straight into an `f32` comparison;
+    /// behaviour is identical to before `get_actual_vein_exact` was split out.
+    /// See that method for the precision caveat.
+    pub fn get_actual_vein(&self, vein_type: &VeinType) -> f32 {
+        self.get_actual_vein_exact(vein_type) as f32
     }
 
     pub fn get_planets(&self) -> &Vec<Planet<'a>> {

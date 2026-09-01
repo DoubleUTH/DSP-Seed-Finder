@@ -17,6 +17,18 @@ use std::f64::consts::PI;
 use std::rc::Rc;
 
 #[derive(Debug)]
+struct VeinParams {
+    theme: &'static ThemeProto,
+    is_birth_planet: bool,
+    birth_seed: i32,
+    rand2_seed: i32,
+    vein_spots: Vec<i32>,
+    vein_counts: Vec<f32>,
+    vein_opacities: Vec<f32>,
+    resource_coef: f32,
+}
+
+#[derive(Debug)]
 pub struct Planet<'a> {
     game_desc: &'a GameDesc,
     pub star: Rc<Star<'a>>,
@@ -52,6 +64,7 @@ pub struct Planet<'a> {
     rotation_period: OnceCell<f64>,
     theme: OnceCell<&'static ThemeProto>,
     gases: OnceCell<Vec<(i32, f32)>>,
+    vein_params: OnceCell<VeinParams>,
     estimated_veins: OnceCell<Vec<EstimatedVein>>,
     actual_veins: OnceCell<Vec<ActualVein>>,
     theme_algo_id: OnceCell<i32>,
@@ -140,6 +153,7 @@ impl<'a> Planet<'a> {
             estimated_veins: OnceCell::new(),
             theme_algo_id: OnceCell::new(),
             actual_veins: OnceCell::new(),
+            vein_params: OnceCell::new(),
         }
     }
 
@@ -547,33 +561,24 @@ impl<'a> Planet<'a> {
         }
     }
 
-    pub fn get_estimated_veins(&self) -> &Vec<EstimatedVein> {
-        self.estimated_veins.get_or_init(|| {
-            if self.is_gas_giant() {
-                return Vec::with_capacity(0);
-            }
-            let mut output: Vec<EstimatedVein> = Vec::with_capacity(14);
+    fn get_vein_params(&self) -> &VeinParams {
+        self.vein_params.get_or_init(|| {
+            let theme = self.get_theme();
             let mut rand1 = DspRandom::new(self.seed);
             rand1.next_f64();
             rand1.next_f64();
             rand1.next_f64();
             rand1.next_f64();
-            rand1.next_f64();
-            rand1.next_f64();
-            let theme_proto = self.get_theme();
+            let birth_seed = rand1.next_seed();
+            let rand2_seed = rand1.next_seed();
             let mut vein_spots: Vec<i32> = (0..15_i32)
-                .map(|i| *theme_proto.vein_spot.get((i - 1) as usize).unwrap_or(&0))
+                .map(|i| *theme.vein_spot.get((i - 1) as usize).unwrap_or(&0))
                 .collect();
             let mut vein_counts: Vec<f32> = (0..15_i32)
-                .map(|i| *theme_proto.vein_count.get((i - 1) as usize).unwrap_or(&0.0))
+                .map(|i| *theme.vein_count.get((i - 1) as usize).unwrap_or(&0.0))
                 .collect();
             let mut vein_opacities: Vec<f32> = (0..15_i32)
-                .map(|i| {
-                    *theme_proto
-                        .vein_opacity
-                        .get((i - 1) as usize)
-                        .unwrap_or(&0.0)
-                })
+                .map(|i| *theme.vein_opacity.get((i - 1) as usize).unwrap_or(&0.0))
                 .collect();
 
             let mut random_vein_spots = |t: f64| {
@@ -620,29 +625,20 @@ impl<'a> Planet<'a> {
                     5.0
                 }
             };
-            let is_rare_resource = self.game_desc.is_rare_resource();
-            let mut f = self.star.get_resource_coef();
-            if theme_proto.distribute == ThemeDistribute::Birth {
-                f *= 2.0 / 3.0;
-            } else if is_rare_resource {
-                if f > 1.0 {
-                    f = f.powf(0.8)
-                }
-                f *= 0.7;
-            }
-            for (index1, rare_vein_ref) in theme_proto.rare_veins.iter().enumerate() {
+
+            for (index1, rare_vein_ref) in theme.rare_veins.iter().enumerate() {
                 let rare_vein = *rare_vein_ref as usize;
-                let rare_vein_chance = theme_proto.rare_settings
-                    [index1 * 4 + (if self.star.is_birth() { 0 } else { 1 })];
-                let rare_setting_1 = theme_proto.rare_settings[index1 * 4 + 2];
-                let rare_setting_2 = theme_proto.rare_settings[index1 * 4 + 3];
+                let rare_vein_chance =
+                    theme.rare_settings[index1 * 4 + (if self.star.is_birth() { 0 } else { 1 })];
+                let rare_setting_1 = theme.rare_settings[index1 * 4 + 2];
+                let rare_setting_2 = theme.rare_settings[index1 * 4 + 3];
                 let adjusted_rare_chance =
                     1.0 - (1.0 - rare_vein_chance).powf(star_type_multiplier);
-                let adjusted_rare_count = 1.0 - (1.0 - rare_setting_2).powf(star_type_multiplier);
+                let adjust_rare_count = 1.0 - (1.0 - rare_setting_2).powf(star_type_multiplier);
                 if rand1.next_f64() < (adjusted_rare_chance as f64) {
                     vein_spots[rare_vein] += 1;
-                    vein_counts[rare_vein] = adjusted_rare_count;
-                    vein_opacities[rare_vein] = adjusted_rare_count;
+                    vein_counts[rare_vein] = adjust_rare_count;
+                    vein_opacities[rare_vein] = adjust_rare_count;
                     for _ in 1..12 {
                         if rand1.next_f64() >= (rare_setting_1 as f64) {
                             break;
@@ -651,6 +647,102 @@ impl<'a> Planet<'a> {
                     }
                 }
             }
+
+            let is_rare_resource = self.game_desc.is_rare_resource();
+            let mut resource_coef = self.star.get_resource_coef();
+            let is_birth_planet = theme.distribute == ThemeDistribute::Birth;
+            if is_birth_planet {
+                resource_coef *= 2.0 / 3.0;
+            } else if is_rare_resource {
+                if resource_coef > 1.0 {
+                    resource_coef = resource_coef.powf(0.8)
+                }
+                resource_coef *= 0.7;
+            }
+
+            VeinParams {
+                theme,
+                is_birth_planet,
+                birth_seed,
+                rand2_seed,
+                vein_spots,
+                vein_counts,
+                vein_opacities,
+                resource_coef,
+            }
+        })
+    }
+
+    pub fn get_max_vein(&self, vein_type: &VeinType) -> i64 {
+        if self.is_gas_giant() {
+            return 0;
+        }
+        let index = *vein_type as usize;
+        let VeinParams {
+            vein_spots,
+            vein_counts,
+            vein_opacities,
+            resource_coef,
+            ..
+        } = self.get_vein_params();
+        let vein_spot_count = vein_spots[index];
+        if vein_spot_count <= 0 {
+            return 0;
+        }
+        let max_group = (vein_spot_count + 1) as i64;
+        let is_oil = vein_type == &VeinType::Oil;
+        let max_patch = if is_oil {
+            1
+        } else {
+            let vein_count_factor = vein_counts[index];
+            (vein_count_factor * 24.0).round_ties_even() as i64
+        };
+
+        let max_amount = if !is_oil && self.game_desc.is_infinite_resource() {
+            1
+        } else {
+            let total_amount_factor = if is_oil {
+                resource_coef.powf(0.5)
+            } else {
+                *resource_coef
+            };
+            let base_amount = ((vein_opacities[index] * 100000.0 * total_amount_factor)
+                .round_ties_even() as i32)
+                .max(20);
+            let amount_variance = if base_amount < 16000 {
+                ((base_amount as f32) * (15.0 / 16.0)).floor() as i32
+            } else {
+                15000
+            };
+
+            let x1 = (((base_amount + amount_variance) as f32) * 1.1).round_ties_even();
+            let x2 = (if vein_type == &VeinType::Oil {
+                x1 * self.game_desc.oil_amount_multiplier()
+            } else {
+                x1 * self.game_desc.resource_multiplier
+            })
+            .round_ties_even() as i64;
+            x2.max(1)
+        };
+
+        max_group * max_patch * max_amount
+    }
+
+    pub fn get_estimated_veins(&self) -> &Vec<EstimatedVein> {
+        self.estimated_veins.get_or_init(|| {
+            if self.is_gas_giant() {
+                return Vec::with_capacity(0);
+            }
+            let mut output: Vec<EstimatedVein> = Vec::with_capacity(14);
+
+            let VeinParams {
+                vein_spots,
+                vein_counts,
+                vein_opacities,
+                resource_coef,
+                ..
+            } = self.get_vein_params();
+
             let is_infinite_resource = self.game_desc.is_infinite_resource();
             for index3 in 1..15 {
                 let vein_spot_count = vein_spots[index3 as usize];
@@ -669,9 +761,9 @@ impl<'a> Planet<'a> {
                         vein.max_patch = (vein_count_factor * 24.0).round_ties_even() as i32;
                     }
                     let total_amount_factor = if vein.vein_type == VeinType::Oil {
-                        f.powf(0.5)
+                        resource_coef.powf(0.5)
                     } else {
-                        f
+                        *resource_coef
                     };
                     if is_infinite_resource && vein.vein_type != VeinType::Oil {
                         vein.min_amount = 1;
@@ -868,110 +960,27 @@ impl<'a> Planet<'a> {
                 return Vec::with_capacity(0);
             }
 
-            let theme = self.get_theme();
-            let mut rand1 = DspRandom::new(self.seed);
-            rand1.next_f64();
-            rand1.next_f64();
-            rand1.next_f64();
-            rand1.next_f64();
-            let birth_seed = rand1.next_seed();
-            let mut rand2 = DspRandom::new(rand1.next_seed());
-            let mut vein_spots: Vec<i32> = (0..15_i32)
-                .map(|i| *theme.vein_spot.get((i - 1) as usize).unwrap_or(&0))
-                .collect();
-            let mut vein_counts: Vec<f32> = (0..15_i32)
-                .map(|i| *theme.vein_count.get((i - 1) as usize).unwrap_or(&0.0))
-                .collect();
-            let mut vein_opacities: Vec<f32> = (0..15_i32)
-                .map(|i| *theme.vein_opacity.get((i - 1) as usize).unwrap_or(&0.0))
-                .collect();
+            let VeinParams {
+                theme,
+                is_birth_planet,
+                birth_seed,
+                rand2_seed,
+                vein_spots,
+                vein_counts,
+                vein_opacities,
+                resource_coef,
+            } = self.get_vein_params();
 
-            let mut random_vein_spots = |t: f64| {
-                for i in 0..11 {
-                    if rand1.next_f64() >= t {
-                        return i;
-                    }
-                }
-                11
-            };
+            let mut rand2 = DspRandom::new(*rand2_seed);
 
-            let star_type_multiplier: f32 = match self.star.star_type {
-                StarType::MainSeqStar => match self.star.get_spectr() {
-                    SpectrType::M => 2.5,
-                    SpectrType::G => 0.7,
-                    SpectrType::F => 0.6,
-                    SpectrType::B => 0.4,
-                    SpectrType::O => 1.6,
-                    _ => 1.0,
-                },
-                StarType::GiantStar => 2.5,
-                StarType::WhiteDwarf => {
-                    vein_spots[9] += 2 + random_vein_spots(0.45);
-                    vein_counts[9] = 0.7;
-                    vein_opacities[9] = 1.0;
-                    vein_spots[10] += 2 + random_vein_spots(0.45);
-                    vein_counts[10] = 0.7;
-                    vein_opacities[10] = 1.0;
-                    vein_spots[12] += 1 + random_vein_spots(0.5);
-                    vein_counts[12] = 0.7;
-                    vein_opacities[12] = 0.3;
-                    3.5
-                }
-                StarType::NeutronStar => {
-                    vein_spots[14] += 1 + random_vein_spots(0.65);
-                    vein_counts[14] = 0.7;
-                    vein_opacities[14] = 0.3;
-                    4.5
-                }
-                StarType::BlackHole => {
-                    vein_spots[14] += 1 + random_vein_spots(0.65);
-                    vein_counts[14] = 0.7;
-                    vein_opacities[14] = 0.3;
-                    5.0
-                }
-            };
-
-            for (index1, rare_vein_ref) in theme.rare_veins.iter().enumerate() {
-                let rare_vein = *rare_vein_ref as usize;
-                let rare_vein_chance =
-                    theme.rare_settings[index1 * 4 + (if self.star.is_birth() { 0 } else { 1 })];
-                let rare_setting_1 = theme.rare_settings[index1 * 4 + 2];
-                let rare_setting_2 = theme.rare_settings[index1 * 4 + 3];
-                let adjusted_rare_chance =
-                    1.0 - (1.0 - rare_vein_chance).powf(star_type_multiplier);
-                let adjust_rare_count = 1.0 - (1.0 - rare_setting_2).powf(star_type_multiplier);
-                if rand1.next_f64() < (adjusted_rare_chance as f64) {
-                    vein_spots[rare_vein] += 1;
-                    vein_counts[rare_vein] = adjust_rare_count;
-                    vein_opacities[rare_vein] = adjust_rare_count;
-                    for _ in 1..12 {
-                        if rand1.next_f64() >= (rare_setting_1 as f64) {
-                            break;
-                        }
-                        vein_spots[rare_vein] += 1;
-                    }
-                }
-            }
-
-            let is_rare_resource = self.game_desc.is_rare_resource();
-            let mut resource_coef = self.star.get_resource_coef();
-            let is_birth_planet = theme.distribute == ThemeDistribute::Birth;
-            if is_birth_planet {
-                resource_coef *= 2.0 / 3.0;
-            } else if is_rare_resource {
-                if resource_coef > 1.0 {
-                    resource_coef = resource_coef.powf(0.8)
-                }
-                resource_coef *= 0.7;
-            }
             let mut vein_vectors: Vec<(VeinType, VectorF3, bool)> = Vec::with_capacity(512);
             // Fetch PlanetRawData once and thread it through all query_height calls
             let mut raw_data = PlanetRawData::new(&self);
 
-            let birth_point = if is_birth_planet {
+            let birth_point = if *is_birth_planet {
                 let star_direction = self.get_star_direction();
                 let birth_point_data =
-                    BirthPoints::new(&mut raw_data, birth_seed, self.radius, star_direction);
+                    BirthPoints::new(&mut raw_data, *birth_seed, self.radius, star_direction);
                 vein_vectors.push((VeinType::Iron, birth_point_data.birth_resource_point0, true));
                 vein_vectors.push((
                     VeinType::Copper,
@@ -1096,7 +1105,7 @@ impl<'a> Planet<'a> {
                 let adjusted_resource_coef = if is_oil {
                     resource_coef.powf(0.5)
                 } else {
-                    resource_coef
+                    *resource_coef
                 };
                 let total_amount = ((vein_density * 100000.0 * adjusted_resource_coef)
                     .round_ties_even() as i32)
@@ -1118,7 +1127,9 @@ impl<'a> Planet<'a> {
                         } else {
                             self.game_desc.resource_multiplier
                         };
-                        (((raw_amount as f32) * 1.1 * multiplier).round_ties_even() as i32).max(1)
+                        ((((raw_amount as f32) * 1.1).round_ties_even() * multiplier)
+                            .round_ties_even() as i32)
+                            .max(1)
                     };
                     if algo_id == 7 || theme.water_item_id == 0 {
                         amount_map[*vein_type as usize] += amount;

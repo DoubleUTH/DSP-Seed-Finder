@@ -35,7 +35,11 @@ msgstr ""
 msgid "{name} (Min)"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:605
+#: web/src/partials/RuleEditor.tsx:579
+msgid "<0/> a <1/> planet."
+msgstr ""
+
+#: web/src/partials/RuleEditor.tsx:616
 msgid "<0/> number of hives is <1/>."
 msgstr ""
 
@@ -48,12 +52,12 @@ msgid "actual"
 msgstr ""
 
 #: web/src/partials/MultiRuleEditor.tsx:214
-#: web/src/partials/RuleEditor.tsx:870
+#: web/src/partials/RuleEditor.tsx:881
 msgid "Add AND rule"
 msgstr ""
 
 #: web/src/partials/MultiRuleEditor.tsx:147
-#: web/src/partials/RuleEditor.tsx:797
+#: web/src/partials/RuleEditor.tsx:808
 msgid "Add OR rule"
 msgstr ""
 
@@ -67,7 +71,7 @@ msgid "all"
 msgstr ""
 
 #: web/src/partials/MultiRuleEditor.tsx:197
-#: web/src/partials/RuleEditor.tsx:844
+#: web/src/partials/RuleEditor.tsx:855
 msgid "AND"
 msgstr ""
 
@@ -239,6 +243,10 @@ msgstr ""
 msgid "Do you really want to delete all settings and progress? This cannot be undone."
 msgstr ""
 
+#: web/src/partials/RuleEditor.tsx:587
+msgid "Does not have"
+msgstr ""
+
 #: web/src/partials/ExportModal.tsx:140
 msgid "Done"
 msgstr ""
@@ -378,6 +386,10 @@ msgstr ""
 msgid "Halitum"
 msgstr ""
 
+#: web/src/partials/RuleEditor.tsx:587
+msgid "Has"
+msgstr ""
+
 #: web/src/partials/RuleEditor.tsx:302
 msgid "Has <0/> <1/> giant(s)"
 msgstr ""
@@ -412,10 +424,6 @@ msgstr ""
 
 #: web/src/partials/RuleEditor.tsx:228
 msgid "Has <0/> tidally locked planets"
-msgstr ""
-
-#: web/src/partials/RuleEditor.tsx:578
-msgid "Has a <0/> planet."
 msgstr ""
 
 #: web/src/partials/RuleEditor.tsx:250
@@ -468,7 +476,7 @@ msgstr ""
 msgid "Index"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:613
+#: web/src/partials/RuleEditor.tsx:624
 msgid "Initial"
 msgstr ""
 
@@ -506,7 +514,7 @@ msgstr ""
 msgid "Is a <0/> type star"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:713
+#: web/src/partials/RuleEditor.tsx:724
 msgid "Is the Starting system"
 msgstr ""
 
@@ -555,7 +563,7 @@ msgstr ""
 msgid "Mass"
 msgstr ""
 
-#: web/src/partials/RuleEditor.tsx:613
+#: web/src/partials/RuleEditor.tsx:624
 msgid "Max"
 msgstr ""
 
@@ -632,7 +640,7 @@ msgid "Onyxtopia"
 msgstr ""
 
 #: web/src/partials/MultiRuleEditor.tsx:72
-#: web/src/partials/RuleEditor.tsx:772
+#: web/src/partials/RuleEditor.tsx:783
 msgid "OR"
 msgstr ""
 

@@ -125,3 +125,11 @@
 .selectInitialOrMax {
     width: 60px;
 }
+
+.selectThemeNegate:lang(en) {
+    width: 130px;
+}
+
+.selectThemeNegate:lang(zh) {
+    width: 80px;
+}

@@ -22,6 +22,7 @@ export const I18nProvider: ParentComponent = (props) => {
         () => store.settings.language,
         async (lang) => {
             await loadLanguage(lang)
+            document.documentElement.lang = lang
             return i18n._.bind(i18n) as any
         },
     )

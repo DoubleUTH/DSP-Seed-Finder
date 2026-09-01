@@ -141,20 +141,20 @@ impl<'a> StarWithPlanets<'a> {
         if !cached_value.is_nan() {
             return *cached_value;
         }
-        let mut count = 0;
+        let mut count: i64 = 0;
         for planet in self.get_planets() {
             if !planet.can_have_vein(vein_type) {
                 continue;
             }
             for vein in planet.get_actual_veins() {
                 if &vein.vein_type == vein_type {
-                    count += vein.amount;
+                    count += vein.amount as i64;
                 }
             }
         }
         *cached_value = count as f32;
         self.mark_safe();
-        count as f32
+        *cached_value
     }
 
     pub fn get_planets(&self) -> &Vec<Planet<'a>> {

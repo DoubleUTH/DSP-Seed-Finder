@@ -775,26 +775,33 @@ impl<'a> Planet<'a> {
     pub fn get_star_direction(&self) -> VectorF3 {
         let pose = self.predict_pose(85.0);
 
+        // star_pos is always zero on birth star and this function is only called on birth planet
         // star.uPosition = star.position * 2400000.0
-        let star_pos = &self.star.position; // Vector3 (f64)
-        let star_u_pos = VectorF3(
-            (star_pos.0 * 2400000.0) as f32,
-            (star_pos.1 * 2400000.0) as f32,
-            (star_pos.2 * 2400000.0) as f32,
-        );
+        // let star_pos = &self.star.position; // Vector3 (f64)
+        // let star_u_pos = VectorF3(
+        //     (star_pos.0 * 2400000.0) as f32,
+        //     (star_pos.1 * 2400000.0) as f32,
+        //     (star_pos.2 * 2400000.0) as f32,
+        // );
 
         // pose.position * 40000.0
-        let pose_scaled = VectorF3(
-            pose.position.0 * 40000.0,
-            pose.position.1 * 40000.0,
-            pose.position.2 * 40000.0,
-        );
+        // let pose_scaled = VectorF3(
+        //     pose.position.0 * 40000.0,
+        //     pose.position.1 * 40000.0,
+        //     pose.position.2 * 40000.0,
+        // );
 
         // star.uPosition - pose.position * 40000.0
+        // let delta = VectorF3(
+        //     star_u_pos.0 - pose_scaled.0,
+        //     star_u_pos.1 - pose_scaled.1,
+        //     star_u_pos.2 - pose_scaled.2,
+        // );
+
         let delta = VectorF3(
-            star_u_pos.0 - pose_scaled.0,
-            star_u_pos.1 - pose_scaled.1,
-            star_u_pos.2 - pose_scaled.2,
+            -pose.position.0 * 40000.0,
+            -pose.position.1 * 40000.0,
+            -pose.position.2 * 40000.0,
         );
 
         // QInvRotateLF(pose.rotation, delta) then normalize

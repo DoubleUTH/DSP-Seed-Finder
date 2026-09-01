@@ -25,12 +25,14 @@ impl Rule for RuleAverageVeinAmount {
 
     fn evaluate(&self, galaxy: &Galaxy, evaluation: &Evaluation) -> u64 {
         evaluate_unsafe!(galaxy, evaluation, |sp| {
-            let count = if self.use_actual {
-                sp.get_actual_vein(&self.vein)
+            if self.use_actual {
+                match self.condition.eval_bound(0.0, sp.get_max_vein(&self.vein)) {
+                    Some(known) => known,
+                    None => self.condition.eval(sp.get_actual_vein(&self.vein)),
+                }
             } else {
-                sp.get_avg_vein(&self.vein)
-            };
-            self.condition.eval(count)
+                self.condition.eval(sp.get_avg_vein(&self.vein))
+            }
         })
     }
 }

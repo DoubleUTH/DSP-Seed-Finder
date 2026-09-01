@@ -157,6 +157,33 @@ impl<'a> StarWithPlanets<'a> {
         *cached_value
     }
 
+    pub fn get_max_vein(&self, vein_type: &VeinType) -> f32 {
+        if self.star.is_birth() && matches!(vein_type, VeinType::Iron | VeinType::Copper) {
+            if !self.is_safe() {
+                self.load_planets();
+            }
+            return f32::INFINITY;
+        }
+        if vein_type == &VeinType::Mag
+            && self.star.star_type != StarType::BlackHole
+            && self.star.star_type != StarType::NeutronStar
+        {
+            if !self.is_safe() {
+                self.load_planets();
+            }
+            return 0.0;
+        }
+        let mut bound: i64 = 0;
+        for planet in self.get_planets() {
+            if !planet.can_have_vein(vein_type) {
+                continue;
+            }
+            bound += planet.get_max_vein(vein_type);
+        }
+        self.mark_safe();
+        bound as f32
+    }
+
     pub fn get_planets(&self) -> &Vec<Planet<'a>> {
         let planets = unsafe { &mut *self.planets.get() };
         if !planets.is_empty() {

@@ -27,6 +27,86 @@ impl Condition {
             Condition::NotBetween(f1, f2) => *f1 > value || value > *f2,
         }
     }
+
+    pub fn eval_bound(&self, min: f32, max: f32) -> Option<bool> {
+        if max < min {
+            return Some(false);
+        }
+        match self {
+            Condition::Eq(f) => {
+                if *f < min || *f > max {
+                    Some(false)
+                } else if min == max {
+                    Some(true)
+                } else {
+                    None
+                }
+            }
+            Condition::Neq(f) => {
+                if *f < min || *f > max {
+                    Some(true)
+                } else if min == max {
+                    Some(false)
+                } else {
+                    None
+                }
+            }
+            Condition::Lt(f) => {
+                if max < *f {
+                    Some(true)
+                } else if min >= *f {
+                    Some(false)
+                } else {
+                    None
+                }
+            }
+            Condition::Lte(f) => {
+                if max <= *f {
+                    Some(true)
+                } else if min > *f {
+                    Some(false)
+                } else {
+                    None
+                }
+            }
+            Condition::Gt(f) => {
+                if min > *f {
+                    Some(true)
+                } else if max <= *f {
+                    Some(false)
+                } else {
+                    None
+                }
+            }
+            Condition::Gte(f) => {
+                if min >= *f {
+                    Some(true)
+                } else if max < *f {
+                    Some(false)
+                } else {
+                    None
+                }
+            }
+            Condition::Between(f1, f2) => {
+                if min >= *f1 && max <= *f2 {
+                    Some(true)
+                } else if max < *f1 || min > *f2 {
+                    Some(false)
+                } else {
+                    None
+                }
+            }
+            Condition::NotBetween(f1, f2) => {
+                if max < *f1 || min > *f2 {
+                    Some(true)
+                } else if min >= *f1 && max <= *f2 {
+                    Some(false)
+                } else {
+                    None
+                }
+            }
+        }
+    }
 }
 
 #[macro_export]

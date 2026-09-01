@@ -574,9 +574,20 @@ const EditThemeId: Component<{
     disabled?: boolean
 }> = (props) => {
     const planetTypes = usePlanetTypeNames()
+    const { t } = useLingui()
     return (
         <Trans>
-            Has a{" "}
+            <Select
+                class={styles.selectThemeNegate}
+                value={!!props.value.negate}
+                onChange={(negate) =>
+                    props.onChange({ ...props.value, negate })
+                }
+                options={[false, true]}
+                getLabel={(negate) => (negate ? t`Does not have` : t`Has`)}
+                disabled={props.disabled}
+            />{" "}
+            a{" "}
             <Select
                 class={styles.selectPlanetType}
                 value={props.value.themeIds[0]!}

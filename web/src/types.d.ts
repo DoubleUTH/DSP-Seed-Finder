@@ -172,6 +172,7 @@ declare global {
         export type ThemeId = {
             type: RuleType.ThemeId
             themeIds: integer[]
+            negate?: boolean
         }
         export type PlanetCount = {
             type: RuleType.PlanetCount

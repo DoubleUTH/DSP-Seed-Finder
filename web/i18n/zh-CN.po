@@ -35,7 +35,11 @@ msgstr "最大{name}"
 msgid "{name} (Min)"
 msgstr "最小{name}"
 
-#: web/src/partials/RuleEditor.tsx:605
+#: web/src/partials/RuleEditor.tsx:579
+msgid "<0/> a <1/> planet."
+msgstr "<0/> <1/> 行星"
+
+#: web/src/partials/RuleEditor.tsx:616
 msgid "<0/> number of hives is <1/>."
 msgstr "黑雾巢穴的 <0/> 数目 <1/>"
 
@@ -48,12 +52,12 @@ msgid "actual"
 msgstr "实际"
 
 #: web/src/partials/MultiRuleEditor.tsx:214
-#: web/src/partials/RuleEditor.tsx:870
+#: web/src/partials/RuleEditor.tsx:881
 msgid "Add AND rule"
 msgstr "添加 与 规则"
 
 #: web/src/partials/MultiRuleEditor.tsx:147
-#: web/src/partials/RuleEditor.tsx:797
+#: web/src/partials/RuleEditor.tsx:808
 msgid "Add OR rule"
 msgstr "添加 或 规则"
 
@@ -67,7 +71,7 @@ msgid "all"
 msgstr "所有"
 
 #: web/src/partials/MultiRuleEditor.tsx:197
-#: web/src/partials/RuleEditor.tsx:844
+#: web/src/partials/RuleEditor.tsx:855
 msgid "AND"
 msgstr "与"
 
@@ -239,6 +243,10 @@ msgstr "您确定要创建新配置吗？所有未保存的更改将丢失。"
 msgid "Do you really want to delete all settings and progress? This cannot be undone."
 msgstr "您确定要删除所有设置和进度吗？此操作无法撤销。"
 
+#: web/src/partials/RuleEditor.tsx:587
+msgid "Does not have"
+msgstr "沒有"
+
 #: web/src/partials/ExportModal.tsx:140
 msgid "Done"
 msgstr "完成"
@@ -378,6 +386,10 @@ msgstr "大于"
 msgid "Halitum"
 msgstr "黑石盐滩"
 
+#: web/src/partials/RuleEditor.tsx:587
+msgid "Has"
+msgstr "有一颗"
+
 #: web/src/partials/RuleEditor.tsx:302
 msgid "Has <0/> <1/> giant(s)"
 msgstr "有 <0/> 顆 <1/> 巨星"
@@ -413,10 +425,6 @@ msgstr "有 <0/> 颗卫星"
 #: web/src/partials/RuleEditor.tsx:228
 msgid "Has <0/> tidally locked planets"
 msgstr "有 <0/> 顆潮汐锁定行星"
-
-#: web/src/partials/RuleEditor.tsx:578
-msgid "Has a <0/> planet."
-msgstr "有一颗 <0/> 行星"
 
 #: web/src/partials/RuleEditor.tsx:250
 msgid "Has planets with <0/> Ocean"
@@ -468,7 +476,7 @@ msgstr "包括"
 msgid "Index"
 msgstr "索引"
 
-#: web/src/partials/RuleEditor.tsx:613
+#: web/src/partials/RuleEditor.tsx:624
 msgid "Initial"
 msgstr "起始"
 
@@ -506,7 +514,7 @@ msgstr "是 <0/>"
 msgid "Is a <0/> type star"
 msgstr "是 <0/> 型恒星"
 
-#: web/src/partials/RuleEditor.tsx:713
+#: web/src/partials/RuleEditor.tsx:724
 msgid "Is the Starting system"
 msgstr "是初始星系"
 
@@ -555,7 +563,7 @@ msgstr "灰烬冻土"
 msgid "Mass"
 msgstr "质量"
 
-#: web/src/partials/RuleEditor.tsx:613
+#: web/src/partials/RuleEditor.tsx:624
 msgid "Max"
 msgstr "最大"
 
@@ -632,7 +640,7 @@ msgid "Onyxtopia"
 msgstr "橙晶荒漠"
 
 #: web/src/partials/MultiRuleEditor.tsx:72
-#: web/src/partials/RuleEditor.tsx:772
+#: web/src/partials/RuleEditor.tsx:783
 msgid "OR"
 msgstr "或"
 

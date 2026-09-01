@@ -41,6 +41,12 @@ function fixRule(rule: SimpleRule): SimpleRule {
             all: !!rule.all,
         }
     }
+    if (rule.type === RuleType.ThemeId) {
+        return {
+            ...rule,
+            negate: !!rule.negate,
+        }
+    }
     return rule
 }
 

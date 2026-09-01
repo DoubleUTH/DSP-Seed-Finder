@@ -8,6 +8,7 @@ use serde::{Deserialize, Serialize};
 #[serde(rename_all = "camelCase")]
 pub struct RuleThemeId {
     pub theme_ids: Vec<i32>,
+    pub negate: bool,
 }
 
 impl Rule for RuleThemeId {
@@ -28,7 +29,7 @@ impl Rule for RuleThemeId {
                     found = true;
                 }
             }
-            found
+            found != self.negate
         })
     }
 }

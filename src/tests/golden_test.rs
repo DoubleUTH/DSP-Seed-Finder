@@ -75,6 +75,7 @@ mod tests {
             }),
             Rules::ThemeId(rules::theme_id::RuleThemeId {
                 theme_ids: vec![1, 6, 7, 12, 13],
+                negate: false,
             }),
             Rules::OceanType(rules::ocean_type::RuleOceanType { ocean_type: 1000 }),
             Rules::GasCount(rules::gas_count::RuleGasCount {
@@ -209,7 +210,13 @@ mod tests {
         };
         let habitable_count = Cell::new(0_i32);
         let galaxy = create_galaxy(seed, &g, &habitable_count);
-        [VeinType::Iron, VeinType::Copper, VeinType::Oil, VeinType::Mag].map(|vein| {
+        [
+            VeinType::Iron,
+            VeinType::Copper,
+            VeinType::Oil,
+            VeinType::Mag,
+        ]
+        .map(|vein| {
             let total: f64 = galaxy
                 .stars
                 .iter()
@@ -228,15 +235,36 @@ mod tests {
         (64, 0x84836fe563b0edc3),
     ];
 
-    const VEIN_EST_GOLDENS: &[(usize, u64)] = &[
-        (32, 0x06862c519e804c99),
-        (64, 0xd4cec694faa6fe9a),
-    ];
+    const VEIN_EST_GOLDENS: &[(usize, u64)] = &[(32, 0x06862c519e804c99), (64, 0xd4cec694faa6fe9a)];
 
     const ACTUAL_VEIN_GOLDENS: &[(i32, [u64; 4])] = &[
-        (1, [0x41f00447f6b00000, 0x41ef8ce1c5600000, 0x41869ea888000000, 0x415668abc0000000]),
-        (42, [0x41f630ecc1d00000, 0x41f79fca2e900000, 0x4187a414e8000000, 0x4151737080000000]),
-        (98765432, [0x41f6644d03f00000, 0x41f79959e2800000, 0x418ad28f48000000, 0x414f557f80000000]),
+        (
+            1,
+            [
+                0x41f00447f6b00000,
+                0x41ef8ce1c5600000,
+                0x41869ea888000000,
+                0x415668abc0000000,
+            ],
+        ),
+        (
+            42,
+            [
+                0x41f630ecc1d00000,
+                0x41f79fca2e900000,
+                0x4187a414e8000000,
+                0x4151737080000000,
+            ],
+        ),
+        (
+            98765432,
+            [
+                0x41f6644d03f00000,
+                0x41f79959e2800000,
+                0x418ad28f48000000,
+                0x414f557f80000000,
+            ],
+        ),
     ];
 
     #[test]

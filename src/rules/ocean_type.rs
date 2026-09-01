@@ -14,11 +14,12 @@ impl Rule for RuleOceanType {
     fn get_priority(&self) -> i32 {
         42
     }
-    fn evaluate(
-        &self,
-        galaxy: &Galaxy,
-        evaluation: &Evaluation,
-    ) -> u64 {
+
+    fn need_position(&self) -> bool {
+        false
+    }
+
+    fn evaluate(&self, galaxy: &Galaxy, evaluation: &Evaluation) -> u64 {
         evaluate_unsafe!(galaxy, evaluation, |sp| {
             let mut found = false;
             for planet in sp.get_planets() {

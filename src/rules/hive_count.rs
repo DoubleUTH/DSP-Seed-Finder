@@ -21,6 +21,10 @@ impl Rule for RuleHiveCount {
         }
     }
 
+    fn need_position(&self) -> bool {
+        self.initial
+    }
+
     fn evaluate(&self, galaxy: &Galaxy, evaluation: &Evaluation) -> u64 {
         evaluate_safe!(galaxy, evaluation, |sp| {
             let count = if self.initial {

@@ -15,6 +15,10 @@ impl Rule for RuleAnd {
             .unwrap_or_default()
     }
 
+    fn need_position(&self) -> bool {
+        self.rules.iter().any(|r| r.need_position())
+    }
+
     fn evaluate(&self, galaxy: &Galaxy, evaluation: &Evaluation) -> u64 {
         let mut e = *evaluation;
         for rule in &self.rules {

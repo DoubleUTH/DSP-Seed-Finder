@@ -16,6 +16,10 @@ impl Rule for RuleLuminosity {
         20
     }
 
+    fn need_position(&self) -> bool {
+        false
+    }
+
     fn evaluate(&self, galaxy: &Galaxy, evaluation: &Evaluation) -> u64 {
         evaluate_safe!(galaxy, evaluation, |sp| {
             self.condition.eval(sp.star.get_luminosity())

@@ -16,6 +16,10 @@ impl Rule for RuleStarType {
         11
     }
 
+    fn need_position(&self) -> bool {
+        false
+    }
+
     fn evaluate(&self, galaxy: &Galaxy, evaluation: &Evaluation) -> u64 {
         evaluate_safe!(galaxy, evaluation, |sp| {
             self.star_type.contains(&sp.star.star_type)

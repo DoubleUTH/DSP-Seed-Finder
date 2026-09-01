@@ -23,6 +23,10 @@ impl Rule for RuleGasCount {
         }
     }
 
+    fn need_position(&self) -> bool {
+        false
+    }
+
     fn evaluate(&self, galaxy: &Galaxy, evaluation: &Evaluation) -> u64 {
         if let Some(ice) = self.ice {
             evaluate_unsafe!(galaxy, evaluation, |sp| {

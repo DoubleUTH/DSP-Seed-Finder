@@ -72,6 +72,10 @@ pub trait Rule {
         0
     }
 
+    fn need_position(&self) -> bool {
+        true
+    }
+
     fn evaluate(&self, galaxy: &Galaxy, evaluation: &Evaluation) -> u64 {
         0
     }

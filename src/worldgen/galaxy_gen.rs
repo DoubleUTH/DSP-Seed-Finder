@@ -106,9 +106,14 @@ fn generate_stars<'a>(
     seed: i32,
     game_desc: &'a GameDesc,
     habitable_count: &'a Cell<i32>,
+    need_position: bool,
 ) -> Vec<StarWithPlanets<'a>> {
     let mut rand = DspRandom::new(seed);
-    let tmp_poses = generate_temp_poses(rand.next_seed(), game_desc.star_count);
+    let tmp_poses = if need_position {
+        generate_temp_poses(rand.next_seed(), game_desc.star_count)
+    } else {
+        vec![Vector3::zero(); game_desc.star_count]
+    };
     let star_count = tmp_poses.len();
 
     let black_hole_count_rand = rand.next_f32();
@@ -191,7 +196,7 @@ pub fn create_galaxy<'a>(
     game_desc: &'a GameDesc,
     habitable_count: &'a Cell<i32>,
 ) -> Galaxy<'a> {
-    let mut stars = generate_stars(seed, game_desc, habitable_count);
+    let mut stars = generate_stars(seed, game_desc, habitable_count, true);
     let mut names: Vec<&str> = Vec::with_capacity(game_desc.star_count);
 
     for sp in stars.iter_mut() {
@@ -208,7 +213,7 @@ pub fn find_stars(seed: i32, game_desc: &GameDesc, rule: &Box<dyn Rule + Send + 
     let habitable_count = Cell::new(0_i32);
     let galaxy = Galaxy {
         seed,
-        stars: generate_stars(seed, game_desc, &habitable_count),
+        stars: generate_stars(seed, game_desc, &habitable_count, rule.need_position()),
     };
 
     let evaluation = Evaluation::new(game_desc.star_count);

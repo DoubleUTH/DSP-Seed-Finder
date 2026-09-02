@@ -109,8 +109,9 @@ fn generate_stars<'a>(
     need_position: bool,
 ) -> Vec<StarWithPlanets<'a>> {
     let mut rand = DspRandom::new(seed);
+    let pose_seed = rand.next_seed();
     let tmp_poses = if need_position {
-        generate_temp_poses(rand.next_seed(), game_desc.star_count)
+        generate_temp_poses(pose_seed, game_desc.star_count)
     } else {
         vec![Vector3::zero(); game_desc.star_count]
     };

@@ -135,8 +135,8 @@ declare global {
             type: RuleType.DysonRadius
             condition: Condition
         }
-        export type AverageVeinAmount = {
-            type: RuleType.AverageVeinAmount // legacy name
+        export type VeinAmount = {
+            type: RuleType.VeinAmount // legacy name
             useActual?: boolean
             vein: VeinType
             condition: Condition
@@ -231,7 +231,7 @@ declare global {
         | Rule.None
         | Rule.Luminosity
         | Rule.DysonRadius
-        | Rule.AverageVeinAmount
+        | Rule.VeinAmount
         | Rule.Spectr
         | Rule.TidalLockCount
         | Rule.OceanType

@@ -163,12 +163,12 @@ mod tests {
 
     fn vein_battery() -> Vec<Rules> {
         vec![
-            Rules::AverageVeinAmount(rules::average_vein_amount::RuleAverageVeinAmount {
+            Rules::VeinAmount(rules::vein_amount::RuleVeinAmount {
                 use_actual: false,
                 vein: VeinType::Iron,
                 condition: Condition::Gte(8_000_000.0),
             }),
-            Rules::AverageVeinAmount(rules::average_vein_amount::RuleAverageVeinAmount {
+            Rules::VeinAmount(rules::vein_amount::RuleVeinAmount {
                 use_actual: false,
                 vein: VeinType::Grat,
                 condition: Condition::Gte(1.0),

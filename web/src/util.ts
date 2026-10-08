@@ -24,10 +24,17 @@ function modifyCondition(condition: Condition, fn: (value: float) => float) {
     }
 }
 
-function fixRule(rule: SimpleRule): SimpleRule {
-    if (rule.type === RuleType.AverageVeinAmount) {
+export function fixRule(rule: SimpleRule): SimpleRule {
+    if ((rule.type as any) === "AverageVeinAmount") {
+        rule = {
+            ...rule,
+            type: RuleType.VeinAmount,
+        } as SimpleRule
+    }
+    if (rule.type === RuleType.VeinAmount) {
         return {
             ...rule,
+            type: RuleType.VeinAmount,
             useActual: !!rule.useActual,
             condition:
                 rule.vein === VeinType.Oil

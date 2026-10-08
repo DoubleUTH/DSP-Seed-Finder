@@ -1,5 +1,4 @@
 pub mod and;
-pub mod average_vein_amount;
 pub mod birth;
 pub mod birth_distance;
 pub mod composite;
@@ -18,4 +17,5 @@ pub mod spectr_distance;
 pub mod star_type;
 pub mod theme_id;
 pub mod tidal_lock_count;
+pub mod vein_amount;
 pub mod x_distance;

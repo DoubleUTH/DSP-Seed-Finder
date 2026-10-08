@@ -134,9 +134,9 @@ const EditDysonRadius: Component<{
     )
 }
 
-const EditAverageVeinAmount: Component<{
-    value: Rule.AverageVeinAmount
-    onChange: (value: Rule.AverageVeinAmount) => void
+const EditVeinAmount: Component<{
+    value: Rule.VeinAmount
+    onChange: (value: Rule.VeinAmount) => void
     disabled?: boolean
 }> = (props) => {
     const { t } = useLingui()
@@ -660,10 +660,8 @@ const EditSimpleRule: Component<{
                 <Match when={isType(props.value, RuleType.DysonRadius)}>
                     {(value) => <EditDysonRadius {...props} value={value()} />}
                 </Match>
-                <Match when={isType(props.value, RuleType.AverageVeinAmount)}>
-                    {(value) => (
-                        <EditAverageVeinAmount {...props} value={value()} />
-                    )}
+                <Match when={isType(props.value, RuleType.VeinAmount)}>
+                    {(value) => <EditVeinAmount {...props} value={value()} />}
                 </Match>
                 <Match when={isType(props.value, RuleType.Spectr)}>
                     {(value) => <EditSpectr {...props} value={value()} />}
@@ -1004,8 +1002,9 @@ const rules: SimpleRule[] = [
         starType: [StarType.MainSeqStar],
     },
     {
-        type: RuleType.AverageVeinAmount,
+        type: RuleType.VeinAmount,
         vein: VeinType.Iron,
+        useActual: false,
         condition: {
             type: ConditionType.Gte,
             value: 0,

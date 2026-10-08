@@ -65,7 +65,7 @@ export enum RuleType {
     GasCount = "GasCount", // 41 / 32
     OceanType = "OceanType", // 42
     GasRate = "GasRate", // 50
-    AverageVeinAmount = "AverageVeinAmount", // 51
+    VeinAmount = "VeinAmount", // 51
 }
 
 export enum CompositeRuleType {

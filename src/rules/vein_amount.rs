@@ -8,13 +8,13 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct RuleAverageVeinAmount {
+pub struct RuleVeinAmount {
     pub use_actual: bool,
     pub vein: VeinType,
     pub condition: Condition,
 }
 
-impl Rule for RuleAverageVeinAmount {
+impl Rule for RuleVeinAmount {
     fn get_priority(&self) -> i32 {
         if self.use_actual {
             101

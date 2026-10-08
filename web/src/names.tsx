@@ -50,7 +50,7 @@ export function useRuleNames(): Record<RuleType, () => string> {
         [RuleType.GasCount]: () => t`Gas/Ice Giant count`,
         [RuleType.OceanType]: () => t`Ocean`,
         [RuleType.GasRate]: () => t`Gas rate`,
-        [RuleType.AverageVeinAmount]: () => t`Vein amount`,
+        [RuleType.VeinAmount]: () => t`Vein amount`,
         [RuleType.PlanetInDysonCount]: () => t`Planets in dyson sphere`,
         [RuleType.HiveCount]: () => t`Hive count`,
     }

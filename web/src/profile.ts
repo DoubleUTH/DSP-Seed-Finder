@@ -4,6 +4,7 @@ import {
     defaultHiveMaxDensity,
     defaultResourceMultiplier,
     defaultStarCount,
+    fixRule,
 } from "./util"
 import { DEFAULT_BATCH_SIZE } from "./constants"
 
@@ -141,6 +142,18 @@ function backCompatProfile(data: any) {
                   ? Math.ceil(data.total / DEFAULT_BATCH_SIZE)
                   : Math.floor((data.current - data.start) / DEFAULT_BATCH_SIZE)
         delete data.current
+    }
+    if (data.multiRules) {
+        for (const mrs of data.multiRules as MultiRule[][]) {
+            for (const mr of mrs) {
+                mr.rules = mr.rules.map((rs) => rs.map((r) => fixRule(r)))
+            }
+        }
+    }
+    if (data.rules) {
+        data.rules = (data.rules as SimpleRule[][]).map((rs) =>
+            rs.map((r) => fixRule(r)),
+        )
     }
 }
 
